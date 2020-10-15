@@ -1,8 +1,4 @@
-export interface AbstractModel {
-  [key: string]: unknown
-}
-
-export interface Entity extends AbstractModel {
+export interface Entity {
   id: string
 }
 
