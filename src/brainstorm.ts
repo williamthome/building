@@ -2,16 +2,6 @@
 /* BRAINSTORM
 /********************************************/
 
-export type Result<Type, Failure> = {
-  kind: 'ok' | 'error',
-  code: number,
-  result?: Type | Failure
-}
-
-export interface UseCase<T> {
-  call: (...args: never[]) => Promise<Result<T, Error>>
-}
-
 export enum HttpStatusCode {
   OK = 200
 }
@@ -65,6 +55,7 @@ export interface Server {
 /* TESTS
 /********************************************/
 
+/*
 interface User {
   name: string
   address: string
@@ -87,3 +78,4 @@ class Test implements UseCase<User> {
 
 const t = new Test()
 t.call('William', 'Tunápolis')
+*/
