@@ -21,6 +21,14 @@ const makeSut = (): SutTypes => {
 //#endregion Factories
 
 describe('AddUser Contract', () => {
+  describe('AddUser Repository', () => {
+    it('should throw if method throws', async () => {
+      const { sut, addUserRepositorySpy } = makeSut()
+      addUserRepositorySpy.shouldThrow = true
+      await expect(sut.call(mockUserModelDto())).rejects.toThrow()
+    })
+  })
+
   it('shold return a new user', async () => {
     const { sut, addUserRepositorySpy } = makeSut()
     const user = await sut.call(mockUserModelDto())
