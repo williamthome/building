@@ -1,4 +1,4 @@
-import { ModelDto } from '@/data/protocol/model.protocol'
+import { ModelDto } from '@/data/protocols/model.protocol'
 import { UserModel } from '@/data/models/user.model'
 
 export interface AddUserRepository {

@@ -1,7 +1,7 @@
 import { AddUserContract } from './add-user.contract'
 import { UserModel } from '@/data/models'
-import { ModelDto } from '@/data/protocol/model.protocol'
 import { AddUserRepository } from '@/data/repositories/user/add-user.repository'
+import { ModelDto } from '@/data/protocols/model.protocol'
 
 const userDtoMock: Required<ModelDto<UserModel>> = {
   name: 'Somebody',

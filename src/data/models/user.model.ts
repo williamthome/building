@@ -1,4 +1,4 @@
-import { Model } from '../protocol/model.protocol'
+import { Model } from '../protocols/model.protocol'
 import { UserEntity } from '@/domain/entities/user.entity'
 
 export class UserModel extends Model implements UserEntity {
