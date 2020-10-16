@@ -1,4 +1,4 @@
-import { HttpStatusCode } from '../contants'
+import { HttpStatusCode } from '../constants'
 import { ServerError } from '../errors'
 import { HttpResponse } from '../protocols'
 
