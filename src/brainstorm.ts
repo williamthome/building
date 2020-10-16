@@ -2,14 +2,7 @@
 /* BRAINSTORM
 /********************************************/
 
-import { Controller } from './presentation/protocols/controller.protocol'
-
-export interface Route<T> {
-  path: string
-  controller: Controller<T>
-  requirement: 'admin' | 'auth' | 'master' | 'none'
-  permissions?: number
-}
+import { Route } from './presentation/protocols/route.protocol'
 
 export interface Database {
   connect: (url: string) => Promise<void>
