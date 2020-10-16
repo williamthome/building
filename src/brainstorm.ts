@@ -2,12 +2,8 @@
 /* BRAINSTORM
 /********************************************/
 
+import { Database } from './infra/protocols'
 import { Route } from './presentation/protocols/route.protocol'
-
-export interface Database {
-  connect: (url: string) => Promise<void>
-  disconnect: () => Promise<void>
-}
 
 export interface Server {
   db: Database
