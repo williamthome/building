@@ -1,46 +1,30 @@
 import { AddUserContract } from './add-user.contract'
-import { UserModel } from '@/data/models'
-import { AddUserRepository } from '@/data/repositories/user/add-user.repository'
-import { ModelDto } from '@/data/protocols/model.protocol'
+import { AddUserRepositorySpy } from '@/data/__test__/spys/add-user-repository.spy'
+import { mockUserModelDto } from '@/data/__test__/mocks/user-model-dto.mock'
 
-const userDtoMock: Required<ModelDto<UserModel>> = {
-  name: 'Somebody',
-  address: 'Someplace'
-}
-
-const userMock: UserModel = {
-  ...userDtoMock,
-  id: 'Someid'
-}
-
-const makeAddUserRepositorySpy = (): AddUserRepository => {
-  class AddUserUserRepositorySpy implements AddUserRepository {
-    addUser = async (): Promise<UserModel> => {
-      return await Promise.resolve(userMock)
-    }
-  }
-  return new AddUserUserRepositorySpy()
-}
+//#region Factories
 
 interface SutTypes {
   sut: AddUserContract
-  addUserMock: AddUserRepository
+  addUserRepositorySpy: AddUserRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
-  const addUserMock = makeAddUserRepositorySpy()
-  const sut = new AddUserContract(addUserMock)
+  const addUserRepositorySpy = new AddUserRepositorySpy()
+  const sut = new AddUserContract(addUserRepositorySpy)
   return {
     sut,
-    addUserMock
+    addUserRepositorySpy
   }
 }
 
+//#endregion Factories
+
 describe('AddUser Contract', () => {
   it('shold return a new user', async () => {
-    const { sut } = makeSut()
-    const user = await sut.call(userDtoMock)
+    const { sut, addUserRepositorySpy } = makeSut()
+    const user = await sut.call(mockUserModelDto())
     expect(user).toBeTruthy()
-    expect(user).toEqual(userMock)
+    expect(user).toEqual(addUserRepositorySpy.userModel)
   })
 })
