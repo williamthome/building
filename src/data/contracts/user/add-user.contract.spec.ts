@@ -22,6 +22,13 @@ const makeSut = (): SutTypes => {
 
 describe('AddUser Contract', () => {
   describe('AddUser Repository', () => {
+    it('should be called with right value', async () => {
+      const { sut, addUserRepositorySpy } = makeSut()
+      const dto = mockUserModelDto()
+      await sut.call(dto)
+      expect(addUserRepositorySpy.userDto).toEqual(dto)
+    })
+
     it('should throw if method throws', async () => {
       const { sut, addUserRepositorySpy } = makeSut()
       addUserRepositorySpy.shouldThrow = true
