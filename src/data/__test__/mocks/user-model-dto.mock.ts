@@ -1,7 +1,8 @@
+import fakeData from '~/lib/fakeData'
 import { UserModel } from '@/data/models'
 import { ModelDto } from '@/data/protocols/model.protocol'
 
 export const mockUserModelDto = (): ModelDto<UserModel> => ({
-  name: 'Some Name',
-  address: 'Some Address'
+  name: fakeData.person.fullName(),
+  address: fakeData.address.full()
 })
