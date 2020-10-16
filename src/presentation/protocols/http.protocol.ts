@@ -1,6 +1,7 @@
 import { HttpHeaderName, HttpStatusCode } from '../contants'
 
-export type HttpHeaders = Partial<Record<HttpHeaderName, string>>
+// export type HttpHeaders = { [P in HttpHeaderName]?: string | undefined }
+export type HttpHeaders = Partial<Record<HttpHeaderName | string, string>>
 
 export type HttpParameters = Record<string, string>
 
