@@ -2,3 +2,8 @@ coverage
 dist
 **/node_modules
 **/*.js
+**/*.test.ts
+**/*.spec.ts
+**/*.mock.ts
+**/*.spy.ts
+**/__test__
