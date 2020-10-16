@@ -10,10 +10,23 @@ export class Fastify implements WebServer {
     this.fastifyInstance = fastify()
   }
 
+  server = (): unknown => {
+    return this.fastifyInstance.server
+  }
+
   listen = async (): Promise<void> => {
     await this.injectRoutes()
     await this.fastifyInstance.listen(this.port)
+    await this.ready()
     console.log('Server listening on port ' + this.port)
+  }
+
+  ready = async (): Promise<void> => {
+    await this.fastifyInstance.ready()
+  }
+
+  close = async (): Promise<void> => {
+    await this.fastifyInstance.close()
   }
 
   injectRoutes = async (): Promise<void> => {
