@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify'
 import { Controller, HttpParameters, HttpRequest } from '@/presentation/protocols'
 import { HttpAdapter } from '../../protocols/http-adapter.protocol'
 
-export class AdaptHttpToFastifyRoute<T> implements HttpAdapter<T> {
+export class AdaptHttpToFastify<T> implements HttpAdapter<T> {
   adapt = async (controller: Controller<T>): Promise<void> => {
     async (req: FastifyRequest, res: FastifyReply): Promise<void> => {
       const httpRequest: HttpRequest<T> = {
