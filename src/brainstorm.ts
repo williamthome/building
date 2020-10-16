@@ -2,40 +2,11 @@
 /* BRAINSTORM
 /********************************************/
 
-export enum HttpStatusCode {
-  OK = 200
-}
+import { Controller } from './presentation/protocols/controller.protocol'
 
-export interface HttpResponse<T = never> {
-  statusCode: HttpStatusCode
-  body: T
-}
-
-export enum HttpHeaderName {
-  AUTHORIZATION = 'Authorization'
-}
-
-export type HttpHeaders = Partial<Record<HttpHeaderName, string>>
-
-export type HttpParameters = Record<string, string>
-
-export interface HttpRequest<T = never> {
-  body?: T
-  headers?: HttpHeaders
-  params?: HttpParameters
-}
-
-export interface Controller {
-  handle: (request: HttpRequest) => Promise<HttpResponse>
-}
-
-export interface LogControllerDecorator extends Controller {
-  controller: Controller
-}
-
-export interface Route {
+export interface Route<T> {
   path: string
-  controller: Controller
+  controller: Controller<T>
   requirement: 'admin' | 'auth' | 'master' | 'none'
   permissions?: number
 }
@@ -47,7 +18,7 @@ export interface Database {
 
 export interface Server {
   db: Database
-  routes: Route[]
+  routes: Array<Route<unknown>>
   run: (dbUrl: string) => Promise<void>
 }
 
