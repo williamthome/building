@@ -9,9 +9,11 @@
     "dev": "npm run build && nodemon --watch 'src/**/*.ts' --exec \"ts-node\" src/server.ts",
     "start": "node dist/server.js",
     "test": "npx jest --passWithNoTests --silent --noStackTrace --runInBand",
-    "test:verbose": "npx jest --passWithNoTests --runInBand",
+    "test:verbose": "npx jest --passWithNoTests --runInBand --detectOpenHandles",
     "test:unit": "npm test -- --watch -c jest-unit-config.js",
+    "test:unit:verbose": "npm run test:verbose -- --watch -c jest-unit-config.js",
     "test:integration": "npm test -- --watch -c jest-integration-config.js",
+    "test:integration:verbose": "npm run test:verbose -- --watch -c jest-integration-config.js",
     "test:staged": "npm test -- --findRelatedTests",
     "test:ci": "npm test -- --coverage",
     "test:clear": "npx jest --clearCache"
