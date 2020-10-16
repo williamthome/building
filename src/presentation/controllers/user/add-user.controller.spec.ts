@@ -1,5 +1,6 @@
 import { UserEntity } from '@/domain/entities'
 import { EntityDto } from '@/domain/protocols'
+import { serverError } from '@/presentation/factories/http.factory'
 import { HttpRequest } from '@/presentation/protocols'
 import { mockUserEntityDto } from '@/presentation/__test__/mocks/user-entity-dto.mock'
 import { AddUserUseCaseSpy } from '@/presentation/__test__/spys/add-user-usecase.spy'
@@ -30,10 +31,17 @@ const makeSut = (): SutTypes => {
 
 describe('AddUser Controller', async () => {
   describe('AddUser UseCase', async () => {
-    fit('should been called with right values', async () => {
+    it('should been called with right values', async () => {
       const { sut, addUserUseCaseSpy } = makeSut()
       await sut.handle(mockHttpRequest())
       expect(addUserUseCaseSpy.userDto).toEqual(userDto)
+    })
+
+    it('should return server error if throws', async () => {
+      const { sut, addUserUseCaseSpy } = makeSut()
+      addUserUseCaseSpy.shouldThrow = true
+      const response = await sut.handle(mockHttpRequest())
+      expect(response).toEqual(serverError(new Error()))
     })
   })
 })
