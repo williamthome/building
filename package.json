@@ -5,7 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "build": "rimraf build && npx tsc -p .",
+    "build": "rimraf build && npx tsc -p tsconfig.build.json",
     "dev": "npm run build && nodemon --watch 'src/**/*.ts' --exec \"ts-node\" src/server.ts",
     "start": "node dist/server.js",
     "test": "npx jest --passWithNoTests --silent --noStackTrace --runInBand",
