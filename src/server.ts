@@ -9,6 +9,7 @@ const dbUrl = 'MONGO_URL'
 const db = new MongoDB(dbUrl)
 const app = new Application(webServer, db)
 
+console.log('App starting')
 app.run().then(() => {
   console.log('App is running')
 }).catch((error) => {
