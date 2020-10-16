@@ -1,6 +1,6 @@
 import { UserEntity } from '@/domain/entities'
 import { EntityDto } from '@/domain/protocols'
-import { serverError } from '@/presentation/factories/http.factory'
+import { ok, serverError } from '@/presentation/factories/http.factory'
 import { HttpRequest } from '@/presentation/protocols'
 import { mockUserEntityDto } from '@/presentation/__test__/mocks/user-entity-dto.mock'
 import { AddUserUseCaseSpy } from '@/presentation/__test__/spys/add-user-usecase.spy'
@@ -43,5 +43,11 @@ describe('AddUser Controller', async () => {
       const response = await sut.handle(mockHttpRequest())
       expect(response).toEqual(serverError(new Error()))
     })
+  })
+
+  it('shold return ok with a new user on body', async () => {
+    const { sut, addUserUseCaseSpy } = makeSut()
+    const response = await sut.handle(mockHttpRequest())
+    expect(response).toEqual(ok(addUserUseCaseSpy.userEntity))
   })
 })
