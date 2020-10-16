@@ -1,4 +1,5 @@
 export interface Database {
-  connect: (url: string) => Promise<void>
+  dbUrl: string
+  connect: () => Promise<void>
   disconnect: () => Promise<void>
 }
