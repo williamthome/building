@@ -1,8 +1,7 @@
 import { App } from './protocols/app.protocol'
-import { Database } from '@/infra/protocols'
+import { WebServer, Database } from '@/infra/protocols'
 import { Route } from '@/presentation/protocols'
 import { setupRoutes } from './config/routes.config'
-import { WebServer } from './protocols/web-server.protocol'
 
 export class Application implements App {
   public readonly routes: Array<Route<unknown>>

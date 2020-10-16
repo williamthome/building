@@ -1,6 +1,6 @@
 import { MongoDB } from './infra/db/mongo/mongo.db'
+import { Fastify } from './infra/web-servers/fastify/fastify.web-server'
 import { Application } from './main/app'
-import { Fastify } from './main/web-servers/fastify.web-server'
 
 const port = 5050
 const webServer = new Fastify(port)
