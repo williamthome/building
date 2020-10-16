@@ -29,8 +29,8 @@ const makeSut = (): SutTypes => {
 
 //#endregion Factories
 
-describe('AddUser Controller', async () => {
-  describe('AddUser UseCase', async () => {
+describe('AddUser Controller', () => {
+  describe('AddUser UseCase', () => {
     it('should been called with right values', async () => {
       const { sut, addUserUseCaseSpy } = makeSut()
       await sut.handle(mockHttpRequest())
