@@ -4,8 +4,8 @@ import { Fastify } from './main/web-servers/fastify/fastify.web-server'
 import { Application } from './main/app'
 
 // Vars
-const port = parseInt(process.env.PORT ?? '5050')
-const dbUrl = process.env.DB_URL ?? 'MONGO_URL'
+const port = parseInt(process.env.PORT || '5050')
+const dbUrl = process.env.DB_URL || 'MONGO_URL'
 
 // Create 3rd party dependencies
 const webServer = new Fastify(port)
