@@ -1,5 +1,5 @@
 import fastify, { FastifyInstance } from 'fastify'
-import { WebServer } from '@/infra/protocols'
+import { WebServer } from '@/main/protocols'
 
 export class Fastify implements WebServer {
   private readonly fastifyInstance: FastifyInstance

@@ -1,5 +1,5 @@
-import { WebServer, Database } from '@/infra/protocols'
-import { Route } from '@/presentation/protocols'
+import { WebServer, Route } from '.'
+import { Database } from '@/infra/protocols/database.protocol'
 
 export interface App {
   server: WebServer

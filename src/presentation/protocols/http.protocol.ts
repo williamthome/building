@@ -1,5 +1,4 @@
-import { HttpHeaderName } from '../contants/http-header-name'
-import { HttpStatusCode } from '../contants/http-status-code'
+import { HttpHeaderName, HttpStatusCode } from '../contants'
 
 export type HttpHeaders = Partial<Record<HttpHeaderName, string>>
 

@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
+import { HttpAdapter } from '@/main/protocols'
 import { Controller, HttpParameters, HttpRequest } from '@/presentation/protocols'
-import { HttpAdapter } from '@/presentation/protocols/http-adapter.protocol'
 
 export class AdaptHttpToFastify<T> implements HttpAdapter<T> {
   adapt = async (controller: Controller<T>): Promise<void> => {

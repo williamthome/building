@@ -1,7 +1,7 @@
 import { Controller, HttpRequest, HttpResponse } from '@/presentation/protocols'
 import { ok, serverError } from '@/presentation/factories/http.factory'
-import { UserEntity } from '@/domain/entities/user.entity'
-import { AddUserUseCase } from '@/domain/usecases/user/add-user.usecase'
+import { UserEntity } from '@/domain/entities'
+import { AddUserUseCase } from '@/domain/usecases/user'
 
 export class AddUserController implements Controller<UserEntity> {
 

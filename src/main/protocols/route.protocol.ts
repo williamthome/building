@@ -1,4 +1,4 @@
-import { Controller } from './controller.protocol'
+import { Controller } from '@/presentation/protocols'
 
 export interface Route<T> {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'

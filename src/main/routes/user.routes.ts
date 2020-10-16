@@ -1,4 +1,4 @@
-import { Route } from '@/presentation/protocols'
+import { Route } from '../protocols'
 import { makeAddUserController } from '../factories/controllers/user'
 import { makeRoutes } from '../factories/route.factory'
 

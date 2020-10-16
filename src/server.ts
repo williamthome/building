@@ -1,5 +1,6 @@
+import 'module-alias/register'
 import { MongoDB } from './infra/db/mongo/mongo.db'
-import { Fastify } from './infra/web-servers/fastify/fastify.web-server'
+import { Fastify } from './main/web-servers/fastify/fastify.web-server'
 import { Application } from './main/app'
 
 const port = 5050

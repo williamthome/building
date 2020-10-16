@@ -1,4 +1,4 @@
-import { Database } from '@/infra/protocols'
+import { Database } from '@/infra/protocols/database.protocol'
 
 export class MongoDB implements Database {
   constructor (public readonly dbUrl: string) {}
