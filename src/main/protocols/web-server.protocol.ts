@@ -5,4 +5,5 @@ export interface WebServer {
   ready: () => Promise<void>
   close: () => Promise<void>
   injectRoutes: () => Promise<void>
+  isListening: boolean
 }
