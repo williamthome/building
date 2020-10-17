@@ -1,3 +1,7 @@
 import { Server } from '@/main/server'
 
-new Server().listen()
+const server = new Server()
+server.listen().catch((error) => {
+  server.close()
+  console.error(error)
+})
