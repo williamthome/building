@@ -1,13 +1,13 @@
 import 'module-alias/register'
 import { MongoDB } from '@/infra/db/mongo/mongo.db'
 import { Fastify } from './web-servers/fastify/fastify.web-server'
+import { App } from './protocols'
 import { Application } from './app'
+import { AppServer, ServerStatus } from './protocols/app-server.protocol'
 
-export type ServerStatus = 'undefined' | 'created' | 'listening' | 'closed' | 'error'
-
-export class Server {
-  _status: ServerStatus = 'undefined'
-  app: Application
+export class Server implements AppServer {
+  private _status: ServerStatus = 'undefined'
+  private _app: App
 
   constructor () {
     console.log('Creating server')
@@ -21,7 +21,7 @@ export class Server {
     const db = new MongoDB(dbUrl)
 
     // Create app and inject dependencies
-    this.app = new Application(webServer, db)
+    this._app = new Application(webServer, db)
 
     // Set status
     this._status = 'created'
@@ -33,15 +33,19 @@ export class Server {
     return this._status
   }
 
+  get app(): App {
+    return this._app
+  }
+
   listen = async (): Promise<void> => {
     try {
       console.log('App starting')
-      await this.app.run()
+      await this._app.run()
       this._status = 'listening'
       console.log('App is running')
     } catch (error) {
       console.log('Shuting down')
-      this.app.stop()
+      this._app.stop()
       this._status = 'error'
       console.error(error)
     }
@@ -50,7 +54,7 @@ export class Server {
   close = async (): Promise<void> => {
     try {
       console.log('App shuting down')
-      await this.app.stop()
+      await this._app.stop()
       this._status = 'closed'
       console.log('App stopped')
     } catch (error) {

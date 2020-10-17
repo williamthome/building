@@ -1,4 +1,5 @@
-import { Server, ServerStatus } from './server'
+import { Server } from './server'
+import { ServerStatus } from './protocols/app-server.protocol'
 
 //#region Factories
 
