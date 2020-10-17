@@ -7,9 +7,13 @@ import { addUserRoute } from './user.routes'
 
 const app = mockApp()
 
-beforeAll(async () => {
+beforeEach(async () => {
   await app.webServer.injectRoutes()
   await app.webServer.ready()
+})
+
+afterEach(async () => {
+  await app.stop()
 })
 
 describe(makeRouteDescribe(addUserRoute), () => {
