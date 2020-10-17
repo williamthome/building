@@ -1,3 +1,4 @@
+import 'module-alias/register'
 import { Server } from '@/main/server'
 
 const server = new Server()
