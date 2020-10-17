@@ -20,10 +20,8 @@ describe('Application', () => {
   it('should run and after stop', async () => {
     const { sut } = makeSut()
     await sut.run()
-    expect(sut.db.isConnected).toBe(true)
-    expect(sut.webServer.isListening).toBe(true)
+    expect(sut.isHealthy()).toBe(true)
     await sut.stop()
-    expect(sut.db.isConnected).toBe(false)
-    expect(sut.webServer.isListening).toBe(false)
+    expect(sut.isHealthy()).toBe(false)
   })
 })

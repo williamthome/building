@@ -17,4 +17,6 @@ export class Application implements App {
     await this.webServer.close()
     await this.db.disconnect()
   }
+
+  isHealthy = (): boolean => this.db.isConnected && this.webServer.isListening
 }

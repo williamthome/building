@@ -1,5 +1,4 @@
 import { Server } from './server'
-import { ServerStatus } from './protocols/app-server.protocol'
 
 //#region Factories
 
@@ -20,10 +19,8 @@ describe('Server', () => {
   it('should listen and after close', async () => {
     const { sut } = makeSut()
     await sut.listen()
-    let expectedStatus: ServerStatus = 'listening'
-    expect(sut.status).toBe(expectedStatus)
+    expect(sut.isHealthy()).toBe(true)
     await sut.close()
-    expectedStatus = 'closed'
-    expect(sut.status).toBe(expectedStatus)
+    expect(sut.isHealthy()).toBe(false)
   })
 })

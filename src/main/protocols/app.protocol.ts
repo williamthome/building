@@ -6,4 +6,5 @@ export interface App {
   db: Database
   run: () => Promise<void>
   stop: () => Promise<void>
+  isHealthy: () => boolean
 }
