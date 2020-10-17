@@ -6,16 +6,22 @@ export class Application implements App {
   constructor (
     public readonly webServer: WebServer,
     public readonly db: Database
-  ) { }
+  ) {
+    console.log('App created')
+  }
 
   run = async (): Promise<void> => {
+    console.log('Starting...')
     await this.webServer.listen()
     await this.db.connect()
+    console.log('App is running')
   }
 
   stop = async (): Promise<void> => {
+    console.log('Stoping...')
     await this.webServer.close()
     await this.db.disconnect()
+    console.log('App is stopped')
   }
 
   isHealthy = (): boolean => this.db.isConnected && this.webServer.isListening
