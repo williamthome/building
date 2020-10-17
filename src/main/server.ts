@@ -1,7 +1,7 @@
 import 'module-alias/register'
-import { MongoDB } from './infra/db/mongo/mongo.db'
-import { Fastify } from './main/web-servers/fastify/fastify.web-server'
-import { Application } from './main/app'
+import { MongoDB } from '@/infra/db/mongo/mongo.db'
+import { Fastify } from './web-servers/fastify/fastify.web-server'
+import { Application } from './app'
 
 export type ServerStatus = 'undefined' | 'created' | 'listening' | 'closed' | 'error'
 
