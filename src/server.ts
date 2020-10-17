@@ -3,7 +3,7 @@ import { MongoDB } from './infra/db/mongo/mongo.db'
 import { Fastify } from './main/web-servers/fastify/fastify.web-server'
 import { Application } from './main/app'
 
-export type ServerStatus = 'undefined' | 'created' | 'listening' | 'error'
+export type ServerStatus = 'undefined' | 'created' | 'listening' | 'closed' | 'error'
 
 export class Server {
   _status: ServerStatus = 'undefined'
@@ -42,6 +42,18 @@ export class Server {
     } catch (error) {
       console.log('Shuting down')
       this.app.stop()
+      this._status = 'error'
+      console.error(error)
+    }
+  }
+
+  close = async (): Promise<void> => {
+    try {
+      console.log('App shuting down')
+      await this.app.stop()
+      this._status = 'closed'
+      console.log('App stopped')
+    } catch (error) {
       this._status = 'error'
       console.error(error)
     }
