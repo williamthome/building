@@ -1,5 +1,6 @@
-import { MongoClient, ClientSession } from 'mongodb'
+import { MongoClient, ClientSession, ObjectId, Collection, CollectionInsertOneOptions } from 'mongodb'
 import { Database } from '@/infra/protocols/database.protocol'
+import { Model } from '@/data/protocols/model.protocol'
 
 export class MongoDB implements Database {
   private _client?: MongoClient
@@ -62,5 +63,39 @@ export class MongoDB implements Database {
   rollback = async (): Promise<void> => {
     await this.session.abortTransaction()
     console.log('Transaction aborted')
+  }
+
+  private map = <T extends Model> (data: any): T => {
+    const { _id, ...rest } = data
+    const id = (_id as ObjectId).toHexString()
+    const mapped: T = { id, ...rest }
+    return mapped
+  }
+
+  getCollection = async <T> (name: string): Promise<Collection<T>> => {
+    if (!this._client || !this.isConnected) {
+      console.warn('Mongo isn\'t connected. Reconnecting...')
+      await this.connect()
+      console.log('Successfully connected to mongo')
+    }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this._client!.db().collection(name)
+  }
+
+  addOne = async <T extends Model> (
+    payload: Partial<T>,
+    collectionName: string,
+    options?: Omit<CollectionInsertOneOptions, 'session'>
+  ): Promise<T> => {
+    const collection = await this.getCollection(collectionName)
+    const data = await collection.insertOne(
+      payload,
+      {
+        ...options,
+        session: this.session
+      }
+    )
+    const model = data.ops[0]
+    return this.map<T>(model)
   }
 }
