@@ -8,7 +8,7 @@
     "build": "rimraf dist && npx tsc -p tsconfig.build.json",
     "dev": "npm run build && nodemon --watch 'src/**/*.ts' --exec \"ts-node\" src/index.ts",
     "start": "node dist/index.js",
-    "test": "npx jest --passWithNoTests --silent --noStackTrace --runInBand",
+    "test": "npx jest --passWithNoTests --silent --noStackTrace --runInBand --detectOpenHandles",
     "test:verbose": "npx jest --passWithNoTests --runInBand --detectOpenHandles",
     "test:unit": "npm test -- --watch -c jest-unit-config.js",
     "test:unit:verbose": "npm run test:verbose -- --watch -c jest-unit-config.js",
