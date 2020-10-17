@@ -12,4 +12,9 @@ export class Application implements App {
     await this.webServer.listen()
     await this.db.connect()
   }
+
+  stop = async (): Promise<void> => {
+    await this.webServer.close()
+    await this.db.disconnect()
+  }
 }
