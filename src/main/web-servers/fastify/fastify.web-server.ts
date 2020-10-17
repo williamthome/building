@@ -1,9 +1,9 @@
-import fastify, { FastifyInstance } from 'fastify'
-import { WebServer } from '@/main/protocols'
+import fastify, { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import { Route, WebServer } from '@/main/protocols'
 import { routes } from '@/main/routes/routes'
-import { adaptRouteToFastify } from '@/main/adapters/web-servers/fastify.route-adapter'
+import { Controller, HttpHeaders, HttpParameters, HttpRequest } from '@/presentation/protocols'
 
-export class Fastify implements WebServer {
+export class Fastify implements WebServer<FastifyInstance, FastifyRequest, FastifyReply> {
   private _isListening = false
 
   private readonly fastifyInstance: FastifyInstance
@@ -36,12 +36,56 @@ export class Fastify implements WebServer {
   injectRoutes = async (): Promise<void> => {
     const allRoutes = routes()
     await Promise.all(allRoutes.map((route, index) => {
-      adaptRouteToFastify(route, this.fastifyInstance)
+      this.adaptRoute(route, this.fastifyInstance)
       console.log(`[${index+1}/${allRoutes.length}] Route '${route.path}' injected`)
     }))
   }
 
   get isListening(): boolean {
     return this._isListening
+  }
+
+  adaptRoute = <T> (
+    route: Route<T>,
+    fastifyInstance: FastifyInstance
+  ): FastifyInstance => {
+    return fastifyInstance.route({
+      method: route.method,
+      url: route.path,
+      handler: this.adaptHttpResponse(route.controller),
+      preHandler: [
+        // middlewares
+      ]
+    })
+  }
+
+  adaptHttpResponse = <T> (controller: Controller<T>) => {
+    return async (req: FastifyRequest, res: FastifyReply): Promise<FastifyReply> => {
+      const httpRequest: HttpRequest<T> = {
+        body: req.body as T,
+        headers: this.adaptHttpHeaders(req),
+        params: req.params as HttpParameters
+      }
+      const httpResponse = await controller.handle(httpRequest)
+      return httpResponse.body instanceof Error
+        ? res.status(httpResponse.statusCode).send({ error: httpResponse.body.message })
+        : res.status(httpResponse.statusCode).send(httpResponse.body)
+    }
+  }
+
+  adaptHttpHeaders = (req: FastifyRequest): HttpHeaders => {
+    const headers: HttpHeaders = {}
+    for (const [key, value] of Object.entries(req.headers)) {
+      if (key && value) {
+        if (typeof value === 'string') {
+          headers[key] = value
+        } else {
+          for (const v of value) {
+            headers[key] = v
+          }
+        }
+      }
+    }
+    return headers
   }
 }

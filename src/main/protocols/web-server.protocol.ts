@@ -1,4 +1,15 @@
-export interface WebServer {
+import {
+  RouteAdapter,
+  HttpResponseAdapter,
+  HttpHeadersAdapter
+} from '../adapters'
+
+export interface WebServer<U, Req, Res>
+extends
+  RouteAdapter<U>,
+  HttpResponseAdapter<Req, Res>,
+  HttpHeadersAdapter<Req>
+{
   port: number
   server: () => unknown
   listen: () => Promise<void>

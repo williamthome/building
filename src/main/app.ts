@@ -2,9 +2,9 @@ import { App } from './protocols/app.protocol'
 import { WebServer } from './protocols/web-server.protocol'
 import { Database } from '@/infra/protocols/database.protocol'
 
-export class Application implements App {
+export class Application<U, Req, Res> implements App<U, Req, Res> {
   constructor (
-    public readonly webServer: WebServer,
+    public readonly webServer: WebServer<U, Req, Res>,
     public readonly db: Database
   ) {
     console.log('App created')
