@@ -1,4 +1,4 @@
-import { bootstrap, InjectableClass } from './di-container'
+import injector, { InjectableClass } from './injector'
 
 @InjectableClass()
 export class Foo {
@@ -28,7 +28,7 @@ export class Foobar {
 
 describe('Injector', () => {
   fit('should inject dependencies', () => {
-    const [foobar] = bootstrap<Foobar>(Foobar)
+    const foobar = injector.resolve<Foobar>(Foobar)
 
     expect(foobar).toBeTruthy()
     expect(foobar.foo).toBeTruthy()

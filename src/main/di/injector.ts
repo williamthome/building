@@ -22,25 +22,14 @@ export const InjectableClass = (): (target: Type<any>) => void => {
 }
 
 /**
- * Lifecycle hook that is used for releasing a resource. It will be called automatically by DI container.
- */
-export interface Releasable {
-  release (): void
-}
-
-/**
  * Every entry point class instance starts its own dependency container.
  * Injector ensures that all decorated classes in the container are singletons.
  */
-export class Injector extends Map {
+class Injector extends Map {
 
-  public resolve<T> (target: Type<any>): T {
+  public resolve = <T> (target: Type<any>): T => {
     const tokens = Reflect.getMetadata('design:paramtypes', target) || []
     const injections = tokens.map((token: Type<any>) => this.resolve<any>(token))
-
-    console.log('tokens', tokens)
-    console.log('injections', injections)
-
 
     const classInstance = this.get(target)
     if (classInstance) {
@@ -50,32 +39,10 @@ export class Injector extends Map {
     const newClassInstance = new target(...injections)
     this.set(target, newClassInstance)
 
-    console.log(`DI-Container created class ${newClassInstance.constructor.name}`)
+    console.log(`Injector created class ${newClassInstance.constructor.name}`)
 
     return newClassInstance
   }
-
-  public release (): void {
-    for (const value of this.values()) {
-      if (typeof value['release'] === 'function') {
-        value['release']()
-      }
-    }
-
-    this.clear()
-  }
 }
 
-/**
- * Bootstraps the entry point class instance of type T.
- *
- * @returns entry point class instance and the "release" function which releases the DI container
- */
-export const bootstrap = <T> (target: Type<any>): [T, () => void] => {
-  // there is exactly one Injector pro entry point class instance
-  const injector = new Injector()
-  // bootstrap all dependencies
-  const entryClass = injector.resolve<T>(target)
-
-  return [entryClass, () => injector.release()]
-}
+export default new Injector()
