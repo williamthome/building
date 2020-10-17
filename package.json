@@ -1,8 +1,8 @@
 {
-  "name": "clean-code",
+  "name": "building",
   "version": "0.0.1",
-  "description": "Clean code architecture",
-  "main": "index.js",
+  "description": "Building manager",
+  "main": "server.js",
   "private": true,
   "scripts": {
     "build": "rimraf build && npx tsc -p tsconfig.build.json",
@@ -19,7 +19,10 @@
     "test:clear": "npx jest --clearCache"
   },
   "keywords": [
-    "clean"
+    "building",
+    "manager",
+    "civil",
+    "engineering"
   ],
   "author": "William Fank Thomé",
   "license": "ISC",
