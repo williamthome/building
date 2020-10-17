@@ -1,8 +1,15 @@
 {
+  "compilerOptions": {
+    "rootDir": "./src",
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
   "extends": "./tsconfig.json",
   "exclude": [
     "**/*.spec.ts",
     "**/*.test.ts",
-    "**/test/*"
+    "**/__test__/*"
   ]
 }
