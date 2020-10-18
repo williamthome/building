@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import request from 'supertest'
 import { HttpStatusCode } from '@/presentation/constants'
 import { mockApp } from '../__test__/mocks/app.mock'

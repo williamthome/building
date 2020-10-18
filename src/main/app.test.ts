@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import { Application } from './app'
 import { mockApp } from './__test__/mocks/app.mock'
 
