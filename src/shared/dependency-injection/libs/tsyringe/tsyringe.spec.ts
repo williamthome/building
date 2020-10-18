@@ -5,7 +5,10 @@ import {
   isClassRegistered,
   Inject,
   isPropertyRegistered,
-  resolve
+  resolve,
+  clearInstances,
+  registerProperty,
+  registerClass
 } from './tsyringe'
 
 type IFoo = { kind: string, doStuff: () => void }
@@ -78,15 +81,24 @@ describe('TSyringe InjectorAdapter', () => {
 
   describe('registerProperty()', () => {
     it('should register an property', () => {
-      container.registerProperty<string>('any', 'value')
-      expect(container.isPropertyRegistered('any')).toBeTruthy()
+      registerProperty<string>('any', 'value')
+      expect(isPropertyRegistered('any')).toBeTruthy()
+    })
+  })
+
+  describe('clearInstances()', () => {
+    it('should clear instances', () => {
+      registerProperty<string>('any', 'value')
+      expect(isPropertyRegistered('any')).toBeTruthy()
+      clearInstances()
+      expect(isPropertyRegistered('any')).toBeFalsy()
     })
   })
 
   describe('registerClass()', () => {
-    fit('should register an class', () => {
-      container.registerClass<Foo>('foo', Foo)
-      expect(container.isPropertyRegistered('foo')).toBeTruthy()
+    it('should register an class', () => {
+      registerClass<Foo>('foo', Foo)
+      expect(isPropertyRegistered('foo')).toBeTruthy()
     })
   })
 })
