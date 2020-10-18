@@ -2,7 +2,7 @@ import { container } from 'tsyringe'
 import { Constructor, InjectorAdapter } from '../../adapters/injector.adapter'
 
 const TSyringe = new class implements InjectorAdapter {
-  injectable = <T>() => {
+  Injectable = <T>() => {
     return (target: Constructor<T>): void => {
       container.registerSingleton<T>(target)
       console.log(`[INJECTABLE] ${target.name} registered as singleton`)
@@ -13,7 +13,7 @@ const TSyringe = new class implements InjectorAdapter {
     return container.isRegistered<T>(target)
   }
 
-  inject = <T> (token: string | symbol) => {
+  Inject = <T> (token: string | symbol) => {
     return (target: Constructor<T>, propertyKey: string | symbol, parameterIndex: number): void => {
       container.register(token, target)
       console.log(`[INJECT] Token ${token.toString()} registered for ${target.name}`)
@@ -36,12 +36,13 @@ const TSyringe = new class implements InjectorAdapter {
 
   registerProperty = <T> (token: string | symbol, value: T): void => {
     container.register<T>(token, { useValue: value })
+    console.log(`[REGISTER PROPERTY] Token ${token.toString()} registered as ${value}`)
   }
 }
 
 const {
-  injectable,
-  inject,
+  Injectable,
+  Inject,
   isClassRegistered,
   isPropertyRegistered,
   resolve,
@@ -50,8 +51,8 @@ const {
 
 export {
   TSyringe as container,
-  injectable,
-  inject,
+  Injectable,
+  Inject,
   isClassRegistered,
   isPropertyRegistered,
   resolve,

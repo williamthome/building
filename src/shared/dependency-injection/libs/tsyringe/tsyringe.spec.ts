@@ -1,9 +1,9 @@
 import 'reflect-metadata'
 import {
   container,
-  injectable,
+  Injectable,
   isClassRegistered,
-  inject,
+  Inject,
   isPropertyRegistered,
   resolve
 } from './tsyringe'
@@ -12,7 +12,7 @@ type IFoo = { kind: string, doStuff: () => void }
 type IBar = IFoo & { foo: IFoo }
 type IFoobar = IFoo & { foo: IFoo, bar: IBar }
 
-@injectable()
+@Injectable()
 class Foo implements IFoo {
   kind = 'foo'
 
@@ -21,7 +21,7 @@ class Foo implements IFoo {
   }
 }
 
-@injectable()
+@Injectable()
 class Bar implements IBar {
   kind = 'bar'
 
@@ -34,14 +34,14 @@ class Bar implements IBar {
   }
 }
 
-@injectable()
+@Injectable()
 class Foobar implements IFoobar {
   kind = 'foobar'
 
   constructor (
     public readonly foo: IFoo,
     public readonly bar: IBar,
-    @inject('foobar') public readonly fobar: string
+    @Inject('foobar') public readonly fobar: string
   ) { }
 
   doStuff = (): void => {
