@@ -7,7 +7,7 @@
   "scripts": {
     "build": "rimraf dist && npx tsc -p tsconfig.build.json",
     "start": "node dist/server.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "npm run build && ts-node-dev --respawn --transpile-only src/server.ts",
     "test": "npx jest --passWithNoTests --silent --noStackTrace --runInBand --detectOpenHandles",
     "test:verbose": "npx jest --passWithNoTests --runInBand --detectOpenHandles",
     "test:unit": "npm test -- --watch -c jest-unit-config.js",
