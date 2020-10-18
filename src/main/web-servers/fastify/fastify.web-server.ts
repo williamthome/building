@@ -3,7 +3,7 @@ import { Route, WebServer } from '@/main/protocols'
 import { routes } from '@/main/routes/routes'
 import { Controller, HttpHeaders, HttpParameters, HttpRequest } from '@/presentation/protocols'
 
-export class Fastify implements WebServer<FastifyInstance, FastifyRequest, FastifyReply> {
+export class Fastify implements WebServer {
   private _isListening = false
 
   private readonly fastifyInstance: FastifyInstance

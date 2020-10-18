@@ -1,10 +1,10 @@
-import { App } from './protocols'
+import { Application } from './app'
 import { mockApp } from './__test__/mocks/app.mock'
 
 //#region Factories
 
 interface SutTypes {
-  sut: App<any, any, any>
+  sut: Application
 }
 
 const makeSut = (): SutTypes => {

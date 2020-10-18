@@ -1,17 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   RouteAdapter,
   HttpResponseAdapter,
   HttpHeadersAdapter
 } from '../adapters'
 
-export interface WebServer<U, Req, Res>
+export interface WebServer
 extends
-  RouteAdapter<U>,
-  HttpResponseAdapter<Req, Res>,
-  HttpHeadersAdapter<Req>
+  RouteAdapter<any>,
+  HttpResponseAdapter<any, any>,
+  HttpHeadersAdapter<any>
 {
   port: number
-  server: () => unknown
+  server: () => any
   listen: () => Promise<void>
   ready: () => Promise<void>
   close: () => Promise<void>
