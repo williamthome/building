@@ -19,7 +19,25 @@ export default new class {
   /**
    * RESOLVE
    */
-  resolve = <T> (target: Constructor<T>): T => {
+  resolve = <T> (toResolve: Constructor<T> | string): T => {
+    let target: Constructor<T> | undefined = undefined
+
+    if (typeof toResolve === 'string') {
+      this.registers.forEach((value, key) => {
+        const toFind = typeof key === 'string' ? key : key.name
+        if (toFind === toResolve) {
+          target = value
+          return
+        }
+      })
+    } else {
+      target = toResolve
+    }
+
+    if (!target) {
+      throw new Error(`{RESOLVE] Unable to resolve ${toResolve}`)
+    }
+
     const targetInjectedTokens = Reflect.getOwnMetadata(INJECTION_TOKEN_METADATA_KEY, target) || {}
     const injectedTokens: InjectionToken = targetInjectedTokens
 
