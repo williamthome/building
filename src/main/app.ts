@@ -1,13 +1,13 @@
-import { Inject, Injectable } from '@/shared/dependency-injection/libs/tsyringe/tsyringe'
+import { Inject, Injectable } from '@/shared/dependency-injection/injector/decorators'
 import { App } from './protocols/app.protocol'
 import { WebServer } from './protocols/web-server.protocol'
 import { Database } from '@/infra/protocols/database.protocol'
 
-@Injectable()
+@Injectable
 export class Application implements App {
   constructor (
-    @Inject('WEB_SERVER') public readonly webServer: WebServer,
-    @Inject('DB') public readonly db: Database
+    @Inject public readonly webServer: WebServer,
+    @Inject public readonly db: Database
   ) {
     console.log('App created')
   }

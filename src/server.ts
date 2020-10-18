@@ -1,11 +1,13 @@
 import 'module-alias/register'
 import 'reflect-metadata'
-import { container } from './shared/dependency-injection/libs/tsyringe/tsyringe'
+import injector from './shared/dependency-injection/injector/injector'
 import { App, WebServer } from './main/protocols'
 import { Fastify } from './main/web-servers/fastify/fastify.web-server'
 import { Database } from './infra/protocols/database.protocol'
 import { MongoDB } from './infra/db/mongo/mongo.db'
 import { Application } from './main/app'
+
+let app: App
 
 const run = async (): Promise<void> => {
   const port = 5050
@@ -13,35 +15,40 @@ const run = async (): Promise<void> => {
 
   console.log('-------------------------------------------------')
 
-  container.registerProperty('PORT', port)
-  container.registerProperty('DB_URL', dbUrl)
+  injector.registers.set('port', port)
+  injector.registers.set('dbUrl', dbUrl)
+
+  injector.registers.set('webServer', Fastify)
+  const webServer = injector.resolve<WebServer>(Fastify)
+
+  injector.registers.set('db', MongoDB)
+  const db = injector.resolve<Database>(MongoDB)
 
   console.log('-------------------------------------------------')
 
-  await import('@/main/web-servers/fastify/fastify.web-server')
-  await import('@/infra/db/mongo/mongo.db')
-  await import('@/main/app')
-
-  console.log('-------------------------------------------------')
-
-  container.registerProperty('WEB_SERVER', new Fastify(port))
-  const webServer = container.resolve<WebServer>('WEB_SERVER')
-
-  console.log('-------------------------------------------------')
-
-  container.registerProperty('DB', new MongoDB(dbUrl))
-  const db = container.resolve<Database>('DB')
-
-  console.log('-------------------------------------------------')
-
-  container.registerProperty('APP', new Application(webServer, db))
-  const app = container.resolve<App>('APP')
-
-  console.log('-------------------------------------------------')
+  app = new Application(webServer, db)
+  injector.registers.set('app', app)
 
   await app.run()
 }
 
 run().catch((error) => {
   console.error(error)
+}).finally(() => {
+  bindProcessEvents()
 })
+
+const bindProcessEvents = (): void => {
+  process.on('SIGINT', () => {
+    cleanUpServer().then(() => {
+      process.exit(0)
+    })
+  })
+}
+
+const cleanUpServer = async (): Promise<void> => {
+  if (app.isHealthy()) {
+    await app.stop()
+  }
+  console.warn('Server closed through app termination')
+}
