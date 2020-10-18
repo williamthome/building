@@ -49,12 +49,12 @@ class Foobar implements IFoobar {
   }
 }
 
-describe('TSyringe', () => {
+describe('TSyringe InjectorAdapter', () => {
   beforeEach(() => {
     container.clearInstances()
   })
 
-  describe('Injectable', () => {
+  describe('@Injectable()', () => {
     it('should have injected classes', () => {
       expect(isClassRegistered(Foo)).toBeTruthy()
       expect(isClassRegistered(Bar)).toBeTruthy()
@@ -62,13 +62,13 @@ describe('TSyringe', () => {
     })
   })
 
-  describe('Inject', () => {
+  describe('@Inject()', () => {
     it('should inject properties', () => {
       expect(isPropertyRegistered('foobar')).toBeTruthy()
     })
   })
 
-  describe('Resolve', () => {
+  describe('resolve()', () => {
     it('should resolve', () => {
       const foo = resolve<Foo>(Foo)
       expect(foo).toBeTruthy()
@@ -76,7 +76,7 @@ describe('TSyringe', () => {
     })
   })
 
-  describe('RegisterProperty', () => {
+  describe('registerProperty()', () => {
     fit('should register a property', () => {
       container.registerProperty<string>('any', 'value')
       expect(container.isPropertyRegistered('any')).toBeTruthy()
