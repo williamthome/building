@@ -52,6 +52,7 @@ const {
   isPropertyRegistered,
   resolve,
   clearInstances,
+  registerProperty,
   registerClass
 } = TSyringe
 
@@ -63,5 +64,6 @@ export {
   isPropertyRegistered,
   resolve,
   clearInstances,
+  registerProperty,
   registerClass
 }
