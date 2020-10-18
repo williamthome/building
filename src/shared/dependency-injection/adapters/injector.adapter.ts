@@ -9,4 +9,5 @@ export interface InjectorAdapter {
   isPropertyRegistered: <T> (token: string | symbol) => boolean
   resolve: <T> (target: Constructor<T>) => T
   clearInstances: () => void
+  registerProperty: <T> (token: string | symbol, value: T) => void
 }

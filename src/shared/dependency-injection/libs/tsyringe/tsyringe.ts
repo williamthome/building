@@ -5,7 +5,6 @@ const TSyringe = new class implements InjectorAdapter {
   injectable = <T>() => {
     return (target: Constructor<T>): void => {
       container.registerSingleton<T>(target)
-
       console.log(`[INJECTABLE] ${target.name} registered as singleton`)
     }
   }
@@ -17,7 +16,6 @@ const TSyringe = new class implements InjectorAdapter {
   inject = <T> (token: string | symbol) => {
     return (target: Constructor<T>, propertyKey: string | symbol, parameterIndex: number): void => {
       container.register(token, target)
-
       console.log(`[INJECT] Token ${token.toString()} registered for ${target.name}`)
     }
   }
@@ -28,14 +26,16 @@ const TSyringe = new class implements InjectorAdapter {
 
   resolve = <T> (target: Constructor<T> | string | symbol): T => {
     const resolved = container.resolve<T>(target)
-
     console.log(`[RESOLVE] ${typeof target === 'symbol' || typeof target === 'symbol' ? target.toString() : target } resolved for ${typeof resolved === 'object' ? (resolved as any).constructor.name : resolved}`)
-
     return resolved
   }
 
   clearInstances = (): void => {
     container.clearInstances()
+  }
+
+  registerProperty = <T> (token: string | symbol, value: T): void => {
+    container.register<T>(token, { useValue: value })
   }
 }
 

@@ -75,4 +75,11 @@ describe('TSyringe', () => {
       expect(foo.doStuff).not.toThrow()
     })
   })
+
+  describe('RegisterProperty', () => {
+    fit('should register a property', () => {
+      container.registerProperty<string>('any', 'value')
+      expect(container.isPropertyRegistered('any')).toBeTruthy()
+    })
+  })
 })
