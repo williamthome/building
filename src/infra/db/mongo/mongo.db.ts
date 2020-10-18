@@ -1,13 +1,17 @@
+import { Injectable, Inject } from '@/shared/dependency-injection/libs/tsyringe/tsyringe'
 import { MongoClient, ClientSession, ObjectId, Collection, CollectionInsertOneOptions } from 'mongodb'
 import { Database } from '@/infra/protocols/database.protocol'
 import { Model } from '@/data/protocols/model.protocol'
 
+@Injectable()
 export class MongoDB implements Database {
   private _client?: MongoClient
   private _session?: ClientSession
   private _isConnected = false
 
-  constructor (public readonly dbUrl: string) { }
+  constructor (
+    @Inject('DB_URL') public readonly dbUrl: string
+  ) { }
 
   private makeMongoClient = async (uri: string): Promise<MongoClient> => {
     return await new MongoClient(
