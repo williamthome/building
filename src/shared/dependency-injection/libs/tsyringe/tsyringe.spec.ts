@@ -77,9 +77,16 @@ describe('TSyringe InjectorAdapter', () => {
   })
 
   describe('registerProperty()', () => {
-    fit('should register a property', () => {
+    it('should register an property', () => {
       container.registerProperty<string>('any', 'value')
       expect(container.isPropertyRegistered('any')).toBeTruthy()
+    })
+  })
+
+  describe('registerClass()', () => {
+    fit('should register an class', () => {
+      container.registerClass<Foo>('foo', Foo)
+      expect(container.isPropertyRegistered('foo')).toBeTruthy()
     })
   })
 })

@@ -36,7 +36,12 @@ const TSyringe = new class implements InjectorAdapter {
 
   registerProperty = <T> (token: string | symbol, value: T): void => {
     container.register<T>(token, { useValue: value })
-    console.log(`[REGISTER PROPERTY] Token ${token.toString()} registered as ${value}`)
+    console.log(`[REGISTER PROPERTY] Token ${token.toString()} registered as ${'value'}`)
+  }
+
+  registerClass = <T> (token: string | symbol, target: Constructor<T>): void => {
+    container.register<T>(token, { useClass: target })
+    console.log(`[REGISTER CLASS] Token ${token.toString()} registered for class ${target.name}`)
   }
 }
 
@@ -46,7 +51,8 @@ const {
   isClassRegistered,
   isPropertyRegistered,
   resolve,
-  clearInstances
+  clearInstances,
+  registerClass
 } = TSyringe
 
 export {
@@ -56,5 +62,6 @@ export {
   isClassRegistered,
   isPropertyRegistered,
   resolve,
-  clearInstances
+  clearInstances,
+  registerClass
 }

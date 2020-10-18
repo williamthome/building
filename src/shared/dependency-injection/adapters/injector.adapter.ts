@@ -10,4 +10,5 @@ export interface InjectorAdapter {
   resolve: <T> (target: Constructor<T>) => T
   clearInstances: () => void
   registerProperty: <T> (token: string | symbol, value: T) => void
+  registerClass: <T> (token: string | symbol, target: Constructor<T>) => void
 }
