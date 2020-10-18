@@ -26,7 +26,7 @@ const TSyringe = new class implements InjectorAdapter {
 
   resolve = <T> (target: Constructor<T> | string | symbol): T => {
     const resolved = container.resolve<T>(target)
-    console.log(`[RESOLVE] ${typeof target === 'symbol' || typeof target === 'symbol' ? target.toString() : target } resolved for ${typeof resolved === 'object' ? (resolved as any).constructor.name : resolved}`)
+    console.log(`[RESOLVE] ${typeof target === 'symbol' || typeof target === 'symbol' ? target.toString() : target } resolved`)
     return resolved
   }
 
