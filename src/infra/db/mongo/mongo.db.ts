@@ -3,7 +3,7 @@ import { MongoClient, ClientSession, ObjectId, Collection, CollectionInsertOneOp
 import { Database } from '@/infra/protocols/database.protocol'
 import { Model } from '@/data/protocols/model.protocol'
 
-@Injectable
+@Injectable()
 export class MongoDB implements Database {
   private _client?: MongoClient
   private _session?: ClientSession

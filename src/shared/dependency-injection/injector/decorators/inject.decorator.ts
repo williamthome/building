@@ -1,10 +1,10 @@
 import { INJECTION_TOKEN_METADATA_KEY, NATIVE_OBJECTS_TYPES } from '../helpers/constants'
-import { InjectionToken } from '../protocols'
+import { InjectConstructor as ConstructorInject, InjectionToken } from '../types'
 
 /**
  * PROPERTY DECORATOR
  */
-export const Inject = <T extends { new(...args: any[]): any }> (
+export const Inject = <T extends ConstructorInject> (
   target: T, _propertyName: string | symbol, propertyIndex: number
 ): T => {
   const metaParams = Reflect.getMetadata('design:paramtypes', target)

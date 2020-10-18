@@ -10,7 +10,7 @@ if (typeof Reflect === 'undefined' || !Reflect.getMetadata) {
 
 import { isConstructor } from '../utils/object/is-constructor'
 import { INJECTION_TOKEN_METADATA_KEY, NATIVE_OBJECTS_TYPES } from './helpers/constants'
-import { Constructor, InjectionToken } from './protocols'
+import { Constructor, InjectionToken } from './types'
 
 export default new class {
   registers = new Map<any, any>()

@@ -5,21 +5,21 @@ import injector from './injector'
 
 //#region Factories
 
-@Injectable class Foo {
+@Injectable() class Foo {
   constructor (
     @Inject public mustBeTruthy: boolean,
   ) { }
   doStuff = (): void => { console.log('do foo') }
 }
 
-@Injectable class Bar {
+@Injectable() class Bar {
   constructor (
     @Inject public foo: Foo,
   ) { }
   doStuff = (): void => { console.log('do bar') }
 }
 
-@Injectable class Foobar {
+@Injectable() class Foobar {
   constructor (
     @Inject public foo: Foo,
     @Inject public bar: Bar,
@@ -65,7 +65,9 @@ describe('Injector', () => {
     expect(objectComparer(foobar.bar, bar).equals).toBe(true)
   })
 
-  it('should resolve by string', () => {
+  fit('should resolve by string', () => {
+    injector.registers.set('mustBeTruthy', true)
+    injector.registers.set('foobar', 'foobar')
     const foo = injector.resolve<Foo>('Foo')
     const bar = injector.resolve<Bar>('Bar')
     expect(foo).toBeTruthy()

@@ -3,7 +3,7 @@ import { App } from './protocols/app.protocol'
 import { WebServer } from './protocols/web-server.protocol'
 import { Database } from '@/infra/protocols/database.protocol'
 
-@Injectable
+@Injectable()
 export class Application implements App {
   constructor (
     @Inject public readonly webServer: WebServer,

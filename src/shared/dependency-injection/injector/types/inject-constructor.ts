@@ -1,0 +1,1 @@
+export type InjectConstructor = { new(...args: any[]): any }
