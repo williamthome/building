@@ -1,4 +1,6 @@
 import 'module-alias/register'
+import 'reflect-metadata'
+
 import { Application } from './main/app'
 import { Fastify } from './main/web-servers/fastify/fastify.web-server'
 import { MongoDB } from './infra/db/mongo/mongo.db'
