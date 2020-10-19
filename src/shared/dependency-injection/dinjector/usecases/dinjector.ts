@@ -2,6 +2,7 @@ import { Injector, TokensMap } from '../protocols'
 import { Tokens } from '.'
 import { ClassDefinitions, PropertyDefinitions } from '../definitions'
 import { Alias, DecoratorOptions } from '../types'
+import { defineTargetInjectedTokensMetadata } from '../helpers'
 
 export class DInjector implements Injector {
   private _tokens: TokensMap
@@ -10,7 +11,7 @@ export class DInjector implements Injector {
     this._tokens = new Tokens()
   }
 
-  get tokens(): TokensMap {
+  get tokens (): TokensMap {
     return this._tokens
   }
 
@@ -28,6 +29,8 @@ export class DInjector implements Injector {
   }
 
   injectProperty = (definitions: Omit<PropertyDefinitions, 'kind'>, options?: DecoratorOptions): void => {
+    defineTargetInjectedTokensMetadata(definitions)
+
     const alias: Alias = options?.alias || definitions.propertyName
     this.tokens.inject(
       alias,

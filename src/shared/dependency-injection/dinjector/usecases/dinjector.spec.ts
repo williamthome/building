@@ -36,7 +36,7 @@ describe('DInjector', () => {
   })
 
   describe('@Inject()', () => {
-    it('shold inject', () => {
+    fit('shold inject', () => {
       expect(dinjector.tokens.has('PORT')).toBeTruthy()
       expect(dinjector.tokens.has('dbUrl')).toBeTruthy()
     })
