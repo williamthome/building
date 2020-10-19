@@ -1,11 +1,11 @@
 import { InjectConstructor } from '../../injector/types'
 import { TokenDefinitions } from '../definitions'
-import { aliasToString, isToken } from '../helpers'
+import { aliasToString, isAliasInjectConstructor } from '../helpers'
 import { Token, TokensMap } from '../protocols'
 import { Alias } from '../types'
 
 export class Tokens extends Map<Token, TokenDefinitions> implements TokensMap {
-  inject = (token: Token, definitions: Omit<TokenDefinitions, 'instances'>): void => {
+  public inject = (token: Token, definitions: Omit<TokenDefinitions, 'instances'>): void => {
     const tokenDefinitions = this.get(token)
     const instances = tokenDefinitions?.instances || []
     instances.push(token.constructor)
@@ -19,20 +19,21 @@ export class Tokens extends Map<Token, TokenDefinitions> implements TokensMap {
     )
   }
 
-  getTokenDefinitions = (token: Token): TokenDefinitions => {
-    const tokenDefinitions = this.get(token)
-    if (!tokenDefinitions) throw new Error(`Token ${token.constructor.name} is invalid`)
+  public getTokenDefinitions = (alias: Alias): TokenDefinitions => {
+    const tokenDefinitions = isAliasInjectConstructor(alias)
+      ? this.getTokenDefinitionsByConstructor(alias)
+      : this.getTokenDefinitionsByAlias(alias)
     return tokenDefinitions
   }
 
-  getInstances = (token: Token): any[] => {
-    const tokenDefinitions = this.getTokenDefinitions(token)
+  public getInstances = (alias: Alias): any[] => {
+    const tokenDefinitions = this.getTokenDefinitions(alias)
     return tokenDefinitions.instances
   }
 
-  getTokenDefinitionsByConstructor = (constructor: InjectConstructor): TokenDefinitions => {
+  private getTokenDefinitionsByConstructor = (constructor: InjectConstructor): TokenDefinitions => {
     let definitions
-    for (const [token, tokenDefinitions] of this) {
+    for (const [, tokenDefinitions] of this) {
       if (tokenDefinitions.constructor && tokenDefinitions.constructor === constructor) {
         definitions = tokenDefinitions
         break
@@ -42,7 +43,7 @@ export class Tokens extends Map<Token, TokenDefinitions> implements TokensMap {
     return definitions
   }
 
-  getTokenDefinitionsByAlias = (alias: Alias): TokenDefinitions => {
+  private getTokenDefinitionsByAlias = (alias: Alias): TokenDefinitions => {
     let definitions
     for (const [token, tokenDefinitions] of this) {
       if (token.alias && token.alias === alias) {

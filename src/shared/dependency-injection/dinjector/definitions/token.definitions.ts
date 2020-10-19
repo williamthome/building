@@ -1,13 +1,13 @@
 import { ClassDefinitions, PropertyDefinitions } from '.'
 import { Token } from '../protocols'
-import { InjectConstructor } from '../types'
+import { DecoratorDefinitions, InjectConstructor } from '../types'
 
 export interface TokenDefinitions
 extends
-  Partial<ClassDefinitions>,
-  Partial<PropertyDefinitions>
+  DecoratorDefinitions,
+  Partial<Omit<ClassDefinitions, 'kind'>>,
+  Partial<Omit<PropertyDefinitions, 'kind'>>
 {
   token: Token
-  value: any
   instances: InjectConstructor[]
 }

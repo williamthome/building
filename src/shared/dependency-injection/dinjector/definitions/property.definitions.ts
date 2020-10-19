@@ -1,7 +1,7 @@
 import { DecoratorDefinitions } from '../types'
 
 export interface PropertyDefinitions extends DecoratorDefinitions {
-  target: any
+  parent: any
   propertyName: string | symbol
   propertyIndex: number
 }

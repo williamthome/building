@@ -9,7 +9,7 @@ export const Inject = (options?: DecoratorOptions) => <T extends InjectConstruct
 
   dinjector.injectProperty(
     {
-      target,
+      parent: target,
       propertyName,
       propertyIndex
     },

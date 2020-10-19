@@ -13,11 +13,11 @@ export const getObjectParams = (
   return Reflect.getMetadata(key, target)
 }
 
-export const getObjectInjectedParams = (
+export const getObjectInjectedTokens = (
   target: Property
 ): Property => {
   const key: MetadataKey = 'injectionstoken'
-  return Reflect.getMetadata(key, target) || {}
+  return Reflect.getOwnMetadata(key, target) || {}
 }
 
 export const getObjectParamProperties = (
@@ -47,7 +47,7 @@ export const isPropertyNativeObjectType = (
 
 export const defineMetadata = (
   metadataKey: MetadataKey,
-  metadataValue: unknown,
+  metadataValue: any,
   target: Property
 ): void => {
   Reflect.defineMetadata(
@@ -58,7 +58,7 @@ export const defineMetadata = (
 }
 
 export const defineInjectTokenMetadata = (
-  metadataValue: unknown,
+  metadataValue: any,
   target: Property
 ): void => {
   const key: MetadataKey = 'injectionstoken'
@@ -69,12 +69,12 @@ export const defineTargetInjectedTokensMetadata = (
   definitions: Omit<PropertyDefinitions, 'kind' | 'propertyName'>,
   token: Token
 ): void => {
-  const { target, propertyIndex } = definitions
+  const { parent: target, propertyIndex } = definitions
 
   const metaParams = getObjectParams(target)
   const { propertyName: metadataPropertyName, isNative } = getObjectParamProperties(target, propertyIndex)
 
-  const injectedTokens = getObjectInjectedParams(target)
+  const injectedTokens = getObjectInjectedTokens(target)
   const tokenKey = aliasToString(token.alias)
   injectedTokens[tokenKey] = isNative ? metadataPropertyName : metaParams[propertyIndex]
 

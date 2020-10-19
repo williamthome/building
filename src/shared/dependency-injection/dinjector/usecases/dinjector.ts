@@ -2,7 +2,7 @@ import { Injector, Token, TokensMap } from '../protocols'
 import { Tokens } from '.'
 import { ClassDefinitions, PropertyDefinitions, TokenDefinitions } from '../definitions'
 import { Alias, DecoratorOptions, InjectConstructor } from '../types'
-import { defineTargetInjectedTokensMetadata, isAliasInjectConstructor, isToken, minimizeAlias } from '../helpers'
+import { defineTargetInjectedTokensMetadata, getObjectInjectedTokens, isAliasInjectConstructor, isToken, minimizeAlias } from '../helpers'
 
 export class DInjector implements Injector {
   private _tokens: TokensMap
@@ -15,11 +15,13 @@ export class DInjector implements Injector {
     return this._tokens
   }
 
-  injectClass = (definitions: Omit<ClassDefinitions, 'kind'>, options?: DecoratorOptions): void => {
+  public injectClass = (definitions: Omit<ClassDefinitions, 'kind' | 'properties'>, options?: DecoratorOptions): void => {
     const token: Token = {
       constructor: definitions.constructor,
       alias: options?.alias || definitions.constructor
     }
+
+    const properties = this.getClassProperties(token.constructor)
 
     this.tokens.inject(
       token,
@@ -27,14 +29,14 @@ export class DInjector implements Injector {
         kind: 'class',
         ...definitions,
         token,
-        value: definitions.constructor
+        properties
       }
     )
   }
 
-  injectProperty = (definitions: Omit<PropertyDefinitions, 'kind'>, options?: DecoratorOptions): void => {
+  public injectProperty = (definitions: Omit<PropertyDefinitions, 'kind'>, options?: DecoratorOptions): void => {
     const token: Token = {
-      constructor: definitions.target,
+      constructor: definitions.parent,
       alias: options?.alias ? minimizeAlias(options.alias): definitions.propertyName
     }
 
@@ -43,25 +45,34 @@ export class DInjector implements Injector {
       {
         kind: 'property',
         ...definitions,
-        token,
-        value: definitions.constructor
+        token
       }
     )
 
     defineTargetInjectedTokensMetadata(definitions, token)
   }
 
-  resolve = async (toResolve: Token | InjectConstructor | Alias): Promise<void> => {
+  public resolve = async (alias: Alias): Promise<TokenDefinitions> => {
     return new Promise(resolve => {
-      const tokenDefinitions: TokenDefinitions = isToken(toResolve)
-        ? this.tokens.getTokenDefinitions(toResolve)
-        : isAliasInjectConstructor(toResolve)
-          ? this.tokens.getTokenDefinitionsByConstructor(toResolve)
-          : this.tokens.getTokenDefinitionsByAlias(toResolve)
+      const tokenDefinitions = this.tokens.getTokenDefinitions(alias)
 
+      const { kind, parent: target } = tokenDefinitions
 
+      if (kind === 'property') {
+        const injectedTokens = getObjectInjectedTokens(target)
+      }
 
-      resolve()
+      resolve(tokenDefinitions)
     })
+  }
+
+  private getClassProperties = (constructor: InjectConstructor): TokenDefinitions[] => {
+    const properties: TokenDefinitions[] = []
+    for (const [token, tokenDefinitions] of this.tokens) {
+      if (token.constructor && token.constructor === constructor) {
+        properties.push(tokenDefinitions)
+      }
+    }
+    return properties
   }
 }
