@@ -1,25 +1,27 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
 import { PropertyDefinitions } from '../definitions'
-import { MetadataKey, MetadataProperties } from '../types'
+import { Token } from '../protocols'
+import { MetadataKey, MetadataProperties, Property } from '../types'
+import { aliasToString } from './alias.helper'
 import { NATIVE_OBJECTS_TYPES } from './constants'
 
 export const getObjectParams = (
-  target: Record<string, unknown>
+  target: Property
 ): Array<Function> => {
   const key: MetadataKey = 'design:paramtypes'
   return Reflect.getMetadata(key, target)
 }
 
 export const getObjectInjectedParams = (
-  target: Record<string, unknown>
-): Record<string, unknown> => {
+  target: Property
+): Property => {
   const key: MetadataKey = 'injectionstoken'
   return Reflect.getMetadata(key, target) || {}
 }
 
 export const getObjectParamProperties = (
-  target: Record<string, unknown>,
+  target: Property,
   index: number
 ): MetadataProperties => {
   const propertyName = getObjectParamName(target, index)
@@ -30,7 +32,7 @@ export const getObjectParamProperties = (
 }
 
 export const getObjectParamName = (
-  target: Record<string, unknown>,
+  target: Property,
   index: number
 ): string => getObjectParams(target)[index].name
 
@@ -46,7 +48,7 @@ export const isPropertyNativeObjectType = (
 export const defineMetadata = (
   metadataKey: MetadataKey,
   metadataValue: unknown,
-  target: Record<string, unknown>
+  target: Property
 ): void => {
   Reflect.defineMetadata(
     metadataKey,
@@ -57,22 +59,23 @@ export const defineMetadata = (
 
 export const defineInjectTokenMetadata = (
   metadataValue: unknown,
-  target: Record<string, unknown>
+  target: Property
 ): void => {
   const key: MetadataKey = 'injectionstoken'
   defineMetadata(key, metadataValue, target)
 }
 
 export const defineTargetInjectedTokensMetadata = (
-  definitions: Omit<PropertyDefinitions, 'kind'>
+  definitions: Omit<PropertyDefinitions, 'kind' | 'propertyName'>,
+  token: Token
 ): void => {
-  const { target, propertyName, propertyIndex } = definitions
+  const { target, propertyIndex } = definitions
 
   const metaParams = getObjectParams(target)
   const { propertyName: metadataPropertyName, isNative } = getObjectParamProperties(target, propertyIndex)
 
   const injectedTokens = getObjectInjectedParams(target)
-  const tokenKey = propertyName.toString()
+  const tokenKey = aliasToString(token.alias)
   injectedTokens[tokenKey] = isNative ? metadataPropertyName : metaParams[propertyIndex]
 
   defineInjectTokenMetadata(injectedTokens, target)

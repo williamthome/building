@@ -1,12 +1,13 @@
 import { ClassDefinitions, PropertyDefinitions } from '.'
-import { Alias } from '../types'
+import { Token } from '../protocols'
+import { InjectConstructor } from '../types'
 
 export interface TokenDefinitions
 extends
   Partial<ClassDefinitions>,
   Partial<PropertyDefinitions>
 {
-  alias: Alias
+  token: Token
   value: any
-  instances: any[]
+  instances: InjectConstructor[]
 }

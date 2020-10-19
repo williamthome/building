@@ -30,15 +30,21 @@ describe('DInjector', () => {
 
   describe('@Injectable()', () => {
     it('shold inject', () => {
-      expect(dinjector.tokens.has(Express)).toBeTruthy()
-      expect(dinjector.tokens.has('db')).toBeTruthy()
+      expect(dinjector.tokens.getTokenDefinitionsByConstructor(Express)).toBeTruthy()
+      expect(dinjector.tokens.getTokenDefinitionsByAlias('db')).toBeTruthy()
     })
   })
 
   describe('@Inject()', () => {
-    fit('shold inject', () => {
-      expect(dinjector.tokens.has('PORT')).toBeTruthy()
-      expect(dinjector.tokens.has('dbUrl')).toBeTruthy()
+    it('shold inject', () => {
+      expect(dinjector.tokens.getTokenDefinitionsByAlias('PORT')).toBeTruthy()
+      expect(dinjector.tokens.getTokenDefinitionsByAlias('dbUrl')).toBeTruthy()
+    })
+  })
+
+  describe('resolve()', () => {
+    it('shold not throw', async () => {
+      await expect(dinjector.resolve(Express)).resolves.not.toThrow()
     })
   })
 })

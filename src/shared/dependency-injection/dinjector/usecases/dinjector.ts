@@ -1,8 +1,8 @@
-import { Injector, TokensMap } from '../protocols'
+import { Injector, Token, TokensMap } from '../protocols'
 import { Tokens } from '.'
-import { ClassDefinitions, PropertyDefinitions } from '../definitions'
-import { Alias, DecoratorOptions } from '../types'
-import { defineTargetInjectedTokensMetadata } from '../helpers'
+import { ClassDefinitions, PropertyDefinitions, TokenDefinitions } from '../definitions'
+import { Alias, DecoratorOptions, InjectConstructor } from '../types'
+import { defineTargetInjectedTokensMetadata, isAliasInjectConstructor, isToken, minimizeAlias } from '../helpers'
 
 export class DInjector implements Injector {
   private _tokens: TokensMap
@@ -16,35 +16,51 @@ export class DInjector implements Injector {
   }
 
   injectClass = (definitions: Omit<ClassDefinitions, 'kind'>, options?: DecoratorOptions): void => {
-    const alias: Alias = options?.alias || definitions.constructor
+    const token: Token = {
+      constructor: definitions.constructor,
+      alias: options?.alias || definitions.constructor
+    }
+
     this.tokens.inject(
-      alias,
+      token,
       {
         kind: 'class',
         ...definitions,
-        alias,
+        token,
         value: definitions.constructor
       }
     )
   }
 
   injectProperty = (definitions: Omit<PropertyDefinitions, 'kind'>, options?: DecoratorOptions): void => {
-    defineTargetInjectedTokensMetadata(definitions)
+    const token: Token = {
+      constructor: definitions.target,
+      alias: options?.alias ? minimizeAlias(options.alias): definitions.propertyName
+    }
 
-    const alias: Alias = options?.alias || definitions.propertyName
     this.tokens.inject(
-      alias,
+      token,
       {
         kind: 'property',
         ...definitions,
-        alias,
+        token,
         value: definitions.constructor
       }
     )
+
+    defineTargetInjectedTokensMetadata(definitions, token)
   }
 
-  resolve = async (): Promise<void> => {
+  resolve = async (toResolve: Token | InjectConstructor | Alias): Promise<void> => {
     return new Promise(resolve => {
+      const tokenDefinitions: TokenDefinitions = isToken(toResolve)
+        ? this.tokens.getTokenDefinitions(toResolve)
+        : isAliasInjectConstructor(toResolve)
+          ? this.tokens.getTokenDefinitionsByConstructor(toResolve)
+          : this.tokens.getTokenDefinitionsByAlias(toResolve)
+
+
+
       resolve()
     })
   }
