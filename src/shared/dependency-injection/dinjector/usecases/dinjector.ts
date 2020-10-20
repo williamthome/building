@@ -2,7 +2,7 @@ import { Injector, Token, TokensMap } from '../protocols'
 import { Tokens } from '.'
 import { ClassDefinitions, InjectClassTokenDefinitions, InjectPropertyTokenDefinitions, InjectTokenDefinitionType, PropertyDefinitions, TokenClassDefinitionsType, TokenDefinitionsType, TokenPropertyDefinitionsType } from '../definitions'
 import { Alias, DecoratorOptions, InjectConstructor } from '../types'
-import { aliasToString, defineTargetInjectedTokensMetadata, getObjectInjectedTokens, isAliasInjectConstructor, isToken, minimizeAlias } from '../helpers'
+import { aliasToString, defineTargetInjectedTokensMetadata, getObjectInjectedTokens, isAliasInjectConstructor, isClass, isDependency, isProperty, isToken, minimizeAlias } from '../helpers'
 
 export class DInjector implements Injector {
   private _tokens: TokensMap
@@ -35,11 +35,13 @@ export class DInjector implements Injector {
     )
   }
 
-  public injectProperty = <T> (definitions: TokenPropertyDefinitionsType<T>, options?: DecoratorOptions): void => {
+  public injectProperty = async <T> (definitions: TokenPropertyDefinitionsType<T>, options?: DecoratorOptions): Promise<void> => {
     const token: Token<T> = {
       constructor: definitions.parent,
       alias: options?.alias ? minimizeAlias(options.alias) : definitions.propertyName
     }
+
+    const dependencies = this.getPropertyDependencies<T>(token.alias)
 
     this.tokens.injectProperty<T>(
       token,
@@ -47,9 +49,25 @@ export class DInjector implements Injector {
         kind: 'property',
         ...definitions,
         token,
-        instances: []
+        instances: [],
+        dependencies
       }
     )
+
+
+    if (dependencies.length > 0) {
+      for (const dependency of dependencies) {
+        if (!dependency.resolved) {
+          console.log(`[DEPENDECIES] Resolving unresolved property ${aliasToString(token.alias)} for ${definitions.parent.name}...`)
+          const resolvedValue = await this.resolve(dependency.constructor)
+          this.updateClassProperty<T>(
+            definitions.parent,
+            definitions.propertyName,
+            resolvedValue
+          )
+        }
+      }
+    }
 
     defineTargetInjectedTokensMetadata(definitions, token)
   }
@@ -59,53 +77,149 @@ export class DInjector implements Injector {
       const tokenDefinitions = this.tokens.getTokenDefinitions<T>(toResolve)
 
       const classDefinitions = tokenDefinitions as InjectClassTokenDefinitions<T>
-      const { constructor, properties } = classDefinitions
+      const { constructor, properties, token } = classDefinitions
 
       const propertiesDefinitions = properties as InjectPropertyTokenDefinitions<T>[]
 
-      const instance = new constructor()
+      const instance = this.updateClassProperties<T>(constructor, propertiesDefinitions)
 
-      this.updateClassProperty<T>(constructor, propertiesDefinitions, instance)
+      const dependencies = this.getPropertyDependencies(token.alias)
+      const dependenciesKey: keyof InjectPropertyTokenDefinitions<T> = 'dependencies'
+      Object.defineProperty(toResolve, dependenciesKey, {
+        value: dependencies
+      })
+
+      const resolvedKey: keyof InjectPropertyTokenDefinitions<T> = 'resolved'
+      Object.defineProperty(toResolve, resolvedKey, {
+        value: true
+      })
+
+      console.log(`[RESOLVE] ${toResolve.name} resolved`)
 
       resolve(instance)
     })
   }
 
-  private getClassProperties = <T> (constructor: InjectConstructor<T>): InjectPropertyTokenDefinitions<T>[] => {
+  private getClassProperties = <T> (
+    constructor: InjectConstructor<T>
+  ): InjectPropertyTokenDefinitions<T>[] => {
     const properties: InjectPropertyTokenDefinitions<T>[] = []
+
     for (const [token, tokenDefinitions] of this.tokens) {
-      if (token.constructor && token.constructor === constructor && tokenDefinitions.kind === 'property') {
+      if (isProperty(tokenDefinitions) && token.constructor === constructor) {
         properties.push(tokenDefinitions as InjectPropertyTokenDefinitions<T>)
       }
     }
+
     return properties
   }
 
   defineProperty = <T> (alias: Alias<T>, value: unknown): void => {
     const definitions = this.tokens.getTokenDefinitions(alias)
 
-    if (definitions.kind !== 'property') throw new Error(`${aliasToString(alias)} must be a property`)
+    if (!isProperty(definitions))
+      throw new Error(`${aliasToString(alias)} must be a property`)
 
-    const updatedDefinition: InjectTokenDefinitionType<T> = { ...definitions, value }
+    const updatedDefinition: InjectTokenDefinitionType<T> = {
+      ...definitions, value
+    }
+
+    updatedDefinition.resolved = true
 
     this.tokens.set(definitions.token, updatedDefinition)
+
+    console.log(`[DEFINE PROPERTY] ${aliasToString(alias)} defined`)
+  }
+
+  updateClassProperties = <T> (
+    constructor: InjectConstructor<T>,
+    propertyTokens: InjectPropertyTokenDefinitions<T>[],
+    constructorInstance?: T
+  ): T => {
+    const storedClassPropertyTokens = this.getClassProperties(constructor)
+
+    const instance = constructorInstance || new constructor()
+
+    for (const propertyToken of propertyTokens) {
+      const { propertyName } = propertyToken
+
+      const storedClassPropertyToken = storedClassPropertyTokens.find(
+        classPropertyToken => classPropertyToken.propertyName === propertyName
+      )
+
+      if (!storedClassPropertyToken)
+        throw new Error(`Property ${propertyName.toString()} inexists`)
+
+      Object.defineProperty(instance, propertyName, {
+        ...propertyToken.propertyDescriptor,
+        value: storedClassPropertyToken.value
+      })
+    }
+
+    console.log(`[UPDATE CLASS PROPERTIES] All ${constructor.name} properties updated`)
+
+    return instance
   }
 
   updateClassProperty = <T> (
-    constructor: InjectConstructor<T>,
-    propertiesDefinitions: InjectPropertyTokenDefinitions<T>[],
-    instance?: T
-  ): void => {
-    const storedProperties = this.getClassProperties(constructor)
+    toUpdate: InjectConstructor<T>, // unique object on map
+    propertyName: string | symbol,
+    value: any
+  ): T => {
+    // > get constructor class definitions
 
-    for (const token of propertiesDefinitions) {
-      const storedProperty = storedProperties.find(p => p.propertyName === token.propertyName)
+    const tokenDefinitions = this.tokens.getTokenDefinitions<T>(toUpdate)
+    const classDefinitions = tokenDefinitions as InjectClassTokenDefinitions<T>
+    const { constructor, properties, token } = classDefinitions
 
-      if (!storedProperty) throw new Error(`Property ${token.propertyName.toString()} inexists`)
+    const propertiesDefinitions = properties as InjectPropertyTokenDefinitions<T>[]
+    const propertyDefinition = propertiesDefinitions.find(property => property.propertyName === propertyName)
 
-      Object.defineProperty(instance || new constructor(), token.propertyName, {
-        value: storedProperty.value
+    // > verify if property exists on constructor
+
+    if (!propertyDefinition)
+      throw new Error(`${propertyName.toString()} inexists on ${toUpdate.name}`)
+
+    // > loop through constructor instances
+
+    const instances: T[] = []
+
+    for (const instance of tokenDefinitions.instances) {
+      const propertyDescriptor = Object.getOwnPropertyDescriptor(
+        instance, propertyName
+      ) as PropertyDescriptor
+
+      Object.defineProperty(instance, propertyName, {
+        ...propertyDescriptor,
+        value
       })
+
+      instances.push(instance)
     }
+
+    // > update definitions
+
+    tokenDefinitions.instances = instances
+    propertyDefinition.value = value
+
+    // > update constructor on tokens map
+
+    this.tokens.set(token, { ...tokenDefinitions, ...propertyDefinition })
+
+    console.log(`[UPDATE CLASS PROPERTY] ${propertyName.toString()} updated for ${constructor.name}`)
+
+    return tokenDefinitions.instances[0]
+  }
+
+  getPropertyDependencies = <T> (alias: Alias<T>): InjectClassTokenDefinitions<T>[] => {
+    const dependencies: InjectClassTokenDefinitions<T>[] = []
+
+    for (const [token, tokenDefinitions] of this.tokens) {
+      if (isClass(tokenDefinitions) && isDependency(alias, token)) {
+        dependencies.push(tokenDefinitions as InjectClassTokenDefinitions<T>)
+      }
+    }
+
+    return dependencies
   }
 }

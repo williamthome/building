@@ -7,13 +7,17 @@ export const Inject = (options?: DecoratorOptions) => <T extends InjectConstruct
   const instance = new target()
   const propertyName = Object.keys(instance)[propertyIndex]
 
-  // const propertyDescriptor = Object.getOwnPropertyDescriptor(instance, propertyName)
+  const propertyDescriptor = Object.getOwnPropertyDescriptor(
+    instance, propertyName
+  ) as PropertyDescriptor
 
   dinjector.injectProperty(
     {
       parent: target,
       propertyName,
-      propertyIndex
+      propertyDescriptor,
+      propertyIndex,
+      dependencies: []
     },
     options
   )

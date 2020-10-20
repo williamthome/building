@@ -6,8 +6,10 @@ import { Alias, InjectConstructor } from '../types'
 export class Tokens extends Map<Token<any>, InjectTokenDefinitionType<any>> implements TokensMap {
   public injectClass = <T> (token: Token<T>, definitions: InjectClassTokenDefinitions<T>): void => {
     const tokenDefinitions = this.get(token)
-    const instances: InjectConstructor<T>[] = tokenDefinitions?.instances || []
-    instances.push(token.constructor)
+
+    const instances: T[] = tokenDefinitions?.instances || []
+    const instance = new token.constructor()
+    instances.push(instance)
 
     this.set(
       token,
@@ -21,8 +23,10 @@ export class Tokens extends Map<Token<any>, InjectTokenDefinitionType<any>> impl
 
   public injectProperty = <T> (token: Token<T>, definitions: InjectPropertyTokenDefinitions<T>): void => {
     const tokenDefinitions = this.get(token)
-    const instances: InjectConstructor<T>[] = tokenDefinitions?.instances || []
-    instances.push(token.constructor)
+
+    const instances: T[] = tokenDefinitions?.instances || []
+    const instance = new token.constructor()
+    instances.push(instance)
 
     this.set(
       token,

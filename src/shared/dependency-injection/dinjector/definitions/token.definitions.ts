@@ -1,10 +1,10 @@
-import { ClassDefinitions, PropertyDefinitions } from '.'
 import { Token } from '../protocols'
 import { DecoratorDefinitions, DecoratorOptions, InjectConstructor } from '../types'
 
 export type TokenDefinitionsType<T> = Pick<DecoratorDefinitions, 'kind'> & {
   token: Token<T>
   instances: T[]
+  resolved?: boolean
 }
 
 export type TokenClassDefinitionsType<T> = {
@@ -15,7 +15,9 @@ export type TokenClassDefinitionsType<T> = {
 export type TokenPropertyDefinitionsType<T> = {
   parent: InjectConstructor<T>
   propertyName: string | symbol
+  propertyDescriptor: PropertyDescriptor
   propertyIndex: number
+  dependencies: InjectClassTokenDefinitions<T>[]
   value?: any
 }
 

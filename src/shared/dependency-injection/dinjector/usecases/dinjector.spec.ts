@@ -48,13 +48,13 @@ describe('DInjector', () => {
       await expect(dinjector.resolve(Express)).resolves.not.toThrow()
     })
 
-    fit('shold return truthy', async () => {
+    it('shold return truthy', async () => {
       dinjector.defineProperty('PORT', 'newvalue')
       const resolved = await dinjector.resolve(Express)
       expect(resolved).toBeTruthy()
     })
 
-    fit('shold update properties', async () => {
+    it('shold update properties', async () => {
       dinjector.defineProperty('PORT', 666)
       dinjector.defineProperty('host', 'fromHell')
 
@@ -62,14 +62,11 @@ describe('DInjector', () => {
 
       expect(express.port).toBe(666)
       expect(express.host).toBe('fromHell')
+    })
 
-      /*
-      dinjector.defineProperty('dbUrl', 'dbUrl/mydb')
-
-      await dinjector.resolve(MySQL)
-
+    fit('shold resolve dependencies', async () => {
       const app = await dinjector.resolve(App)
-      */
+      expect(app.db).toBeTruthy()
     })
   })
 })
