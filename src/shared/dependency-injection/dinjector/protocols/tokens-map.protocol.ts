@@ -1,9 +1,10 @@
 import { Token } from '.'
-import { TokenDefinitions } from '../definitions'
+import { ClassDefinitions, InjectClassTokenDefinitions, InjectPropertyTokenDefinitions, InjectTokenDefinitionType} from '../definitions'
 import { Alias } from '../types'
 
-export interface TokensMap extends Map<Token, TokenDefinitions> {
-  inject: (token: Token, definitions: Omit<TokenDefinitions, 'instances'>) => void
-  getTokenDefinitions: (alias: Alias) => TokenDefinitions
-  getInstances: (alias: Alias) => any[]
+export interface TokensMap extends Map<Token<any>, InjectTokenDefinitionType<any>> {
+  injectClass: <T> (token: Token<T>, definitions: InjectClassTokenDefinitions<T>) => void
+  injectProperty: <T> (token: Token<T>, definitions: InjectPropertyTokenDefinitions<T>) => void
+  getTokenDefinitions: <T> (alias: Alias<T>) => InjectTokenDefinitionType<T>
+  getInstances: <T> (alias: Alias<T>) => T[]
 }

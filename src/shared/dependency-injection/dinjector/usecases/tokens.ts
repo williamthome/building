@@ -1,13 +1,27 @@
-import { InjectConstructor } from '../../injector/types'
-import { TokenDefinitions } from '../definitions'
+import { InjectClassTokenDefinitions, InjectPropertyTokenDefinitions, InjectTokenDefinitionType } from '../definitions'
 import { aliasToString, isAliasInjectConstructor } from '../helpers'
 import { Token, TokensMap } from '../protocols'
-import { Alias } from '../types'
+import { Alias, InjectConstructor } from '../types'
 
-export class Tokens extends Map<Token, TokenDefinitions> implements TokensMap {
-  public inject = (token: Token, definitions: Omit<TokenDefinitions, 'instances'>): void => {
+export class Tokens extends Map<Token<any>, InjectTokenDefinitionType<any>> implements TokensMap {
+  public injectClass = <T> (token: Token<T>, definitions: InjectClassTokenDefinitions<T>): void => {
     const tokenDefinitions = this.get(token)
-    const instances = tokenDefinitions?.instances || []
+    const instances: InjectConstructor<T>[] = tokenDefinitions?.instances || []
+    instances.push(token.constructor)
+
+    this.set(
+      token,
+      {
+        ...definitions,
+        instances
+      }
+    )
+
+  }
+
+  public injectProperty = <T> (token: Token<T>, definitions: InjectPropertyTokenDefinitions<T>): void => {
+    const tokenDefinitions = this.get(token)
+    const instances: InjectConstructor<T>[] = tokenDefinitions?.instances || []
     instances.push(token.constructor)
 
     this.set(
@@ -19,19 +33,19 @@ export class Tokens extends Map<Token, TokenDefinitions> implements TokensMap {
     )
   }
 
-  public getTokenDefinitions = (alias: Alias): TokenDefinitions => {
-    const tokenDefinitions = isAliasInjectConstructor(alias)
-      ? this.getTokenDefinitionsByConstructor(alias)
-      : this.getTokenDefinitionsByAlias(alias)
+  public getTokenDefinitions = <T> (alias: Alias<T>): InjectTokenDefinitionType<T> => {
+    const tokenDefinitions = isAliasInjectConstructor<T>(alias)
+      ? this.getTokenDefinitionsByConstructor<T>(alias)
+      : this.getTokenDefinitionsByAlias<T>(alias)
     return tokenDefinitions
   }
 
-  public getInstances = (alias: Alias): any[] => {
+  public getInstances = <T> (alias: Alias<T>): T[] => {
     const tokenDefinitions = this.getTokenDefinitions(alias)
     return tokenDefinitions.instances
   }
 
-  private getTokenDefinitionsByConstructor = (constructor: InjectConstructor): TokenDefinitions => {
+  private getTokenDefinitionsByConstructor = <T> (constructor: InjectConstructor<T>): InjectTokenDefinitionType<T> => {
     let definitions
     for (const [, tokenDefinitions] of this) {
       if (tokenDefinitions.constructor && tokenDefinitions.constructor === constructor) {
@@ -43,7 +57,7 @@ export class Tokens extends Map<Token, TokenDefinitions> implements TokensMap {
     return definitions
   }
 
-  private getTokenDefinitionsByAlias = (alias: Alias): TokenDefinitions => {
+  private getTokenDefinitionsByAlias = <T> (alias: Alias<T>): InjectTokenDefinitionType<T> => {
     let definitions
     for (const [token, tokenDefinitions] of this) {
       if (token.alias && token.alias === alias) {

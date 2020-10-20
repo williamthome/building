@@ -1,12 +1,13 @@
 import dinjector from '..'
 import { DecoratorOptions, InjectConstructor } from '../types'
 
-export const Injectable = (options?: DecoratorOptions) => <T extends InjectConstructor> (
+export const Injectable = (options?: DecoratorOptions) => <T extends InjectConstructor<any>> (
   constructor: T
 ): T => {
-  dinjector.injectClass(
+  dinjector.injectClass<T>(
     {
-      constructor
+      constructor,
+      properties: []
     },
     options
   )

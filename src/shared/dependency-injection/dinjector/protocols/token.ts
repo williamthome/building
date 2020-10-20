@@ -1,6 +1,6 @@
-import { InjectConstructor, Alias, Property } from '../types'
+import { Alias, InjectConstructor, Property } from '../types'
 
-export interface Token extends Property {
-  constructor: InjectConstructor,
-  alias: Alias
+export interface Token<T> extends Property {
+  constructor: InjectConstructor<T>,
+  alias: Alias<T>
 }

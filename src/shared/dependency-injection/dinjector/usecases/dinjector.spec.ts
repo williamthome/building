@@ -6,7 +6,8 @@ interface Database {}
 @Injectable()
 class Express {
   constructor (
-    @Inject({ alias: 'PORT' }) public readonly port: string
+    @Inject({ alias: 'PORT' }) public readonly port: number,
+    @Inject() public readonly host: string
   ) {}
 }
 
@@ -47,9 +48,28 @@ describe('DInjector', () => {
       await expect(dinjector.resolve(Express)).resolves.not.toThrow()
     })
 
-    it('shold return truthy', async () => {
+    fit('shold return truthy', async () => {
+      dinjector.defineProperty('PORT', 'newvalue')
       const resolved = await dinjector.resolve(Express)
       expect(resolved).toBeTruthy()
+    })
+
+    fit('shold update properties', async () => {
+      dinjector.defineProperty('PORT', 666)
+      dinjector.defineProperty('host', 'fromHell')
+
+      const express = await dinjector.resolve(Express)
+
+      expect(express.port).toBe(666)
+      expect(express.host).toBe('fromHell')
+
+      /*
+      dinjector.defineProperty('dbUrl', 'dbUrl/mydb')
+
+      await dinjector.resolve(MySQL)
+
+      const app = await dinjector.resolve(App)
+      */
     })
   })
 })

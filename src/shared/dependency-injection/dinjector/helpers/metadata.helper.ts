@@ -2,26 +2,26 @@
 
 import { PropertyDefinitions } from '../definitions'
 import { Token } from '../protocols'
-import { MetadataKey, MetadataProperties, Property } from '../types'
+import { InjectConstructor, MetadataKey, MetadataProperties, Property } from '../types'
 import { aliasToString } from './alias.helper'
 import { NATIVE_OBJECTS_TYPES } from './constants'
 
-export const getObjectParams = (
-  target: Property
+export const getObjectParams = <T> (
+  target: InjectConstructor<T>
 ): Array<Function> => {
   const key: MetadataKey = 'design:paramtypes'
   return Reflect.getMetadata(key, target)
 }
 
-export const getObjectInjectedTokens = (
-  target: Property
+export const getObjectInjectedTokens = <T> (
+  target: InjectConstructor<T>
 ): Property => {
   const key: MetadataKey = 'injectionstoken'
   return Reflect.getOwnMetadata(key, target) || {}
 }
 
-export const getObjectParamProperties = (
-  target: Property,
+export const getObjectParamProperties = <T> (
+  target: InjectConstructor<T>,
   index: number
 ): MetadataProperties => {
   const propertyName = getObjectParamName(target, index)
@@ -31,8 +31,8 @@ export const getObjectParamProperties = (
   }
 }
 
-export const getObjectParamName = (
-  target: Property,
+export const getObjectParamName = <T> (
+  target: InjectConstructor<T>,
   index: number
 ): string => getObjectParams(target)[index].name
 
@@ -45,10 +45,10 @@ export const isPropertyNativeObjectType = (
       type => type === metadataPropertyKey.toLowerCase()
     )
 
-export const defineMetadata = (
+export const defineMetadata = <T> (
   metadataKey: MetadataKey,
   metadataValue: any,
-  target: Property
+  target: InjectConstructor<T>
 ): void => {
   Reflect.defineMetadata(
     metadataKey,
@@ -57,17 +57,17 @@ export const defineMetadata = (
   )
 }
 
-export const defineInjectTokenMetadata = (
+export const defineInjectTokenMetadata = <T> (
   metadataValue: any,
-  target: Property
+  target: InjectConstructor<T>
 ): void => {
   const key: MetadataKey = 'injectionstoken'
   defineMetadata(key, metadataValue, target)
 }
 
-export const defineTargetInjectedTokensMetadata = (
-  definitions: Omit<PropertyDefinitions, 'kind' | 'propertyName'>,
-  token: Token
+export const defineTargetInjectedTokensMetadata = <T> (
+  definitions: Omit<PropertyDefinitions<any>, 'kind' | 'propertyName'>,
+  token: Token<T>
 ): void => {
   const { parent: target, propertyIndex } = definitions
 

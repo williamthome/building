@@ -1,1 +1,1 @@
-export type InjectConstructor = { new(...args: any[]): any }
+export type InjectConstructor <T> = { new(...args: any[]): T }
