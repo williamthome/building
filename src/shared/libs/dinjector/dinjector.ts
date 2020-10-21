@@ -1,7 +1,7 @@
-import { Injector } from '../models'
-import { IdAlias } from '../interfaces'
-import { Alias, Id } from '../types'
-import { idAliasToString } from '../helpers'
+import { Injector } from './models'
+import { IdAlias } from './protocols'
+import { Alias, Id } from './usecases'
+import { idAliasToString } from './helpers'
 
 export default new class DInjector<TTarget = unknown, TValue = unknown> {
 

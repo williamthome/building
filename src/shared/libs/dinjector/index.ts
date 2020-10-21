@@ -1,4 +1,4 @@
-import dinjector from './usecases/dinjector'
+import dinjector from './dinjector'
 
 export default dinjector
 export * from './decorators'

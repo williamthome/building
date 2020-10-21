@@ -1,5 +1,5 @@
 import 'module-alias/register'
-import dinjector from './shared/libs/dinjector/usecases/dinjector'
+import dinjector from './shared/libs/dinjector/dinjector'
 import { App, WebServer } from './main/protocols'
 import { Fastify } from './main/web-servers/fastify/fastify.web-server'
 import { Database } from './infra/protocols/database.protocol'

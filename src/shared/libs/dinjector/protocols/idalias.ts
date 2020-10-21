@@ -1,4 +1,4 @@
-import { Alias, Id } from '../types'
+import { Alias, Id } from '../usecases'
 
 export interface IdAlias<T> {
   id: Id<T>,

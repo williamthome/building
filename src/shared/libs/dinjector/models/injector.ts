@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events'
 import { idAliasToString } from '../helpers'
-import { IdAlias, Properties } from '../interfaces'
-import { Id } from '../types'
+import { IdAlias, Properties } from '../protocols'
+import { Id } from '../usecases'
 
 export class Injector<TTarget, TValue> {
   private readonly _emitter: EventEmitter

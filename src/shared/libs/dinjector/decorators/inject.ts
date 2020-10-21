@@ -1,7 +1,7 @@
 import dinjector from '..'
 import { Injector } from '../models'
-import { Options } from '../interfaces'
-import { Target } from '../types'
+import { Options } from '../protocols'
+import { Target } from '../usecases'
 
 /**
  * Injects a property on injector map
