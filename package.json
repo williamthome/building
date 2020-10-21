@@ -42,7 +42,6 @@
     "husky": "^4.3.0",
     "jest": "^26.5.3",
     "lint-staged": "^10.4.0",
-    "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "supertest": "^5.0.0",
     "ts-jest": "^26.4.1",
@@ -52,8 +51,7 @@
   "dependencies": {
     "fastify": "^3.6.0",
     "module-alias": "^2.2.2",
-    "mongodb": "^3.6.2",
-    "tsyringe": "^4.3.0"
+    "mongodb": "^3.6.2"
   },
   "engines": {
     "node": "12.x"
