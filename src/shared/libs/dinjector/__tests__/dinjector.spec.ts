@@ -2,6 +2,7 @@ import dinjector, { Injectable, Inject } from '..'
 
 interface Database {
   dbUrl: string
+  updateSome: (thing: any) => Promise<any>
 }
 
 class Express {
@@ -15,6 +16,10 @@ class MySQL implements Database {
   constructor (
     public readonly dbUrl: string
   ) {}
+
+  updateSome = (thing: any): Promise<any> => {
+    return new Promise(resolve => resolve(thing))
+  }
 }
 
 class App {
@@ -90,6 +95,11 @@ describe('DInjector', () => {
     it('shold resolve by alias and constructor', async () => {
       await expect(dinjector.resolve<MySQL>('db')).resolves.toBeTruthy()
       await expect(dinjector.resolve<MySQL>(MySQL)).resolves.toBeTruthy()
+    })
+
+    fit('shold resolve constructor with args and functions', async () => {
+      const sql = await dinjector.resolve<Database>(MySQL)
+      await expect(sql.updateSome('toResolve')).resolves.not.toThrow()
     })
   })
 })
