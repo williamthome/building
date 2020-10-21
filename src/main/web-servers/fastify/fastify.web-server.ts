@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@/shared/dependency-injection/dinjector'
+import { Injectable, Inject } from '@/shared/libs/dinjector'
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { Route, WebServer } from '@/main/protocols'
 import { routes } from '@/main/routes/routes'

@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@/shared/dependency-injection/dinjector'
+import { Injectable, Inject } from '@/shared/libs/dinjector'
 import { MongoClient, ClientSession, ObjectId, Collection, CollectionInsertOneOptions } from 'mongodb'
 import { Database } from '@/infra/protocols/database.protocol'
 import { Model } from '@/data/protocols/model.protocol'

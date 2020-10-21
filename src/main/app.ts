@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@/shared/dependency-injection/dinjector'
+import { Inject, Injectable } from '@/shared/libs/dinjector'
 import { App } from './protocols/app.protocol'
 import { WebServer } from './protocols/web-server.protocol'
 import { Database } from '@/infra/protocols/database.protocol'
