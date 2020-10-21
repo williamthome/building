@@ -1,9 +1,8 @@
-import 'reflect-metadata'
 import request from 'supertest'
 import { HttpStatusCode } from '@/presentation/constants'
-import { mockApp } from '../__test__/mocks/app.mock'
-import { mockUserEntityDto } from '@/presentation/__test__/mocks/user-entity-dto.mock'
-import { makeRouteDescribe } from '../__test__/utils/route.utils'
+import { mockApp } from '../__tests__/mocks/app.mock'
+import { mockUserEntityDto } from '@/presentation/__tests__/__mocks__/user-entity-dto.mock'
+import { makeRouteDescribe } from '../__tests__/utils/route.utils'
 import { addUserRoute } from './user.routes'
 
 const app = mockApp()

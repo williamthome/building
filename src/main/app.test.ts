@@ -1,6 +1,5 @@
-import 'reflect-metadata'
 import { Application } from './app'
-import { mockApp } from './__test__/mocks/app.mock'
+import { mockApp } from './__tests__/mocks/app.mock'
 
 //#region Factories
 

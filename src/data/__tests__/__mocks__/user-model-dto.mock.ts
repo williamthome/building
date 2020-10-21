@@ -1,4 +1,4 @@
-import fakeData from '~/lib/fakeData'
+import fakeData from '~/libs/fakeData'
 import { UserModel } from '@/data/models'
 import { ModelDto } from '@/data/protocols/model.protocol'
 

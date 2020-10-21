@@ -2,8 +2,8 @@ import { UserEntity } from '@/domain/entities'
 import { EntityDto } from '@/domain/protocols'
 import { ok, serverError } from '@/presentation/factories/http.factory'
 import { HttpRequest } from '@/presentation/protocols'
-import { mockUserEntityDto } from '@/presentation/__test__/mocks/user-entity-dto.mock'
-import { AddUserUseCaseSpy } from '@/presentation/__test__/spys/add-user-usecase.spy'
+import { mockUserEntityDto } from '@/presentation/__tests__/__mocks__/user-entity-dto.mock'
+import { AddUserUseCaseSpy } from '@/presentation/__tests__/__spys__/add-user-usecase.spy'
 import { AddUserController } from './add-user.controller'
 
 //#region Factories

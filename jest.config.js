@@ -1,13 +1,14 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
+  testRegex: '.(spec|test).ts$',
   roots: ['<rootDir>/src'],
   collectCoverageFrom: [
     '<rootDir>/src/**/*.ts',
-    '!<rootDir>/src/**/*.protocol.ts',
     '!**/server.ts',
-    '!**/index.ts',
-    '!**/test/**'
+    // '!<rootDir>/src/**/*.protocol.ts',
+    // '!**/index.ts',
+    // '!**/__tests__/**'
   ],
   coverageDirectory: 'coverage',
   transform: {

@@ -6,4 +6,4 @@ dist
 **/*.spec.ts
 **/*.mock.ts
 **/*.spy.ts
-**/__test__
+**/__tests__

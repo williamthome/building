@@ -1,4 +1,4 @@
-import fakeData from '~/lib/fakeData'
+import fakeData from '~/libs/fakeData'
 import { UserEntity } from '@/domain/entities'
 import { EntityDto } from '@/domain/protocols'
 

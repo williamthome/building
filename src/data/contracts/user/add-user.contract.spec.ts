@@ -1,6 +1,6 @@
 import { AddUserContract } from './add-user.contract'
-import { AddUserRepositorySpy } from '@/data/__test__/spys/add-user-repository.spy'
-import { mockUserModelDto } from '@/data/__test__/mocks/user-model-dto.mock'
+import { AddUserRepositorySpy } from '@/data/__tests__/__spys__/add-user-repository.spy'
+import { mockUserModelDto } from '@/data/__tests__/__mocks__/user-model-dto.mock'
 
 //#region Factories
 
