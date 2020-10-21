@@ -12,16 +12,6 @@
       "type": "node"
     },
     {
-      "name": "Launch Dev via NPM",
-      "request": "launch",
-      "runtimeArgs": [
-        "run-script",
-        "debug:dev"
-      ],
-      "runtimeExecutable": "npm",
-      "type": "node"
-    },
-    {
       "type": "node",
       "request": "attach",
       "name": "Docker: Attach to Node",
