@@ -1,6 +1,7 @@
-import { Injector } from '../models/injector'
+import { Injector } from '../models'
 import { IdAlias } from '../interfaces'
 import { Alias, Id } from '../types'
+import { idAliasToString } from '../helpers'
 
 export class DInjector<TTarget = unknown, TValue = unknown> {
 
@@ -29,7 +30,7 @@ export class DInjector<TTarget = unknown, TValue = unknown> {
       }
       // Store updated model on map
       this.map.set(updatedModel.idalias, updatedModel)
-      // console.log(`[INJECTOR MAP] Model id ${updatedModel.idalias} updated`)
+      console.log(`[INJECTOR MAP] Model id ${updatedModel.toString()} updated`)
     })
 
     // Loop througt map to set updated properties to model
@@ -91,11 +92,11 @@ export class DInjector<TTarget = unknown, TValue = unknown> {
   resolve = async <T> (id: Id<T>): Promise<T> => {
     return new Promise(resolve => {
       let model = this.get<T>(id)
-      if (!model) throw new Error(`Unknown id: ${id}`)
+      if (!model) throw new Error(`Unknown id: ${idAliasToString(id)}`)
 
       if (typeof model.idalias.id === 'string') {
         model = this.getByAlias(model.idalias.alias)
-        if (!model) throw new Error(`Unknown id: ${id}`)
+        if (!model) throw new Error(`Unknown id: ${idAliasToString(id)}`)
       }
 
       if (typeof model.idalias.id === 'string')

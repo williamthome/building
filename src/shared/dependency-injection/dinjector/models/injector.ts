@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import { idAliasToString } from '../helpers'
 import { IdAlias, Properties } from '../interfaces'
 import { Id } from '../types'
 
@@ -24,6 +25,11 @@ export class Injector<TTarget, TValue> {
     this._resolved = []
   }
 
+  toString = (): string => {
+    const { id, alias } = this.idalias
+    return `'id: ${idAliasToString(id)} | alias: ${idAliasToString(alias)}'`
+  }
+
   get instances (): Injector<TTarget, TValue>[] {
     return this._instances
   }
@@ -46,14 +52,14 @@ export class Injector<TTarget, TValue> {
 
   set value (payload: TValue | undefined) {
     this._value = payload
-    // console.log(`[VALUE UPDATED] Model ${this.idalias.id} updated`)
+    console.log(`[VALUE UPDATED] Model ${this.toString()} updated`)
     this.notifyChanges()
   }
 
   updateProperty = (property: Properties): void => {
     const oldPropertyIndex = this.properties.findIndex(p => p.name === property.name)
     if (oldPropertyIndex === -1)
-      throw new Error(`Property ${property.name} inexists in ${this.idalias.id}`)
+      throw new Error(`Property ${property.name} inexists in ${this.toString()}`)
     Object.defineProperty(this, property.name, property.descriptor)
     this._properties[oldPropertyIndex] = property
     this.notifyChanges()
@@ -61,25 +67,25 @@ export class Injector<TTarget, TValue> {
 
   pushInstance = (instance: Injector<TTarget, TValue>): void => {
     this._instances.push(instance)
-    // console.log(`[INSTANCE ADDED] New instance for ${this.idalias.id}`)
+    console.log(`[INSTANCE ADDED] New instance for ${this.toString()}`)
     this.notifyChanges()
   }
 
   pushProperty = (property: Properties): void => {
     this._properties.push(property)
-    // console.log(`[PROPERTY ADDED] New property for ${this.idalias.id}`)
+    console.log(`[PROPERTY ADDED] New property for ${this.toString()}`)
     this.notifyChanges()
   }
 
   pushDependency = (dependency: Id<TTarget>): void => {
     this._dependencyIds.push(dependency)
-    // console.log(`[DEPENDENCY ADDED] New dependency for ${this.idalias.id}`)
+    console.log(`[DEPENDENCY ADDED] New dependency for ${this.toString()}`)
     this.notifyChanges()
   }
 
   pushResolved = <T> (resolved: T): void => {
     this._resolved.push(resolved)
-    // console.log(`[RESOLVED ADDED] New resolved for ${this.idalias.id}`)
+    console.log(`[RESOLVED ADDED] New resolved for ${this.toString()}`)
     this.notifyChanges()
   }
 
