@@ -40,11 +40,13 @@ export class Fastify implements WebServer {
   }
 
   injectRoutes = async (): Promise<void> => {
-    const allRoutes = routes()
+    const allRoutes = await routes()
     await Promise.all(allRoutes.map((route, index) => {
       this.adaptRoute(route, this.fastifyInstance)
       console.log(`[${index+1}/${allRoutes.length}] Route '${route.path}' injected`)
     }))
+
+    console.log('ROUTES', allRoutes[0].controller)
   }
 
   get isListening(): boolean {

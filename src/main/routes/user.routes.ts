@@ -1,15 +1,22 @@
 import { Route } from '../protocols'
-import { makeAddUserController } from '../factories/controllers/user'
+// import { makeAddUserController } from '../factories/controllers/user'
 import { makeRoutes } from '../factories/route.factory'
 import { UserEntity } from '@/domain/entities'
+import dinjector from '@/shared/libs/dinjector'
+import { AddUserController } from '@/presentation/controllers/user/add-user.controller'
 
-export const addUserRoute: Route<UserEntity> = {
-  method: 'POST',
-  path: '/user',
-  controller: makeAddUserController(),
-  requirement: 'none'
+export const addUserRoute = async (): Promise<Route<UserEntity>> => {
+  return {
+    method: 'POST',
+    path: '/user',
+    controller: await dinjector.resolve(AddUserController),// makeAddUserController(),
+    requirement: 'none'
+  }
 }
 
-export const userRoutes = (): Array<Route<unknown>> => makeRoutes(
-  addUserRoute
-)
+export const userRoutes = async (): Promise<Array<Route<unknown>>> => {
+  const addUser = await addUserRoute()
+  return  makeRoutes(
+    addUser
+  )
+}

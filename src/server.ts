@@ -5,12 +5,16 @@ import { Fastify } from './main/web-servers/fastify/fastify.web-server'
 import { Database } from './infra/protocols/database.protocol'
 import { MongoDB } from './infra/db/mongo/mongo.db'
 import { Application } from './main/app'
+import { AddUserContract } from './data/contracts/user/add-user.contract'
 
 let app: App
 
 const run = async (): Promise<void> => {
   dinjector.setValue('PORT', 5050)
   dinjector.setValue('DB_URL', 'mongodb://localhost:27001,localhost:27002,localhost:27003/building')
+
+  // >>
+  dinjector.setValue('addUserUseCase', AddUserContract)
 
   await dinjector.resolve<WebServer>(Fastify)
   await dinjector.resolve<Database>(MongoDB)
