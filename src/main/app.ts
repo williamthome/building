@@ -1,13 +1,15 @@
-import { Inject, Injectable } from '@/shared/dependency-injection/injector/decorators'
+import { Inject, Injectable } from '@/shared/dependency-injection/dinjector'
 import { App } from './protocols/app.protocol'
 import { WebServer } from './protocols/web-server.protocol'
 import { Database } from '@/infra/protocols/database.protocol'
 
-@Injectable()
+@Injectable({
+  alias: 'app'
+})
 export class Application implements App {
   constructor (
-    @Inject public readonly webServer: WebServer,
-    @Inject public readonly db: Database
+    @Inject() public readonly webServer: WebServer,
+    @Inject() public readonly db: Database
   ) {
     console.log('App created')
   }

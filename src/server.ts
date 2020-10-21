@@ -1,6 +1,5 @@
 import 'module-alias/register'
-import 'reflect-metadata'
-import injector from './shared/dependency-injection/injector/injector'
+import dinjector from './shared/dependency-injection/dinjector/usecases/dinjector'
 import { App, WebServer } from './main/protocols'
 import { Fastify } from './main/web-servers/fastify/fastify.web-server'
 import { Database } from './infra/protocols/database.protocol'
@@ -10,24 +9,12 @@ import { Application } from './main/app'
 let app: App
 
 const run = async (): Promise<void> => {
-  const port = 5050
-  const dbUrl = 'mongodb://localhost:27001,localhost:27002,localhost:27003/building'
+  dinjector.setValue('PORT', 5050)
+  dinjector.setValue('DB_URL', 'mongodb://localhost:27001,localhost:27002,localhost:27003/building')
 
-  console.log('-------------------------------------------------')
-
-  injector.registers.set('port', port)
-  injector.registers.set('dbUrl', dbUrl)
-
-  injector.registers.set('webServer', Fastify)
-  const webServer = injector.resolve<WebServer>(Fastify)
-
-  injector.registers.set('db', MongoDB)
-  const db = injector.resolve<Database>(MongoDB)
-
-  console.log('-------------------------------------------------')
-
-  app = new Application(webServer, db)
-  injector.registers.set('app', app)
+  await dinjector.resolve<WebServer>(Fastify)
+  await dinjector.resolve<Database>(MongoDB)
+  app = await dinjector.resolve<App>(Application)
 
   await app.run()
 }
