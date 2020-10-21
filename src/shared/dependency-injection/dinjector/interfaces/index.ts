@@ -1,3 +1,3 @@
-export * from './class.interface'
-export * from './property.interface'
-export * from './token.interface'
+export * from './options'
+export * from './idalias'
+export * from './properties'

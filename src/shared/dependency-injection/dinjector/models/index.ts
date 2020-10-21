@@ -1,2 +1,1 @@
-export * from './class.model'
-export * from './token.model'
+export * from './injector'

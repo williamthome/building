@@ -1,6 +1,0 @@
-export * from './injector.protocol'
-export * from './tokens-map.protocol'
-export * from './token.protocol'
-export * from './injector.protocol'
-export * from './metadata-property.protocol'
-export * from './decorator-options.protocol'

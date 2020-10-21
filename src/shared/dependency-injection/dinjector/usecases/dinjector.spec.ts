@@ -1,86 +1,57 @@
-import 'reflect-metadata'
 import dinjector, { Injectable, Inject } from '..'
 
 interface Database {
   dbUrl: string
 }
 
-@Injectable()
 class Express {
   constructor (
-    @Inject({ alias: 'PORT' }) public readonly port: number,
-    @Inject() public readonly host: string
+    public readonly port: number,
+    public readonly host: string
   ) {}
 }
 
-@Injectable({
-  alias: 'db'
-})
 class MySQL implements Database {
   constructor (
-    @Inject() public readonly dbUrl: string
+    public readonly dbUrl: string
   ) {}
 }
 
-@Injectable()
 class App {
   constructor (
-    @Inject() public readonly db: Database
+    public readonly db: Database
   ) {}
 }
 
 describe('DInjector', () => {
 
-  it('shold inject', () => {
-    dinjector.setValue('PORT', 666)
-    dinjector.setValue('dbUrl', 'myDbUrl')
+  beforeEach(() => {
+    Inject()(Express, 'host', 1)
+    Inject({ alias: 'PORT' })(Express, 'port', 0)
+    Injectable()(Express)
 
-    const sqlByAlias = dinjector.resolve<MySQL>('db')
-    const sqlByConstructor = dinjector.resolve<MySQL>(MySQL)
-    const sqlByName = dinjector.resolve<MySQL>('MySQL')
+    Inject()(MySQL, 'dbUrl', 0)
+    Injectable({ alias: 'db' })(MySQL)
 
-    const expressByConstructor = dinjector.resolve<Express>(Express)
-
-    const appByConstructor = dinjector.resolve<App>(App)
-
-    dinjector.setValue('host', 'anyHost')
-
-    const d = dinjector.all()
+    Inject()(App, 'db', 0)
+    Injectable()(App)
   })
 
-  /*
+  afterEach(() => {
+    dinjector.reset()
+  })
+
   describe('@Injectable()', () => {
     it('shold inject', () => {
-      expect(dinjector.getToken(Express)).toBeTruthy()
-      expect(dinjector.getToken('db')).toBeTruthy()
+      expect(dinjector.get(Express)).toBeTruthy()
+      expect(dinjector.get('db')).toBeTruthy()
     })
   })
 
   describe('@Inject()', () => {
     it('shold inject', () => {
-      expect(dinjector.getToken('PORT')).toBeTruthy()
-      expect(dinjector.getToken('dbUrl')).toBeTruthy()
-    })
-  })
-
-  describe('defineProperty()', () => {
-    fit('shold define a property', () => {
-      dinjector.defineProperty<string>('dbUrl', 'myDbUrl')
-    })
-  })
-
-  /*
-  describe('@Injectable()', () => {
-    it('shold inject', () => {
-      expect(dinjector.tokens.getDefinitions(Express)).toBeTruthy()
-      expect(dinjector.tokens.getDefinitions('db')).toBeTruthy()
-    })
-  })
-
-  describe('@Inject()', () => {
-    it('shold inject', () => {
-      expect(dinjector.tokens.getDefinitions('PORT')).toBeTruthy()
-      expect(dinjector.tokens.getDefinitions('dbUrl')).toBeTruthy()
+      expect(dinjector.getByAlias('PORT')).toBeTruthy()
+      expect(dinjector.getByAlias('dbUrl')).toBeTruthy()
     })
   })
 
@@ -90,14 +61,14 @@ describe('DInjector', () => {
     })
 
     it('shold return truthy', async () => {
-      dinjector.defineProperty('PORT', 'newvalue')
+      dinjector.setValue('PORT', 'newvalue')
       const resolved = await dinjector.resolve(Express)
       expect(resolved).toBeTruthy()
     })
 
     it('shold update properties', async () => {
-      dinjector.defineProperty('PORT', 666)
-      dinjector.defineProperty('host', 'fromHell')
+      dinjector.setValue('PORT', 666)
+      dinjector.setValue('host', 'fromHell')
 
       const express = await dinjector.resolve(Express)
 
@@ -110,11 +81,15 @@ describe('DInjector', () => {
       expect(app.db).toBeTruthy()
     })
 
-    fit('shold define resolved dependencies properties', async () => {
-      dinjector.defineProperty('dbUrl', 'dbUrl/mydb')
+    it('shold define resolved dependencies properties', async () => {
+      dinjector.setValue('dbUrl', 'dbUrl/mydb')
       const app = await dinjector.resolve(App)
-      // expect(app.db.dbUrl).toBe('dbUrl/mydb')
+      expect(app.db.dbUrl).toBe('dbUrl/mydb')
+    })
+
+    it('shold resolve by alias and constructor', async () => {
+      await expect(dinjector.resolve<MySQL>('db')).resolves.toBeTruthy()
+      await expect(dinjector.resolve<MySQL>(MySQL)).resolves.toBeTruthy()
     })
   })
-  */
 })
