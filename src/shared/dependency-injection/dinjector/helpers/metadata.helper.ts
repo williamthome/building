@@ -1,27 +1,27 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
 import { PropertyDefinitions } from '../definitions'
-import { Token } from '../protocols'
-import { InjectConstructor, MetadataKey, MetadataProperties, Property } from '../types'
+import { MetadataProperties, Token } from '../protocols'
+import { TargetType, MetadataKeyType, RecordType } from '../types'
 import { aliasToString } from './alias.helper'
 import { NATIVE_OBJECTS_TYPES } from './constants'
 
 export const getObjectParams = <T> (
-  target: InjectConstructor<T>
+  target: TargetType<T>
 ): Array<Function> => {
-  const key: MetadataKey = 'design:paramtypes'
+  const key: MetadataKeyType = 'design:paramtypes'
   return Reflect.getMetadata(key, target)
 }
 
 export const getObjectInjectedTokens = <T> (
-  target: InjectConstructor<T>
-): Property => {
-  const key: MetadataKey = 'injectionstoken'
+  target: TargetType<T>
+): RecordType => {
+  const key: MetadataKeyType = 'injectionstoken'
   return Reflect.getOwnMetadata(key, target) || {}
 }
 
 export const getObjectParamProperties = <T> (
-  target: InjectConstructor<T>,
+  target: TargetType<T>,
   index: number
 ): MetadataProperties => {
   const propertyName = getObjectParamName(target, index)
@@ -32,7 +32,7 @@ export const getObjectParamProperties = <T> (
 }
 
 export const getObjectParamName = <T> (
-  target: InjectConstructor<T>,
+  target: TargetType<T>,
   index: number
 ): string => getObjectParams(target)[index].name
 
@@ -46,9 +46,9 @@ export const isPropertyNativeObjectType = (
     )
 
 export const defineMetadata = <T> (
-  metadataKey: MetadataKey,
+  metadataKey: MetadataKeyType,
   metadataValue: any,
-  target: InjectConstructor<T>
+  target: TargetType<T>
 ): void => {
   Reflect.defineMetadata(
     metadataKey,
@@ -59,9 +59,9 @@ export const defineMetadata = <T> (
 
 export const defineInjectTokenMetadata = <T> (
   metadataValue: any,
-  target: InjectConstructor<T>
+  target: TargetType<T>
 ): void => {
-  const key: MetadataKey = 'injectionstoken'
+  const key: MetadataKeyType = 'injectionstoken'
   defineMetadata(key, metadataValue, target)
 }
 

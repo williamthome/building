@@ -1,7 +1,7 @@
-import { DecoratorDefinitions, InjectConstructor } from '../types'
-import { InjectPropertyTokenDefinitions } from './token.definitions'
+import { Token } from '../protocols'
+import { TargetType } from '../types'
 
-export interface ClassDefinitions <T> extends DecoratorDefinitions {
-  constructor: InjectConstructor<T>
-  properties: InjectPropertyTokenDefinitions<any>[]
+export interface ClassDefinitions <T> {
+  target: TargetType<T>
+  properties: Token<any>[]
 }

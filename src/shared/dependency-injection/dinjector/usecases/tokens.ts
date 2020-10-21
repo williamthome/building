@@ -1,75 +1,85 @@
-import { InjectClassTokenDefinitions, InjectPropertyTokenDefinitions, InjectTokenDefinitionType } from '../definitions'
-import { aliasToString, isAliasInjectConstructor } from '../helpers'
+import { ClassDefinitions, PropertyDefinitions, TokenDefinitions } from '../definitions'
+import { aliasToString, isAliasInjectConstructor, isClass, isDependency, isProperty } from '../helpers'
+import { InjectorMap, InjectorModel } from '../models/injector.model'
 import { Token, TokensMap } from '../protocols'
-import { Alias, InjectConstructor } from '../types'
+import { AliasType, DefinitionsType, TargetType } from '../types'
 
-export class Tokens extends Map<Token<any>, InjectTokenDefinitionType<any>> implements TokensMap {
-  public injectClass = <T> (token: Token<T>, definitions: InjectClassTokenDefinitions<T>): void => {
+export class Tokens extends Map<Token<any>, DefinitionsType<any>> implements TokensMap {
+
+  injectToken = <T> (token: Token<T>, definitions: Omit<DefinitionsType<T>, 'instances'>): void => {
+    // > Get all instances of token to update token instances
+
     const tokenDefinitions = this.get(token)
 
     const instances: T[] = tokenDefinitions?.instances || []
-    const instance = new token.constructor()
+    const instance = new token.target()
     instances.push(instance)
 
-    this.set(
-      token,
-      {
-        ...definitions,
-        instances
-      }
-    )
+    // > Update token on tokens map
 
+    this.set(token, { ...definitions, instances })
   }
 
-  public injectProperty = <T> (token: Token<T>, definitions: InjectPropertyTokenDefinitions<T>): void => {
-    const tokenDefinitions = this.get(token)
-
-    const instances: T[] = tokenDefinitions?.instances || []
-    const instance = new token.constructor()
-    instances.push(instance)
-
-    this.set(
-      token,
-      {
-        ...definitions,
-        instances
-      }
-    )
-  }
-
-  public getTokenDefinitions = <T> (alias: Alias<T>): InjectTokenDefinitionType<T> => {
-    const tokenDefinitions = isAliasInjectConstructor<T>(alias)
-      ? this.getTokenDefinitionsByConstructor<T>(alias)
-      : this.getTokenDefinitionsByAlias<T>(alias)
-    return tokenDefinitions
-  }
-
-  public getInstances = <T> (alias: Alias<T>): T[] => {
-    const tokenDefinitions = this.getTokenDefinitions(alias)
-    return tokenDefinitions.instances
-  }
-
-  private getTokenDefinitionsByConstructor = <T> (constructor: InjectConstructor<T>): InjectTokenDefinitionType<T> => {
-    let definitions
-    for (const [, tokenDefinitions] of this) {
-      if (tokenDefinitions.constructor && tokenDefinitions.constructor === constructor) {
-        definitions = tokenDefinitions
-        break
-      }
-    }
-    if (!definitions) throw new Error(`Constructor ${constructor.name} is invalid`)
-    return definitions
-  }
-
-  private getTokenDefinitionsByAlias = <T> (alias: Alias<T>): InjectTokenDefinitionType<T> => {
-    let definitions
-    for (const [token, tokenDefinitions] of this) {
-      if (token.alias && token.alias === alias) {
-        definitions = tokenDefinitions
-        break
-      }
-    }
+  getDefinitions = <T> (alias: AliasType<T>): DefinitionsType<T> => {
+    const definitions = isAliasInjectConstructor<T>(alias)
+      ? this.getDefinitionsTypeByConstructor<T>(alias)
+      : this.getDefinitionsTypeByAlias<T>(alias)
     if (!definitions) throw new Error(`Alias ${aliasToString(alias)} is invalid`)
     return definitions
+  }
+
+  getDefinitionsTypeByConstructor = <T> (constructor: TargetType<T>): DefinitionsType<T> | undefined => {
+    for (const [, tokenDefinitions] of this) {
+      if (tokenDefinitions.target && tokenDefinitions.target === constructor) {
+        return tokenDefinitions
+      }
+    }
+  }
+
+  getDefinitionsTypeByAlias = <T> (alias: AliasType<T>): DefinitionsType<T> | undefined => {
+    for (const [token, tokenDefinitions] of this) {
+      if (token.alias && token.alias === alias) {
+        return tokenDefinitions
+      }
+    }
+  }
+
+  getClassDefinitions = <T> (alias: AliasType<T>): ClassDefinitions<T> => {
+    const definitions = this.getDefinitions(alias)
+    if (!isClass(definitions)) throw new Error(`${aliasToString(alias)} isn't kind of class`)
+    return definitions as ClassDefinitions<T>
+  }
+
+  getPropertyDefinitions = <T> (alias: AliasType<T>): PropertyDefinitions<T> => {
+    const definitions = this.getDefinitions(alias)
+    if (!isProperty(definitions)) throw new Error(`${aliasToString(alias)} isn't kind of property`)
+    return definitions as PropertyDefinitions<T>
+  }
+
+  getClassProperties = (target: TargetType<unknown>): Token<unknown>[] => {
+    const properties: Token<unknown>[] = []
+    for (const [token, tokenDefinitions] of this) {
+      if (isProperty(tokenDefinitions) && token.target === target) {
+        properties.push(token)
+      }
+    }
+    return properties
+  }
+
+  getPropertyDependencies = (alias: AliasType<unknown>): DefinitionsType<unknown>[] => {
+    const dependencies: DefinitionsType<unknown>[] = []
+    for (const [, tokenDefinitions] of this) {
+      if (isClass(tokenDefinitions)) {
+        const { properties } = tokenDefinitions
+        if (properties) {
+          for (const property of properties) {
+            if (property.alias === alias) {
+              dependencies.push(tokenDefinitions)
+            }
+          }
+        }
+      }
+    }
+    return dependencies
   }
 }

@@ -1,1 +1,0 @@
-export type InjectConstructor <T> = { new(...args: any[]): T }

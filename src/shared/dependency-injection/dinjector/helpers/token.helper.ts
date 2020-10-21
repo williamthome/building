@@ -1,22 +1,22 @@
-import { TokenDefinitionsType } from '../definitions'
+import { TokenDefinitions } from '../definitions'
 import { Token } from '../protocols'
-import { Alias } from '../types'
+import { AliasType } from '../types'
 
 export const isClass = (
-  tokenDefinitions: TokenDefinitionsType<any>
+  tokenDefinitions: TokenDefinitions<any>
 ): boolean => {
   return tokenDefinitions.kind === 'class'
 }
 
 export const isProperty = (
-  tokenDefinitions: TokenDefinitionsType<any>
+  tokenDefinitions: TokenDefinitions<any>
 ): boolean => {
   return tokenDefinitions.kind === 'property'
 }
 
 export const isDependency = (
-  alias: Alias<any>,
+  alias: AliasType<any>,
   token: Token<any>
 ): boolean => {
-  return token.constructor !== alias && token.alias === alias
+  return token.target !== alias && token.alias === alias
 }

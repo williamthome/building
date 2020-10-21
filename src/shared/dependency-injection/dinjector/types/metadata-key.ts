@@ -1,1 +1,0 @@
-export type MetadataKey = 'injectionstoken' | 'design:paramtypes'

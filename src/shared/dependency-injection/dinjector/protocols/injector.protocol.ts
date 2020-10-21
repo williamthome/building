@@ -1,10 +1,11 @@
-import { TokensMap } from '.'
-import { ClassDefinitions, PropertyDefinitions, TokenClassDefinitionsType, TokenPropertyDefinitionsType } from '../definitions'
-import { Alias, DecoratorOptions, InjectConstructor } from '../types'
+import { TokensMap, DecoratorOptions } from '.'
+import { ClassDefinitions, PropertyDefinitions } from '../definitions'
+import { AliasType, DefinitionsType, TargetType } from '../types'
 
 export interface Injector {
-  tokens: TokensMap
-  injectClass: <T> (definitions: TokenClassDefinitionsType<T>, options?: DecoratorOptions) => void
-  injectProperty: <T> (definitions: TokenPropertyDefinitionsType<T>, options?: DecoratorOptions) => Promise<void>
-  resolve: <T> (toResolve: InjectConstructor<T>) => Promise<T>
+  injectClass: <T> (definitions: Omit<ClassDefinitions<T>, 'properties'>, options?: DecoratorOptions<T>) => void
+  injectProperty: <T> (definitions: Omit<PropertyDefinitions<T>, 'dependencies'>, options?: DecoratorOptions<T>) => Promise<void>
+  // resolve: <T> (toResolve: TargetType<T>) => Promise<T>
+  getToken: <T> (alias: AliasType<T>) => DefinitionsType<T>
+  defineProperty: <T> (alias: AliasType<T>, value: unknown) => void
 }

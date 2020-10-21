@@ -8,7 +8,9 @@ if (typeof Reflect === 'undefined' || !Reflect.getMetadata) {
   )
 }
 
-import { DInjector } from './usecases'
+import { InjectorMap } from './models/injector.model'
+// import { DInjector } from './usecases'
 
-export default new DInjector()
+// export default new DInjector()
+export default new InjectorMap()
 export * from './decorators'
