@@ -1,4 +1,4 @@
-import { DInjector } from './usecases'
+import dinjector from './usecases/dinjector'
 
-export default new DInjector()
+export default dinjector
 export * from './decorators'

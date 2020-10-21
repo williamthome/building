@@ -3,7 +3,7 @@ import { IdAlias } from '../interfaces'
 import { Alias, Id } from '../types'
 import { idAliasToString } from '../helpers'
 
-export class DInjector<TTarget = unknown, TValue = unknown> {
+export default new class DInjector<TTarget = unknown, TValue = unknown> {
 
   private map: Map<IdAlias<TTarget>, Injector<TTarget, TValue>>
 
@@ -39,15 +39,18 @@ export class DInjector<TTarget = unknown, TValue = unknown> {
         // Push class properties
         if (model.property && model.dependencyIds.some(id => id === (typeof newModel.idalias.id === 'string' ? newModel.idalias.id : newModel.idalias.id.name))) {
           newModel.pushProperty(model.property)
+          console.warn('[INJECTOR/PUSH] Push class properties')
         }
       } else { // is property
         // Push dependencies to property
         if (model.idalias.alias === newModel.idalias.alias && model.idalias.id !== newModel.idalias.id) {
           model.pushDependency(newModel.idalias.id)
+          console.warn('[INJECTOR/PUSH] Push dependencies to property')
         }
         // Copy properties from a existing class
         if (newModel.property && model.idalias.alias === newModel.idalias.alias) {
           newModel.properties.push(...model.properties)
+          console.warn('[INJECTOR/PUSH] Copy properties from a existing class')
         }
       }
       // The first one is the model, so, skip the first
@@ -58,6 +61,7 @@ export class DInjector<TTarget = unknown, TValue = unknown> {
     // Add or set the model on map
     this.map.set(newModel.idalias, newModel)
   }
+
 
   setValue = (alias: Alias<TTarget>, value: TValue | undefined): void => {
     const model = this.getByAlias(alias)
@@ -100,7 +104,7 @@ export class DInjector<TTarget = unknown, TValue = unknown> {
       }
 
       if (typeof model.idalias.id === 'string')
-        throw new Error('Just classes can be resolved')
+        throw new Error('Only classes can be resolved')
 
       const resolved: T = new model.idalias.id() as unknown as T
 
