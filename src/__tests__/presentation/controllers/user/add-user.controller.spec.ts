@@ -1,9 +1,9 @@
 // > In: presentation layer
-import { AddUserController } from './add-user.controller'
+import { AddUserController } from '@/presentation/controllers/user/add-user.controller'
 import { ok, serverError } from '@/presentation/factories/http.factory'
 import { HttpRequest } from '@/presentation/protocols'
-import { mockUserEntityDto } from '@/presentation/__tests__/__mocks__/user-entity-dto.mock'
-import { AddUserUseCaseSpy } from '@/presentation/__tests__/__spys__/add-user-usecase.spy'
+import { mockUserEntityDto } from '@/__tests__/presentation/__mocks__/user-entity-dto.mock'
+import { AddUserUseCaseSpy } from '@/__tests__/presentation/__spys__/add-user-usecase.spy'
 // < Out: only domain layer
 import { UserEntity } from '@/domain/entities'
 import { EntityDto } from '@/domain/protocols'

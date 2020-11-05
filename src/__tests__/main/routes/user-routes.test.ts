@@ -1,6 +1,6 @@
 import request from 'supertest'
 import { HttpStatusCode } from '@/presentation/constants'
-import { mockUserEntityDto } from '@/presentation/__tests__/__mocks__/user-entity-dto.mock'
+import { mockUserEntityDto } from '@/__tests__/presentation/__mocks__/user-entity-dto.mock'
 import { App } from '@/main/protocols'
 import { Server } from '@/main/server'
 

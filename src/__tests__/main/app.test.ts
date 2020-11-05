@@ -1,5 +1,5 @@
-import { App } from './protocols'
-import { Server } from './server'
+import { App } from '@/main/protocols'
+import { Server } from '@/main/server'
 
 //#region Factories
 
