@@ -1,7 +1,8 @@
 import { Entity, EntityDto } from './entity.protocol'
 
 export interface SchemaOptions {
-  kind: unknown,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  kind: { new (...args: any[]): unknown },
   required?: boolean,
   unique?: boolean
 }
