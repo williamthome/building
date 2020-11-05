@@ -1,27 +1,28 @@
-import { Application } from './app'
-import { mockApp } from './__tests__/mocks/app.mock'
+import { App } from './protocols'
+import { Server } from './server'
 
 //#region Factories
 
-interface SutTypes {
-  sut: Application
-}
+let app: App
 
-const makeSut = (): SutTypes => {
-  const sut = mockApp()
-  return {
-    sut
-  }
-}
+beforeEach(async (done) => {
+  const server = await new Server().config()
+  app = await server.run()
+  done()
+})
+
+afterEach(async (done) => {
+  await app.stop()
+  await new Promise(resolve => setTimeout(() => resolve(), 500))
+  done()
+})
 
 //#endregion Factories
 
 describe('Application', () => {
   it('should run and after stop', async () => {
-    const { sut } = makeSut()
-    await sut.run()
-    expect(sut.isHealthy()).toBe(true)
-    await sut.stop()
-    expect(sut.isHealthy()).toBe(false)
+    expect(app.isHealthy()).toBe(true)
+    await app.stop()
+    expect(app.isHealthy()).toBe(false)
   })
 })

@@ -5,6 +5,8 @@ export type HttpHeaders = Partial<Record<HttpHeaderName | string, string>>
 
 export type HttpParameters = Record<string, string>
 
+export type HttpMethods = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+
 export interface HttpRequest<T = unknown> {
   body?: T
   headers?: HttpHeaders

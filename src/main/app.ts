@@ -1,10 +1,10 @@
-import { Inject, Injectable } from '@/shared/libs/dinjector'
-import { App } from './protocols/app.protocol'
-import { WebServer } from './protocols/web-server.protocol'
-import { Database } from '@/infra/protocols/database.protocol'
+import { Injectable, Inject } from 'heinjector'
+import { App } from './protocols'
+import { WebServer } from '@/presentation/protocols'
+import { Database } from '@/infra/protocols'
 
 @Injectable({
-  alias: 'app'
+  identifier: 'app'
 })
 export class Application implements App {
   constructor (
@@ -14,18 +14,20 @@ export class Application implements App {
     console.log('App created')
   }
 
-  run = async (): Promise<void> => {
+  run = async (): Promise<App> => {
     console.log('Starting...')
     await this.webServer.listen()
     await this.db.connect()
     console.log('App is running')
+    return this
   }
 
-  stop = async (): Promise<void> => {
+  stop = async (): Promise<App> => {
     console.log('Stoping...')
     await this.webServer.close()
     await this.db.disconnect()
     console.log('App is stopped')
+    return this
   }
 
   isHealthy = (): boolean => this.db.isConnected && this.webServer.isListening

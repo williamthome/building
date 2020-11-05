@@ -1,5 +1,5 @@
 // : Shared
-import { Inject, Injectable } from '@/shared/libs/dinjector'
+import { Injectable, Inject } from 'heinjector'
 // > Data
 import { AddUserRepository } from '@/data/repositories/user'
 // < Only Domain
@@ -8,12 +8,12 @@ import { EntityDto } from '@/domain/protocols'
 import { AddUserUseCase } from '@/domain/usecases/user'
 
 @Injectable({
-  alias: 'addUserUseCase'
+  identifier: 'addUserUseCase'
 })
 export class AddUserContract implements AddUserUseCase {
 
   constructor (
-    @Inject({ alias: 'addUserRepository' }) private readonly addUserRepository: AddUserRepository
+    @Inject() private readonly addUserRepository: AddUserRepository
   ) {}
 
   call = async (userDto: EntityDto<UserEntity>): Promise<UserEntity> => {
