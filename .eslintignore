@@ -1,6 +1,7 @@
+.vscode
+@types
 coverage
 dist
-@types
 **/node_modules
 **/*.js
 **/*.test.ts
