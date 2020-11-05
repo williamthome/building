@@ -1,6 +1,6 @@
 {
   "*.ts": [
-    "npx eslint 'src/**' --fix --cache",
+    "npx eslint --cache --fix",
     "npm run test:staged"
   ]
 }
