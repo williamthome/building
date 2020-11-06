@@ -10,6 +10,9 @@ export default {
     fullName: (): string => faker.name.findName()
   },
   address: {
+    street: (): string => faker.address.streetName(),
+    city: (): string => faker.address.city(),
+    state: (): string => faker.address.stateAbbr(),
     full: (): string => faker.address.streetAddress(true)
   }
 }
