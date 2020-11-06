@@ -7,6 +7,11 @@ export const ok = <T>(response: T): HttpResponse<T> => ({
   body: response
 })
 
+export const badRequest = (error: Error): HttpResponse<Error> => ({
+  statusCode: HttpStatusCode.BAD_REQUEST,
+  body: error
+})
+
 export const serverError = (error: Error): HttpResponse<Error> => ({
   statusCode: HttpStatusCode.INTERNAL_SERVER_ERROR,
   body: new ServerError(error.stack)
