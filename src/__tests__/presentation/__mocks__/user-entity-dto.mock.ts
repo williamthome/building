@@ -1,8 +1,7 @@
 import fakeData from '@/__tests__/utils/fakeData'
 import { UserEntity } from '@/domain/entities'
-import { EntityDto } from '@/domain/protocols'
 
-export const mockUserEntityDto = (): EntityDto<UserEntity> => ({
+export const mockUserEntityDto = (): Partial<Omit<UserEntity, 'id'>> => ({
   name: fakeData.person.fullName(),
   address: {
     street: fakeData.address.street(),

@@ -6,12 +6,11 @@ import { mockUserEntityDto } from '@/__tests__/presentation/__mocks__/user-entit
 import { AddUserUseCaseSpy } from '@/__tests__/presentation/__spys__/add-user-usecase.spy'
 // < Out: only domain layer
 import { UserEntity } from '@/domain/entities'
-import { EntityDto } from '@/domain/protocols'
 
 //#region Factories
 
 const userDto = mockUserEntityDto()
-const mockHttpRequest = (): HttpRequest<EntityDto<UserEntity>> => ({
+const mockHttpRequest = (): HttpRequest<Partial<Omit<UserEntity, 'id'>>> => ({
   body: userDto
 })
 

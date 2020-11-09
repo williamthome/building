@@ -5,7 +5,6 @@ import { ok, serverError } from '@/presentation/factories/http.factory'
 // < Out: only domain layer
 import { UserEntity } from '@/domain/entities'
 import { AddUserUseCase } from '@/domain/usecases/user'
-import { EntityDto } from '@/domain/protocols'
 import { InjectableController } from '@/presentation/decorators'
 
 @InjectableController<UserEntity>({
@@ -19,9 +18,9 @@ export class AddUserController implements Controller<UserEntity> {
     @Inject() private readonly addUserUseCase: AddUserUseCase
   ) { }
 
-  handle = async (request: HttpRequest<EntityDto<UserEntity>>): Promise<HttpResponse<UserEntity | Error>> => {
+  async handle(request: HttpRequest<Partial<Omit<UserEntity, 'id'>>>): Promise<HttpResponse<UserEntity | null | Error>> {
     try {
-      const userDto = request.body as EntityDto<UserEntity>
+      const userDto = request.body as Partial<Omit<UserEntity, 'id'>>
       const newUser = await this.addUserUseCase.call(userDto)
 
       return ok(newUser)

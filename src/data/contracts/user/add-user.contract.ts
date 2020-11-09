@@ -4,7 +4,6 @@ import { Injectable, Inject } from 'heinjector'
 import { AddUserRepository } from '@/data/repositories/user'
 // < Only Domain
 import { UserEntity } from '@/domain/entities'
-import { EntityDto } from '@/domain/protocols'
 import { AddUserUseCase } from '@/domain/usecases/user'
 
 @Injectable({
@@ -16,7 +15,7 @@ export class AddUserContract implements AddUserUseCase {
     @Inject() private readonly addUserRepository: AddUserRepository
   ) {}
 
-  call = async (userDto: EntityDto<UserEntity>): Promise<UserEntity> => {
+  call = async (userDto: Partial<Omit<UserEntity, 'id'>>): Promise<UserEntity> => {
     return await this.addUserRepository.addUser(userDto)
   }
 }

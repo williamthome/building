@@ -1,14 +1,13 @@
 import { UserEntity } from '@/domain/entities'
-import { EntityDto } from '@/domain/protocols'
 import { AddUserUseCase } from '@/domain/usecases/user'
 import { mockUserEntity } from '../__mocks__/user-entity.mock'
 
 export class AddUserUseCaseSpy implements AddUserUseCase {
-  userDto?:  EntityDto<UserEntity>
+  userDto?: Partial<Omit<UserEntity, 'id'>>
   userEntity?: UserEntity
   shouldThrow = false
 
-  call = async (userDto: EntityDto<UserEntity>): Promise<UserEntity> => {
+  call = async (userDto: Partial<Omit<UserEntity, 'id'>>): Promise<UserEntity> => {
     this.userDto = userDto
 
     if (this.shouldThrow) throw new Error()
