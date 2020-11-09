@@ -1,6 +1,4 @@
-import { Nested } from '@/domain/protocols'
-
-export interface Address extends Nested {
+export interface Address {
   street?: string
   city?: string
   state?: string
