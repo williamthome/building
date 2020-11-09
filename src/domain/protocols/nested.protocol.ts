@@ -1,1 +1,0 @@
-export type Nested = Record<string, unknown>
