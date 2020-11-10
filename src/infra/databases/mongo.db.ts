@@ -4,7 +4,10 @@ import { Database } from '@/infra/protocols'
 import { Model } from '@/data/protocols/model.protocol'
 
 @Injectable({
-  identifier: 'db'
+  identifier: [
+    'db',
+    MongoDB
+  ]
 })
 export class MongoDB implements Database {
   private _client?: MongoClient
@@ -51,7 +54,7 @@ export class MongoDB implements Database {
     return this._isConnected
   }
 
-  private get session(): ClientSession {
+  private get session (): ClientSession {
     if (!this._session) throw new Error('No session active')
     return this._session
   }
