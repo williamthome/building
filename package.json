@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "fastify": "^3.7.0",
-    "heinjector": "0.0.4",
+    "heinjector": "0.0.5",
     "module-alias": "^2.2.2",
     "mongodb": "^3.6.2"
   },
