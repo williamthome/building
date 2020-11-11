@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "Building manager",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/williamthome/building.git"
+  },
   "private": true,
   "scripts": {
     "build": "rimraf dist && npx tsc -p tsconfig.build.json",
