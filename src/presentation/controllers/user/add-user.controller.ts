@@ -3,7 +3,7 @@ import { Inject } from '@/shared/dependency-injection'
 import { Controller, HttpRequest, HttpResponse } from '@/presentation/protocols'
 import { ok, serverError } from '@/presentation/factories/http.factory'
 // < Out: only domain layer
-import { UserEntity } from '@/domain/entities'
+import { UserEntity, userKeys } from '@/domain/entities'
 import { AddUserUseCase } from '@/domain/usecases/user'
 import { InjectableController, ValidateRequest } from '@/presentation/decorators'
 import { userSchema } from '@/presentation/schemas/user.schema'
@@ -21,6 +21,7 @@ export class AddUserController implements Controller<UserEntity> {
 
   @ValidateRequest<Partial<Omit<UserEntity, 'id'>>, UserEntity>({
     schema: userSchema,
+    keys: userKeys,
     nullable: false
   })
   async handle(request: HttpRequest<Partial<Omit<UserEntity, 'id'>>>): Promise<HttpResponse<UserEntity | null | Error>> {

@@ -1,15 +1,17 @@
 import { Controller, HttpRequest, HttpResponse, Schema } from '../protocols'
 import { badRequest, noContent } from '../factories/http.factory'
 import { schemaError } from '../helpers/validation.helper'
+import { DeepFlattenPaths } from '@/shared/types'
 
 export interface ValidateRequestOptions<T extends Record<PropertyKey, any>> {
   schema: Schema<T>
+  keys: DeepFlattenPaths<T>
   nullable: boolean
 }
 
 export const ValidateRequest =
   <TRequest, TResponse> (
-    { schema, nullable }: ValidateRequestOptions<TRequest>
+    { schema, keys, nullable }: ValidateRequestOptions<TRequest>
   ) =>
     <TController extends Controller<TRequest>> (
       _controller: TController,
@@ -28,7 +30,7 @@ export const ValidateRequest =
 
         if (!body) return noContent()
 
-        const error = schemaError<TRequest>(body, schema)
+        const error = schemaError<TRequest>(body, schema, keys)
         if (error) return error
 
         return await originalMethod.apply(this, args)
