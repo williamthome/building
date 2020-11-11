@@ -3,7 +3,7 @@ import { App } from './protocols'
 
 export class Server {
   get app (): App {
-    return container.resolve<string, App>('app') as App
+    return container.resolve<App>('app')
   }
 
   private importDepencencyInjections = async (): Promise<void> => {

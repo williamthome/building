@@ -11,8 +11,8 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const addUserRepositorySpy = container.resolve('addUserRepository') as AddUserRepositorySpy
-  const sut = container.resolve(AddUserContract) as AddUserContract
+  const addUserRepositorySpy = container.resolve<AddUserRepositorySpy>('addUserRepository')
+  const sut = container.resolve(AddUserContract)
   return {
     sut,
     addUserRepositorySpy

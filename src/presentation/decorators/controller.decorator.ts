@@ -15,7 +15,7 @@ export const InjectableController = <E extends Entity> (
     .asArray({
       method,
       path,
-      controller: container.resolve(controller) as Controller<E>,
+      controller: container.resolve(controller),
       requirement,
       permissions
     })

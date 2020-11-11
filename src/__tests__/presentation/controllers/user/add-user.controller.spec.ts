@@ -23,8 +23,8 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const addUserUseCaseSpy = container.resolve('addUserUseCase') as AddUserUseCaseSpy
-  const sut = container.resolve(AddUserController) as AddUserController
+  const addUserUseCaseSpy = container.resolve<AddUserUseCaseSpy>('addUserUseCase')
+  const sut = container.resolve(AddUserController)
   return {
     sut,
     addUserUseCaseSpy
