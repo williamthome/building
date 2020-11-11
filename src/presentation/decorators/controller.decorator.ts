@@ -1,6 +1,9 @@
+// : Shared
 import container, { Injectable } from '@/shared/dependency-injection'
-import { Entity } from '@/domain/protocols'
+// > In: presentation layer
 import { Controller, Route } from '../protocols'
+// < Out: only domain layer
+import { Entity } from '@/domain/protocols'
 
 type ControllerOptions<E> = Omit<Route<E>, 'controller'>
 

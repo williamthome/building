@@ -1,7 +1,10 @@
-import { Controller, HttpRequest, HttpResponse, Schema } from '../protocols'
+// : Shared
+import { DeepFlattenPaths } from '@/shared/types'
+// > In: presentation layer
+import { Controller, HandleResponse, HttpRequest, Schema } from '../protocols'
 import { badRequest, noContent } from '../factories/http.factory'
 import { schemaError } from '../helpers/validation.helper'
-import { DeepFlattenPaths } from '@/shared/types'
+// < Out: only domain layer
 
 export interface ValidateRequestOptions<T extends Record<PropertyKey, any>> {
   schema: Schema<T>
@@ -22,7 +25,7 @@ export const ValidateRequest =
 
       descriptor.value = async function (
         ...args: [request: HttpRequest<TRequest>]
-      ): Promise<HttpResponse<TResponse | null | Error>> {
+      ): HandleResponse<TResponse> {
         const { body } = args[0]
 
         if (!body && !nullable)
