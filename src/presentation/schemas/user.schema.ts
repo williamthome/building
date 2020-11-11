@@ -1,5 +1,5 @@
 import { EntitySchema } from '../protocols'
-import { isString, required } from '../validations'
+import { isObject, isString, required } from '../validations'
 import { UserEntity } from '@/domain/entities'
 
 export const userSchema: EntitySchema<UserEntity> = {
@@ -10,7 +10,9 @@ export const userSchema: EntitySchema<UserEntity> = {
     ]
   },
   address: {
-    validations: [],
+    validations: [
+      isObject
+    ],
     nested: {
       street: {
         validations: [
