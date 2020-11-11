@@ -1,5 +1,17 @@
 import { Validation } from './validation.protocol'
 
+// export interface ValidationOptions {
+//   validation: Validation
+//   message: string
+// }
+
+// export interface SchemaOptions {
+//   validations: (Omit<Validation, 'validate'> | ValidationOptions)[]
+// }
+
+// export const isValidationOptions = (obj: any): obj is ValidationOptions =>
+// (obj !== null || obj !== undefined) && obj === Object(obj) && 'validation' in obj && 'message' in obj
+
 export interface SchemaOptions {
   validations: Validation[]
 }
