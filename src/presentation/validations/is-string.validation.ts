@@ -8,8 +8,8 @@ export const isString: Validation = {
     validations?: Validation[],
     errorMessage?: string
   ): ValidationResult => {
-    const valid = requiredInValidations(validations)
-      ? obj && typeof obj[field] === 'string'
+    const valid = requiredInValidations(validations) || obj[field] !== undefined
+      ? typeof obj[field] === 'string' && obj[field] !== ''
       : true
     return {
       valid,
