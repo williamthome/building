@@ -1,14 +1,12 @@
 // : Shared
-import { Injectable, Inject } from 'heinjector'
+import { Injectable, Inject } from '@/shared/dependency-injection'
 // > Data
 import { AddUserRepository } from '@/data/repositories/user'
 // < Only Domain
 import { UserEntity } from '@/domain/entities'
 import { AddUserUseCase } from '@/domain/usecases/user'
 
-@Injectable({
-  identifier: 'addUserUseCase'
-})
+@Injectable('addUserUseCase')
 export class AddUserContract implements AddUserUseCase {
 
   constructor (

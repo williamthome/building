@@ -1,18 +1,16 @@
-import { Injectable, Inject } from 'heinjector'
+import { Injectable, Inject } from '@/shared/dependency-injection'
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { Route, WebServer, Controller, HttpHeaders, HttpParameters, HttpRequest } from '../protocols'
 
-@Injectable({
-  identifier: 'webServer'
-})
+@Injectable('webServer')
 export class Fastify implements WebServer {
   private _isListening = false
 
   private readonly fastifyInstance: FastifyInstance
 
   constructor (
-    @Inject({ identifier: 'PORT' }) public readonly port: number,
-    @Inject({ isArray: true }) public readonly routes: Route<unknown>[]
+    @Inject('PORT') public readonly port: number,
+    @Inject() public readonly routes: Route<unknown>[]
   ) {
     this.fastifyInstance = fastify()
   }

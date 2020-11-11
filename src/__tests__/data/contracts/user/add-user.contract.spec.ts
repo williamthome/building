@@ -1,3 +1,4 @@
+import container from '@/shared/dependency-injection'
 import { AddUserContract } from '@/data/contracts/user/add-user.contract'
 import { AddUserRepositorySpy } from '@/__tests__/data/__spys__/add-user-repository.spy'
 import { mockUserModelDto } from '@/__tests__/data/__mocks__/user-model-dto.mock'
@@ -10,8 +11,8 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const addUserRepositorySpy = new AddUserRepositorySpy()
-  const sut = new AddUserContract(addUserRepositorySpy)
+  const addUserRepositorySpy = container.resolve('addUserRepository') as AddUserRepositorySpy
+  const sut = container.resolve(AddUserContract) as AddUserContract
   return {
     sut,
     addUserRepositorySpy
@@ -21,6 +22,12 @@ const makeSut = (): SutTypes => {
 //#endregion Factories
 
 describe('AddUser Contract', () => {
+  beforeEach(() => {
+    container.clear()
+    container.bind('addUserRepository').asNewable(AddUserRepositorySpy)
+    container.bind(AddUserContract).asNewable(AddUserContract)
+  })
+
   describe('AddUser Repository', () => {
     it('should be called with right value', async () => {
       const { sut, addUserRepositorySpy } = makeSut()

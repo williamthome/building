@@ -1,48 +1,35 @@
-import heinjector from 'heinjector'
+import container from '@/shared/dependency-injection'
 import { App } from './protocols'
 
 export class Server {
-  private _app?: App
-
-  get app(): App {
-    if (!this._app) throw new Error('App is undefined')
-
-    return this._app
+  get app (): App {
+    return container.resolve<string, App>('app') as App
   }
 
-  public config = async (serverCallback?: (server: Server) => void): Promise<Server> => {
+  private importDepencencyInjections = async (): Promise<void> => {
     await import('@/infra/databases')
     await import('@/infra/repositories')
     await import('@/data/contracts')
     await import('@/presentation/web-servers')
     await import('@/presentation/controllers')
     await import('@/main/app')
+  }
 
-    heinjector.define<number>({
-      identifier: 'PORT',
-      value: 5050
-    })
+  private defineInjectedValues = (): void => {
+    container.define('PORT').as(5051)
+    container.define('DB_URL').as('mongodb://localhost:27001,localhost:27002,localhost:27003/building')
+  }
 
-    heinjector.define<string>({
-      identifier: 'DB_URL',
-      value: 'mongodb://localhost:27001,localhost:27002,localhost:27003/building'
-    })
-
-    heinjector.resolve('addUserRepository')
-    heinjector.resolve('addUserUseCase')
-    this._app = heinjector.resolve<App>('app') as App
-
-    heinjector.clear()
-
+  public config = async (): Promise<Server> => {
+    await this.importDepencencyInjections()
+    this.defineInjectedValues()
     this.bindProcessEvents()
-
-    if (serverCallback) serverCallback(this)
-
     return this
   }
 
-  public run = async (): Promise<App> => {
-    return await this.app.run()
+  public run = async (): Promise<Server> => {
+    await this.app.run()
+    return this
   }
 
   private bindProcessEvents = (): void => {

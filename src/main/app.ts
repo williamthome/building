@@ -1,11 +1,9 @@
-import { Injectable, Inject } from 'heinjector'
+import { Injectable, Inject } from '@/shared/dependency-injection'
 import { App } from './protocols'
 import { WebServer } from '@/presentation/protocols'
 import { Database } from '@/infra/protocols'
 
-@Injectable({
-  identifier: 'app'
-})
+@Injectable('app')
 export class Application implements App {
   constructor (
     @Inject() public readonly webServer: WebServer,

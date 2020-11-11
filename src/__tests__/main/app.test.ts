@@ -1,18 +1,17 @@
-import { App } from '@/main/protocols'
 import { Server } from '@/main/server'
 
 //#region Factories
 
-let app: App
+let server: Server
 
 beforeEach(async (done) => {
-  const server = await new Server().config()
-  app = await server.run()
+  server = await new Server().config()
+  await server.run()
   done()
 })
 
 afterEach(async (done) => {
-  await app.stop()
+  await server.app.stop()
   await new Promise(resolve => setTimeout(() => resolve(), 500))
   done()
 })
@@ -21,8 +20,8 @@ afterEach(async (done) => {
 
 describe('Application', () => {
   it('should run and after stop', async () => {
-    expect(app.isHealthy()).toBe(true)
-    await app.stop()
-    expect(app.isHealthy()).toBe(false)
+    expect(server.app.isHealthy()).toBe(true)
+    await server.app.stop()
+    expect(server.app.isHealthy()).toBe(false)
   })
 })

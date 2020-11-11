@@ -1,21 +1,16 @@
-import { Injectable, Inject } from 'heinjector'
+import { Injectable, Inject } from '@/shared/dependency-injection'
 import { MongoClient, ClientSession, ObjectId, Collection, CollectionInsertOneOptions } from 'mongodb'
 import { Database } from '@/infra/protocols'
 import { Model } from '@/data/protocols/model.protocol'
 
-@Injectable({
-  identifier: [
-    'db',
-    MongoDB
-  ]
-})
+@Injectable('db')
 export class MongoDB implements Database {
   private _client?: MongoClient
   private _session?: ClientSession
   private _isConnected = false
 
   constructor (
-    @Inject({ identifier: 'DB_URL' }) public readonly dbUrl: string
+    @Inject('DB_URL') public readonly dbUrl: string
   ) { }
 
   private makeMongoClient = async (uri: string): Promise<MongoClient> => {
@@ -85,7 +80,6 @@ export class MongoDB implements Database {
     if (!this._client || !this.isConnected) {
       console.warn('Mongo isn\'t connected. Reconnecting...')
       await this.connect()
-      console.log('Successfully connected to mongo')
     }
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return this._client!.db().collection(name)

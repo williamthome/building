@@ -1,3 +1,6 @@
+import container from '@/shared/dependency-injection'
+container.bind('routes').asArray([])
+
 // > In: presentation layer
 import { AddUserController } from '@/presentation/controllers/user/add-user.controller'
 import { ok, serverError } from '@/presentation/factories/http.factory'
@@ -20,8 +23,8 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const addUserUseCaseSpy = new AddUserUseCaseSpy()
-  const sut = new AddUserController(addUserUseCaseSpy)
+  const addUserUseCaseSpy = container.resolve('addUserUseCase') as AddUserUseCaseSpy
+  const sut = container.resolve(AddUserController) as AddUserController
   return {
     sut,
     addUserUseCaseSpy
@@ -31,6 +34,12 @@ const makeSut = (): SutTypes => {
 //#endregion Factories
 
 describe('AddUser Controller', () => {
+  beforeEach(() => {
+    container.clear()
+    container.bind('addUserUseCase').asNewable(AddUserUseCaseSpy)
+    container.bind(AddUserController).asNewable(AddUserController)
+  })
+
   describe('AddUser UseCase', () => {
     it('should been called with right values', async () => {
       const { sut, addUserUseCaseSpy } = makeSut()

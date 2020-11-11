@@ -1,4 +1,4 @@
-import { Inject } from 'heinjector'
+import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HttpRequest, HttpResponse } from '@/presentation/protocols'
 import { ok, serverError } from '@/presentation/factories/http.factory'
