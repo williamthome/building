@@ -5,7 +5,3 @@ export type HandleResponse<T> = Promise<HttpResponse<T | null | Error>>
 export interface Controller<T> {
   handle: (request: HttpRequest<T>) => HandleResponse<T>
 }
-
-export interface LogControllerDecorator<T> extends Controller<T> {
-  controller: Controller<T>
-}
