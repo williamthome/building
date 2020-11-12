@@ -8,7 +8,7 @@ import { InjectableController, ServerErrorHandler, ValidateRequest } from '@/pre
 // < Out: only domain layer
 import { UserEntity, userKeys } from '@/domain/entities'
 import { AddUserUseCase } from '@/domain/usecases/user'
-import { AddUserDto } from '@/domain/protocols'
+import { UserDto } from '@/domain/protocols'
 
 @InjectableController<UserEntity>({
   method: 'POST',
@@ -22,13 +22,13 @@ export class AddUserController implements Controller<UserEntity> {
   ) { }
 
   @ServerErrorHandler
-  @ValidateRequest<AddUserDto, UserEntity>({
+  @ValidateRequest<UserDto, UserEntity>({
     schema: userSchema,
     keys: userKeys,
     nullable: false
   })
-  async handle (request: HttpRequest<AddUserDto>): HandleResponse<UserEntity> {
-    const userDto = request.body as AddUserDto
+  async handle (request: HttpRequest<UserDto>): HandleResponse<UserEntity> {
+    const userDto = request.body as UserDto
     const newUser = await this.addUserUseCase.call(userDto)
     return ok(newUser)
   }

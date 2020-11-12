@@ -1,6 +1,6 @@
-import { UserEntity } from '@/domain/entities/user.entity'
-import { AddUserDto } from '@/domain/protocols'
+import { UserEntity } from '@/domain/entities'
+import { UserDto } from '@/domain/protocols'
 
 export interface AddUserUseCase {
-  call: (userDto: AddUserDto) => Promise<UserEntity>
+  call: (userDto: UserDto) => Promise<UserEntity>
 }

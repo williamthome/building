@@ -1,3 +1,3 @@
 import { UserEntity } from '../entities'
 
-export type AddUserDto = Partial<Omit<UserEntity, 'id'>>
+export type UserDto = Partial<Omit<UserEntity, 'id'>>
