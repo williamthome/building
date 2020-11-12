@@ -7,7 +7,18 @@ export const required: Validation = {
     validations?: Validation[],
     errorMessage?: string
   ): ValidationResult => {
-    const valid = obj && typeof obj[field] !== 'undefined'
+    const value = obj[field]
+    let valid: boolean
+    switch (typeof value) {
+      case 'string':
+        valid = value !== ''
+        break
+      case 'object':
+        valid = value === Object(value)
+        break
+      default:
+        valid = value !== 'undefined'
+    }
     return {
       valid,
       errorMessage: valid
