@@ -9,5 +9,11 @@ export interface Database {
     payload: Partial<TModel>,
     collectionName: string,
     options?: TOptions
+  ) => Promise<TModel>,
+  updateOne: <TModel extends Model, TOptions = unknown> (
+    id: Model['id'],
+    payload: Partial<TModel>,
+    collectionName: string,
+    options?: TOptions
   ) => Promise<TModel>
 }
