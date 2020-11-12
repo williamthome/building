@@ -33,7 +33,7 @@ export const ValidateRequest =
 
         if (!body) return noContent()
 
-        const error = schemaError<TRequest>(body, schema, keys)
+        const error = schemaError<TRequest>(body, schema, nullable, keys)
         if (error) return error
 
         return await originalMethod.apply(this, args)

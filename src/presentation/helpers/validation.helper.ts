@@ -7,11 +7,14 @@ import { DeepFlattenPaths } from '@/shared/types'
 export const schemaError = <T extends Record<PropertyKey, any>> (
   obj: Partial<T>,
   schema: Schema<T>,
+  nullable: boolean,
   keys?: DeepFlattenPaths<T>
 ): HttpResponse<Error> | undefined => {
   if (keys) deleteInexistentFields(obj, keys)
 
   for (const [field, value] of Object.entries(schema)) {
+    if (nullable && !(field in obj)) continue
+
     const fieldSchema = isNestedSchema(value) ? value : value as SchemaOptions
 
     const error = validationsError(obj, field, fieldSchema.validations)
@@ -23,7 +26,7 @@ export const schemaError = <T extends Record<PropertyKey, any>> (
       if (!nestedObj && !requiredInValidations(fieldSchema.validations))
         continue
 
-      const nestedError = schemaError(nestedObj as any, fieldSchema.nested, keys as any)
+      const nestedError = schemaError(nestedObj as any, fieldSchema.nested, nullable, keys as any)
       if (nestedError)
         return nestedError
     }
