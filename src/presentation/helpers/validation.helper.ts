@@ -1,5 +1,5 @@
 import { badRequest } from '../factories/http.factory'
-import { HttpResponse, Schema, SchemaOptions, Validation } from '../protocols'
+import { HttpResponse, Schema, SchemaOptions, Validation, ValidationResult } from '../protocols'
 import { isNestedSchema } from './schema.helper'
 import { required } from '../validations'
 import { DeepFlattenPaths } from '@/shared/types'
@@ -62,3 +62,31 @@ const validationsError = <T extends Record<PropertyKey, any>> (
 export const requiredInValidations = (
   validations?: Validation[]
 ): boolean => validations ? validations.some(v => v === required) : false
+
+export const validIfNotRequired = <T> (
+  valid: boolean,
+  obj: T,
+  field: keyof T,
+  validations?: Validation[]
+): boolean => !valid && !requiredInValidations(validations) && !(field in obj) ? true : valid
+
+export const errorIfInvalid = (
+  valid: boolean,
+  messageMessage: string,
+  customMessage: string | undefined
+): string | undefined => valid ? undefined : customMessage || messageMessage
+
+export const makeValidationResult = <T> (
+  valid: boolean,
+  obj: T,
+  field: keyof T,
+  errorMessage: string,
+  customErrorMessage: string | undefined,
+  validations?: Validation[]
+): ValidationResult => (
+    {
+      valid: validIfNotRequired(valid, obj, field, validations),
+      errorMessage: errorIfInvalid(valid, errorMessage, customErrorMessage),
+      validations
+    }
+  )

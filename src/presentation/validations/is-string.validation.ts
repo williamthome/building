@@ -1,4 +1,4 @@
-import { requiredInValidations } from '../helpers/validation.helper'
+import { makeValidationResult } from '../helpers/validation.helper'
 import { Validation, ValidationResult } from '../protocols'
 
 export const isString: Validation = {
@@ -6,18 +6,17 @@ export const isString: Validation = {
     obj: T,
     field: keyof T,
     validations?: Validation[],
-    errorMessage?: string
+    customErrorMessage?: string
   ): ValidationResult => {
-    let valid = field in obj && typeof obj[field] === 'string' && obj[field] !== ''
-    if (!valid && !requiredInValidations(validations) && !(field in obj)) {
-      valid = true
-    }
-    return {
+    const valid = field in obj && typeof obj[field] === 'string' && obj[field] !== ''
+    const errorMessage = `Field ${field} must be string type`
+    return makeValidationResult(
       valid,
-      errorMessage: valid
-        ? undefined
-        : errorMessage || `Field ${field} must be string type`,
+      obj,
+      field,
+      errorMessage,
+      customErrorMessage,
       validations
-    }
+    )
   }
 }

@@ -5,5 +5,5 @@ export interface ValidationResult {
 }
 
 export interface Validation {
-  validate: <T extends Record<string, unknown>> (obj: T, field: keyof T, validations?: Validation[], errorMessage?: string) => ValidationResult
+  validate: <T extends Record<string, unknown>> (obj: T, field: keyof T, validations?: Validation[], customErrorMessage?: string) => ValidationResult
 }

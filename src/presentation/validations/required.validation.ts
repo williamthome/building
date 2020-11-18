@@ -1,11 +1,11 @@
-import { Validation, ValidationResult } from '@/presentation/protocols/validation.protocol'
+import { Validation, ValidationResult } from '../protocols'
 
 export const required: Validation = {
   validate: <T extends Record<string, unknown>> (
     obj: T,
     field: keyof T,
     validations?: Validation[],
-    errorMessage?: string
+    customErrorMessage?: string
   ): ValidationResult => {
     const value = obj[field]
     let valid = field in obj
@@ -25,7 +25,7 @@ export const required: Validation = {
       valid,
       errorMessage: valid
         ? undefined :
-        errorMessage || `Field ${field} is required`,
+        customErrorMessage || `Field ${field} is required`,
       validations
     }
   }

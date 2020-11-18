@@ -1,3 +1,4 @@
+import { makeValidationResult } from '../helpers/validation.helper'
 import { Validation, ValidationResult } from '../protocols'
 
 export const isObject: Validation = {
@@ -5,15 +6,17 @@ export const isObject: Validation = {
     obj: T,
     field: keyof T,
     validations?: Validation[],
-    errorMessage?: string
+    customErrorMessage?: string
   ): ValidationResult => {
     const valid = (obj !== null || obj !== undefined) && field in obj && obj[field] === Object(obj[field])
-    return {
+    const errorMessage = `Field ${field} must be object type`
+    return makeValidationResult(
       valid,
-      errorMessage: valid
-        ? undefined
-        : errorMessage || `Field ${field} must be object type`,
+      obj,
+      field,
+      errorMessage,
+      customErrorMessage,
       validations
-    }
+    )
   }
 }
