@@ -120,4 +120,20 @@ export class MongoDB implements Database {
     const { value } = result
     return this.map<T>(value)
   }
+
+  getOneBy = async <T extends Model, V> (
+    field: keyof T,
+    value: V,
+    collectionName: string,
+    options?: Omit<CollectionInsertOneOptions, 'session'>
+  ): Promise<T | null> => {
+    const collection = await this.getCollection(collectionName)
+    const model = await collection.findOne({
+      [field]: value
+    }, {
+      ...options,
+      session: this.session
+    })
+    return model ? this.map<T>(model) : null
+  }
 }
