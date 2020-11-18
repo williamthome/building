@@ -1,8 +1,12 @@
 import bcrypt from 'bcrypt'
+// : Shared
+import { Injectable } from '@/shared/dependency-injection'
 // > In: infra layer
 // < Out: only data layer
-import { Hasher, HashComparer } from '../protocols'
+import { Hasher, HashComparer } from '@/data/protocols/cryptography'
 
+@Injectable('hasher')
+@Injectable('hashComparer')
 export class BcryptAdapter implements Hasher, HashComparer {
   constructor (
     private readonly salt: number = 12
