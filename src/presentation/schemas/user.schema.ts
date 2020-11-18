@@ -9,6 +9,12 @@ export const userSchema: EntitySchema<UserEntity> = {
       isString
     ]
   },
+  password: {
+    validations: [
+      required,
+      isString
+    ]
+  },
   address: {
     validations: [
       isObject

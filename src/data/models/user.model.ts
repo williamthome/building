@@ -6,6 +6,7 @@ export class UserModel extends Model implements UserEntity {
   constructor (
     public readonly id: string,
     public readonly name: string,
+    public readonly password: string,
     public readonly address?: Address
   ) {
     super(id)
