@@ -4,6 +4,8 @@ import { ModelDto } from '@/data/protocols/model.protocol'
 
 export const mockUserModel = (userDto?: ModelDto<UserModel>): UserModel => ({
   id: fakeData.entity.id(),
+  email: fakeData.person.email(),
+  password: fakeData.entity.password(),
   name: fakeData.person.fullName(),
   address: {
     street: fakeData.address.street(),

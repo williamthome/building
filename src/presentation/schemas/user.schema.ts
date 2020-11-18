@@ -3,13 +3,19 @@ import { isObject, isString, required } from '../validations'
 import { UserEntity } from '@/domain/entities'
 
 export const userSchema: EntitySchema<UserEntity> = {
-  name: {
+  email: {
     validations: [
       required,
       isString
     ]
   },
   password: {
+    validations: [
+      required,
+      isString
+    ]
+  },
+  name: {
     validations: [
       required,
       isString

@@ -3,6 +3,8 @@ import { UserEntity } from '@/domain/entities'
 
 export const mockUserEntity = (userDto?: Partial<Omit<UserEntity, 'id'>>): UserEntity => ({
   id: fakeData.entity.id(),
+  email: fakeData.person.email(),
+  password: fakeData.entity.password(),
   name: fakeData.person.fullName(),
   address: {
     street: fakeData.address.street(),
