@@ -4,7 +4,8 @@ import faker from 'faker'
 
 export default {
   entity: {
-    id: (): string => faker.random.uuid()
+    id: (): string => faker.random.uuid(),
+    password: (): string => faker.random.uuid(),
   },
   person: {
     fullName: (): string => faker.name.findName()
