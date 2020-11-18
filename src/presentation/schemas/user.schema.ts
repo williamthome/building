@@ -1,5 +1,5 @@
 import { EntitySchema } from '../protocols'
-import { isObject, isString, required } from '../validations'
+import { isObject, isString, minLength, required } from '../validations'
 import { UserEntity } from '@/domain/entities'
 
 export const userSchema: EntitySchema<UserEntity> = {
@@ -12,7 +12,8 @@ export const userSchema: EntitySchema<UserEntity> = {
   password: {
     validations: [
       required,
-      isString
+      isString,
+      minLength(6)
     ]
   },
   name: {
