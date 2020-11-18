@@ -1,12 +1,13 @@
 import { EntitySchema } from '../protocols'
-import { isObject, isString, minLength, required } from '../validations'
+import { isEmail, isObject, isString, minLength, required } from '../validations'
 import { UserEntity } from '@/domain/entities'
 
 export const userSchema: EntitySchema<UserEntity> = {
   email: {
     validations: [
       required,
-      isString
+      isString,
+      isEmail
     ]
   },
   password: {
