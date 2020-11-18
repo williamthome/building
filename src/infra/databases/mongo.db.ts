@@ -107,7 +107,7 @@ export class MongoDB implements Database {
     payload: Partial<T>,
     collectionName: string,
     options?: Omit<CollectionInsertOneOptions, 'session'>
-  ): Promise<T> => {
+  ): Promise<T | null> => {
     const collection = await this.getCollection(collectionName)
     const result = await collection.findOneAndUpdate(
       { _id: new ObjectId(id) },
@@ -118,7 +118,7 @@ export class MongoDB implements Database {
       }
     )
     const { value } = result
-    return this.map<T>(value)
+    return value ? this.map<T>(value) : null
   }
 
   getOneBy = async <T extends Model, V> (

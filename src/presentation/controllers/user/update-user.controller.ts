@@ -9,6 +9,7 @@ import { InjectableController, ServerErrorHandler, ValidateRequest } from '@/pre
 import { UserEntity, userKeys } from '@/domain/entities'
 import { UpdateUserUseCase } from '@/domain/usecases/user'
 import { UserDto } from '@/domain/protocols'
+import { CanNotFindEntityError } from '@/presentation/errors/can-not-find-entity.error'
 
 @InjectableController<UserEntity>({
   method: 'PATCH',
@@ -29,9 +30,16 @@ export class UpdateUserController implements Controller<UserEntity> {
   })
   async handle (request: HttpRequest<UserDto>): HandleResponse<UserEntity> {
     const id = request.params?.id
-    if (!id) return badRequest(new Error('Id is required'))
+
+    if (!id)
+      return badRequest(new Error('Id is required'))
+
     const userDto = request.body as UserDto
     const udpatedUser = await this.updateUserUseCase.call(id, userDto)
+
+    if (!udpatedUser)
+      return badRequest(new CanNotFindEntityError('User'))
+
     return ok(udpatedUser)
   }
 }

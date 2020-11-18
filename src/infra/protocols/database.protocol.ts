@@ -15,7 +15,7 @@ export interface Database {
     payload: Partial<TModel>,
     collectionName: string,
     options?: TOptions
-  ) => Promise<TModel>,
+  ) => Promise<TModel | null>,
   getOneBy: <TModel extends Model, TValue, TOptions = unknown> (
     field: keyof TModel,
     value: TValue,

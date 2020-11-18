@@ -14,7 +14,7 @@ export class UpdateUserContract implements UpdateUserUseCase {
     @Inject() private readonly updateUserRepository: UpdateUserRepository
   ) {}
 
-  call = async (userId: UserEntity['id'],userDto: UserDto): Promise<UserEntity> => {
+  call = async (userId: UserEntity['id'],userDto: UserDto): Promise<UserEntity | null> => {
     return await this.updateUserRepository.updateUser(userId, userDto)
   }
 }
