@@ -9,7 +9,8 @@ export default {
     token: (): string => faker.random.alphaNumeric(20)
   },
   person: {
-    fullName: (): string => faker.name.findName()
+    fullName: (): string => faker.name.findName(),
+    email: (): string => faker.internet.email()
   },
   address: {
     street: (): string => faker.address.streetName(),
