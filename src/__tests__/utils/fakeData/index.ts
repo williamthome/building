@@ -6,6 +6,7 @@ export default {
   entity: {
     id: (): string => faker.random.uuid(),
     password: (): string => faker.random.uuid(),
+    token: (): string => faker.random.alphaNumeric(20)
   },
   person: {
     fullName: (): string => faker.name.findName()
