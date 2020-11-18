@@ -8,16 +8,18 @@ export const required: Validation = {
     errorMessage?: string
   ): ValidationResult => {
     const value = obj[field]
-    let valid: boolean
-    switch (typeof value) {
-      case 'string':
-        valid = value !== ''
-        break
-      case 'object':
-        valid = value === Object(value)
-        break
-      default:
-        valid = value !== 'undefined'
+    let valid = field in obj
+    if (valid) {
+      switch (typeof value) {
+        case 'string':
+          valid = value !== ''
+          break
+        case 'object':
+          valid = value === Object(value)
+          break
+        default:
+          valid = value !== 'undefined'
+      }
     }
     return {
       valid,

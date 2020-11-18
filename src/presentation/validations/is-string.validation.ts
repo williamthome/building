@@ -1,5 +1,5 @@
-import { Validation, ValidationResult } from '../protocols'
 import { requiredInValidations } from '../helpers/validation.helper'
+import { Validation, ValidationResult } from '../protocols'
 
 export const isString: Validation = {
   validate: <T extends Record<string, unknown>> (
@@ -8,9 +8,10 @@ export const isString: Validation = {
     validations?: Validation[],
     errorMessage?: string
   ): ValidationResult => {
-    const valid = requiredInValidations(validations) || obj[field] !== undefined
-      ? typeof obj[field] === 'string' && obj[field] !== ''
-      : true
+    let valid = field in obj && typeof obj[field] === 'string' && obj[field] !== ''
+    if (!valid && !requiredInValidations(validations) && !(field in obj)) {
+      valid = true
+    }
     return {
       valid,
       errorMessage: valid
