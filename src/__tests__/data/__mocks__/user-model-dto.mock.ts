@@ -1,4 +1,4 @@
-import fakeData from '@/__tests__/utils/fakeData'
+import fakeData from '@/__tests__/shared/fakeData'
 import { UserModel } from '@/data/models'
 import { ModelDto } from '@/data/protocols/model.protocol'
 

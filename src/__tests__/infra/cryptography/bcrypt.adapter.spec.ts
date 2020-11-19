@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 // : Shared
-import fakeData from '../../utils/fakeData'
+import fakeData from '../../shared/fakeData'
 // > In: infra layer
 import { BcryptAdapter } from '@/infra/cryptography'
 // < Out: only data layer
