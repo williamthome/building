@@ -58,7 +58,7 @@
     "bcrypt": "^5.0.0",
     "fastify": "^3.7.0",
     "jsonwebtoken": "^8.5.1",
-    "lilinjector": "0.0.5",
+    "lilinjector": "0.0.7",
     "module-alias": "^2.2.2",
     "mongodb": "^3.6.2"
   },
