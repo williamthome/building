@@ -52,6 +52,21 @@ describe('AddUser Contract', () => {
     })
   })
 
+  describe('Hasher', () => {
+    it('should be called with right value', async () => {
+      const { sut, hasherSpy } = makeSut()
+      const dto = mockUserModelDto()
+      await sut.call(dto)
+      expect(hasherSpy.plaintext).toEqual(dto.password)
+    })
+
+    it('should throw if method throws', async () => {
+      const { sut, hasherSpy } = makeSut()
+      hasherSpy.shouldThrow = true
+      await expect(sut.call(mockUserModelDto())).rejects.toThrow()
+    })
+  })
+
   it('shold return a new user', async () => {
     const { sut, addUserRepositorySpy } = makeSut()
     const user = await sut.call(mockUserModelDto())
