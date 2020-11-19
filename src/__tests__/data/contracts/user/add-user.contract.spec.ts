@@ -1,7 +1,7 @@
 import container from '@/shared/dependency-injection'
-import { AddUserContract } from '@/data/contracts/user/add-user.contract'
+import { AddUserContract } from '@/data/contracts'
 import { AddUserRepositorySpy, HasherSpy } from '@/__tests__/data/__spys__'
-import { mockUserModelDto } from '@/__tests__/data/__mocks__/user-model-dto.mock'
+import { mockUserModelDto } from '@/__tests__/data/__mocks__/models'
 import { UserDto } from '@/domain/protocols'
 
 //#region Factories

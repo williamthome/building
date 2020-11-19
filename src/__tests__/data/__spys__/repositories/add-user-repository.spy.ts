@@ -1,7 +1,7 @@
 import { UserModel } from '@/data/models'
 import { ModelDto } from '@/data/protocols/model.protocol'
-import { AddUserRepository } from '@/data/repositories/user/add-user.repository'
-import { mockUserModel } from '../__mocks__/user-model.mock'
+import { AddUserRepository } from '@/data/repositories/user'
+import { mockUserModel } from '@/__tests__/data/__mocks__/models'
 
 export class AddUserRepositorySpy implements AddUserRepository {
   userDto?:  ModelDto<UserModel>

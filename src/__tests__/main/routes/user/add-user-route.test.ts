@@ -1,9 +1,9 @@
 import request from 'supertest'
 import { HttpStatusCode } from '@/presentation/constants'
-import { mockUserEntityDto } from '@/__tests__/presentation/__mocks__/user-entity-dto.mock'
+import { mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities'
 import { Server } from '@/main/server'
 
-describe('User Routes', () => {
+describe('AddUser Route > POST /user', () => {
   let server: Server
 
   beforeEach(async (done) => {
@@ -18,12 +18,10 @@ describe('User Routes', () => {
     done()
   })
 
-  describe('POST /user', () => {
-    it('shold return ok', async () => {
-      await request(server.app.webServer.server())
-        .post('/user')
-        .send(mockUserEntityDto())
-        .expect(HttpStatusCode.OK)
-    })
+  it('shold return ok', async () => {
+    await request(server.app.webServer.server())
+      .post('/user')
+      .send(mockUserEntityDto())
+      .expect(HttpStatusCode.OK)
   })
 })

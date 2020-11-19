@@ -1,6 +1,6 @@
 import { UserEntity } from '@/domain/entities'
-import { AddUserUseCase } from '@/domain/usecases/user'
-import { mockUserEntity } from '../__mocks__/user-entity.mock'
+import { AddUserUseCase } from '@/domain/usecases'
+import { mockUserEntity } from '@/__tests__/domain/__mocks__/entities'
 
 export class AddUserUseCaseSpy implements AddUserUseCase {
   userDto?: Partial<Omit<UserEntity, 'id'>>
