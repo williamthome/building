@@ -1,20 +1,16 @@
 // : Shared
-import { Inject } from '@/shared/dependency-injection'
+import { Inject, Injectable } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { ok } from '@/presentation/factories/http.factory'
 import { userSchema } from '@/presentation/schemas/user.schema'
-import { InjectableController, ServerErrorHandler, ValidateRequest } from '@/presentation/decorators'
+import { ServerErrorHandler, ValidateRequest } from '@/presentation/decorators'
 // < Out: only domain layer
 import { UserEntity, userKeys } from '@/domain/entities'
 import { AddUserUseCase } from '@/domain/usecases/user'
 import { UserDto } from '@/domain/protocols'
 
-@InjectableController<UserEntity>({
-  method: 'POST',
-  path: '/user',
-  requirement: 'none'
-})
+@Injectable()
 export class AddUserController implements Controller<UserEntity> {
 
   constructor (

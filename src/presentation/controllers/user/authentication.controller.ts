@@ -1,19 +1,15 @@
-import { Inject } from '@/shared/dependency-injection'
+import { Inject, Injectable } from '@/shared/dependency-injection'
 import { UserEntity } from '@/domain/entities'
 import { AuthDto } from '@/domain/protocols'
 import { AuthenticationUseCase } from '@/domain/usecases/user'
-import { InjectableController, ServerErrorHandler, ValidateRequest } from '@/presentation/decorators'
+import { ServerErrorHandler, ValidateRequest } from '@/presentation/decorators'
 import { badRequest, ok } from '@/presentation/factories/http.factory'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { authSchema } from '@/presentation/schemas'
 import { HashComparer } from '@/data/protocols/cryptography'
 import { CanNotFindEntityError, PasswordDoNotMatchError } from '@/presentation/errors'
 
-@InjectableController<UserEntity>({
-  method: 'POST',
-  path: '/login',
-  requirement: 'none'
-})
+@Injectable()
 export class AuthenticationController implements Controller<UserEntity> {
 
   constructor (
