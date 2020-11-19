@@ -1,4 +1,4 @@
-import fakeData from '@/__tests__/shared/fakeData'
+import fakeData from '@/__tests__/shared/fake-data'
 import { UserEntity } from '@/domain/entities'
 
 export const mockUserEntityDto = (): Omit<UserEntity, 'id'> => ({

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 // : Shared
-import fakeData from '../../shared/fakeData'
+import fakeData from '../../shared/fake-data'
 // > In: infra layer
 import { JwtAdapter } from '@/infra/cryptography'
 // < Out: only data layer
