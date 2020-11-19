@@ -1,6 +1,4 @@
 import container from '@/shared/dependency-injection'
-container.bind('routes').asArray([])
-
 // > In: presentation layer
 import { AddUserController } from '@/presentation/controllers/user/add-user.controller'
 import { ok, serverError } from '@/presentation/factories/http.factory'
