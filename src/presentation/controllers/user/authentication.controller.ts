@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 import { UserEntity } from '@/domain/entities'
 import { AuthDto } from '@/domain/protocols'
-import { GetUserByEmailUseCase } from '@/domain/usecases/user'
+import { GetUserByEmailUseCase, UpdateUserAccessTokenUseCase } from '@/domain/usecases/user'
 import { ServerErrorHandler, ValidateRequest } from '@/presentation/decorators'
 import { badRequest, ok } from '@/presentation/factories/http.factory'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { authSchema } from '@/presentation/schemas'
-import { HashComparer } from '@/data/protocols/cryptography'
+import { Encrypter, HashComparer } from '@/data/protocols/cryptography'
 import { CanNotFindEntityError, PasswordDoNotMatchError } from '@/presentation/errors'
 
 @Injectable()
@@ -14,7 +14,9 @@ export class AuthenticationController implements Controller<UserEntity> {
 
   constructor (
     @Inject() private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
-    @Inject() private readonly hashComparer: HashComparer
+    @Inject() private readonly hashComparer: HashComparer,
+    @Inject() private readonly encrypter: Encrypter,
+    @Inject() private readonly updateUserAccessTokenUseCase: UpdateUserAccessTokenUseCase
   ) { }
 
   @ServerErrorHandler
@@ -40,6 +42,12 @@ export class AuthenticationController implements Controller<UserEntity> {
 
     if (!passwordMatch)
       return badRequest(new PasswordDoNotMatchError())
+
+    const accessToken = await this.encrypter.encrypt(user.id)
+
+    await this.updateUserAccessTokenUseCase.call(user.id, accessToken)
+
+    user.accessToken = accessToken
 
     return ok(user)
   }
