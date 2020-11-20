@@ -13,5 +13,6 @@ export const mockUserModel = (userDto?: ModelDto<UserModel>): UserModel => ({
     city: fakeData.address.city(),
     state: fakeData.address.state()
   },
+  activeCompanyId: fakeData.entity.id(),
   ...userDto,
 })

@@ -48,5 +48,10 @@ export const userSchema: EntitySchema<UserEntity> = {
         ]
       }
     }
+  },
+  activeCompanyId: {
+    validations: [
+      isString
+    ]
   }
 }

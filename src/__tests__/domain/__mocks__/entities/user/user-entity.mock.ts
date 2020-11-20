@@ -12,5 +12,6 @@ export const mockUserEntity = (userDto?: Partial<Omit<UserEntity, 'id'>>): UserE
     city: fakeData.address.city(),
     state: fakeData.address.state()
   },
+  activeCompanyId: fakeData.entity.id(),
   ...userDto,
 })

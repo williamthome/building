@@ -10,5 +10,6 @@ export const mockUserEntityDto = (): Omit<UserEntity, 'id'> => ({
     street: fakeData.address.street(),
     city: fakeData.address.city(),
     state: fakeData.address.state()
-  }
+  },
+  activeCompanyId: fakeData.entity.id()
 })
