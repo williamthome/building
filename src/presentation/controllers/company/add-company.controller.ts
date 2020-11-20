@@ -9,22 +9,23 @@ import { ServerErrorHandler, ValidateRequest } from '@/presentation/decorators'
 import { AccessDeniedError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity, companyKeys } from '@/domain/entities'
-import { AddCompanyUseCase } from '@/domain/usecases'
+import { AddCompanyUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
 import { CompanyDto } from '@/domain/protocols'
 
 @Injectable()
 export class AddCompanyController implements Controller<CompanyEntity> {
 
   constructor (
-    @Inject() private readonly addCompanyUseCase: AddCompanyUseCase
+    @Inject() private readonly addCompanyUseCase: AddCompanyUseCase,
+    @Inject() private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase
   ) { }
 
-  @ServerErrorHandler
   @ValidateRequest<CompanyDto, CompanyEntity>({
     schema: companySchema,
     keys: companyKeys,
     nullable: false
   })
+  @ServerErrorHandler
   async handle (request: HttpRequest<CompanyDto>): HandleResponse<CompanyEntity> {
     const companyDto = request.body as CompanyDto
     const loggedUserId = request.loggedUserInfo?.id
@@ -39,6 +40,8 @@ export class AddCompanyController implements Controller<CompanyEntity> {
     }]
 
     const newCompany = await this.addCompanyUseCase.call(companyDto)
+
+    await this.updateUserActiveCompanyUseCase.call(loggedUserId, newCompany.id)
 
     return ok(newCompany)
   }
