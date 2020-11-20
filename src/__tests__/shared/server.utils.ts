@@ -40,5 +40,4 @@ export const stop = async (): Promise<void> => {
 
   await server.app.stop()
   await replSet.stop()
-  await new Promise(resolve => setTimeout(() => resolve(), 500))
 }

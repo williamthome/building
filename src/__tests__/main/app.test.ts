@@ -12,7 +12,6 @@ beforeEach(async (done) => {
 
 afterEach(async (done) => {
   await server.app.stop()
-  await new Promise(resolve => setTimeout(() => resolve(), 500))
   done()
 })
 
