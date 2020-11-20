@@ -1,20 +1,21 @@
 import request from 'supertest'
 import { HttpStatusCode } from '@/presentation/constants'
 import { mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities'
-import { Server } from '@/main/server'
+import { server, config, run, stop } from '@/__tests__/shared/server.utils.ts'
 
 describe('AddUser Route > POST /user', () => {
-  let server: Server
+  beforeAll(async (done) => {
+    await config()
+    done()
+  })
 
   beforeEach(async (done) => {
-    server = await new Server().config()
-    await server.run()
+    await run()
     done()
   })
 
   afterEach(async (done) => {
-    await server.app.stop()
-    await new Promise(resolve => setTimeout(() => resolve(), 500))
+    await stop()
     done()
   })
 
