@@ -1,4 +1,5 @@
 import { HttpHeaderName, HttpStatusCode } from '../constants'
+import { LoggedUserInfo } from './logged-user-info.protocol'
 
 // export type HttpHeaders = { [P in HttpHeaderName]?: string | undefined }
 export type HttpHeaders = Partial<Record<HttpHeaderName | string, string>>
@@ -11,6 +12,7 @@ export interface HttpRequest<T = unknown> {
   body?: T
   headers?: HttpHeaders
   params?: HttpParameters
+  loggedUserInfo: LoggedUserInfo
 }
 
 export interface HttpResponse<T = unknown> {
