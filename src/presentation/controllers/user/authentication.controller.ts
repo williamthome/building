@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 import { UserEntity } from '@/domain/entities'
 import { AuthDto } from '@/domain/protocols'
-import { AuthenticationUseCase } from '@/domain/usecases/user'
+import { GetUserByEmailUseCase } from '@/domain/usecases/user'
 import { ServerErrorHandler, ValidateRequest } from '@/presentation/decorators'
 import { badRequest, ok } from '@/presentation/factories/http.factory'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
@@ -13,7 +13,7 @@ import { CanNotFindEntityError, PasswordDoNotMatchError } from '@/presentation/e
 export class AuthenticationController implements Controller<UserEntity> {
 
   constructor (
-    @Inject() private readonly authenticationUseCase: AuthenticationUseCase,
+    @Inject() private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
     @Inject() private readonly hashComparer: HashComparer
   ) { }
 
@@ -28,7 +28,7 @@ export class AuthenticationController implements Controller<UserEntity> {
   })
   async handle (request: HttpRequest<AuthDto>): HandleResponse<UserEntity> {
     const authDto = request.body as AuthDto
-    const user = await this.authenticationUseCase.call(authDto)
+    const user = await this.getUserByEmailUseCase.call(authDto.email)
 
     if (!user)
       return badRequest(new CanNotFindEntityError('User'))
