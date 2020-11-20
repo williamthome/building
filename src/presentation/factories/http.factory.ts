@@ -17,6 +17,16 @@ export const badRequest = (error: Error): HttpResponse<Error> => ({
   body: error
 })
 
+export const forbidden = (error: Error): HttpResponse<Error> => ({
+  statusCode: HttpStatusCode.FORBIDDEN,
+  body: error
+})
+
+export const notFound = (error: Error): HttpResponse<Error> => ({
+  statusCode: HttpStatusCode.NOT_FOUND,
+  body: error
+})
+
 export const serverError = (error: Error): HttpResponse<Error> => ({
   statusCode: HttpStatusCode.INTERNAL_SERVER_ERROR,
   body: new ServerError(error.stack)
