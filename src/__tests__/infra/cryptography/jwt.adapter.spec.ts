@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 // : Shared
 import fakeData from '@/__tests__/shared/fake-data'
+import container from '@/shared/dependency-injection'
 // > In: infra layer
 import { JwtAdapter } from '@/infra/cryptography'
 // < Out: only data layer
@@ -28,7 +29,7 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const sut = new JwtAdapter(fakeSecret)
+  const sut = container.resolve<JwtAdapter>('encrypter')
   return {
     sut
   }
@@ -38,6 +39,13 @@ const makeSut = (): SutTypes => {
 
 describe('JWT Adapter', () => {
   describe('sign()', () => {
+    beforeEach(() => {
+      container.clear()
+      container.bind('encrypter').asNewable(JwtAdapter)
+      container.bind('decrypter').asNewable(JwtAdapter)
+      container.bind('JWT_SECRET').as(fakeSecret)
+    })
+
     test('Should call method with right values', async () => {
       const { sut } = makeSut()
       const signSpy = jest.spyOn(jwt, 'sign')

@@ -20,6 +20,7 @@ export class Server {
   private defineInjectedValues = (): void => {
     container.define('PORT').as(5051)
     container.define('DB_URL').as('mongodb://localhost:27001,localhost:27002,localhost:27003/building')
+    container.define('JWT_SECRET').as('building_jwt_secret')
   }
 
   public config = async (): Promise<Server> => {
