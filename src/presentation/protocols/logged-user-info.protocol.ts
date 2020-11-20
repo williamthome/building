@@ -1,5 +1,9 @@
 import { UserEntity } from '@/domain/entities'
 
-export interface LoggedUserInfo {
-  id?: UserEntity['id']
-}
+export type LoggedUserInfo =
+  Partial<
+    Pick<UserEntity,
+      | 'id'
+      | 'activeCompanyId'
+    >
+  >
