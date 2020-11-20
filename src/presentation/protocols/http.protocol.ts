@@ -12,7 +12,7 @@ export interface HttpRequest<T = unknown> {
   body?: T
   headers?: HttpHeaders
   params?: HttpParameters
-  loggedUserInfo: LoggedUserInfo
+  loggedUserInfo?: LoggedUserInfo
 }
 
 export interface HttpResponse<T = unknown> {

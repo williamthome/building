@@ -7,6 +7,6 @@ declare module 'fastify' {
     RawServer extends RawServerBase = RawServerDefault,
     RawRequest extends RawRequestDefaultExpression<RawServer> = RawRequestDefaultExpression<RawServer>
     > {
-    loggedUserInfo: LoggedUserInfo
+    loggedUserInfo?: LoggedUserInfo
   }
 }
