@@ -17,12 +17,12 @@ export class AddUserController implements Controller<UserEntity> {
     @Inject() private readonly addUserUseCase: AddUserUseCase
   ) { }
 
-  @ServerErrorHandler
   @ValidateRequest<UserDto, UserEntity>({
     schema: userSchema,
     keys: userKeys,
     nullable: false
   })
+  @ServerErrorHandler
   async handle (request: HttpRequest<UserDto>): HandleResponse<UserEntity> {
     const userDto = request.body as UserDto
     const newUser = await this.addUserUseCase.call(userDto)

@@ -19,7 +19,6 @@ export class AuthenticationController implements Controller<UserEntity> {
     @Inject() private readonly updateUserAccessTokenUseCase: UpdateUserAccessTokenUseCase
   ) { }
 
-  @ServerErrorHandler
   @ValidateRequest<AuthDto, UserEntity>({
     schema: authSchema,
     keys: {
@@ -28,6 +27,7 @@ export class AuthenticationController implements Controller<UserEntity> {
     },
     nullable: false
   })
+  @ServerErrorHandler
   async handle (request: HttpRequest<AuthDto>): HandleResponse<UserEntity> {
     const authDto = request.body as AuthDto
     const user = await this.getUserByEmailUseCase.call(authDto.email)

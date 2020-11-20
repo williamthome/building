@@ -18,12 +18,12 @@ export class UpdateUserController implements Controller<UserEntity> {
     @Inject() private readonly updateUserUseCase: UpdateUserUseCase
   ) { }
 
-  @ServerErrorHandler
   @ValidateRequest<UserDto, UserEntity>({
     schema: userSchema,
     keys: userKeys,
     nullable: true
   })
+  @ServerErrorHandler
   async handle (request: HttpRequest<UserDto>): HandleResponse<UserEntity> {
     const id = request.params?.id
 
