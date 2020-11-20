@@ -1,4 +1,4 @@
-import { EntityName } from '../constants'
+import { EntityName } from '@/domain/protocols'
 
 export class CanNotFindEntityError extends Error {
   constructor (entityName: EntityName) {
