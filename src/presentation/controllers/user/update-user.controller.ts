@@ -2,7 +2,7 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
-import { badRequest, ok } from '@/presentation/factories/http.factory'
+import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
 import { userSchema } from '@/presentation/schemas/user.schema'
 import { ServerErrorHandler, ValidateRequest } from '@/presentation/decorators'
 // < Out: only domain layer
@@ -34,7 +34,7 @@ export class UpdateUserController implements Controller<UserEntity> {
     const udpatedUser = await this.updateUserUseCase.call(id, userDto)
 
     if (!udpatedUser)
-      return badRequest(new CanNotFindEntityError('User'))
+      return notFound(new CanNotFindEntityError('User'))
 
     return ok(udpatedUser)
   }

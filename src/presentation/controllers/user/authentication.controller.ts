@@ -3,7 +3,7 @@ import { UserEntity } from '@/domain/entities'
 import { AuthDto } from '@/domain/protocols'
 import { GetUserByEmailUseCase, UpdateUserAccessTokenUseCase } from '@/domain/usecases/user'
 import { ServerErrorHandler, ValidateRequest } from '@/presentation/decorators'
-import { badRequest, ok } from '@/presentation/factories/http.factory'
+import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { authSchema } from '@/presentation/schemas'
 import { Encrypter, HashComparer } from '@/data/protocols/cryptography'
@@ -33,7 +33,7 @@ export class AuthenticationController implements Controller<UserEntity> {
     const user = await this.getUserByEmailUseCase.call(authDto.email)
 
     if (!user)
-      return badRequest(new CanNotFindEntityError('User'))
+      return notFound(new CanNotFindEntityError('User'))
 
     const passwordMatch = await this.hashComparer.match(
       authDto.password,
