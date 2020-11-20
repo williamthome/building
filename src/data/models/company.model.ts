@@ -4,7 +4,7 @@ import { Member } from '@/domain/entities/nested'
 
 export class CompanyModel extends Model implements CompanyEntity {
   constructor (
-    public readonly id: string,
+    public readonly id: Model['id'],
     public readonly name: string,
     public readonly members: Member[]
   ) {

@@ -4,7 +4,7 @@ import { Address } from '@/domain/entities/nested'
 
 export class UserModel extends Model implements UserEntity {
   constructor (
-    public readonly id: string,
+    public readonly id: Model['id'],
     public readonly email: string,
     public readonly password: string,
     public readonly name: string,
