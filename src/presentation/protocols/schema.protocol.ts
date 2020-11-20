@@ -22,6 +22,8 @@ export interface NestedSchemaOptions<T extends Record<PropertyKey, any>, P exten
 
 export type Schema<T extends Record<PropertyKey, any>> = {
   [P in keyof T]-?: T[P] extends Record<PropertyKey, any>
-  ? NestedSchemaOptions<T, P>
+  ? T[P] extends Array<any>
+    ? SchemaOptions
+    : NestedSchemaOptions<T, P>
   : SchemaOptions
 }
