@@ -17,6 +17,9 @@ export const userSchema: EntitySchema<UserEntity> = {
       minLength(6)
     ]
   },
+  accessToken: {
+    validations: []
+  },
   name: {
     validations: [
       required,
