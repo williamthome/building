@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@/shared/dependency-injection'
-import fastify, { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import { Route, WebServer, Controller, HttpHeaders, HttpParameters, HttpRequest } from '../protocols'
+import fastify, { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler } from 'fastify'
+import { Route, WebServer, Controller, HttpHeaders, HttpParameters, HttpRequest, Middleware } from '../protocols'
 
 @Injectable('webServer')
 export class Fastify implements WebServer {
@@ -57,10 +57,30 @@ export class Fastify implements WebServer {
       method: route.method,
       url: route.path,
       handler: this.adaptHttpResponse(route.controller),
-      preHandler: [
-        // middlewares
-      ]
+      preHandler: this.adaptMiddlewares<T>(route.middlewares)
     })
+  }
+
+  adaptMiddlewares = <T> (middlewares: Middleware[]): preHandlerHookHandler[] => {
+    const adapted: preHandlerHookHandler[] = []
+    for (const middleware of middlewares)
+      adapted.push(this.adaptMiddleware<T>(middleware))
+    return adapted
+  }
+
+  adaptMiddleware = <T> (middleware: Middleware): preHandlerHookHandler => {
+    return async (req: FastifyRequest, res: FastifyReply): Promise<FastifyReply> => {
+      const httpRequest: HttpRequest<T> = {
+        body: req.body as T,
+        headers: this.adaptHttpHeaders(req),
+        params: req.params as HttpParameters,
+        loggedUserInfo: req.loggedUserInfo
+      }
+      const httpResponse = await middleware.handle(httpRequest)
+      return httpResponse.body instanceof Error
+        ? res.status(httpResponse.statusCode).send({ error: httpResponse.body.message })
+        : res.status(httpResponse.statusCode).send(httpResponse.body)
+    }
   }
 
   adaptHttpResponse = <T> (controller: Controller<T>) => {
@@ -68,7 +88,8 @@ export class Fastify implements WebServer {
       const httpRequest: HttpRequest<T> = {
         body: req.body as T,
         headers: this.adaptHttpHeaders(req),
-        params: req.params as HttpParameters
+        params: req.params as HttpParameters,
+        loggedUserInfo: req.loggedUserInfo
       }
       const httpResponse = await controller.handle(httpRequest)
       return httpResponse.body instanceof Error

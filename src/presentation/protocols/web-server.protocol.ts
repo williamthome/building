@@ -2,12 +2,16 @@
 import {
   RouteAdapter,
   HttpResponseAdapter,
-  HttpHeadersAdapter
+  HttpHeadersAdapter,
+  MiddlewareAdapter,
+  MiddlewaresAdapter
 } from '../adapters'
 import { Route } from './route.protocol'
 
 export interface WebServer
 extends
+  MiddlewareAdapter<any>,
+  MiddlewaresAdapter<any>,
   RouteAdapter<any>,
   HttpResponseAdapter<any, any>,
   HttpHeadersAdapter<any>
