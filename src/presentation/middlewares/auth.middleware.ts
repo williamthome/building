@@ -23,19 +23,16 @@ export class AuthMiddleware implements Middleware {
 
       const accessToken = bearer.substring(7)
 
-      const user  = await this.getUserByAccessTokenUseCase.call(accessToken)
+      const user = await this.getUserByAccessTokenUseCase.call(accessToken)
       if (!user)
         return notFound(new CanNotFindEntityError('User'))
 
-      if (httpRequest.loggedUserInfo) {
-        httpRequest.loggedUserInfo.id = user.id
-      } else {
-        httpRequest.loggedUserInfo = {
-          id: user.id
-        }
-      }
+      const { id, activeCompanyId } = user
 
-      return ok(httpRequest.loggedUserInfo)
+      return ok({
+        id,
+        activeCompanyId
+      })
     } catch (error) {
       return serverError(error)
     }
