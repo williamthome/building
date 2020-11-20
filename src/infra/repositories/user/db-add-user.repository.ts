@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
-import { ModelDto } from '@/data/protocols/model.protocol'
-import { UserModel } from '@/data/models/user.model'
-import { AddUserRepository } from '@/data/repositories/user/add-user.repository'
+import { ModelDto } from '@/data/protocols'
+import { UserModel } from '@/data/models'
+import { AddUserRepository } from '@/data/repositories'
 import { Database } from '@/infra/protocols'
 
 @Injectable('addUserRepository')

@@ -1,5 +1,5 @@
 import { UserModel } from '@/data/models'
-import { GetUserByEmailRepository } from '@/data/repositories/user'
+import { GetUserByEmailRepository } from '@/data/repositories'
 import { Database } from '@/infra/protocols'
 import { Inject, Injectable } from '@/shared/dependency-injection'
 

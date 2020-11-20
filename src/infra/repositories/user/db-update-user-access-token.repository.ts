@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
-import { UserModel } from '@/data/models/user.model'
-import { UpdateUserAccessTokenRepository } from '@/data/repositories/user'
+import { UserModel } from '@/data/models'
+import { UpdateUserAccessTokenRepository } from '@/data/repositories'
 import { Database } from '@/infra/protocols'
 
 @Injectable('updateUserAccessTokenRepository')
