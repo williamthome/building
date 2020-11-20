@@ -1,4 +1,4 @@
-import fastify, { FastifyInstance, FastifyReply, FastifyRequest, HookHandlerDoneFunction, preHandlerHookHandler } from 'fastify'
+import fastify, { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler } from 'fastify'
 import { Injectable, Inject } from '@/shared/dependency-injection'
 import { HttpStatusCode } from '../constants'
 import { Route, WebServer, Controller, HttpHeaders, HttpParameters, HttpRequest, Middleware, LoggedUserInfo } from '../protocols'
@@ -70,7 +70,7 @@ export class Fastify implements WebServer {
   }
 
   adaptMiddleware = <T> (middleware: Middleware): preHandlerHookHandler => {
-    return async (req: FastifyRequest, res: FastifyReply, next: HookHandlerDoneFunction): Promise<void> => {
+    return async (req: FastifyRequest, res: FastifyReply): Promise<void> => {
       const httpRequest: HttpRequest<T> = {
         body: req.body as T,
         headers: this.adaptHttpHeaders(req),
@@ -83,10 +83,8 @@ export class Fastify implements WebServer {
       switch (httpResponse.statusCode) {
         case HttpStatusCode.OK:
           req.loggedUserInfo = httpResponse.body as LoggedUserInfo
-          next()
           break
         case HttpStatusCode.NO_CONTENT:
-          next()
           break
         default:
           res.status(httpResponse.statusCode).send({
