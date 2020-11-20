@@ -1,3 +1,5 @@
 export * from './http-headers.adapter'
 export * from './http-response.adapter'
 export * from './route.adapter'
+export * from './middleware.adapter'
+export * from './middlewares.adapter'
