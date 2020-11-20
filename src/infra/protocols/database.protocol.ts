@@ -1,4 +1,5 @@
 import { Model } from '@/data/protocols/model.protocol'
+import { CollectionName } from '@/shared/types'
 
 export interface Database {
   dbUrl: string
@@ -7,19 +8,19 @@ export interface Database {
   isConnected: boolean
   addOne: <TModel extends Model, TOptions = unknown> (
     payload: Partial<TModel>,
-    collectionName: string,
+    collectionName: CollectionName,
     options?: TOptions
   ) => Promise<TModel>,
   updateOne: <TModel extends Model, TOptions = unknown> (
     id: Model['id'],
     payload: Partial<TModel>,
-    collectionName: string,
+    collectionName: CollectionName,
     options?: TOptions
   ) => Promise<TModel | null>,
   getOneBy: <TModel extends Model, TValue, TOptions = unknown> (
     field: keyof TModel,
     value: TValue,
-    collectionName: string,
+    collectionName: CollectionName,
     options?: TOptions
   ) => Promise<TModel | null>
 }

@@ -1,7 +1,8 @@
-import { Injectable, Inject } from '@/shared/dependency-injection'
 import { MongoClient, ClientSession, ObjectId, Collection, CollectionInsertOneOptions } from 'mongodb'
+import { Injectable, Inject } from '@/shared/dependency-injection'
+import { CollectionName } from '@/shared/types'
 import { Database } from '@/infra/protocols'
-import { Model } from '@/data/protocols/model.protocol'
+import { Model } from '@/data/protocols'
 
 @Injectable('db')
 export class MongoDB implements Database {
@@ -87,7 +88,7 @@ export class MongoDB implements Database {
 
   addOne = async <T extends Model> (
     payload: Partial<T>,
-    collectionName: string,
+    collectionName: CollectionName,
     options?: Omit<CollectionInsertOneOptions, 'session'>
   ): Promise<T> => {
     const collection = await this.getCollection(collectionName)
@@ -105,7 +106,7 @@ export class MongoDB implements Database {
   updateOne = async <T extends Model> (
     id: Model['id'],
     payload: Partial<T>,
-    collectionName: string,
+    collectionName: CollectionName,
     options?: Omit<CollectionInsertOneOptions, 'session'>
   ): Promise<T | null> => {
     const collection = await this.getCollection(collectionName)
@@ -124,7 +125,7 @@ export class MongoDB implements Database {
   getOneBy = async <T extends Model, V> (
     field: keyof T,
     value: V,
-    collectionName: string,
+    collectionName: CollectionName,
     options?: Omit<CollectionInsertOneOptions, 'session'>
   ): Promise<T | null> => {
     const collection = await this.getCollection(collectionName)
