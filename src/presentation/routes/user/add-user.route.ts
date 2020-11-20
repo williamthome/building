@@ -1,6 +1,6 @@
 import { UserEntity } from '@/domain/entities'
 import { AddUserController } from '@/presentation/controllers'
-import { Controller, HttpMethods, Route, RouteRequirement } from '@/presentation/protocols'
+import { Controller, HttpMethods, Middleware, Route, RouteRequirement } from '@/presentation/protocols'
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
 
 @InjectableArray('routes')
@@ -12,4 +12,5 @@ export class AddUserRoute implements Route<UserEntity> {
   get method(): HttpMethods { return 'POST' }
   get path(): string { return '/user' }
   get requirement(): RouteRequirement { return 'none' }
+  get middlewares(): Middleware[] { return [] }
 }

@@ -1,6 +1,6 @@
 import { UserEntity } from '@/domain/entities'
 import { UpdateUserController } from '@/presentation/controllers'
-import { Controller, HttpMethods, Route, RouteRequirement } from '@/presentation/protocols'
+import { Controller, HttpMethods, Middleware, Route, RouteRequirement } from '@/presentation/protocols'
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
 
 @InjectableArray('routes')
@@ -12,4 +12,5 @@ export class UpdateUserRoute implements Route<UserEntity> {
   get method(): HttpMethods { return 'PATCH' }
   get path(): string { return '/user/:id' }
   get requirement(): RouteRequirement { return 'none' }
+  get middlewares(): Middleware[] { return [] }
 }

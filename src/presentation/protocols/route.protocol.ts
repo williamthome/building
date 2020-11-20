@@ -1,4 +1,5 @@
 import { Controller, HttpMethods } from '../protocols'
+import { Middleware } from './middleware.protocol'
 
 export type RouteRequirement = 'admin' | 'auth' | 'master' | 'none'
 
@@ -8,4 +9,5 @@ export interface Route<T> {
   controller: Controller<T>
   requirement: RouteRequirement
   permissions?: number
+  middlewares: Middleware[]
 }
