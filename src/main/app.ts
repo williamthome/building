@@ -21,7 +21,7 @@ export class Application implements App {
   }
 
   stop = async (): Promise<App> => {
-    console.log('Stoping...')
+    console.log('Stopping...')
     await this.webServer.close()
     await this.db.disconnect()
     console.log('App is stopped')
