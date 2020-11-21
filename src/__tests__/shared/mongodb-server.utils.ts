@@ -1,52 +1,37 @@
-import { MongoMemoryReplSet } from 'mongodb-memory-server'
 import container from '@/shared/dependency-injection'
 import fakeData from './fake-data'
-import { Server } from '@/main/server'
-import { Database } from '@/infra/protocols'
 import { mockUserEntityDto } from '../domain/__mocks__/entities'
 import { UserModel } from '@/data/models'
 import { UserDto } from '@/domain/protocols'
+import { Database } from '@/infra/protocols'
+import { WebServer } from '@/main/protocols'
+import { MongoMemoryReplSet } from 'mongodb-memory-server'
+import { Server } from '@/main/server'
 
-let replSet: MongoMemoryReplSet
-let uri: string
-export let server: Server
-export let db: Database
+export const db = (): Database => container.resolve<Database>('db')
+export const webServer = (): WebServer => container.resolve<WebServer>('webServer')
+export const replSet = (): MongoMemoryReplSet => container.resolve(MongoMemoryReplSet)
 
 export const config = async (): Promise<void> => {
-  if (!replSet) {
-    replSet = new MongoMemoryReplSet({
+  if (!container.has(Server)) {
+    const replSet = new MongoMemoryReplSet({
       replSet: {
         storageEngine: 'wiredTiger',
-        count: 3,
+        count: 2,
         name: 'rstest',
         dbName: 'building-test'
       }
     })
+    await replSet.waitUntilRunning()
+    const uri = await replSet.getUri()
+    const server = await new Server().config()
+
+    container.define(MongoMemoryReplSet).as(replSet).pinned().done()
+    container.define(Server).as(server).pinned().done()
+    container.define('webServer').as(server.app.webServer).pinned().done()
+    container.define('db').as(server.app.db).pinned().done()
+    container.define('DB_URL').as(uri).pinned().done()
   }
-  if (!server) {
-    server = await new Server().config()
-  }
-}
-
-export const run = async (): Promise<void> => {
-  if (!replSet || !server)
-    throw new Error('Use config method before run')
-
-  await replSet.waitUntilRunning()
-
-  if (!uri) uri = await replSet.getUri()
-  container.define('DB_URL').as(uri)
-
-  await server.run()
-  db = server.app.db
-}
-
-export const stop = async (): Promise<void> => {
-  if (!replSet || !server)
-    throw new Error('Use run method before stop')
-
-  await server.app.stop()
-  await replSet.stop()
 }
 
 export const addUserAndAuthenticate = async (): Promise<{
@@ -54,6 +39,7 @@ export const addUserAndAuthenticate = async (): Promise<{
 }> => {
   const accessToken = fakeData.entity.token()
   const userDto: UserDto = { ...mockUserEntityDto(), accessToken }
+  const db = container.resolve<Database>('db')
   const user = await db.addOne<UserModel>(userDto, 'users')
   return { user, accessToken }
 }

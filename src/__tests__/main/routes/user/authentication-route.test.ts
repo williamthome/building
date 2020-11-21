@@ -1,35 +1,38 @@
 import request from 'supertest'
 import { HttpStatusCode } from '@/presentation/constants'
 import { mockAuthDto, mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities'
-import { server, db, config, run, stop } from '@/__tests__/shared/mongodb-server.utils'
+import { config, db, replSet, webServer } from '@/__tests__/shared/mongodb-server.utils'
 
 describe('Authentication Route > POST /login', () => {
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     await config()
-    done()
+    await db().connect()
   })
 
-  beforeEach(async (done) => {
-    await run()
-    await db.clearCollection('users')
-    done()
+  beforeEach(async () => {
+    await db().clearCollection('users')
+    await webServer().listen()
   })
 
-  afterEach(async (done) => {
-    await stop()
-    done()
+  afterEach(async () => {
+    await webServer().close()
+  })
+
+  afterAll(async () => {
+    await db().disconnect()
+    await replSet().stop()
   })
 
   it('shold return ok', async () => {
     const authDto = mockAuthDto()
 
     // add user
-    await request(server.app.webServer.server())
+    await request(webServer().server())
       .post('/user')
       .send(mockUserEntityDto(authDto))
 
     // login
-    await request(server.app.webServer.server())
+    await request(webServer().server())
       .post('/login')
       .send(authDto)
       .expect(HttpStatusCode.OK)

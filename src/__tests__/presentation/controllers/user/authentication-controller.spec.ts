@@ -47,12 +47,11 @@ const makeSut = (): SutTypes => {
 
 describe('AddUser Controller', () => {
   beforeEach(() => {
-    container.clear()
-    container.bind('getUserByEmailUseCase').asNewable(GetUserByEmailUseCaseSpy)
-    container.bind('hashComparer').asNewable(HashComparerSpy)
-    container.bind('encrypter').asNewable(EncrypterSpy)
-    container.bind('updateUserAccessTokenUseCase').asNewable(UpdateUserAccessTokenUseCaseSpy)
-    container.bind(AuthenticationController).asNewable(AuthenticationController)
+    container.define('getUserByEmailUseCase').asNewable(GetUserByEmailUseCaseSpy).done()
+    container.define('hashComparer').asNewable(HashComparerSpy).done()
+    container.define('encrypter').asNewable(EncrypterSpy).done()
+    container.define('updateUserAccessTokenUseCase').asNewable(UpdateUserAccessTokenUseCaseSpy).done()
+    container.define(AuthenticationController).asNewable(AuthenticationController).done()
   })
 
   describe('GetUserByEmail UseCase', () => {

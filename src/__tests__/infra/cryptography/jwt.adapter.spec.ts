@@ -40,10 +40,9 @@ const makeSut = (): SutTypes => {
 describe('JWT Adapter', () => {
   describe('sign()', () => {
     beforeEach(() => {
-      container.clear()
-      container.bind('encrypter').asNewable(JwtAdapter)
-      container.bind('decrypter').asNewable(JwtAdapter)
-      container.bind('JWT_SECRET').as(fakeSecret)
+      container.define('encrypter').asNewable(JwtAdapter).done()
+      container.define('decrypter').asNewable(JwtAdapter).done()
+      container.define('JWT_SECRET').as(fakeSecret).done()
     })
 
     test('Should call method with right values', async () => {

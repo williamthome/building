@@ -11,25 +11,21 @@ let mongoMemoryServer: MongoMemoryServer
 //#endregion Factories
 
 describe('MongoDB Database', () => {
-  beforeEach(async (done) => {
+  beforeAll(async () => {
     mongoMemoryServer = new MongoMemoryServer()
     const dbUrl = await mongoMemoryServer.getUri()
 
-    container.clear()
-    container.bind('DB_URL').as(dbUrl)
-    container.bind(MongoDB).asNewable(MongoDB)
+    container.define('DB_URL').as(dbUrl).done()
+    container.define(MongoDB).asNewable(MongoDB).done()
 
     mongodb = container.resolve(MongoDB)
     await mongodb.connect()
-
-    done()
   })
 
-  afterEach(async (done) => {
+  afterAll(async () => {
     if (mongodb.isConnected)
       await mongodb.disconnect()
     await mongoMemoryServer.stop()
-    done()
   })
 
   describe('connect()', () => {
@@ -70,6 +66,7 @@ describe('MongoDB Database', () => {
       await mongodb.addOne({}, 'users')
       nDocs = await collection.countDocuments()
       expect(nDocs).toBe(1)
+      await mongodb.clearCollection('users')
     })
   })
 
@@ -77,6 +74,7 @@ describe('MongoDB Database', () => {
     it('should return truthy', async () => {
       const { id } = await mongodb.addOne({}, 'users')
       await expect(mongodb.getOneBy('id', id, 'users')).resolves.toBeTruthy()
+      await mongodb.clearCollection('users')
     })
 
     it('should return falsy', async () => {
@@ -94,6 +92,7 @@ describe('MongoDB Database', () => {
       await mongodb.updateOne<any>(id, { field: 'updated' }, 'users')
       const updated = await mongodb.getOneBy<any, any>('id', id, 'users')
       expect(updated.field).toBe('updated')
+      await mongodb.clearCollection('users')
     })
   })
 })

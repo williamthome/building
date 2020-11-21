@@ -1,29 +1,32 @@
 import request from 'supertest'
-import { server, db, config, run, stop, addUserAndAuthenticate } from '@/__tests__/shared/mongodb-server.utils'
+import { addUserAndAuthenticate, config, db, replSet, webServer } from '@/__tests__/shared/mongodb-server.utils'
 import { makeBearer } from '../../helpers/route.helper'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities'
 
 describe('UpdateUser Route > PATCH /user/:id', () => {
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     await config()
-    done()
+    await db().connect()
   })
 
-  beforeEach(async (done) => {
-    await run()
-    await db.clearCollection('users')
-    done()
+  beforeEach(async () => {
+    await db().clearCollection('users')
+    await webServer().listen()
   })
 
-  afterEach(async (done) => {
-    await stop()
-    done()
+  afterEach(async () => {
+    await webServer().close()
+  })
+
+  afterAll(async () => {
+    await db().disconnect()
+    await replSet().stop()
   })
 
   it('shold return ok', async () => {
     const { user, accessToken } = await addUserAndAuthenticate()
-    await request(server.app.webServer.server())
+    await request(webServer().server())
       .patch(`/user/${user.id}`)
       .set(HttpHeaderName.AUTHORIZATION, makeBearer(accessToken))
       .send(mockUserEntityDto())

@@ -23,9 +23,8 @@ const makeSut = (): SutTypes => {
 
 describe('GetUserByEmail Contract', () => {
   beforeEach(() => {
-    container.clear()
-    container.bind('getUserByEmailRepository').asNewable(GetUserByEmailRepositorySpy)
-    container.bind(GetUserByEmailContract).asNewable(GetUserByEmailContract)
+    container.define('getUserByEmailRepository').asNewable(GetUserByEmailRepositorySpy).done()
+    container.define(GetUserByEmailContract).asNewable(GetUserByEmailContract).done()
   })
 
   describe('GetUserByEmail Repository', () => {

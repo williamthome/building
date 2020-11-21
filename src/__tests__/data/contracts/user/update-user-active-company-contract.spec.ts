@@ -23,9 +23,8 @@ const makeSut = (): SutTypes => {
 
 describe('UpdateUserActiveCompany Contract', () => {
   beforeEach(() => {
-    container.clear()
-    container.bind('updateUserActiveCompanyRepository').asNewable(UpdateUserActiveCompanyRepositorySpy)
-    container.bind(UpdateUserActiveCompanyContract).asNewable(UpdateUserActiveCompanyContract)
+    container.define('updateUserActiveCompanyRepository').asNewable(UpdateUserActiveCompanyRepositorySpy).done()
+    container.define(UpdateUserActiveCompanyContract).asNewable(UpdateUserActiveCompanyContract).done()
   })
 
   describe('UpdateUserActiveCompany Repository', () => {

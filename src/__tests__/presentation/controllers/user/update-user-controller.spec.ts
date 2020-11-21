@@ -40,9 +40,8 @@ const makeSut = (): SutTypes => {
 
 describe('UpdateUser Controller', () => {
   beforeEach(() => {
-    container.clear()
-    container.bind('updateUserUseCase').asNewable(UpdateUserUseCaseSpy)
-    container.bind(UpdateUserController).asNewable(UpdateUserController)
+    container.define('updateUserUseCase').asNewable(UpdateUserUseCaseSpy).done()
+    container.define(UpdateUserController).asNewable(UpdateUserController).done()
   })
 
   describe('UpdateUser UseCase', () => {
