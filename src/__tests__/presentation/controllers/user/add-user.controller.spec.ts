@@ -4,7 +4,7 @@ import { AddUserController } from '@/presentation/controllers'
 import { ok, serverError } from '@/presentation/factories/http.factory'
 import { HttpRequest } from '@/presentation/protocols'
 import { mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities/user/user-entity-dto.mock'
-import { AddUserUseCaseSpy } from '@/__tests__/presentation/__spys__/usecases/add-user-usecase.spy'
+import { AddUserUseCaseSpy } from '@/__tests__/domain/__spys__/usecases/add-user-usecase.spy'
 // < Out: only domain layer
 import { UserEntity } from '@/domain/entities'
 
