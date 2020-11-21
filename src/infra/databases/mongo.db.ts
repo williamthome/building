@@ -78,13 +78,13 @@ export class MongoDB implements Database {
     return mapped
   }
 
-  getCollection = async <T> (name: string): Promise<Collection<T>> => {
+  getCollection = async <T> (collectionName: CollectionName): Promise<Collection<T>> => {
     if (!this._client || !this.isConnected) {
       console.warn('Mongo isn\'t connected. Reconnecting...')
       await this.connect()
     }
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this._client!.db().collection(name)
+    return this._client!.db().collection(collectionName)
   }
 
   addOne = async <T extends Model> (
@@ -111,12 +111,17 @@ export class MongoDB implements Database {
     options?: Omit<CollectionInsertOneOptions, 'session'>
   ): Promise<T | null> => {
     const collection = await this.getCollection(collectionName)
+
+    if (typeof payload === 'object' && Object.entries(payload).length === 0)
+      return this.getOneBy<T, unknown>('id', id, collectionName)
+
     const result = await collection.findOneAndUpdate(
       { _id: new ObjectId(id) },
       { $set: payload },
       {
         ...options,
-        session: this.session
+        session: this.session,
+        returnOriginal: false
       }
     )
     const { value } = result
@@ -125,17 +130,20 @@ export class MongoDB implements Database {
 
   getOneBy = async <T extends Model, V> (
     field: keyof T,
-    value: V,
+    toSearch: V,
     collectionName: CollectionName,
     options?: Omit<CollectionInsertOneOptions, 'session'>
   ): Promise<T | null> => {
     const collection = await this.getCollection(collectionName)
-    const model = await collection.findOne({
-      [field]: value
-    }, {
-      ...options,
-      session: this.session
-    })
+    const model = await collection.findOne(
+      field === 'id'
+        ? { _id: new ObjectId(toSearch as unknown as Model['id']) }
+        : { [field]: toSearch },
+      {
+        ...options,
+        session: this.session
+      }
+    )
     return model ? this.map<T>(model) : null
   }
 

@@ -19,7 +19,7 @@ export interface Database {
   ) => Promise<TModel | null>,
   getOneBy: <TModel extends Model, TValue, TOptions = unknown> (
     field: keyof TModel,
-    value: TValue,
+    toSearch: TValue,
     collectionName: CollectionName,
     options?: TOptions
   ) => Promise<TModel | null>,
