@@ -1,7 +1,7 @@
 import request from 'supertest'
 import { HttpStatusCode } from '@/presentation/constants'
 import { mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities'
-import { server, config, run, stop } from '@/__tests__/shared/server.utils.ts'
+import { server, config, run, stop } from '@/__tests__/shared/mongodb-server.utils'
 
 describe('AddUser Route > POST /user', () => {
   beforeAll(async (done) => {
