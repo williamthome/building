@@ -1,5 +1,5 @@
 import { UserModel } from '@/data/models'
-import { GetUserByEmailRepository } from '@/data/repositories/user'
+import { GetUserByEmailRepository } from '@/data/repositories'
 import { mockUserModel } from '@/__tests__/data/__mocks__/models'
 
 export class GetUserByEmailRepositorySpy implements GetUserByEmailRepository {

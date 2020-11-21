@@ -1,5 +1,5 @@
 import { UserModel } from '@/data/models'
-import { GetUserByAccessTokenRepository } from '@/data/repositories/user'
+import { GetUserByAccessTokenRepository } from '@/data/repositories'
 import { mockUserModel } from '@/__tests__/data/__mocks__/models'
 
 export class GetUserByAccessTokenRepositorySpy implements GetUserByAccessTokenRepository {
