@@ -30,9 +30,14 @@ export default {
   // An array of regexp pattern strings used to skip coverage collection
   coveragePathIgnorePatterns: [
     '/node_modules/',
-    'types\\.ts',
-    'index\\.ts',
-    '.+\\.d\\.ts'
+    'domain/usecases/',
+    'data/models/',
+    'data/repositories/',
+    'main/adapters/',
+    'shared/',
+    '.+\\.d\\.ts',
+    'index.ts',
+    '.protocol.ts'
   ],
 
   // Indicates which provider should be used to instrument code for coverage
