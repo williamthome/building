@@ -1,7 +1,11 @@
 import { MongoMemoryReplSet } from 'mongodb-memory-server'
 import container from '@/shared/dependency-injection'
+import fakeData from './fake-data'
 import { Server } from '@/main/server'
 import { Database } from '@/infra/protocols'
+import { mockUserEntityDto } from '../domain/__mocks__/entities'
+import { UserModel } from '@/data/models'
+import { UserDto } from '@/domain/protocols'
 
 let replSet: MongoMemoryReplSet
 let uri: string
@@ -43,4 +47,13 @@ export const stop = async (): Promise<void> => {
 
   await server.app.stop()
   await replSet.stop()
+}
+
+export const addUserAndAuthenticate = async (): Promise<{
+  user: UserModel, accessToken: UserModel['accessToken']
+}> => {
+  const accessToken = fakeData.entity.token()
+  const userDto: UserDto = { ...mockUserEntityDto(), accessToken }
+  const user = await db.addOne<UserModel>(userDto, 'users')
+  return { user, accessToken }
 }
