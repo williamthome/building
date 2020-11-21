@@ -1,4 +1,4 @@
-import { Controller, HttpMethods } from '../protocols'
+import { Controller, HttpMethods } from '../../presentation/protocols'
 import { Middleware } from './middleware.protocol'
 
 export type RouteRequirement = 'admin' | 'auth' | 'master' | 'none'

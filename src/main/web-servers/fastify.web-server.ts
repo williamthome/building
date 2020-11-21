@@ -1,7 +1,8 @@
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler } from 'fastify'
 import { Injectable, Inject } from '@/shared/dependency-injection'
-import { HttpStatusCode } from '../constants'
-import { Route, WebServer, Controller, HttpHeaders, HttpParameters, HttpRequest, Middleware, LoggedUserInfo } from '../protocols'
+import { Middleware, Route, WebServer } from '../protocols'
+import { HttpStatusCode } from '@/presentation/constants'
+import { Controller, HttpHeaders, HttpParameters, HttpRequest, LoggedUserInfo } from '@/presentation/protocols'
 
 @Injectable('webServer')
 export class Fastify implements WebServer {

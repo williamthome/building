@@ -1,6 +1,5 @@
 import { Injectable, Inject } from '@/shared/dependency-injection'
-import { App } from './protocols'
-import { WebServer } from '@/presentation/protocols'
+import { App, WebServer } from './protocols'
 import { Database } from '@/infra/protocols'
 
 @Injectable('app')

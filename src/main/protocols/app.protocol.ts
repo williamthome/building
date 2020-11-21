@@ -1,5 +1,5 @@
+import { WebServer } from '.'
 import { Database } from '@/infra/protocols'
-import { WebServer } from '@/presentation/protocols'
 
 export interface App {
   webServer: WebServer

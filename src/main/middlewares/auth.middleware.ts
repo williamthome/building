@@ -1,9 +1,10 @@
-import { GetUserByAccessTokenUseCase } from '@/domain/usecases'
 import { Inject, Injectable } from '@/shared/dependency-injection'
-import { HttpHeaderName } from '../constants'
-import { AccessDeniedError, CanNotFindEntityError } from '../errors'
-import { forbidden, notFound, ok, serverError } from '../factories/http.factory'
-import { HttpRequest, HttpResponse, LoggedUserInfo, Middleware } from '../protocols'
+import { Middleware } from '../protocols'
+import { HttpHeaderName } from '@/presentation/constants'
+import { AccessDeniedError, CanNotFindEntityError } from '@/presentation/errors'
+import { forbidden, notFound, ok, serverError } from '@/presentation/factories/http.factory'
+import { HttpRequest, HttpResponse, LoggedUserInfo } from '@/presentation/protocols'
+import { GetUserByAccessTokenUseCase } from '@/domain/usecases'
 
 @Injectable()
 export class AuthMiddleware implements Middleware {

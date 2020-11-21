@@ -1,8 +1,9 @@
-import { CompanyEntity } from '@/domain/entities'
-import { AddCompanyController } from '@/presentation/controllers'
-import { AuthMiddleware } from '@/presentation/middlewares'
-import { Controller, HttpMethods, Middleware, Route, RouteRequirement } from '@/presentation/protocols'
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
+import { AuthMiddleware } from '@/main/middlewares'
+import { Middleware, Route, RouteRequirement } from '@/main/protocols'
+import { AddCompanyController } from '@/presentation/controllers'
+import { Controller, HttpMethods } from '@/presentation/protocols'
+import { CompanyEntity } from '@/domain/entities'
 
 @InjectableArray('routes')
 export class AddCompanyRoute implements Route<CompanyEntity> {

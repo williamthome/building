@@ -11,9 +11,9 @@ export class Server {
     await import('@/infra/repositories')
     await import('@/infra/cryptography')
     await import('@/data/contracts')
-    await import('@/presentation/middlewares')
-    await import('@/presentation/routes')
-    await import('@/presentation/web-servers')
+    await import('@/main/middlewares')
+    await import('@/main/routes')
+    await import('@/main/web-servers')
     await import('@/presentation/controllers')
     await import('@/main/app')
   }

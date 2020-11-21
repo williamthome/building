@@ -1,7 +1,8 @@
-import { UserEntity } from '@/domain/entities'
-import { AddUserController } from '@/presentation/controllers'
-import { Controller, HttpMethods, Middleware, Route, RouteRequirement } from '@/presentation/protocols'
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
+import { Middleware, Route, RouteRequirement } from '@/main/protocols'
+import { AddUserController } from '@/presentation/controllers'
+import { Controller, HttpMethods } from '@/presentation/protocols'
+import { UserEntity } from '@/domain/entities'
 
 @InjectableArray('routes')
 export class AddUserRoute implements Route<UserEntity> {
