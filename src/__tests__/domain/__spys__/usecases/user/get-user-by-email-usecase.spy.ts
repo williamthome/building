@@ -5,6 +5,7 @@ import { mockUserEntity } from '@/__tests__/domain/__mocks__/entities'
 export class GetUserByEmailUseCaseSpy implements GetUserByEmailUseCase {
   email?: UserEntity['email']
   userEntity?: UserEntity | null
+  override?: Partial<UserEntity>
   shouldReturnNull = false
   shouldThrow = false
 
@@ -15,7 +16,7 @@ export class GetUserByEmailUseCaseSpy implements GetUserByEmailUseCase {
 
     this.userEntity = this.shouldReturnNull
       ? null
-      : { ...mockUserEntity(), email }
+      : { ...mockUserEntity(), email, ...this.override }
 
     return this.userEntity
   }
