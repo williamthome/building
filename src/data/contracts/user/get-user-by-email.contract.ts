@@ -1,9 +1,9 @@
 // : Shared
 import { Inject, Injectable } from '@/shared/dependency-injection'
 // > Data
-import { GetUserByEmailRepository } from '@/data/repositories/user'
+import { GetUserByEmailRepository } from '@/data/repositories'
 // < Only Domain
-import { GetUserByEmailUseCase } from '@/domain/usecases/user'
+import { GetUserByEmailUseCase } from '@/domain/usecases'
 import { UserEntity } from '@/domain/entities'
 
 @Injectable('getUserByEmailUseCase')

@@ -1,10 +1,10 @@
 // : Shared
 import { Injectable, Inject } from '@/shared/dependency-injection'
 // > Data
-import { AddCompanyRepository } from '@/data/repositories/company'
+import { AddCompanyRepository } from '@/data/repositories'
 // < Only Domain
 import { CompanyEntity } from '@/domain/entities'
-import { AddCompanyUseCase } from '@/domain/usecases/company'
+import { AddCompanyUseCase } from '@/domain/usecases'
 import { CompanyDto } from '@/domain/protocols'
 
 @Injectable('addCompanyUseCase')

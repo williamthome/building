@@ -1,9 +1,9 @@
 // : Shared
 import { Inject, Injectable } from '@/shared/dependency-injection'
 // > Data
-import { UpdateUserAccessTokenRepository } from '@/data/repositories/user'
+import { UpdateUserAccessTokenRepository } from '@/data/repositories'
 // < Only Domain
-import { UpdateUserAccessTokenUseCase } from '@/domain/usecases/user'
+import { UpdateUserAccessTokenUseCase } from '@/domain/usecases'
 import { UserEntity } from '@/domain/entities'
 
 @Injectable('updateUserAccessTokenUseCase')
