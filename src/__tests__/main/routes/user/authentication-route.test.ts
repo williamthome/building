@@ -1,7 +1,7 @@
 import request from 'supertest'
 import { HttpStatusCode } from '@/presentation/constants'
 import { mockAuthDto, mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities'
-import { config, db, replSet, webServer } from '@/__tests__/shared/mongodb-server.utils'
+import { config, db, mongoInMemory, webServer } from '@/__tests__/shared/mongodb-server.utils'
 
 describe('Authentication Route > POST /login', () => {
   beforeAll(async () => {
@@ -20,7 +20,7 @@ describe('Authentication Route > POST /login', () => {
 
   afterAll(async () => {
     await db().disconnect()
-    await replSet().stop()
+    await mongoInMemory().stop()
   })
 
   it('shold return ok', async () => {

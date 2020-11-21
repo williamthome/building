@@ -1,7 +1,7 @@
 import request from 'supertest'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { mockCompanyEntityDto } from '@/__tests__/domain/__mocks__/entities'
-import { addUserAndAuthenticate, config, db, replSet, webServer } from '@/__tests__/shared/mongodb-server.utils'
+import { addUserAndAuthenticate, config, db, mongoInMemory, webServer } from '@/__tests__/shared/mongodb-server.utils'
 import { makeBearer } from '../../helpers/route.helper'
 
 describe('AddCompany Route > POST /company', () => {
@@ -22,7 +22,7 @@ describe('AddCompany Route > POST /company', () => {
 
   afterAll(async () => {
     await db().disconnect()
-    await replSet().stop()
+    await mongoInMemory().stop()
   })
 
   it('shold return ok', async () => {

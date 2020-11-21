@@ -1,5 +1,5 @@
 import request from 'supertest'
-import { addUserAndAuthenticate, config, db, replSet, webServer } from '@/__tests__/shared/mongodb-server.utils'
+import { addUserAndAuthenticate, config, db, mongoInMemory, webServer } from '@/__tests__/shared/mongodb-server.utils'
 import { makeBearer } from '../../helpers/route.helper'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities'
@@ -21,7 +21,7 @@ describe('UpdateUser Route > PATCH /user/:id', () => {
 
   afterAll(async () => {
     await db().disconnect()
-    await replSet().stop()
+    await mongoInMemory().stop()
   })
 
   it('shold return ok', async () => {
