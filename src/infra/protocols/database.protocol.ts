@@ -22,5 +22,6 @@ export interface Database {
     value: TValue,
     collectionName: CollectionName,
     options?: TOptions
-  ) => Promise<TModel | null>
+  ) => Promise<TModel | null>,
+  clearCollection: (collectionName: CollectionName) => Promise<void>
 }

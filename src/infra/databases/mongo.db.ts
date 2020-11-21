@@ -3,6 +3,7 @@ import { Injectable, Inject } from '@/shared/dependency-injection'
 import { CollectionName } from '@/shared/types'
 import { Database } from '@/infra/protocols'
 import { Model } from '@/data/protocols'
+import { AccessDeniedError } from '@/presentation/errors'
 
 @Injectable('db')
 export class MongoDB implements Database {
@@ -136,5 +137,13 @@ export class MongoDB implements Database {
       session: this.session
     })
     return model ? this.map<T>(model) : null
+  }
+
+  clearCollection = async (collectionName: CollectionName): Promise<void> => {
+    if (process.env.NODE_ENV === 'production')
+      throw new AccessDeniedError()
+
+    const collection = await this.getCollection(collectionName)
+    await collection.deleteMany({})
   }
 }
