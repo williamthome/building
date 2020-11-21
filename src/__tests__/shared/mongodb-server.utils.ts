@@ -1,10 +1,12 @@
 import { MongoMemoryReplSet } from 'mongodb-memory-server'
 import container from '@/shared/dependency-injection'
 import { Server } from '@/main/server'
+import { Database } from '@/infra/protocols'
 
 let replSet: MongoMemoryReplSet
 let uri: string
 export let server: Server
+export let db: Database
 
 export const config = async (): Promise<void> => {
   if (!replSet) {
@@ -32,6 +34,7 @@ export const run = async (): Promise<void> => {
   container.define('DB_URL').as(uri)
 
   await server.run()
+  db = server.app.db
 }
 
 export const stop = async (): Promise<void> => {
