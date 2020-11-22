@@ -16,14 +16,14 @@ export class AuthMiddleware implements Middleware {
 
   @HandleLogError
   async handle (httpRequest: HttpRequest): HandleResponse<LoggedUserInfo> {
-    const bearer: string | undefined =
+    const authorization: string | undefined =
       httpRequest.headers?.[HttpHeaderName.AUTHORIZATION] ||
       httpRequest.headers?.[HttpHeaderName.AUTHORIZATION.toLowerCase()]
 
-    if (!bearer || !bearer.startsWith('Bearer '))
+    if (!authorization || !authorization.startsWith('Bearer '))
       return forbidden(new AccessDeniedError())
 
-    const accessToken = bearer.substring(7)
+    const accessToken = authorization.substring(7)
 
     const user = await this.getUserByAccessTokenUseCase.call(accessToken)
     if (!user)
