@@ -4,6 +4,7 @@ import { noContent, unauthorized } from '@/presentation/factories/http.factory'
 import { HttpRequest } from '@/presentation/protocols'
 import { HandleLogError } from '@/presentation/decorators'
 import { UserRole } from '@/shared/constants'
+import { hasPermission } from '../helpers/middleware.helper'
 
 @Injectable()
 export class RoleMiddleware implements Middleware {
@@ -14,11 +15,7 @@ export class RoleMiddleware implements Middleware {
 
   @HandleLogError
   async handle <T> (httpRequest: HttpRequest<T>): MiddlewareResponse {
-    const { loggedUserInfo } = httpRequest
-
-    const roles = Array.isArray(this.role) ? this.role : [this.role]
-
-    return loggedUserInfo && loggedUserInfo.role && roles.includes(loggedUserInfo.role)
+    return hasPermission(httpRequest, this.role)
       ? noContent()
       : unauthorized()
   }
