@@ -4,7 +4,7 @@ import { serverError } from '../factories/http.factory'
 import { HandleResponse } from '../protocols'
 // < Out: only domain layer
 
-export const ServerErrorHandler =
+export const HandleLogError =
   <TTarget, TReturn extends HandleResponse<TReturn>> (
     _target: TTarget,
     _methodKey: string | symbol,

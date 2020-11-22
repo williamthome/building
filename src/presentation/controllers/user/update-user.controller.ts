@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
 import { userSchema } from '@/presentation/schemas'
-import { ServerErrorHandler, ValidateRequest } from '@/presentation/decorators'
+import { HandleLogError, ValidateRequest } from '@/presentation/decorators'
 import { CanNotFindEntityError, MissingParamError } from '@/presentation/errors'
 // < Out: only domain layer
 import { UserEntity, userKeys } from '@/domain/entities'
@@ -23,7 +23,7 @@ export class UpdateUserController implements Controller<UserEntity> {
     keys: userKeys,
     nullable: true
   })
-  @ServerErrorHandler
+  @HandleLogError
   async handle (request: HttpRequest<UserDto>): HandleResponse<UserEntity> {
     const id = request.params?.id
 

@@ -4,7 +4,7 @@ import { HttpHeaderName } from '@/presentation/constants'
 import { AccessDeniedError, CanNotFindEntityError } from '@/presentation/errors'
 import { forbidden, notFound, ok } from '@/presentation/factories/http.factory'
 import { HandleResponse, HttpRequest, LoggedUserInfo } from '@/presentation/protocols'
-import { ServerErrorHandler } from '@/presentation/decorators'
+import { HandleLogError } from '@/presentation/decorators'
 import { GetUserByAccessTokenUseCase } from '@/domain/usecases'
 
 @Injectable()
@@ -14,7 +14,7 @@ export class AuthMiddleware implements Middleware {
     @Inject() private readonly getUserByAccessTokenUseCase: GetUserByAccessTokenUseCase
   ) { }
 
-  @ServerErrorHandler
+  @HandleLogError
   async handle (httpRequest: HttpRequest): HandleResponse<LoggedUserInfo> {
     const bearer: string | undefined =
       httpRequest.headers?.[HttpHeaderName.AUTHORIZATION] ||

@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { ok } from '@/presentation/factories/http.factory'
 import { userSchema } from '@/presentation/schemas'
-import { ServerErrorHandler, ValidateRequest } from '@/presentation/decorators'
+import { HandleLogError, ValidateRequest } from '@/presentation/decorators'
 // < Out: only domain layer
 import { UserEntity, userKeys } from '@/domain/entities'
 import { AddUserUseCase } from '@/domain/usecases'
@@ -22,7 +22,7 @@ export class AddUserController implements Controller<UserEntity> {
     keys: userKeys,
     nullable: false
   })
-  @ServerErrorHandler
+  @HandleLogError
   async handle (request: HttpRequest<UserDto>): HandleResponse<UserEntity> {
     const userDto = request.body as UserDto
     const newUser = await this.addUserUseCase.call(userDto)

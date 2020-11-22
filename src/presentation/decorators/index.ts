@@ -1,2 +1,2 @@
 export * from './validate-request.decorator'
-export * from './server-error-handler.decorator'
+export * from './handle-log-error.decorator'

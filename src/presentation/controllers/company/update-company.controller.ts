@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
 import { companySchema } from '@/presentation/schemas'
-import { ServerErrorHandler, ValidateRequest } from '@/presentation/decorators'
+import { HandleLogError, ValidateRequest } from '@/presentation/decorators'
 import { CanNotFindEntityError, MissingParamError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity, companyKeys } from '@/domain/entities'
@@ -23,7 +23,7 @@ export class UpdateCompanyController implements Controller<CompanyEntity> {
     keys: companyKeys,
     nullable: true
   })
-  @ServerErrorHandler
+  @HandleLogError
   async handle (request: HttpRequest<CompanyDto>): HandleResponse<CompanyEntity> {
     const id = request.params?.id
 

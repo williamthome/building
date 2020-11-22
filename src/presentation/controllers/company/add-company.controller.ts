@@ -5,7 +5,7 @@ import { UserFeatures } from '@/shared/constants'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { forbidden, ok } from '@/presentation/factories/http.factory'
 import { companySchema } from '@/presentation/schemas'
-import { ServerErrorHandler, ValidateRequest } from '@/presentation/decorators'
+import { HandleLogError, ValidateRequest } from '@/presentation/decorators'
 import { AccessDeniedError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity, companyKeys } from '@/domain/entities'
@@ -25,7 +25,7 @@ export class AddCompanyController implements Controller<CompanyEntity> {
     keys: companyKeys,
     nullable: false
   })
-  @ServerErrorHandler
+  @HandleLogError
   async handle (request: HttpRequest<CompanyDto>): HandleResponse<CompanyEntity> {
     const companyDto = request.body as CompanyDto
     const loggedUserId = request.loggedUserInfo?.id
