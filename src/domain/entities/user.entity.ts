@@ -4,7 +4,7 @@ import { CompanyEntity } from './company.entity'
 import { Address, addressKeys } from './nested'
 
 export interface UserEntity extends Entity {
-  email: Entity['id']
+  email: string
   password: string
   accessToken?: string
   name: string
