@@ -15,7 +15,7 @@ export class AuthMiddleware implements Middleware {
   ) { }
 
   @HandleLogError
-  async handle <T> (httpRequest: HttpRequest<T>): MiddlewareResponse {
+  async handle<T> (httpRequest: HttpRequest<T>): MiddlewareResponse {
     const accessToken = authorizationToken(httpRequest)
     if (!accessToken)
       return forbidden(new AccessDeniedError())
@@ -25,10 +25,14 @@ export class AuthMiddleware implements Middleware {
       return notFound(new CanNotFindEntityError('User'))
 
     return okMiddleware(
-      httpRequest, {
-        id: user.id
-      }, {
-        id: user.activeCompanyId
+      httpRequest,
+      {
+        loggedUserInfo: {
+          id: user.id
+        },
+        activeCompanyInfo: {
+          id: user.activeCompanyId
+        }
       }
     )
   }
