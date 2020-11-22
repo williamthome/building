@@ -5,6 +5,7 @@ import { mockUserEntity } from '@/__tests__/domain/__mocks__/entities'
 export class GetUserByAccessTokenUseCaseSpy implements GetUserByAccessTokenUseCase {
   accessToken?: UserEntity['accessToken']
   userModel?: UserEntity | null
+  override?: Partial<UserEntity>
   shouldReturnNull = false
   shouldThrow = false
 
@@ -15,7 +16,7 @@ export class GetUserByAccessTokenUseCaseSpy implements GetUserByAccessTokenUseCa
 
     this.userModel = this.shouldReturnNull
       ? null
-      : { ...mockUserEntity(), accessToken }
+      : { ...mockUserEntity(), accessToken, ...this.override }
 
     return this.userModel
   }
