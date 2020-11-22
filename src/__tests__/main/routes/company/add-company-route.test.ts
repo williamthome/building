@@ -2,7 +2,7 @@ import request from 'supertest'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { mockCompanyEntityDto } from '@/__tests__/domain/__mocks__/entities'
 import { addUserAndAuthenticate, config, db, mongoInMemory, webServer } from '@/__tests__/shared/mongodb-server.utils'
-import { makeBearer } from '../../helpers/route.helper'
+import { mockAuthorizationToken } from '@/__tests__/presentation/__mocks__'
 
 describe('AddCompany Route > POST /company', () => {
   beforeAll(async () => {
@@ -29,7 +29,7 @@ describe('AddCompany Route > POST /company', () => {
     const { accessToken } = await addUserAndAuthenticate()
     await request(webServer().server())
       .post('/company')
-      .set(HttpHeaderName.AUTHORIZATION, makeBearer(accessToken))
+      .set(HttpHeaderName.AUTHORIZATION, mockAuthorizationToken(accessToken))
       .send(mockCompanyEntityDto())
       .expect(HttpStatusCode.OK)
   })

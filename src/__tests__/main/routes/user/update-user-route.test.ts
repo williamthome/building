@@ -1,8 +1,8 @@
 import request from 'supertest'
 import { addUserAndAuthenticate, config, db, mongoInMemory, webServer } from '@/__tests__/shared/mongodb-server.utils'
-import { makeBearer } from '../../helpers/route.helper'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities'
+import { mockAuthorizationToken } from '@/__tests__/presentation/__mocks__'
 
 describe('UpdateUser Route > PATCH /user/:id', () => {
   beforeAll(async () => {
@@ -28,7 +28,7 @@ describe('UpdateUser Route > PATCH /user/:id', () => {
     const { user, accessToken } = await addUserAndAuthenticate()
     await request(webServer().server())
       .patch(`/user/${user.id}`)
-      .set(HttpHeaderName.AUTHORIZATION, makeBearer(accessToken))
+      .set(HttpHeaderName.AUTHORIZATION, mockAuthorizationToken(accessToken))
       .send(mockUserEntityDto())
       .expect(HttpStatusCode.OK)
   })
