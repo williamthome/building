@@ -1,4 +1,5 @@
 import { HttpHeaderName, HttpStatusCode } from '../constants'
+import { ActiveCompanyInfo } from './active-company-info.protocol'
 import { LoggedUserInfo } from './logged-user-info.protocol'
 
 // export type HttpHeaders = { [P in HttpHeaderName]?: string | undefined }
@@ -13,6 +14,7 @@ export interface HttpRequest<T = unknown> {
   headers?: HttpHeaders
   params?: HttpParameters
   loggedUserInfo?: LoggedUserInfo
+  activeCompanyInfo?: ActiveCompanyInfo
 }
 
 export interface HttpResponse<T = unknown> {
