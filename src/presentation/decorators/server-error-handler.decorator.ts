@@ -1,20 +1,20 @@
 // : Shared
 // > In: presentation layer
-import { Controller, HandleResponse, HttpRequest } from '../protocols'
 import { serverError } from '../factories/http.factory'
+import { HandleResponse } from '../protocols'
 // < Out: only domain layer
 
 export const ServerErrorHandler =
-  <TController extends Controller<any>> (
-    _controller: TController,
+  <TTarget, TReturn extends HandleResponse<TReturn>> (
+    _target: TTarget,
     _methodKey: string | symbol,
     descriptor: PropertyDescriptor
-  ): any => {
+  ): PropertyDescriptor | void => {
     const originalMethod = descriptor.value
 
     descriptor.value = async function (
-      ...args: [request: HttpRequest<any>]
-    ): HandleResponse<any> {
+      ...args: any[]
+    ): HandleResponse<TReturn> {
       try {
         return await originalMethod.apply(this, args)
       } catch (error) {
