@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
-import { Middleware } from '../protocols'
+import { Middleware, MiddlewareResponse } from '../protocols'
 import { HttpHeaderName } from '@/presentation/constants'
 import { AccessDeniedError, CanNotFindEntityError } from '@/presentation/errors'
-import { forbidden, notFound, ok } from '@/presentation/factories/http.factory'
-import { HandleResponse, HttpRequest, LoggedUserInfo } from '@/presentation/protocols'
+import { forbidden, notFound } from '@/presentation/factories/http.factory'
+import { HttpRequest } from '@/presentation/protocols'
 import { HandleLogError } from '@/presentation/decorators'
 import { GetUserByAccessTokenUseCase } from '@/domain/usecases'
+import { okMiddleware } from '../helpers/middleware.helper'
 
 @Injectable()
 export class AuthMiddleware implements Middleware {
@@ -15,7 +16,7 @@ export class AuthMiddleware implements Middleware {
   ) { }
 
   @HandleLogError
-  async handle (httpRequest: HttpRequest): HandleResponse<LoggedUserInfo> {
+  async handle <T> (httpRequest: HttpRequest<T>): MiddlewareResponse {
     const authorization: string | undefined =
       httpRequest.headers?.[HttpHeaderName.AUTHORIZATION] ||
       httpRequest.headers?.[HttpHeaderName.AUTHORIZATION.toLowerCase()]
@@ -29,11 +30,12 @@ export class AuthMiddleware implements Middleware {
     if (!user)
       return notFound(new CanNotFindEntityError('User'))
 
-    const { id, activeCompanyId } = user
-
-    return ok({
-      id,
-      activeCompanyId
-    })
+    return okMiddleware(
+      httpRequest, {
+        id: user.id
+      }, {
+        id: user.activeCompanyId
+      }
+    )
   }
 }
