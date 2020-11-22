@@ -11,6 +11,7 @@ describe('UpdateUser Route > PATCH /user/:id', () => {
   })
 
   beforeEach(async () => {
+    await db().clearCollection('companies')
     await db().clearCollection('users')
     await webServer().listen()
   })
