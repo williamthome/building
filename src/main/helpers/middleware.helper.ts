@@ -1,5 +1,5 @@
 import { hasFeatures } from '@/shared/helpers/user-features.helper'
-import { UserFeatures, UserRole } from '@/shared/constants'
+import { UserFeatures, CompanyRole } from '@/shared/constants'
 import { MiddlewareContent } from '../protocols'
 import { ok } from '@/presentation/factories/http.factory'
 import { ActiveCompanyInfo, HttpRequest, HttpResponse, LoggedUserInfo } from '@/presentation/protocols'
@@ -34,20 +34,20 @@ export const hasRequirements = <T> (httpRequest: HttpRequest<T>, requirements: U
   const { loggedUserInfo } = httpRequest
 
   return loggedUserInfo !== undefined &&
-    loggedUserInfo.role !== undefined &&
+    loggedUserInfo.companyRole !== undefined &&
     loggedUserInfo.features !== undefined &&
     (
-      loggedUserInfo.role === UserRole.owner ||
+      loggedUserInfo.companyRole === CompanyRole.owner ||
       hasFeatures(loggedUserInfo.features, requirements)
     )
 }
 
-export const hasPermission = <T> (httpRequest: HttpRequest<T>, userRole: UserRole | UserRole[]): boolean => {
-  const roles = Array.isArray(userRole) ? userRole : [userRole]
+export const hasPermission = <T> (httpRequest: HttpRequest<T>, companyRole: CompanyRole | CompanyRole[]): boolean => {
+  const roles = Array.isArray(companyRole) ? companyRole : [companyRole]
 
   const { loggedUserInfo } = httpRequest
 
   return loggedUserInfo !== undefined &&
-    loggedUserInfo.role !== undefined &&
-    roles.includes(loggedUserInfo.role)
+    loggedUserInfo.companyRole !== undefined &&
+    roles.includes(loggedUserInfo.companyRole)
 }

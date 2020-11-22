@@ -9,7 +9,7 @@ export type LoggedUserInfo =
   >
   & Partial<
     Pick<Member,
-      | 'role'
+      | 'companyRole'
       | 'features'
     >
   >

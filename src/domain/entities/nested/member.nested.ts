@@ -1,15 +1,15 @@
 import { DeepFlattenPaths } from '@/shared/types'
-import { UserFeatures, UserRole } from '@/shared/constants'
+import { UserFeatures, CompanyRole } from '@/shared/constants'
 import { UserEntity } from '../user.entity'
 
 export interface Member {
   userId: UserEntity['id']
-  role: UserRole
+  companyRole: CompanyRole
   features: UserFeatures
 }
 
 export const memberKeys: DeepFlattenPaths<Member> = {
   userId: 'userId',
-  role: 'role',
+  companyRole: 'companyRole',
   features: 'features'
 }
