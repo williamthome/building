@@ -1,6 +1,5 @@
-import { HttpRequest, HttpResponse } from '../../presentation/protocols/http.protocol'
-import { LoggedUserInfo } from '../../presentation/protocols/logged-user-info.protocol'
+import { HttpRequest, HandleResponse, LoggedUserInfo } from '@/presentation/protocols'
 
 export interface Middleware {
-  handle: (httpRequest: HttpRequest) => Promise<HttpResponse<LoggedUserInfo | Error>>
+  handle: (httpRequest: HttpRequest) => HandleResponse<LoggedUserInfo>
 }
