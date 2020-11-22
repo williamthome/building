@@ -1,8 +1,7 @@
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler } from 'fastify'
 import { Injectable, Inject } from '@/shared/dependency-injection'
-import { Middleware, Route, WebServer } from '../protocols'
-import { HttpStatusCode } from '@/presentation/constants'
-import { Controller, HttpHeaders, HttpParameters, HttpRequest, LoggedUserInfo } from '@/presentation/protocols'
+import { AdaptMiddlewareHttpRequest, Middleware, Route, WebServer } from '../protocols'
+import { Controller, HttpHeaders, HttpParameters, HttpRequest } from '@/presentation/protocols'
 
 @Injectable('webServer')
 export class Fastify implements WebServer {
@@ -43,11 +42,11 @@ export class Fastify implements WebServer {
 
     await Promise.all(this.routes.map((route, index) => {
       this.adaptRoute(route, this.fastifyInstance)
-      console.log(`[${index+1}/${this.routes.length}] Route '${route.path}' injected`)
+      console.log(`[${index + 1}/${this.routes.length}] Route '${route.path}' injected`)
     }))
   }
 
-  get isListening(): boolean {
+  get isListening (): boolean {
     return this._isListening
   }
 
@@ -72,25 +71,26 @@ export class Fastify implements WebServer {
 
   adaptMiddleware = <T> (middleware: Middleware): preHandlerHookHandler => {
     return async (req: FastifyRequest, res: FastifyReply): Promise<void> => {
-      const httpRequest: HttpRequest<T> = {
+      const httpRequest: AdaptMiddlewareHttpRequest = {
         body: req.body as T,
         headers: this.adaptHttpHeaders(req),
         params: req.params as HttpParameters,
-        loggedUserInfo: req.loggedUserInfo
+        loggedUserInfo: req.loggedUserInfo,
+        activeCompanyInfo: req.activeCompanyInfo
       }
 
-      const httpResponse = await middleware.handle(httpRequest)
+      const { statusCode, body: middlewareContent } = await middleware.handle<T>(httpRequest)
 
-      switch (httpResponse.statusCode) {
-        case HttpStatusCode.OK:
-          req.loggedUserInfo = httpResponse.body as LoggedUserInfo
-          break
-        case HttpStatusCode.NO_CONTENT:
-          break
-        default:
-          res.status(httpResponse.statusCode).send({
-            error: (httpResponse.body as Error).message
-          })
+      if (middlewareContent instanceof Error) {
+        res.status(statusCode).send({
+          error: middlewareContent.message
+        })
+      } else {
+        if (middlewareContent) {
+          const { loggedUserInfo, activeCompanyInfo } = middlewareContent
+          req.loggedUserInfo = loggedUserInfo
+          req.activeCompanyInfo = activeCompanyInfo
+        }
       }
     }
   }
