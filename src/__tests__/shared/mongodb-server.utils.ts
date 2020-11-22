@@ -1,8 +1,6 @@
 import container from '@/shared/dependency-injection'
 import fakeData from './fake-data'
-import { mockUserEntityDto } from '../domain/__mocks__/entities'
-import { UserModel } from '@/data/models'
-import { UserDto } from '@/domain/protocols'
+import { CompanyModel, UserModel } from '@/data/models'
 import { Database } from '@/infra/protocols'
 import { WebServer } from '@/main/protocols'
 import { Server } from '@/main/server'
@@ -10,6 +8,9 @@ import {
   // MongoMemoryReplSet,
   MongoMemoryServer
 } from 'mongodb-memory-server'
+
+// !! ONLY DATA LAYER !!
+import { mockCompanyEntityDto, mockUserEntityDto } from '../domain/__mocks__/entities'
 
 export const db = (): Database => container.resolve<Database>('db')
 export const webServer = (): WebServer => container.resolve<WebServer>('webServer')
@@ -45,8 +46,11 @@ export const addUserAndAuthenticate = async (): Promise<{
   user: UserModel, accessToken: UserModel['accessToken']
 }> => {
   const accessToken = fakeData.entity.token()
-  const userDto: UserDto = { ...mockUserEntityDto(), accessToken }
+  const userDto = { ...mockUserEntityDto(), accessToken }
   const db = container.resolve<Database>('db')
-  const user = await db.addOne<UserModel>(userDto, 'users')
+  let user = await db.addOne<UserModel>(userDto, 'users')
+  const companyDto = mockCompanyEntityDto(user)
+  const company = await db.addOne<CompanyModel>(companyDto, 'companies')
+  user = await db.updateOne<UserModel>(user.id, { activeCompanyId: company.id }, 'users') as UserModel
   return { user, accessToken }
 }
