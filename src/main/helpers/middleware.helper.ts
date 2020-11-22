@@ -3,6 +3,7 @@ import { UserFeatures, CompanyRole } from '@/shared/constants'
 import { MiddlewareContent } from '../protocols'
 import { ok } from '@/presentation/factories/http.factory'
 import { ActiveCompanyInfo, HttpRequest, HttpResponse, LoggedUserInfo } from '@/presentation/protocols'
+import { HttpHeaderName } from '@/presentation/constants'
 
 const merge = <T> (original?: Partial<T>, toMerge?: Partial<T>): Partial<T> => ({
   ...original,
@@ -28,6 +29,20 @@ export const okMiddleware = (
     loggedUserInfo: mergeLoggedUserInfo(loggedUserInfoToMerge, httpRequest.loggedUserInfo),
     activeCompanyInfo: mergeActiveCompanyInfo(activeCompanyInfoToMerge, httpRequest.activeCompanyInfo)
   })
+}
+
+export const authorizationToken = <T> (httpRequest: HttpRequest<T>): string | undefined => {
+  const authorization: string | undefined = httpRequest.headers
+    ? httpRequest.headers[HttpHeaderName.AUTHORIZATION] !== undefined
+      ? httpRequest.headers[HttpHeaderName.AUTHORIZATION]
+      : httpRequest.headers[HttpHeaderName.AUTHORIZATION.toLowerCase()] !== undefined
+        ? httpRequest.headers[HttpHeaderName.AUTHORIZATION.toLowerCase()]
+        : undefined
+    : undefined
+
+  return authorization && authorization.startsWith('Bearer ')
+    ? authorization.substring(7)
+    : undefined
 }
 
 export const hasRequirements = <T> (httpRequest: HttpRequest<T>, requirements: UserFeatures): boolean => {
