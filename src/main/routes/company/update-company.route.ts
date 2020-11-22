@@ -1,14 +1,14 @@
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
-import { AuthMiddleware, RoleMiddleware } from '@/main/middlewares'
+import { AuthMiddleware, RequirementsMiddleware } from '@/main/middlewares'
 import { Middleware, Route, RouteRequirement } from '@/main/protocols'
 import { UpdateCompanyController } from '@/presentation/controllers'
 import { Controller, HttpMethods } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
-import { UserRole } from '@/shared/constants'
+import { UserFeatures } from '@/shared/constants'
 
 @InjectableArray('routes')
 export class UpdateCompanyRoute implements Route<CompanyEntity> {
-  roleMiddleware = new RoleMiddleware([UserRole.owner, UserRole.admin])
+  requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageCompanyData)
 
   constructor (
     @Inject(UpdateCompanyController) public readonly controller: Controller<CompanyEntity>,
@@ -21,7 +21,7 @@ export class UpdateCompanyRoute implements Route<CompanyEntity> {
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,
-      this.roleMiddleware
+      this.requirementsMiddleware
     ]
   }
 }
