@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { HttpRequest } from '@/presentation/protocols'
 import {
   RouteAdapter,
   HttpResponseAdapter,
@@ -25,3 +26,5 @@ extends
   injectRoutes: () => Promise<void>
   isListening: boolean
 }
+
+export type AdaptMiddlewareHttpRequest = { [T in keyof Required<HttpRequest<T>>]: any }
