@@ -32,6 +32,7 @@ export const okMiddleware = (
 
 export const hasRequirements = <T> (httpRequest: HttpRequest<T>, requirements: UserFeatures): boolean => {
   const { loggedUserInfo } = httpRequest
+
   return loggedUserInfo !== undefined &&
     loggedUserInfo.role !== undefined &&
     loggedUserInfo.features !== undefined &&
@@ -39,4 +40,14 @@ export const hasRequirements = <T> (httpRequest: HttpRequest<T>, requirements: U
       loggedUserInfo.role === UserRole.owner ||
       hasFeatures(loggedUserInfo.features, requirements)
     )
+}
+
+export const hasPermission = <T> (httpRequest: HttpRequest<T>, userRole: UserRole | UserRole[]): boolean => {
+  const roles = Array.isArray(userRole) ? userRole : [userRole]
+
+  const { loggedUserInfo } = httpRequest
+
+  return loggedUserInfo !== undefined &&
+    loggedUserInfo.role !== undefined &&
+    roles.includes(loggedUserInfo.role)
 }
