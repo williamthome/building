@@ -6,14 +6,13 @@ import { GetUserByAccessTokenUseCaseSpy } from '@/__tests__/domain/__spys__/usec
 import { AccessDeniedError, CanNotFindEntityError } from '@/presentation/errors'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { HttpRequest } from '@/presentation/protocols'
+import { mockAuthorizationHeader } from '@/__tests__/presentation/__mocks__'
 
 //#region Factories
 
 const accessToken = fakeData.entity.token()
 const mockHttpRequest = (): HttpRequest<unknown> => ({
-  headers: {
-    [HttpHeaderName.AUTHORIZATION]: `Bearer ${accessToken}`
-  }
+  headers: mockAuthorizationHeader(accessToken)
 })
 
 interface SutTypes {
@@ -48,9 +47,7 @@ describe('Auth Middleware', () => {
     it('should return forbidden if authorization token is undefined', async () => {
       const { sut } = makeSut()
       const response = await sut.handle({
-        headers: {
-          [HttpHeaderName.AUTHORIZATION]: undefined
-        }
+        headers: mockAuthorizationHeader(undefined)
       })
       expect(response).toEqual(forbidden(new AccessDeniedError()))
     })
