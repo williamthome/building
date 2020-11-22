@@ -1,8 +1,10 @@
 // : Shared
+import container from '@/shared/dependency-injection'
 // > In: presentation layer
 import { serverError } from '../factories/http.factory'
 import { HandleResponse } from '../protocols'
 // < Out: only domain layer
+import { LogErrorUseCase } from '@/domain/usecases'
 
 export const HandleLogError =
   <TTarget, TReturn extends HandleResponse<TReturn>> (
@@ -18,6 +20,13 @@ export const HandleLogError =
       try {
         return await originalMethod.apply(this, args)
       } catch (error) {
+        if (process.env.NODE_ENV === 'production') {
+          const logErrorUseCase = container.resolve<LogErrorUseCase>('logErrorUseCase')
+          await logErrorUseCase.call({
+            stack: errorStack(error),
+            date: new Date()
+          })
+        }
         console.error(error)
         return serverError(error)
       }
@@ -25,3 +34,17 @@ export const HandleLogError =
 
     return descriptor
   }
+
+const errorStack = (error: any): string =>
+  typeof error === 'undefined'
+    ? 'Error is undefined'
+    : 'stack' in error
+      ? error['stack']
+      : typeof error === 'string'
+        ? error
+        : typeof error === 'bigint' ||
+          typeof error === 'boolean' ||
+          typeof error === 'number' ||
+          typeof error === 'symbol'
+          ? error.toString()
+          : JSON.stringify(error)
