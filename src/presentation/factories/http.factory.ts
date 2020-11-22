@@ -1,5 +1,5 @@
 import { HttpStatusCode } from '../constants'
-import { ServerError } from '../errors'
+import { ServerError, UnauthorizedError } from '../errors'
 import { HttpResponse } from '../protocols'
 
 export const ok = <T>(response: T): HttpResponse<T> => ({
@@ -15,6 +15,11 @@ export const noContent = (): HttpResponse<null> => ({
 export const badRequest = (error: Error): HttpResponse<Error> => ({
   statusCode: HttpStatusCode.BAD_REQUEST,
   body: error
+})
+
+export const unauthorized = (): HttpResponse<Error> => ({
+  statusCode: HttpStatusCode.UNAUTHORIZED,
+  body: new UnauthorizedError()
 })
 
 export const forbidden = (error: Error): HttpResponse<Error> => ({
