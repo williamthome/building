@@ -1,6 +1,6 @@
 // : Shared
 import { Inject, Injectable } from '@/shared/dependency-injection'
-import { UserFeatures } from '@/shared/constants'
+import { UserFeatures, UserRole } from '@/shared/constants'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { forbidden, ok } from '@/presentation/factories/http.factory'
@@ -35,7 +35,7 @@ export class AddCompanyController implements Controller<CompanyEntity> {
 
     companyDto.members = [{
       userId: loggedUserId,
-      role: 'owner',
+      role: UserRole.owner,
       features: UserFeatures.None
     }]
 

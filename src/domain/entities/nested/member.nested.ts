@@ -1,5 +1,5 @@
-import { DeepFlattenPaths, UserRole } from '@/shared/types'
-import { UserFeatures } from '@/shared/constants'
+import { DeepFlattenPaths } from '@/shared/types'
+import { UserFeatures, UserRole } from '@/shared/constants'
 import { UserEntity } from '../user.entity'
 
 export interface Member {
