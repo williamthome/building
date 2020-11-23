@@ -7,6 +7,7 @@ import { AccessDeniedError, CanNotFindEntityError } from '@/presentation/errors'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { HttpRequest } from '@/presentation/protocols'
 import { mockAuthorizationHeader } from '@/__tests__/presentation/__mocks__'
+import { CompanyRole, UserFeatures } from '@/shared/constants'
 
 //#region Factories
 
@@ -110,7 +111,7 @@ describe('Auth Middleware', () => {
       expect(response).toEqual(notFound(new CanNotFindEntityError('Company')))
     })
 
-    fit('should return access denied if user is not a member of active company', async () => {
+    it('should return access denied if user is not a member of active company', async () => {
       const { sut, getCompanyByIdUseCaseSpy } = makeSut()
       getCompanyByIdUseCaseSpy.override = {
         members: []
@@ -130,7 +131,18 @@ describe('Auth Middleware', () => {
   })
 
   it('should return ok', async () => {
-    const { sut } = makeSut()
+    const { sut, getUserByAccessTokenUseCaseSpy, getCompanyByIdUseCaseSpy } = makeSut()
+    const userId = fakeData.entity.id()
+    getUserByAccessTokenUseCaseSpy.override = {
+      id: userId
+    }
+    getCompanyByIdUseCaseSpy.override = {
+      members: [{
+        userId,
+        companyRole: CompanyRole.owner,
+        features: UserFeatures.None
+      }]
+    }
     const response = await sut.handle(mockHttpRequest())
     expect(response.statusCode).toBe(HttpStatusCode.OK)
   })
