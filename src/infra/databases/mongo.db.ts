@@ -1,6 +1,6 @@
 import { MongoClient, ClientSession, ObjectId, Collection, CollectionInsertOneOptions } from 'mongodb'
 import { Injectable, Inject } from '@/shared/dependency-injection'
-import { CollectionName } from '@/shared/types'
+import { CollectionName, Unpacked } from '@/shared/types'
 import { Database } from '@/infra/protocols'
 import { Model } from '@/data/protocols'
 import { AccessDeniedError } from '@/presentation/errors'
@@ -153,5 +153,30 @@ export class MongoDB implements Database {
 
     const collection = await this.getCollection(collectionName)
     await collection.deleteMany({})
+  }
+
+  pushOne = async <T extends Model, K extends keyof T, TPayload extends Unpacked<T[K]>> (
+    id: Model['id'],
+    arrayKey: K,
+    payload: TPayload,
+    collectionName: CollectionName,
+    options?: Omit<CollectionInsertOneOptions, 'session'>
+  ): Promise<T | null> => {
+    const collection = await this.getCollection(collectionName)
+    const result = await collection.findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      {
+        $push: {
+          [arrayKey]: payload
+        }
+      },
+      {
+        ...options,
+        session: this.session,
+        returnOriginal: false
+      }
+    )
+    const { value } = result
+    return value ? this.map<T>(value) : null
   }
 }

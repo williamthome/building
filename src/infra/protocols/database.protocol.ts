@@ -1,5 +1,5 @@
 import { Model } from '@/data/protocols/model.protocol'
-import { CollectionName } from '@/shared/types'
+import { CollectionName, Unpacked } from '@/shared/types'
 
 export interface Database {
   dbUrl: string
@@ -24,4 +24,11 @@ export interface Database {
     options?: TOptions
   ) => Promise<TModel | null>,
   clearCollection: (collectionName: CollectionName) => Promise<void>
+  pushOne: <T extends Model, K extends keyof T, TPayload extends Unpacked<T[K]>, TOptions = unknown> (
+    id: Model['id'],
+    arrayKey: K,
+    payload: TPayload,
+    collectionName: CollectionName,
+    options?: TOptions
+  ) => Promise<T | null>
 }
