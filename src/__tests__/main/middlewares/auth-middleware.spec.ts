@@ -1,7 +1,7 @@
 import container from '@/shared/dependency-injection'
 import fakeData from '@/__tests__/shared/fake-data'
 import { AuthMiddleware } from '@/main/middlewares'
-import { forbidden, notFound, serverError } from '@/presentation/factories/http.factory'
+import { forbidden, notFound, serverError, unauthorized } from '@/presentation/factories/http.factory'
 import { GetCompanyByIdUseCaseSpy, GetUserByAccessTokenUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
 import { AccessDeniedError, CanNotFindEntityError } from '@/presentation/errors'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
@@ -43,28 +43,28 @@ describe('Auth Middleware', () => {
   })
 
   describe('accessToken', () => {
-    it('should return forbidden if headers are undefined', async () => {
+    it('should return unauthorized if headers are undefined', async () => {
       const { sut } = makeSut()
       const response = await sut.handle({})
-      expect(response).toEqual(forbidden(new AccessDeniedError()))
+      expect(response).toEqual(unauthorized())
     })
 
-    it('should return forbidden if authorization token is undefined', async () => {
+    it('should return unauthorized if authorization token is undefined', async () => {
       const { sut } = makeSut()
       const response = await sut.handle({
         headers: mockAuthorizationHeader(undefined)
       })
-      expect(response).toEqual(forbidden(new AccessDeniedError()))
+      expect(response).toEqual(unauthorized())
     })
 
-    it('should return forbidden if authorization token not starts with \'Bearer\'', async () => {
+    it('should return unauthorized if authorization token not starts with \'Bearer\'', async () => {
       const { sut } = makeSut()
       const response = await sut.handle({
         headers: {
           [HttpHeaderName.AUTHORIZATION]: accessToken
         }
       })
-      expect(response).toEqual(forbidden(new AccessDeniedError()))
+      expect(response).toEqual(unauthorized())
     })
   })
 
