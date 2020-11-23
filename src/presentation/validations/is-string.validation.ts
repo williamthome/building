@@ -1,22 +1,25 @@
 import { makeValidationResult } from '../helpers/validation.helper'
-import { Validation, ValidationResult } from '../protocols'
+import { BaseValidation, Validation, ValidationResult } from '../protocols'
 
-export const isString: Validation = {
-  validate: <T extends Record<string, unknown>> (
+class IsStringValidation extends BaseValidation<IsStringValidation> {
+  validation = (): IsStringValidation => this
+
+  validate = <T extends Record<string, unknown>> (
     obj: T,
-    field: keyof T,
-    validations?: Validation[],
-    customErrorMessage?: string
+    key: keyof T,
+    validations?: Validation[]
   ): ValidationResult => {
-    const valid = field in obj && typeof obj[field] === 'string' && obj[field] !== ''
-    const errorMessage = `Field ${field} must be string type`
+    const valid = key in obj && typeof obj[key] === 'string' && obj[key] !== ''
+    const errorMessage = `${this.isParam ? 'Param' : 'Field'} ${key} must be string type`
     return makeValidationResult(
       valid,
       obj,
-      field,
+      key,
       errorMessage,
-      customErrorMessage,
+      this.customErrorMessage,
       validations
     )
   }
 }
+
+export const isString = new IsStringValidation()

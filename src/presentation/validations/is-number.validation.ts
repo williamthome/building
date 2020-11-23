@@ -1,22 +1,25 @@
 import { makeValidationResult } from '../helpers/validation.helper'
-import { Validation, ValidationResult } from '../protocols'
+import { BaseValidation, Validation, ValidationResult } from '../protocols'
 
-export const isNumber: Validation = {
-  validate: <T extends Record<string, unknown>> (
+class IsNumberValidation extends BaseValidation<IsNumberValidation> {
+  validation = (): IsNumberValidation => this
+
+  validate = <T extends Record<string, unknown>> (
     obj: T,
-    field: keyof T,
-    validations?: Validation[],
-    customErrorMessage?: string
+    key: keyof T,
+    validations?: Validation[]
   ): ValidationResult => {
-    const valid = field in obj && typeof obj[field] === 'number'
-    const errorMessage = `Field ${field} must be number type`
+    const valid = key in obj && typeof obj[key] === 'number'
+    const errorMessage = `${this.isParam ? 'Param' : 'Field'} ${key} must be number type`
     return makeValidationResult(
       valid,
       obj,
-      field,
+      key,
       errorMessage,
-      customErrorMessage,
+      this.customErrorMessage,
       validations
     )
   }
 }
+
+export const isNumber = new IsNumberValidation()

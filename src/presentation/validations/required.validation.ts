@@ -1,14 +1,15 @@
-import { Validation, ValidationResult } from '../protocols'
+import { BaseValidation, Validation, ValidationResult } from '../protocols'
 
-export const required: Validation = {
-  validate: <T extends Record<string, unknown>> (
+class RequiredValidation extends BaseValidation<RequiredValidation> {
+  validation = (): RequiredValidation => this
+
+  validate = <T extends Record<string, unknown>> (
     obj: T,
-    field: keyof T,
-    validations?: Validation[],
-    customErrorMessage?: string
+    key: keyof T,
+    validations?: Validation[]
   ): ValidationResult => {
-    const value = obj[field]
-    let valid = field in obj
+    const value = obj[key]
+    let valid = key in obj
     if (valid) {
       switch (typeof value) {
         case 'string':
@@ -25,8 +26,10 @@ export const required: Validation = {
       valid,
       errorMessage: valid
         ? undefined :
-        customErrorMessage || `Field ${field} is required`,
+        this.customErrorMessage || `${this.isParam ? 'Param' : 'Field'} ${key} is required`,
       validations
     }
   }
 }
+
+export const required = new RequiredValidation()

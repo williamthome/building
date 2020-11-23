@@ -1,10 +1,11 @@
 import { makeValidationResult } from '../helpers/validation.helper'
-import { Validation, ValidationResult } from '../protocols'
+import { BaseValidation, Validation, ValidationResult } from '../protocols'
 
-class RangeValidation implements Validation {
-  private _min = Number.MIN_VALUE
+class RangeValidation extends BaseValidation<RangeValidation> {
+  validation = (): RangeValidation => this
+
   private _max = Number.MAX_VALUE
-  private _customErrorMessage: string | undefined = undefined
+  private _min = Number.MIN_VALUE
 
   min = (value: number): RangeValidation => {
     this._min = value
@@ -16,27 +17,22 @@ class RangeValidation implements Validation {
     return this
   }
 
-  message = (message: string | undefined): RangeValidation => {
-    this._customErrorMessage = message
-    return this
-  }
-
   validate = <T extends Record<string, unknown>> (
     obj: T,
-    field: keyof T,
+    key: keyof T,
     validations?: Validation[]
   ): ValidationResult => {
-    const valid = field in obj &&
-      typeof obj[field] === 'number' &&
-      (obj[field] as number) >= this._min &&
-      (obj[field] as number) <= this._max
-    const errorMessage = `Field ${field} must be between ${this._min} and ${this._max}`
+    const valid = key in obj &&
+      typeof obj[key] === 'number' &&
+      (obj[key] as number) >= this._min &&
+      (obj[key] as number) <= this._max
+    const errorMessage = `${this.isParam ? 'Param' : 'Field'} ${key} must be between ${this._min} and ${this._max}`
     return makeValidationResult(
       valid,
       obj,
-      field,
+      key,
       errorMessage,
-      this._customErrorMessage,
+      this.customErrorMessage,
       validations
     )
   }

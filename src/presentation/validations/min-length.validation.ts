@@ -1,22 +1,27 @@
 import { makeValidationResult } from '../helpers/validation.helper'
-import { Validation, ValidationResult } from '../protocols'
+import { BaseValidation, Validation, ValidationResult } from '../protocols'
 
-export const minLength = (minLength: number): Validation => ({
-  validate: <T extends Record<string, unknown>> (
+class MinLengthValidation extends BaseValidation<MinLengthValidation> {
+  validation = (): MinLengthValidation => this
+
+  constructor (private readonly minLength: number) { super() }
+
+  validate = <T extends Record<string, unknown>> (
     obj: T,
-    field: keyof T,
-    validations?: Validation[],
-    customErrorMessage?: string
+    key: keyof T,
+    validations?: Validation[]
   ): ValidationResult => {
-    const valid = field in obj && typeof obj[field] === 'string' && (obj[field] as string).length >= minLength
-    const errorMessage = `Field ${field} must be at least ${minLength} characters`
+    const valid = key in obj && typeof obj[key] === 'string' && (obj[key] as string).length >= this.minLength
+    const errorMessage = `${this.isParam ? 'Param' : 'Field'} ${key} must be at least ${this.minLength} characters`
     return makeValidationResult(
       valid,
       obj,
-      field,
+      key,
       errorMessage,
-      customErrorMessage,
+      this.customErrorMessage,
       validations
     )
   }
-})
+}
+
+export const minLength = (minLength: number): MinLengthValidation => new MinLengthValidation(minLength)

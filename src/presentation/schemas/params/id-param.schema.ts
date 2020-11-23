@@ -6,7 +6,7 @@ import { DeepFlattenPaths } from '@/shared/types'
 export const idParamSchema: Schema<Entity> = {
   id: {
     validations: [
-      required,
+      required.param(),
       isString
     ]
   }
