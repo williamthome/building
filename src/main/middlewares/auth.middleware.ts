@@ -7,6 +7,7 @@ import { HandleLogError } from '@/presentation/decorators'
 import { GetCompanyByIdUseCase, GetUserByAccessTokenUseCase } from '@/domain/usecases'
 import { authorizationToken, okMiddleware } from '../helpers/middleware.helper'
 import { CompanyEntity } from '@/domain/entities'
+import { Member } from '@/domain/entities/nested'
 
 @Injectable()
 export class AuthMiddleware implements Middleware {
@@ -27,17 +28,25 @@ export class AuthMiddleware implements Middleware {
       return notFound(new CanNotFindEntityError('User'))
 
     let activeCompany: CompanyEntity | null = null
+    let member: Member | undefined = undefined
+
     if (user.activeCompanyId) {
       activeCompany = await this.getCompanyByIdUseCase.call(user.activeCompanyId)
       if (!activeCompany)
         return notFound(new CanNotFindEntityError('Company'))
+
+      member = activeCompany.members.find(companyMember => user.id === companyMember.userId)
+      if (!member)
+        return forbidden(new AccessDeniedError())
     }
 
     return okMiddleware(
       httpRequest,
       {
         loggedUserInfo: {
-          id: user.id
+          id: user.id,
+          companyRole: member?.companyRole,
+          features: member?.features
         },
         activeCompanyInfo: {
           id: activeCompany?.id,
