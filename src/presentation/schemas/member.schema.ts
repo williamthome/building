@@ -1,6 +1,8 @@
 import { Schema } from '../protocols'
-import { isNumber, isString, required } from '../validations'
+import { isNumber, isString, range, required } from '../validations'
 import { Member } from '@/domain/entities/nested'
+import { AllUserFeatures, CompanyRole } from '@/shared/constants'
+import { firstEnumValue, lastEnumValue } from '@/shared/helpers/enum.helper'
 
 export const memberSchema: Schema<Member> = {
   userId: {
@@ -12,13 +14,15 @@ export const memberSchema: Schema<Member> = {
   companyRole: {
     validations: [
       required,
-      isNumber
+      isNumber,
+      range.min(firstEnumValue(CompanyRole)).max(lastEnumValue(CompanyRole))
     ]
   },
   features: {
     validations: [
       required,
-      isNumber
+      isNumber,
+      range.min(0).max(AllUserFeatures).message('Invalid user features')
     ]
   }
 }
