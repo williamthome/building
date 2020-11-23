@@ -3,10 +3,10 @@ import { Middleware } from './middleware.protocol'
 
 export type RouteRequirement = 'admin' | 'auth' | 'master' | 'none'
 
-export interface Route<T> {
+export interface Route<TRequest, TResponse = TRequest> {
   method: HttpMethods
   path: string
-  controller: Controller<T>
+  controller: Controller<TRequest, TResponse>
   requirement: RouteRequirement
   permissions?: number
   middlewares: Middleware[]

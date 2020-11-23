@@ -16,7 +16,7 @@ export const ValidateRequest =
   <TRequest, TResponse> (
     { schema, keys, nullable }: ValidateRequestOptions<TRequest>
   ) =>
-    <TController extends Controller<TRequest>> (
+    <TController extends Controller<TRequest, TResponse>> (
       _controller: TController,
       _methodKey: string | symbol,
       descriptor: PropertyDescriptor
