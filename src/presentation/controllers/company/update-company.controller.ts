@@ -27,10 +27,10 @@ export class UpdateCompanyController implements Controller<CompanyEntity> {
   })
   @HandleLogError
   async handle (request: HttpRequest<CompanyDto>): HandleResponse<CompanyEntity> {
-    const id = request.params?.id as CompanyEntity['id']
+    const companyId = request.params?.id as CompanyEntity['id']
     const companyDto = request.body as CompanyDto
 
-    const udpatedCompany = await this.updateCompanyUseCase.call(id, companyDto)
+    const udpatedCompany = await this.updateCompanyUseCase.call(companyId, companyDto)
     if (!udpatedCompany)
       return notFound(new CanNotFindEntityError('Company'))
 

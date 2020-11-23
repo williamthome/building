@@ -27,10 +27,10 @@ export class UpdateUserController implements Controller<UserEntity> {
   })
   @HandleLogError
   async handle (request: HttpRequest<UserDto>): HandleResponse<UserEntity> {
-    const id = request.params?.id as UserEntity['id']
+    const userId = request.params?.id as UserEntity['id']
     const userDto = request.body as UserDto
 
-    const udpatedUser = await this.updateUserUseCase.call(id, userDto)
+    const udpatedUser = await this.updateUserUseCase.call(userId, userDto)
     if (!udpatedUser)
       return notFound(new CanNotFindEntityError('User'))
 
