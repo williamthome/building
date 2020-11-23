@@ -109,6 +109,15 @@ describe('Auth Middleware', () => {
       const response = await sut.handle(mockHttpRequest())
       expect(response).toEqual(notFound(new CanNotFindEntityError('Company')))
     })
+
+    fit('should return access denied if user is not a member of active company', async () => {
+      const { sut, getCompanyByIdUseCaseSpy } = makeSut()
+      getCompanyByIdUseCaseSpy.override = {
+        members: []
+      }
+      const response = await sut.handle(mockHttpRequest())
+      expect(response).toEqual(forbidden(new AccessDeniedError()))
+    })
   })
 
   it('should return ok without user active company id', async () => {
