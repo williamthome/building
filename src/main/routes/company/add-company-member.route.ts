@@ -1,5 +1,5 @@
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
-import { AuthMiddleware, RequirementsMiddleware } from '@/main/middlewares'
+import { AuthMiddleware, ParamIdMatchActiveCompanyIdMiddleware, RequirementsMiddleware } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { AddCompanyMemberController } from '@/presentation/controllers'
 import { Controller, HttpMethods } from '@/presentation/protocols'
@@ -12,8 +12,14 @@ export class AddCompanyMemberRoute implements Route<Member, CompanyEntity> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageCompanyData)
 
   constructor (
-    @Inject(AddCompanyMemberController) public readonly controller: Controller<Member, CompanyEntity>,
-    @Inject(AuthMiddleware) public readonly authMiddleware: Middleware
+    @Inject(AddCompanyMemberController)
+    public readonly controller: Controller<Member, CompanyEntity>,
+
+    @Inject(AuthMiddleware)
+    private readonly authMiddleware: Middleware,
+
+    @Inject(ParamIdMatchActiveCompanyIdMiddleware)
+    private readonly paramIdMatchActiveCompanyIdMiddleware: ParamIdMatchActiveCompanyIdMiddleware
   ) { }
 
   get method (): HttpMethods { return 'POST' }
@@ -21,7 +27,8 @@ export class AddCompanyMemberRoute implements Route<Member, CompanyEntity> {
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,
-      this.requirementsMiddleware
+      this.requirementsMiddleware,
+      this.paramIdMatchActiveCompanyIdMiddleware
     ]
   }
 }
