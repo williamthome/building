@@ -1,6 +1,6 @@
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
 import { AuthMiddleware, RequirementsMiddleware } from '@/main/middlewares'
-import { Middleware, Route, RouteRequirement } from '@/main/protocols'
+import { Middleware, Route } from '@/main/protocols'
 import { AddCompanyMemberController } from '@/presentation/controllers'
 import { Controller, HttpMethods } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
@@ -18,7 +18,6 @@ export class AddCompanyMemberRoute implements Route<Member, CompanyEntity> {
 
   get method (): HttpMethods { return 'POST' }
   get path (): string { return '/company/:id/members' }
-  get requirement (): RouteRequirement { return 'none' }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,
