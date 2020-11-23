@@ -9,12 +9,14 @@ import { schemaError } from '../helpers/validation.helper'
 export interface ValidateRequestOptions<T extends Record<PropertyKey, any>> {
   schema: Schema<T>
   keys: DeepFlattenPaths<T>
-  nullable: boolean
+  nullable: boolean,
+  paramsSchema?: Schema<any>
+  paramKeys?: DeepFlattenPaths<any>
 }
 
 export const ValidateRequest =
   <TRequest, TResponse> (
-    { schema, keys, nullable }: ValidateRequestOptions<TRequest>
+    { paramsSchema, paramKeys, schema, keys, nullable }: ValidateRequestOptions<TRequest>
   ) =>
     <TController extends Controller<TRequest, TResponse>> (
       _controller: TController,
@@ -26,15 +28,20 @@ export const ValidateRequest =
       descriptor.value = async function (
         ...args: [request: HttpRequest<TRequest>]
       ): HandleResponse<TResponse> {
-        const { body } = args[0]
+        const { params, body } = args[0]
+
+        if (paramsSchema) {
+          const paramsError = schemaError(params || {}, paramsSchema, nullable, paramKeys)
+          if (paramsError) return paramsError
+        }
 
         if (!body && !nullable)
           return badRequest(new Error('Data is required'))
 
         if (!body) return noContent()
 
-        const error = schemaError<TRequest>(body, schema, nullable, keys)
-        if (error) return error
+        const bodyError = schemaError<TRequest>(body, schema, nullable, keys)
+        if (bodyError) return bodyError
 
         return await originalMethod.apply(this, args)
       }
