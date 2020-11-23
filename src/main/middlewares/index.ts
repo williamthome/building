@@ -1,3 +1,5 @@
 export * from './auth.middleware'
 export * from './company-role.middleware'
 export * from './requirements.middleware'
+export * from './param-id-match-logged-user-id.middleware'
+export * from './param-id-match-active-company-id.middleware'
