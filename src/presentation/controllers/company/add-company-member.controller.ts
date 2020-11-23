@@ -2,10 +2,10 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
-import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
-import { memberSchema } from '@/presentation/schemas'
+import { notFound, ok } from '@/presentation/factories/http.factory'
+import { idParamKeys, idParamSchema, memberSchema } from '@/presentation/schemas'
 import { HandleLogError, ValidateRequest } from '@/presentation/decorators'
-import { CanNotFindEntityError, MissingParamError } from '@/presentation/errors'
+import { CanNotFindEntityError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity } from '@/domain/entities'
 import { AddCompanyMemberUseCase } from '@/domain/usecases'
@@ -21,15 +21,13 @@ export class AddCompanyMemberController implements Controller<Member, CompanyEnt
   @ValidateRequest<Member, CompanyEntity>({
     schema: memberSchema,
     keys: memberKeys,
-    nullable: false
+    nullable: false,
+    paramsSchema: idParamSchema,
+    paramKeys: idParamKeys
   })
   @HandleLogError
   async handle (request: HttpRequest<Member>): HandleResponse<CompanyEntity> {
-    const companyId = request.params?.id
-
-    if (!companyId)
-      return badRequest(new MissingParamError('id'))
-
+    const companyId = request.params?.id as CompanyEntity['id']
     const member = request.body as Member
 
     const updatedCompany = await this.addCompanyMemberUseCase.call(companyId, member)

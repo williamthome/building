@@ -67,13 +67,6 @@ describe('UpdateUser Controller', () => {
     })
   })
 
-  it('shold throw if param id is missing', async () => {
-    const { sut } = makeSut()
-    const httpRequest = { ...mockHttpRequest(), params: undefined }
-    const response = await sut.handle(httpRequest)
-    expect(response).toEqual(badRequest(new MissingParamError('id')))
-  })
-
   it('shold return ok with updated user on body', async () => {
     const { sut, updateUserUseCaseSpy } = makeSut()
     const response = await sut.handle(mockHttpRequest())
