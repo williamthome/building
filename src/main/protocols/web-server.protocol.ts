@@ -27,4 +27,4 @@ extends
   isListening: boolean
 }
 
-export type AdaptMiddlewareHttpRequest = { [T in keyof Required<HttpRequest<T>>]: any }
+export type AdaptMiddlewareHttpRequest<T> = { [K in keyof Required<HttpRequest<T>>]: any }
