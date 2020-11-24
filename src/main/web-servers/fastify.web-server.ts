@@ -1,7 +1,7 @@
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler } from 'fastify'
 import { Injectable, Inject } from '@/shared/dependency-injection'
 import { AdaptMiddlewareHttpRequest, Middleware, Route, WebServer } from '../protocols'
-import { Controller, HttpHeaders, HttpParameters, HttpRequest } from '@/presentation/protocols'
+import { Controller, HttpHeaders, HttpParameters } from '@/presentation/protocols'
 
 @Injectable('webServer')
 export class Fastify implements WebServer {
@@ -71,13 +71,7 @@ export class Fastify implements WebServer {
 
   adaptMiddleware = <T> (middleware: Middleware): preHandlerHookHandler => {
     return async (req: FastifyRequest, res: FastifyReply): Promise<void> => {
-      const httpRequest: AdaptMiddlewareHttpRequest = {
-        body: req.body as T,
-        headers: this.adaptHttpHeaders(req),
-        params: req.params as HttpParameters,
-        loggedUserInfo: req.loggedUserInfo,
-        activeCompanyInfo: req.activeCompanyInfo
-      }
+      const httpRequest = this.adaptHttpRequest(req)
 
       const { statusCode, body: middlewareContent } = await middleware.handle<T>(httpRequest)
 
@@ -95,14 +89,17 @@ export class Fastify implements WebServer {
     }
   }
 
+  adaptHttpRequest = <T> (req: FastifyRequest): AdaptMiddlewareHttpRequest<T> => ({
+    body: req.body as T,
+    headers: this.adaptHttpHeaders(req),
+    params: req.params as HttpParameters,
+    loggedUserInfo: req.loggedUserInfo,
+    activeCompanyInfo: req.activeCompanyInfo
+  })
+
   adaptHttpResponse = <T> (controller: Controller<T>) => {
     return async (req: FastifyRequest, res: FastifyReply): Promise<FastifyReply> => {
-      const httpRequest: HttpRequest<T> = {
-        body: req.body as T,
-        headers: this.adaptHttpHeaders(req),
-        params: req.params as HttpParameters,
-        loggedUserInfo: req.loggedUserInfo
-      }
+      const httpRequest = this.adaptHttpRequest(req)
       const httpResponse = await controller.handle(httpRequest)
       return httpResponse.body instanceof Error
         ? res.status(httpResponse.statusCode).send({ error: httpResponse.body.message })

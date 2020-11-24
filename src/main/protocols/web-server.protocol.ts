@@ -5,7 +5,8 @@ import {
   HttpResponseAdapter,
   HttpHeadersAdapter,
   MiddlewareAdapter,
-  MiddlewaresAdapter
+  MiddlewaresAdapter,
+  HttpRequestAdapter
 } from '../adapters'
 import { Route } from './route.protocol'
 
@@ -14,6 +15,7 @@ extends
   MiddlewareAdapter<any>,
   MiddlewaresAdapter<any>,
   RouteAdapter<any>,
+  HttpRequestAdapter<any>,
   HttpResponseAdapter<any, any>,
   HttpHeadersAdapter<any>
 {
