@@ -13,6 +13,6 @@ export class DbAddCompanyMemberRepository implements AddCompanyMemberRepository 
   ) { }
 
   addCompanyMember = async (companyId: CompanyModel['id'], member: Member): Promise<CompanyModel | null> => {
-    return await this.db.pushOne<CompanyModel, 'members', Member>(companyId, 'members', member, 'companies')
+    return await this.db.pushOne<CompanyModel, 'members'>(companyId, 'members', member, 'companies')
   }
 }
