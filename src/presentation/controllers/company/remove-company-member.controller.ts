@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, forbidden, notFound, ok } from '@/presentation/factories/http.factory'
 import { idParamKeys, idParamSchema, idParamSchemaOptions } from '@/presentation/schemas'
-import { HandleLogError, ValidateRequest } from '@/presentation/decorators'
+import { HandleLogError, ValidateParams } from '@/presentation/decorators'
 import { AccessDeniedError, CanNotFindEntityError, UserIsNotAMemberError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity } from '@/domain/entities'
@@ -19,12 +19,12 @@ export class RemoveCompanyMemberController implements Controller<undefined, Comp
     @Inject() private readonly removeCompanyMemberUseCase: RemoveCompanyMemberUseCase
   ) { }
 
-  @ValidateRequest<undefined, CompanyEntity>({
-    paramsSchema: {
+  @ValidateParams<undefined, CompanyEntity>({
+    schema: {
       ...idParamSchema,
       userId: idParamSchemaOptions
     },
-    paramKeys: {
+    keys: {
       ...idParamKeys,
       userId: 'userId'
     }

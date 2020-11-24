@@ -5,7 +5,7 @@ import { UserFeatures, CompanyRole } from '@/shared/constants'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { ok } from '@/presentation/factories/http.factory'
 import { companySchema } from '@/presentation/schemas'
-import { HandleLogError, ValidateRequest } from '@/presentation/decorators'
+import { HandleLogError, ValidateBody } from '@/presentation/decorators'
 // < Out: only domain layer
 import { CompanyEntity, companyKeys, UserEntity } from '@/domain/entities'
 import { AddCompanyUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
@@ -19,10 +19,9 @@ export class AddCompanyController implements Controller<CompanyEntity> {
     @Inject() private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase
   ) { }
 
-  @ValidateRequest<CompanyDto, CompanyEntity>({
+  @ValidateBody<CompanyDto, CompanyEntity>({
     schema: companySchema,
-    keys: companyKeys,
-    nullable: false
+    keys: companyKeys
   })
   @HandleLogError
   async handle (request: HttpRequest<CompanyDto>): HandleResponse<CompanyEntity> {

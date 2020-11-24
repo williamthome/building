@@ -5,7 +5,7 @@ import { required } from '../validations'
 import { DeepFlattenPaths } from '@/shared/types'
 
 export const schemaError = <T extends Record<PropertyKey, any>> (
-  obj: Partial<T>,
+  obj: T,
   schema: Schema<T>,
   nullable: boolean,
   keys?: DeepFlattenPaths<T>

@@ -1,22 +1,20 @@
 // : Shared
 import { DeepFlattenPaths } from '@/shared/types'
 // > In: presentation layer
-import { Controller, HandleResponse, HttpRequest, Schema } from '../protocols'
+import { Controller, HandleResponse, HttpParameters, HttpRequest, Schema } from '../protocols'
 import { badRequest, noContent } from '../factories/http.factory'
 import { schemaError } from '../helpers/validation.helper'
 // < Out: only domain layer
 
-export interface ValidateRequestOptions<T extends Record<PropertyKey, any>> {
-  schema?: Schema<T>
-  keys?: DeepFlattenPaths<T>
+export interface ValidateSchemaOptions<T extends Record<PropertyKey, any>> {
+  schema: Schema<T>
+  keys: DeepFlattenPaths<T>
   nullable?: boolean
-  paramsSchema?: Schema<any>
-  paramKeys?: DeepFlattenPaths<any>
 }
 
-export const ValidateRequest =
+export const ValidateBody =
   <TRequest, TResponse> (
-    { paramsSchema, paramKeys, schema, keys, nullable = false }: ValidateRequestOptions<TRequest>
+    { schema, keys, nullable = false }: ValidateSchemaOptions<TRequest>
   ) =>
     <TController extends Controller<TRequest, TResponse>> (
       _controller: TController,
@@ -28,22 +26,40 @@ export const ValidateRequest =
       descriptor.value = async function (
         httpRequest: HttpRequest<TRequest>
       ): HandleResponse<TResponse> {
-        const { params, body } = httpRequest
+        const { body } = httpRequest
 
-        if (paramsSchema) {
-          const paramsError = schemaError(params || {}, paramsSchema, nullable, paramKeys)
-          if (paramsError) return paramsError
-        }
+        if (!body && !nullable)
+          return badRequest(new Error('Data is required'))
 
-        if (schema) {
-          if (!body && !nullable)
-            return badRequest(new Error('Data is required'))
+        if (!body) return noContent()
 
-          if (!body) return noContent()
+        const bodyError = schemaError<TRequest>(body, schema, nullable, keys)
+        if (bodyError) return bodyError
 
-          const bodyError = schemaError<TRequest>(body, schema, nullable, keys)
-          if (bodyError) return bodyError
-        }
+        return await originalMethod.apply(this, [httpRequest])
+      }
+
+      return descriptor
+    }
+
+export const ValidateParams =
+  <TRequest, TResponse> (
+    { schema, keys, nullable = false }: ValidateSchemaOptions<HttpParameters>
+  ) =>
+    <TController extends Controller<TRequest, TResponse>> (
+      _controller: TController,
+      _methodKey: string | symbol,
+      descriptor: PropertyDescriptor
+    ): any => {
+      const originalMethod = descriptor.value
+
+      descriptor.value = async function (
+        httpRequest: HttpRequest<TRequest>
+      ): HandleResponse<TResponse> {
+        const { params } = httpRequest
+
+        const paramsError = schemaError(params || {}, schema, nullable, keys)
+        if (paramsError) return paramsError
 
         return await originalMethod.apply(this, [httpRequest])
       }

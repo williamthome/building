@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { UserEntity } from '@/domain/entities'
 import { AuthDto } from '@/domain/protocols'
 import { GetUserByEmailUseCase, UpdateUserAccessTokenUseCase } from '@/domain/usecases/user'
-import { HandleLogError, ValidateRequest } from '@/presentation/decorators'
+import { HandleLogError, ValidateBody } from '@/presentation/decorators'
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { authSchema } from '@/presentation/schemas'
@@ -19,13 +19,12 @@ export class AuthenticationController implements Controller<UserEntity> {
     @Inject() private readonly updateUserAccessTokenUseCase: UpdateUserAccessTokenUseCase
   ) { }
 
-  @ValidateRequest<AuthDto, UserEntity>({
+  @ValidateBody<AuthDto, UserEntity>({
     schema: authSchema,
     keys: {
       email: 'email',
       password: 'password'
-    },
-    nullable: false
+    }
   })
   @HandleLogError
   async handle (request: HttpRequest<AuthDto>): HandleResponse<UserEntity> {

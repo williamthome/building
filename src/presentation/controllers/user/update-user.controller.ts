@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { idParamKeys, idParamSchema, userSchema } from '@/presentation/schemas'
-import { HandleLogError, ValidateRequest } from '@/presentation/decorators'
+import { HandleLogError, ValidateBody, ValidateParams } from '@/presentation/decorators'
 import { CanNotFindEntityError } from '@/presentation/errors'
 // < Out: only domain layer
 import { UserEntity, userKeys } from '@/domain/entities'
@@ -18,12 +18,14 @@ export class UpdateUserController implements Controller<UserEntity> {
     @Inject() private readonly updateUserUseCase: UpdateUserUseCase
   ) { }
 
-  @ValidateRequest<UserDto, UserEntity>({
+  @ValidateBody<UserDto, UserEntity>({
     schema: userSchema,
     keys: userKeys,
-    nullable: true,
-    paramsSchema: idParamSchema,
-    paramKeys: idParamKeys
+    nullable: true
+  })
+  @ValidateParams<UserDto, UserEntity>({
+    schema: idParamSchema,
+    keys: idParamKeys
   })
   @HandleLogError
   async handle (request: HttpRequest<UserDto>): HandleResponse<UserEntity> {
