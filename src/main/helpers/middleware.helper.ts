@@ -23,13 +23,13 @@ const mergeActiveCompanyInfo = (
 export const okMiddleware = (
   httpRequest: HttpRequest,
   toMerge?: {
-    loggedUserInfo?: Partial<LoggedUserInfo>
+    loggedUserInfo?: Partial<LoggedUserInfo>,
     activeCompanyInfo?: Partial<ActiveCompanyInfo>
   }
 ): HttpResponse<MiddlewareContent> => {
   return ok<MiddlewareContent>({
-    loggedUserInfo: mergeLoggedUserInfo(toMerge?.loggedUserInfo, httpRequest.loggedUserInfo),
-    activeCompanyInfo: mergeActiveCompanyInfo(toMerge?.activeCompanyInfo, httpRequest.activeCompanyInfo)
+    loggedUserInfo: mergeLoggedUserInfo(httpRequest.loggedUserInfo, toMerge?.loggedUserInfo),
+    activeCompanyInfo: mergeActiveCompanyInfo(httpRequest.activeCompanyInfo, toMerge?.activeCompanyInfo)
   })
 }
 
