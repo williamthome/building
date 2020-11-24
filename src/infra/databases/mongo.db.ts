@@ -204,4 +204,42 @@ export class MongoDB implements Database {
     const { value } = result
     return value ? this.map<T>(value) : null
   }
+
+  setOne = async <T extends Model, KArray extends keyof T, KMatch extends keyof Unpacked<T[KArray]>> (
+    id: Model['id'],
+    arrayKey: KArray,
+    matchKey: KMatch,
+    match: Unpacked<T[KArray]>[KMatch],
+    payload: Partial<Unpacked<T[KArray]>>,
+    collectionName: CollectionName,
+    options?: Omit<CollectionInsertOneOptions, 'session'>
+  ): Promise<T | null> => {
+    const collection = await this.getCollection(collectionName)
+
+    const toUpdate: Record<string, unknown> = {}
+    for (const [key, value] of Object.entries(payload)) {
+      toUpdate[`${arrayKey}.$.${key}`] = value
+    }
+
+    const result = await collection.findOneAndUpdate(
+      {
+        _id: new ObjectId(id),
+        [arrayKey]: {
+          $elemMatch: {
+            [matchKey]: match
+          }
+        }
+      },
+      {
+        $set: toUpdate
+      },
+      {
+        ...options,
+        session: this.session,
+        returnOriginal: false
+      }
+    )
+    const { value } = result
+    return value ? this.map<T>(value) : null
+  }
 }

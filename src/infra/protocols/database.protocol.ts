@@ -38,4 +38,13 @@ export interface Database {
     collectionName: CollectionName,
     options?: TOptions
   ) => Promise<T | null>
+  setOne: <T extends Model, KArray extends keyof T, KMatch extends keyof Unpacked<T[KArray]>, TOptions = unknown> (
+    id: Model['id'],
+    arrayKey: KArray,
+    matchKey: KMatch,
+    match: Unpacked<T[KArray]>[KMatch],
+    payload: Partial<Unpacked<T[KArray]>>,
+    collectionName: CollectionName,
+    options?: TOptions
+  ) => Promise<T | null>
 }
