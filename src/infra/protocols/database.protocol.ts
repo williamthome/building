@@ -24,10 +24,17 @@ export interface Database {
     options?: TOptions
   ) => Promise<TModel | null>,
   clearCollection: (collectionName: CollectionName) => Promise<void>
-  pushOne: <T extends Model, K extends keyof T, TPayload extends Unpacked<T[K]>, TOptions = unknown> (
+  pushOne: <T extends Model, K extends keyof T, TOptions = unknown> (
     id: Model['id'],
     arrayKey: K,
-    payload: TPayload,
+    payload: Unpacked<T[K]>,
+    collectionName: CollectionName,
+    options?: TOptions
+  ) => Promise<T | null>
+  pullOne: <T extends Model, K extends keyof T, TOptions = unknown> (
+    id: Model['id'],
+    arrayKey: K,
+    payload: Partial<Unpacked<T[K]>>,
     collectionName: CollectionName,
     options?: TOptions
   ) => Promise<T | null>

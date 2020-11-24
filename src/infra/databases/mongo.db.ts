@@ -179,4 +179,29 @@ export class MongoDB implements Database {
     const { value } = result
     return value ? this.map<T>(value) : null
   }
+
+  pullOne = async <T extends Model, K extends keyof T> (
+    id: Model['id'],
+    arrayKey: K,
+    payload: Partial<Unpacked<T[K]>>,
+    collectionName: CollectionName,
+    options?: Omit<CollectionInsertOneOptions, 'session'>
+  ): Promise<T | null> => {
+    const collection = await this.getCollection(collectionName)
+    const result = await collection.findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      {
+        $pull: {
+          [arrayKey]: payload
+        }
+      },
+      {
+        ...options,
+        session: this.session,
+        returnOriginal: false
+      }
+    )
+    const { value } = result
+    return value ? this.map<T>(value) : null
+  }
 }
