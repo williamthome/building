@@ -58,12 +58,14 @@ export const addUserAndAuthenticate = async (): Promise<{
 }
 
 export const addCompany = async (user: UserModel): Promise<{
+  owner: UserModel,
   company: CompanyModel
 }> => {
   const db = container.resolve<Database>('db')
   const company = await db.addOne<CompanyModel>(mockCompanyEntityDto(user), 'companies')
-  await db.updateOne<UserModel>(user.id, { activeCompanyId: company.id }, 'users') as UserModel
+  const owner = await db.updateOne<UserModel>(user.id, { activeCompanyId: company.id }, 'users') as UserModel
   return {
+    owner,
     company
   }
 }
