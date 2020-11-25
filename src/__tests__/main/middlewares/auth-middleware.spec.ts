@@ -1,13 +1,12 @@
 import container from '@/shared/dependency-injection'
 import fakeData from '@/__tests__/shared/fake-data'
 import { AuthMiddleware } from '@/main/middlewares'
-import { forbidden, notFound, serverError, unauthorized } from '@/presentation/factories/http.factory'
-import { GetCompanyByIdUseCaseSpy, GetUserByAccessTokenUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
-import { AccessDeniedError, CanNotFindEntityError } from '@/presentation/errors'
+import { notFound, serverError, unauthorized } from '@/presentation/factories/http.factory'
+import { GetUserByAccessTokenUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
+import { CanNotFindEntityError } from '@/presentation/errors'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { HttpRequest } from '@/presentation/protocols'
 import { mockAuthorizationHeader } from '@/__tests__/presentation/__mocks__'
-import { CompanyRole, UserFeatures } from '@/shared/constants'
 
 //#region Factories
 
@@ -19,17 +18,14 @@ const mockHttpRequest = (): HttpRequest<unknown> => ({
 interface SutTypes {
   sut: AuthMiddleware
   getUserByAccessTokenUseCaseSpy: GetUserByAccessTokenUseCaseSpy
-  getCompanyByIdUseCaseSpy: GetCompanyByIdUseCaseSpy
 }
 
 const makeSut = (): SutTypes => {
   const getUserByAccessTokenUseCaseSpy = container.resolve<GetUserByAccessTokenUseCaseSpy>('getUserByAccessTokenUseCase')
-  const getCompanyByIdUseCaseSpy = container.resolve<GetCompanyByIdUseCaseSpy>('getCompanyByIdUseCase')
   const sut = container.resolve(AuthMiddleware)
   return {
     sut,
-    getUserByAccessTokenUseCaseSpy,
-    getCompanyByIdUseCaseSpy
+    getUserByAccessTokenUseCaseSpy
   }
 }
 
@@ -38,7 +34,6 @@ const makeSut = (): SutTypes => {
 describe('Auth Middleware', () => {
   beforeEach(() => {
     container.define('getUserByAccessTokenUseCase').asNewable(GetUserByAccessTokenUseCaseSpy).done()
-    container.define('getCompanyByIdUseCase').asNewable(GetCompanyByIdUseCaseSpy).done()
     container.define(AuthMiddleware).asNewable(AuthMiddleware).done()
   })
 
@@ -90,59 +85,8 @@ describe('Auth Middleware', () => {
     })
   })
 
-  describe('GetCompanyById UseCase', () => {
-    it('should been called with right values', async () => {
-      const { sut, getUserByAccessTokenUseCaseSpy, getCompanyByIdUseCaseSpy } = makeSut()
-      await sut.handle(mockHttpRequest())
-      expect(getCompanyByIdUseCaseSpy.id).toBe(getUserByAccessTokenUseCaseSpy.userModel?.activeCompanyId)
-    })
-
-    it('should return server error if throws', async () => {
-      const { sut, getCompanyByIdUseCaseSpy } = makeSut()
-      getCompanyByIdUseCaseSpy.shouldThrow = true
-      const response = await sut.handle(mockHttpRequest())
-      expect(response).toEqual(serverError(new Error()))
-    })
-
-    it('should return company not found', async () => {
-      const { sut, getCompanyByIdUseCaseSpy } = makeSut()
-      getCompanyByIdUseCaseSpy.shouldReturnNull = true
-      const response = await sut.handle(mockHttpRequest())
-      expect(response).toEqual(notFound(new CanNotFindEntityError('Company')))
-    })
-
-    it('should return access denied if user is not a member of active company', async () => {
-      const { sut, getCompanyByIdUseCaseSpy } = makeSut()
-      getCompanyByIdUseCaseSpy.override = {
-        members: []
-      }
-      const response = await sut.handle(mockHttpRequest())
-      expect(response).toEqual(forbidden(new AccessDeniedError()))
-    })
-  })
-
-  it('should return ok without user active company id', async () => {
-    const { sut, getUserByAccessTokenUseCaseSpy } = makeSut()
-    getUserByAccessTokenUseCaseSpy.override = {
-      activeCompanyId: undefined
-    }
-    const response = await sut.handle(mockHttpRequest())
-    expect(response.statusCode).toBe(HttpStatusCode.OK)
-  })
-
   it('should return ok', async () => {
-    const { sut, getUserByAccessTokenUseCaseSpy, getCompanyByIdUseCaseSpy } = makeSut()
-    const userId = fakeData.entity.id()
-    getUserByAccessTokenUseCaseSpy.override = {
-      id: userId
-    }
-    getCompanyByIdUseCaseSpy.override = {
-      members: [{
-        userId,
-        companyRole: CompanyRole.owner,
-        features: UserFeatures.None
-      }]
-    }
+    const { sut } = makeSut()
     const response = await sut.handle(mockHttpRequest())
     expect(response.statusCode).toBe(HttpStatusCode.OK)
   })
