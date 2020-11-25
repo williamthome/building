@@ -1,10 +1,9 @@
 import request from 'supertest'
-import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
-import { mockCompanyEntityDto } from '@/__tests__/domain/__mocks__/entities'
 import { addCompany, addUserAndAuthenticate, config, db, mongoInMemory, webServer } from '@/__tests__/shared/mongodb-server.utils'
+import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { mockAuthorizationToken } from '@/__tests__/presentation/__mocks__'
 
-describe('UpdateCompany Route > PATCH /company', () => {
+describe('UpdateUserActiveCompany Route > PATCH /user/activeCompany/:companyId', () => {
   beforeAll(async () => {
     await config()
     await webServer().listen()
@@ -22,13 +21,12 @@ describe('UpdateCompany Route > PATCH /company', () => {
     await mongoInMemory().stop()
   })
 
-  it('shold return ok', async () => {
+  xit('shold return no content', async () => {
     const { authenticatedUser, accessToken } = await addUserAndAuthenticate()
-    await addCompany(authenticatedUser)
-    await request(webServer().server())
-      .patch('/company')
+    const { company } = await addCompany(authenticatedUser)
+    return await request(webServer().server())
+      .patch(`/user/activeCompany/${company.id}`)
       .set(HttpHeaderName.AUTHORIZATION, mockAuthorizationToken(accessToken))
-      .send(mockCompanyEntityDto())
-      .expect(HttpStatusCode.OK)
+      .expect(HttpStatusCode.NO_CONTENT)
   })
 })

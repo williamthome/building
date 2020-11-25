@@ -6,20 +6,17 @@ import { config, db, mongoInMemory, webServer } from '@/__tests__/shared/mongodb
 describe('Authentication Route > POST /login', () => {
   beforeAll(async () => {
     await config()
+    await webServer().listen()
     await db().connect()
   })
 
   beforeEach(async () => {
     await db().clearCollection('users')
-    await webServer().listen()
-  })
-
-  afterEach(async () => {
-    await webServer().close()
   })
 
   afterAll(async () => {
     await db().disconnect()
+    await webServer().close()
     await mongoInMemory().stop()
   })
 

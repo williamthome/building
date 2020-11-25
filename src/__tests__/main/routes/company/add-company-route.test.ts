@@ -7,21 +7,18 @@ import { mockAuthorizationToken } from '@/__tests__/presentation/__mocks__'
 describe('AddCompany Route > POST /company', () => {
   beforeAll(async () => {
     await config()
+    await webServer().listen()
     await db().connect()
   })
 
   beforeEach(async () => {
     await db().clearCollection('companies')
     await db().clearCollection('users')
-    await webServer().listen()
-  })
-
-  afterEach(async () => {
-    await webServer().close()
   })
 
   afterAll(async () => {
     await db().disconnect()
+    await webServer().close()
     await mongoInMemory().stop()
   })
 
