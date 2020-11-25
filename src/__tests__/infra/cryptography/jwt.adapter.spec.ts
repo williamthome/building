@@ -11,7 +11,7 @@ import { JwtAdapter } from '@/infra/cryptography'
 const fakeSecret = fakeData.entity.jwtSecret()
 const fakeId = fakeData.entity.id()
 const fakeToken = 'encrypted'
-const fakeVerifiedToken = 'decrypted'
+const fakeVerifiedToken = { [JwtAdapter.key]: 'decrypted' }
 
 jest.mock('jsonwebtoken', () => ({
   sign (): string {
@@ -19,7 +19,7 @@ jest.mock('jsonwebtoken', () => ({
   },
 
   verify (): string {
-    return fakeVerifiedToken
+    return fakeVerifiedToken[JwtAdapter.key]
   }
 }))
 
@@ -48,7 +48,7 @@ describe('JWT Adapter', () => {
       const { sut } = makeSut()
       const signSpy = jest.spyOn(jwt, 'sign')
       await sut.encrypt(fakeId)
-      expect(signSpy).toHaveBeenCalledWith(fakeId, fakeSecret)
+      expect(signSpy).toHaveBeenCalledWith({ [JwtAdapter.key]: fakeId }, fakeSecret)
     })
 
     it('Should returns a token on success', async () => {

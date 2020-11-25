@@ -8,15 +8,18 @@ import { Decrypter, Encrypter } from '@/data/protocols/cryptography'
 @Injectable('encrypter')
 @Injectable('decrypter')
 export class JwtAdapter implements Encrypter, Decrypter {
+  static key = 'data'
+
   constructor (
     @Inject('JWT_SECRET') private readonly secret: string
   ) {}
 
   encrypt = async (value: string): Promise<string> => {
-    return await Promise.resolve(jwt.sign(value, this.secret))
+    return jwt.sign({ [JwtAdapter.key]: value }, this.secret)
   }
 
   decrypt = async (value: string): Promise<string> => {
-    return await Promise.resolve(jwt.verify(value, this.secret).toString())
+    const decrypted = jwt.verify(value, this.secret) as Record<string, any>
+    return decrypted[JwtAdapter.key]
   }
 }
