@@ -9,7 +9,7 @@ export type HttpParameters = Record<string, string>
 
 export type HttpMethods = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 
-export interface HttpRequest<T = unknown> {
+export interface HttpRequest<T = undefined> {
   body?: T
   headers?: HttpHeaders
   params?: HttpParameters
@@ -17,7 +17,7 @@ export interface HttpRequest<T = unknown> {
   activeCompanyInfo?: ActiveCompanyInfo
 }
 
-export interface HttpResponse<T = unknown> {
+export interface HttpResponse<T = null> {
   statusCode: HttpStatusCode
   body: T
 }
