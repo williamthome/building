@@ -5,6 +5,7 @@ export type LoggedUserInfo =
   Partial<
     Pick<UserEntity,
       | 'id'
+      | 'activeCompanyId'
     >
   >
   & Partial<
