@@ -25,7 +25,7 @@ extends
   listen: () => Promise<void>
   ready: () => Promise<void>
   close: () => Promise<void>
-  injectRoutes: () => Promise<void>
+  injectRoutes: () => void
   isListening: boolean
 }
 

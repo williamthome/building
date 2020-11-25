@@ -14,6 +14,7 @@ export class Fastify implements WebServer {
     @Inject() public readonly routes: Route<unknown>[]
   ) {
     this.fastifyInstance = fastify()
+    this.injectRoutes()
   }
 
   server = (): unknown => {
@@ -21,7 +22,6 @@ export class Fastify implements WebServer {
   }
 
   listen = async (): Promise<void> => {
-    await this.injectRoutes()
     await this.fastifyInstance.listen(this.port)
     await this.ready()
     this._isListening = true
@@ -37,13 +37,13 @@ export class Fastify implements WebServer {
     this._isListening = false
   }
 
-  injectRoutes = async (): Promise<void> => {
+  injectRoutes = (): void => {
     if (this.routes.length === 0) throw new Error('No routes')
 
-    await Promise.all(this.routes.map((route, index) => {
+    this.routes.map((route, index) => {
       this.adaptRoute(route, this.fastifyInstance)
       console.log(`Route ${index + 1}/${this.routes.length} injected - ${route.path} ${route.method}`)
-    }))
+    })
   }
 
   get isListening (): boolean {
