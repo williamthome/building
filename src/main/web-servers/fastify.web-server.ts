@@ -42,7 +42,7 @@ export class Fastify implements WebServer {
 
     await Promise.all(this.routes.map((route, index) => {
       this.adaptRoute(route, this.fastifyInstance)
-      console.log(`[${index + 1}/${this.routes.length}] Route '${route.path}' injected`)
+      console.log(`Route ${index + 1}/${this.routes.length} injected - ${route.path} ${route.method}`)
     }))
   }
 
