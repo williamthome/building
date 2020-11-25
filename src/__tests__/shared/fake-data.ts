@@ -1,4 +1,5 @@
 import faker from 'faker'
+import jwt from 'jsonwebtoken'
 
 // see: https://rawgit.com/Marak/faker.js/master/examples/browser/index.html#
 
@@ -6,7 +7,8 @@ export default {
   entity: {
     id: (): string => faker.random.uuid(),
     password: (): string => faker.random.uuid(),
-    token: (): string => faker.random.alphaNumeric(20)
+    token: (value: string, secret: string): string => jwt.sign(value, secret),
+    jwtSecret: (): string => faker.random.word()
   },
   person: {
     fullName: (): string => faker.name.findName(),

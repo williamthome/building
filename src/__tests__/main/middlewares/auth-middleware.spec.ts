@@ -11,7 +11,7 @@ import { CompanyRole, UserFeatures } from '@/shared/constants'
 
 //#region Factories
 
-const accessToken = fakeData.entity.token()
+const accessToken = fakeData.entity.token(fakeData.entity.id(), fakeData.entity.jwtSecret())
 const mockHttpRequest = (): HttpRequest<unknown> => ({
   headers: mockAuthorizationHeader(accessToken)
 })

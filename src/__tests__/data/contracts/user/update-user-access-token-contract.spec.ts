@@ -5,6 +5,9 @@ import fakeData from '@/__tests__/shared/fake-data'
 
 //#region Factories
 
+const id = fakeData.entity.id()
+const accessToken = fakeData.entity.token(id, fakeData.entity.jwtSecret())
+
 interface SutTypes {
   sut: UpdateUserAccessTokenContract
   updateUserAccessTokenRepositorySpy: UpdateUserAccessTokenRepositorySpy
@@ -30,8 +33,6 @@ describe('UpdateUserAccessToken Contract', () => {
   describe('UpdateUserAccessToken Repository', () => {
     it('should be called with right value', async () => {
       const { sut, updateUserAccessTokenRepositorySpy } = makeSut()
-      const id = fakeData.entity.id()
-      const accessToken = fakeData.entity.token()
       await sut.call(id, accessToken)
       expect(updateUserAccessTokenRepositorySpy.id).toEqual(id)
       expect(updateUserAccessTokenRepositorySpy.accessToken).toEqual(accessToken)
@@ -40,12 +41,12 @@ describe('UpdateUserAccessToken Contract', () => {
     it('should throw if method throws', async () => {
       const { sut, updateUserAccessTokenRepositorySpy } = makeSut()
       updateUserAccessTokenRepositorySpy.shouldThrow = true
-      await expect(sut.call(fakeData.entity.id(), fakeData.entity.token())).rejects.toThrow()
+      await expect(sut.call(fakeData.entity.id(), accessToken)).rejects.toThrow()
     })
   })
 
   it('shold not throw on update user access token', async () => {
     const { sut } = makeSut()
-    await expect(sut.call(fakeData.entity.id(), fakeData.entity.token())).resolves.not.toThrow()
+    await expect(sut.call(id, accessToken)).resolves.not.toThrow()
   })
 })

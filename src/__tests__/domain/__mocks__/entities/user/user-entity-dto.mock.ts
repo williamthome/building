@@ -5,7 +5,7 @@ import { AuthDto } from '@/domain/protocols'
 export const mockUserEntityDto = (authDto?: AuthDto): Omit<UserEntity, 'id'> => ({
   email: fakeData.person.email(),
   password: fakeData.entity.password(),
-  accessToken: fakeData.entity.token(),
+  accessToken: fakeData.entity.token(fakeData.entity.id(), fakeData.entity.jwtSecret()),
   name: fakeData.person.fullName(),
   address: {
     street: fakeData.address.street(),
