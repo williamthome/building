@@ -7,7 +7,7 @@ import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { authSchema } from '@/presentation/schemas'
 import { Encrypter, HashComparer } from '@/data/protocols/cryptography'
-import { CanNotFindEntityError, PasswordDoNotMatchError } from '@/presentation/errors'
+import { EntityNotFoundError, PasswordDoNotMatchError } from '@/presentation/errors'
 
 @Injectable()
 export class AuthenticationController implements Controller<UserEntity> {
@@ -32,7 +32,7 @@ export class AuthenticationController implements Controller<UserEntity> {
     const user = await this.getUserByEmailUseCase.call(authDto.email)
 
     if (!user)
-      return notFound(new CanNotFindEntityError('User'))
+      return notFound(new EntityNotFoundError('User'))
 
     const passwordMatch = await this.hashComparer.match(
       authDto.password,

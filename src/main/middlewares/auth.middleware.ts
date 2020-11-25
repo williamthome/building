@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Middleware, MiddlewareResponse } from '../protocols'
-import { CanNotFindEntityError } from '@/presentation/errors'
+import { EntityNotFoundError } from '@/presentation/errors'
 import { notFound, unauthorized } from '@/presentation/factories/http.factory'
 import { HttpRequest } from '@/presentation/protocols'
 import { HandleLogError } from '@/presentation/decorators'
@@ -22,7 +22,7 @@ export class AuthMiddleware implements Middleware {
 
     const user = await this.getUserByAccessTokenUseCase.call(accessToken)
     if (!user)
-      return notFound(new CanNotFindEntityError('User'))
+      return notFound(new EntityNotFoundError('User'))
 
     return okMiddleware(
       httpRequest,

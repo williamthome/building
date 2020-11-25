@@ -6,7 +6,7 @@ import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocol
 import { badRequest, forbidden, notFound, ok } from '@/presentation/factories/http.factory'
 import { idParamKeys, idParamSchema, idParamSchemaOptions, memberSchema } from '@/presentation/schemas'
 import { HandleLogError, ValidateBody, ValidateParams } from '@/presentation/decorators'
-import { AccessDeniedError, CanNotFindEntityError, UserIsNotAMemberError } from '@/presentation/errors'
+import { AccessDeniedError, EntityNotFoundError, UserIsNotAMemberError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity } from '@/domain/entities'
 import { UpdateCompanyMemberUseCase } from '@/domain/usecases'
@@ -51,7 +51,7 @@ export class UpdateCompanyMemberController implements Controller<MemberDto, Comp
 
     const updatedCompany = await this.updateCompanyMemberUseCase.call(companyId, userId, memberDto)
     if (!updatedCompany)
-      return notFound(new CanNotFindEntityError('Company'))
+      return notFound(new EntityNotFoundError('Company'))
 
     return ok(updatedCompany)
   }

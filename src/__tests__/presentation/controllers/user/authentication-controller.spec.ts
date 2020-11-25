@@ -3,7 +3,7 @@ import container from '@/shared/dependency-injection'
 import { AuthenticationController } from '@/presentation/controllers'
 import { badRequest, notFound, ok, serverError } from '@/presentation/factories/http.factory'
 import { HttpRequest } from '@/presentation/protocols'
-import { CanNotFindEntityError, PasswordDoNotMatchError } from '@/presentation/errors'
+import { EntityNotFoundError, PasswordDoNotMatchError } from '@/presentation/errors'
 // < Out: only domain layer
 import { mockAuthDto } from '@/__tests__/domain/__mocks__/entities'
 import { GetUserByEmailUseCaseSpy, UpdateUserAccessTokenUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
@@ -72,7 +72,7 @@ describe('AddUser Controller', () => {
       const { sut, getUserByEmailUseCase } = makeSut()
       getUserByEmailUseCase.shouldReturnNull = true
       const response = await sut.handle(mockHttpRequest())
-      expect(response).toEqual(notFound(new CanNotFindEntityError('User')))
+      expect(response).toEqual(notFound(new EntityNotFoundError('User')))
     })
   })
 

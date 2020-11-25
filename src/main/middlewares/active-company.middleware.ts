@@ -4,7 +4,7 @@ import { forbidden, notFound, unauthorized } from '@/presentation/factories/http
 import { HttpRequest } from '@/presentation/protocols'
 import { HandleLogError } from '@/presentation/decorators'
 import { GetCompanyByIdUseCase } from '@/domain/usecases'
-import { AccessDeniedError, CanNotFindEntityError } from '@/presentation/errors'
+import { AccessDeniedError, EntityNotFoundError } from '@/presentation/errors'
 import { okMiddleware } from '../helpers/middleware.helper'
 
 @Injectable()
@@ -24,7 +24,7 @@ export class ActiveCompanyMiddleware implements Middleware {
 
     const activeCompany = await this.getCompanyByIdUseCase.call(activeCompanyId)
     if (!activeCompany)
-      return notFound(new CanNotFindEntityError('Company'))
+      return notFound(new EntityNotFoundError('Company'))
 
     const member = activeCompany.members.find(companyMember => userId === companyMember.userId)
     if (!member)

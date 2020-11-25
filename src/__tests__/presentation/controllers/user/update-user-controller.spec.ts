@@ -4,7 +4,7 @@ import fakeData from '@/__tests__/shared/fake-data'
 // > In: presentation layer
 import { UpdateUserController } from '@/presentation/controllers'
 import { badRequest, notFound, ok, serverError } from '@/presentation/factories/http.factory'
-import { CanNotFindEntityError, MissingParamError } from '@/presentation/errors'
+import { EntityNotFoundError, MissingParamError } from '@/presentation/errors'
 import { HttpRequest } from '@/presentation/protocols'
 // < Out: only domain layer
 import { UserDto } from '@/domain/protocols'
@@ -66,7 +66,7 @@ describe('UpdateUser Controller', () => {
       const { sut, updateUserUseCaseSpy } = makeSut()
       updateUserUseCaseSpy.shouldReturnNull = true
       const response = await sut.handle(mockHttpRequest())
-      expect(response).toEqual(notFound(new CanNotFindEntityError('User')))
+      expect(response).toEqual(notFound(new EntityNotFoundError('User')))
     })
   })
 

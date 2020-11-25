@@ -3,7 +3,7 @@ import fakeData from '@/__tests__/shared/fake-data'
 import { AuthMiddleware } from '@/main/middlewares'
 import { notFound, serverError, unauthorized } from '@/presentation/factories/http.factory'
 import { GetUserByAccessTokenUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
-import { CanNotFindEntityError } from '@/presentation/errors'
+import { EntityNotFoundError } from '@/presentation/errors'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { HttpRequest } from '@/presentation/protocols'
 import { mockAuthorizationHeader } from '@/__tests__/presentation/__mocks__'
@@ -81,7 +81,7 @@ describe('Auth Middleware', () => {
       const { sut, getUserByAccessTokenUseCaseSpy } = makeSut()
       getUserByAccessTokenUseCaseSpy.shouldReturnNull = true
       const response = await sut.handle(mockHttpRequest())
-      expect(response).toEqual(notFound(new CanNotFindEntityError('User')))
+      expect(response).toEqual(notFound(new EntityNotFoundError('User')))
     })
   })
 

@@ -5,7 +5,7 @@ import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocol
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { idParamKeys, idParamSchema, memberSchema } from '@/presentation/schemas'
 import { HandleLogError, ValidateBody, ValidateParams } from '@/presentation/decorators'
-import { CanNotFindEntityError } from '@/presentation/errors'
+import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity } from '@/domain/entities'
 import { AddCompanyMemberUseCase } from '@/domain/usecases'
@@ -33,7 +33,7 @@ export class AddCompanyMemberController implements Controller<Member, CompanyEnt
 
     const updatedCompany = await this.addCompanyMemberUseCase.call(companyId, member)
     if (!updatedCompany)
-      return notFound(new CanNotFindEntityError('Company'))
+      return notFound(new EntityNotFoundError('Company'))
 
     return ok(updatedCompany)
   }

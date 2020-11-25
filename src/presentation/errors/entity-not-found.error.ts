@@ -1,8 +1,8 @@
 import { EntityName } from '@/domain/protocols'
 
-export class CanNotFindEntityError extends Error {
+export class EntityNotFoundError extends Error {
   constructor (entityName: EntityName) {
     super(`Can not find ${entityName.toLowerCase()}`)
-    this.name = 'CanNotFindEntityError'
+    this.name = 'EntityNotFoundError'
   }
 }

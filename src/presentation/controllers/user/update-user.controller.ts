@@ -5,7 +5,7 @@ import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocol
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { userSchema } from '@/presentation/schemas'
 import { HandleLogError, ValidateBody } from '@/presentation/decorators'
-import { CanNotFindEntityError } from '@/presentation/errors'
+import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { UserEntity, userKeys } from '@/domain/entities'
 import { UpdateUserUseCase } from '@/domain/usecases'
@@ -30,7 +30,7 @@ export class UpdateUserController implements Controller<UserEntity> {
 
     const udpatedUser = await this.updateUserUseCase.call(userId, userDto)
     if (!udpatedUser)
-      return notFound(new CanNotFindEntityError('User'))
+      return notFound(new EntityNotFoundError('User'))
 
     return ok(udpatedUser)
   }

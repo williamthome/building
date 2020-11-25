@@ -3,7 +3,7 @@ import fakeData from '@/__tests__/shared/fake-data'
 import { ActiveCompanyMiddleware } from '@/main/middlewares'
 import { forbidden, notFound, serverError, unauthorized } from '@/presentation/factories/http.factory'
 import { GetCompanyByIdUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
-import { AccessDeniedError, CanNotFindEntityError } from '@/presentation/errors'
+import { AccessDeniedError, EntityNotFoundError } from '@/presentation/errors'
 import { HttpStatusCode } from '@/presentation/constants'
 import { HttpRequest } from '@/presentation/protocols'
 import { mockAuthorizationHeader } from '@/__tests__/presentation/__mocks__'
@@ -69,7 +69,7 @@ describe('ActiveCompany Middleware', () => {
       const { sut, getCompanyByIdUseCaseSpy } = makeSut()
       getCompanyByIdUseCaseSpy.shouldReturnNull = true
       const response = await sut.handle(mockHttpRequest())
-      expect(response).toEqual(notFound(new CanNotFindEntityError('Company')))
+      expect(response).toEqual(notFound(new EntityNotFoundError('Company')))
     })
 
     it('should return access denied if user is not a member of active company', async () => {

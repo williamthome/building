@@ -5,7 +5,7 @@ import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocol
 import { badRequest, forbidden, notFound, ok } from '@/presentation/factories/http.factory'
 import { idParamKeys, idParamSchema, idParamSchemaOptions } from '@/presentation/schemas'
 import { HandleLogError, ValidateParams } from '@/presentation/decorators'
-import { AccessDeniedError, CanNotFindEntityError, UserIsNotAMemberError } from '@/presentation/errors'
+import { AccessDeniedError, EntityNotFoundError, UserIsNotAMemberError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity } from '@/domain/entities'
 import { RemoveCompanyMemberUseCase } from '@/domain/usecases'
@@ -44,7 +44,7 @@ export class RemoveCompanyMemberController implements Controller<undefined, Comp
 
     const updatedCompany = await this.removeCompanyMemberUseCase.call(companyId, userId)
     if (!updatedCompany)
-      return notFound(new CanNotFindEntityError('Company'))
+      return notFound(new EntityNotFoundError('Company'))
 
     return ok(updatedCompany)
   }

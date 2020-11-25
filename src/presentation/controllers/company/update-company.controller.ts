@@ -5,7 +5,7 @@ import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocol
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { companySchema } from '@/presentation/schemas'
 import { HandleLogError, ValidateBody } from '@/presentation/decorators'
-import { CanNotFindEntityError } from '@/presentation/errors'
+import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity, companyKeys } from '@/domain/entities'
 import { UpdateCompanyUseCase } from '@/domain/usecases'
@@ -30,7 +30,7 @@ export class UpdateCompanyController implements Controller<CompanyEntity> {
 
     const udpatedCompany = await this.updateCompanyUseCase.call(companyId, companyDto)
     if (!udpatedCompany)
-      return notFound(new CanNotFindEntityError('Company'))
+      return notFound(new EntityNotFoundError('Company'))
 
     return ok(udpatedCompany)
   }
