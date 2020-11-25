@@ -20,8 +20,8 @@ const mergeActiveCompanyInfo = (
   toMerge?: Partial<ActiveCompanyInfo>
 ): Partial<ActiveCompanyInfo> => merge(activeCompanyInfo, toMerge)
 
-export const okMiddleware = (
-  httpRequest: HttpRequest,
+export const okMiddleware = <T> (
+  httpRequest: HttpRequest<T>,
   toMerge?: {
     loggedUserInfo?: Partial<LoggedUserInfo>,
     activeCompanyInfo?: Partial<ActiveCompanyInfo>
