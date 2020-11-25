@@ -43,15 +43,27 @@ export const config = async (): Promise<void> => {
 }
 
 export const addUserAndAuthenticate = async (): Promise<{
-  user: UserModel, accessToken: UserModel['accessToken']
+  authenticatedUser: UserModel,
+  accessToken: UserModel['accessToken']
 }> => {
-  const userDto = mockUserEntityDto()
   const db = container.resolve<Database>('db')
-  let user = await db.addOne<UserModel>(userDto, 'users')
-  const companyDto = mockCompanyEntityDto(user)
-  const company = await db.addOne<CompanyModel>(companyDto, 'companies')
+  const user = await db.addOne<UserModel>(mockUserEntityDto(), 'users')
   const jwtSecret = container.resolve<string>('JWT_SECRET')
   const accessToken = fakeData.entity.token(user.id, jwtSecret)
-  user = await db.updateOne<UserModel>(user.id, { activeCompanyId: company.id, accessToken }, 'users') as UserModel
-  return { user, accessToken }
+  const authenticatedUser = await db.updateOne<UserModel>(user.id, { accessToken }, 'users') as UserModel
+  return {
+    authenticatedUser,
+    accessToken
+  }
+}
+
+export const addCompany = async (user: UserModel): Promise<{
+  company: CompanyModel
+}> => {
+  const db = container.resolve<Database>('db')
+  const company = await db.addOne<CompanyModel>(mockCompanyEntityDto(user), 'companies')
+  await db.updateOne<UserModel>(user.id, { activeCompanyId: company.id }, 'users') as UserModel
+  return {
+    company
+  }
 }

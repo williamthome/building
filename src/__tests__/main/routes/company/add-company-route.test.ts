@@ -1,7 +1,7 @@
 import request from 'supertest'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { mockCompanyEntityDto } from '@/__tests__/domain/__mocks__/entities'
-import { addUserAndAuthenticate, config, db, mongoInMemory, webServer } from '@/__tests__/shared/mongodb-server.utils'
+import { addCompany, addUserAndAuthenticate, config, db, mongoInMemory, webServer } from '@/__tests__/shared/mongodb-server.utils'
 import { mockAuthorizationToken } from '@/__tests__/presentation/__mocks__'
 
 describe('AddCompany Route > POST /company', () => {
@@ -26,7 +26,8 @@ describe('AddCompany Route > POST /company', () => {
   })
 
   it('shold return ok', async () => {
-    const { accessToken } = await addUserAndAuthenticate()
+    const { authenticatedUser, accessToken } = await addUserAndAuthenticate()
+    await addCompany(authenticatedUser)
     await request(webServer().server())
       .post('/company')
       .set(HttpHeaderName.AUTHORIZATION, mockAuthorizationToken(accessToken))
