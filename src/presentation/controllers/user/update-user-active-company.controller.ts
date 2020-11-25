@@ -11,14 +11,14 @@ import { GetCompanyByIdUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/
 import { AccessDeniedError, EntityNotFoundError } from '@/presentation/errors'
 
 @Injectable()
-export class UpdateUserActiveCompanyController implements Controller<void> {
+export class UpdateUserActiveCompanyController implements Controller<undefined, null> {
 
   constructor (
     @Inject() private readonly getCompanyByIdUseCase: GetCompanyByIdUseCase,
     @Inject() private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase
   ) { }
 
-  @ValidateParams<undefined, void>({
+  @ValidateParams<undefined, null>({
     schema: {
       companyId: idParamSchemaOptions
     },
@@ -27,7 +27,7 @@ export class UpdateUserActiveCompanyController implements Controller<void> {
     }
   })
   @HandleLogError
-  async handle (request: HttpRequest): HandleResponse<void> {
+  async handle (request: HttpRequest): HandleResponse {
     const companyId = request.params?.companyId as CompanyEntity['id']
     const userId = request.loggedUserInfo?.id as UserEntity['id']
 

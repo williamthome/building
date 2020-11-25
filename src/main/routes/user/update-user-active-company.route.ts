@@ -3,13 +3,12 @@ import { AuthMiddleware, } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { UpdateUserActiveCompanyController } from '@/presentation/controllers'
 import { Controller, HttpMethods } from '@/presentation/protocols'
-import { UserEntity } from '@/domain/entities'
 
 @InjectableArray('routes')
-export class UpdateUserActiveCompanyRoute implements Route<UserEntity> {
+export class UpdateUserActiveCompanyRoute implements Route<undefined, null> {
   constructor (
     @Inject(UpdateUserActiveCompanyController)
-    public readonly controller: Controller<UserEntity>,
+    public readonly controller: Controller<undefined, null>,
 
     @Inject(AuthMiddleware)
     private readonly authMiddleware: Middleware

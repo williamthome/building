@@ -1,21 +1,20 @@
 // : Shared
 import container from '@/shared/dependency-injection'
 import fakeData from '@/__tests__/shared/fake-data'
+import { CompanyRole, UserFeatures } from '@/shared/constants'
 // > In: presentation layer
 import { UpdateUserActiveCompanyController } from '@/presentation/controllers'
 import { forbidden, noContent, notFound, serverError } from '@/presentation/factories/http.factory'
 import { AccessDeniedError, EntityNotFoundError } from '@/presentation/errors'
 import { HttpRequest } from '@/presentation/protocols'
 // < Out: only domain layer
-import { UserDto } from '@/domain/protocols'
 import { GetCompanyByIdUseCaseSpy, UpdateUserActiveCompanyUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
-import { CompanyRole, UserFeatures } from '@/shared/constants'
 
 //#region Factories
 
 const userId = fakeData.entity.id()
 const companyId = fakeData.entity.id()
-const mockHttpRequest = (): HttpRequest<UserDto> => ({
+const mockHttpRequest = (): HttpRequest => ({
   loggedUserInfo: {
     id: userId
   },
