@@ -4,6 +4,7 @@ import { DeepFlattenPaths } from '@/shared/types'
 import { Controller, HandleResponse, HttpParameters, HttpRequest, Schema } from '../protocols'
 import { badRequest, noContent } from '../factories/http.factory'
 import { schemaError } from '../helpers/validation.helper'
+import { MissingBodyError } from '../errors'
 // < Out: only domain layer
 
 export interface ValidateSchemaOptions<T extends Record<PropertyKey, any>> {
@@ -29,7 +30,7 @@ export const ValidateBody =
         const { body } = httpRequest
 
         if (!body && !nullable)
-          return badRequest(new Error('Data is required'))
+          return badRequest(new MissingBodyError())
 
         if (!body) return noContent()
 
