@@ -3,8 +3,8 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { idParamKeys, idParamSchema, userSchema } from '@/presentation/schemas'
-import { HandleLogError, ValidateBody, ValidateParams } from '@/presentation/decorators'
+import { userSchema } from '@/presentation/schemas'
+import { HandleLogError, ValidateBody } from '@/presentation/decorators'
 import { CanNotFindEntityError } from '@/presentation/errors'
 // < Out: only domain layer
 import { UserEntity, userKeys } from '@/domain/entities'
@@ -23,13 +23,9 @@ export class UpdateUserController implements Controller<UserEntity> {
     keys: userKeys,
     nullable: true
   })
-  @ValidateParams<UserDto, UserEntity>({
-    schema: idParamSchema,
-    keys: idParamKeys
-  })
   @HandleLogError
   async handle (request: HttpRequest<UserDto>): HandleResponse<UserEntity> {
-    const userId = request.params?.id as UserEntity['id']
+    const userId = request.loggedUserInfo?.id as UserEntity['id']
     const userDto = request.body as UserDto
 
     const udpatedUser = await this.updateUserUseCase.call(userId, userDto)

@@ -19,6 +19,9 @@ const mockHttpRequest = (): HttpRequest<UserDto> => ({
   body: userDto,
   params: {
     id: userId
+  },
+  loggedUserInfo: {
+    id: userId
   }
 })
 
