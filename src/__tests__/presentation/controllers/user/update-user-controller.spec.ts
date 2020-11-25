@@ -3,8 +3,8 @@ import container from '@/shared/dependency-injection'
 import fakeData from '@/__tests__/shared/fake-data'
 // > In: presentation layer
 import { UpdateUserController } from '@/presentation/controllers'
-import { badRequest, notFound, ok, serverError } from '@/presentation/factories/http.factory'
-import { EntityNotFoundError, MissingParamError } from '@/presentation/errors'
+import { notFound, ok, serverError } from '@/presentation/factories/http.factory'
+import { EntityNotFoundError } from '@/presentation/errors'
 import { HttpRequest } from '@/presentation/protocols'
 // < Out: only domain layer
 import { UserDto } from '@/domain/protocols'
