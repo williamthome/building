@@ -9,21 +9,20 @@ import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { BuildingEntity } from '@/domain/entities'
 import { DeleteBuildingUseCase } from '@/domain/usecases'
-import { BuildingDto } from '@/domain/protocols'
 
 @Injectable()
-export class DeleteBuildingController implements Controller<BuildingEntity> {
+export class DeleteBuildingController implements Controller<undefined, BuildingEntity> {
 
   constructor (
     @Inject() private readonly deleteBuildingUseCase: DeleteBuildingUseCase
   ) { }
 
-  @ValidateParams<BuildingDto, BuildingEntity>({
+  @ValidateParams<undefined, BuildingEntity>({
     schema: idParamSchema,
     keys: idParamKeys
   })
   @HandleLogError
-  async handle (request: HttpRequest<BuildingDto>): HandleResponse<BuildingEntity> {
+  async handle (request: HttpRequest): HandleResponse<BuildingEntity> {
     const buildingId = request.params?.id as BuildingEntity['id']
 
     const udpatedBuilding = await this.deleteBuildingUseCase.call(buildingId)
