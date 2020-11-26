@@ -8,14 +8,13 @@ import { HandleLogError, ValidateParams } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity } from '@/domain/entities'
-import { DeleteCompanyUseCase, UpdateMembersOnCompanyDeleteUseCase } from '@/domain/usecases'
+import { DeleteCompanyUseCase } from '@/domain/usecases'
 
 @Injectable()
 export class DeleteCompanyController implements Controller<undefined, CompanyEntity> {
 
   constructor (
-    @Inject() private readonly deleteCompanyUseCase: DeleteCompanyUseCase,
-    @Inject() private readonly updateMembersOnCompanyDeleteUseCase: UpdateMembersOnCompanyDeleteUseCase
+    @Inject() private readonly deleteCompanyUseCase: DeleteCompanyUseCase
   ) { }
 
   @ValidateParams<undefined, CompanyEntity>({
@@ -29,8 +28,6 @@ export class DeleteCompanyController implements Controller<undefined, CompanyEnt
     const company = await this.deleteCompanyUseCase.call(id)
     if (!company)
       return notFound(new EntityNotFoundError('Company'))
-
-    await this.updateMembersOnCompanyDeleteUseCase.call(company)
 
     return ok(company)
   }

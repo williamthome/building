@@ -4,7 +4,9 @@ import { Injectable, Inject } from '@/shared/dependency-injection'
 import {
   DeleteCompanyRepository,
   DeleteCompanyProjectsRepository,
-  DeleteCompanyBuildingsRepository
+  DeleteCompanyBuildingsRepository,
+  GetUserByIdRepository,
+  UpdateUserActiveCompanyRepository
 } from '@/data/repositories'
 // < Only Domain
 import { CompanyEntity } from '@/domain/entities'
@@ -21,7 +23,13 @@ export class DeleteCompanyContract implements DeleteCompanyUseCase {
     private readonly deleteCompanyProjectsRepository: DeleteCompanyProjectsRepository,
 
     @Inject()
-    private readonly deleteCompanyBuildingsRepository: DeleteCompanyBuildingsRepository
+    private readonly deleteCompanyBuildingsRepository: DeleteCompanyBuildingsRepository,
+
+    @Inject()
+    private readonly getUserByIdRepository: GetUserByIdRepository,
+
+    @Inject()
+    private readonly updateUserActiveCompanyRepository: UpdateUserActiveCompanyRepository
   ) { }
 
   call = async (companyId: CompanyEntity['id']): Promise<CompanyEntity | null> => {
@@ -30,6 +38,14 @@ export class DeleteCompanyContract implements DeleteCompanyUseCase {
 
     await this.deleteCompanyProjectsRepository.deleteCompanyProjects(companyId)
     await this.deleteCompanyBuildingsRepository.deleteCompanyBuildings(companyId)
+
+    for (const { userId } of company.members) {
+      const user = await this.getUserByIdRepository.getUserById(userId)
+      if (!user) continue
+
+      if (user.activeCompanyId === company.id)
+        await this.updateUserActiveCompanyRepository.updateUserActiveCompany(userId, undefined)
+    }
 
     return company
   }
