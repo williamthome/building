@@ -2,4 +2,4 @@ export interface Entity {
   id: string
 }
 
-export type EntityName = 'User' | 'Company' | 'Building' | 'Project'
+export type EntityName = 'User' | 'Company' | 'Building' | 'Project' | 'Unverified'
