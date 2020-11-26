@@ -22,7 +22,7 @@ export class DeleteCompanyRoute implements Route<CompanyEntity> {
   ) { }
 
   get method (): HttpMethods { return 'DELETE' }
-  get path (): string { return '/company/:id' }
+  get path (): string { return '/company' }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,
