@@ -2,7 +2,7 @@ import { Inject, InjectableArray } from '@/shared/dependency-injection'
 import { AuthMiddleware, ParamIdMatchActiveCompanyIdMiddleware, RequirementsMiddleware } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { RemoveCompanyMemberController } from '@/presentation/controllers'
-import { Controller, HttpMethods } from '@/presentation/protocols'
+import { HttpMethods } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 
@@ -12,7 +12,7 @@ export class RemoveCompanyMemberRoute implements Route<undefined, CompanyEntity>
 
   constructor (
     @Inject(RemoveCompanyMemberController)
-    public readonly controller: Controller<undefined, CompanyEntity>,
+    public readonly controller: RemoveCompanyMemberController,
 
     @Inject(AuthMiddleware)
     private readonly authMiddleware: Middleware,

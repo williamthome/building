@@ -11,7 +11,7 @@ import { AddBuildingUseCase } from '@/domain/usecases'
 import { BuildingDto } from '@/domain/protocols'
 
 @Injectable()
-export class AddBuildingController implements Controller<BuildingEntity> {
+export class AddBuildingController implements Controller<BuildingDto, BuildingEntity> {
 
   constructor (
     @Inject() private readonly addBuildingUseCase: AddBuildingUseCase

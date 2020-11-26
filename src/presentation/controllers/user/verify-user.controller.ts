@@ -34,7 +34,7 @@ export class VerifyUserController implements Controller<undefined, UserEntity> {
     }
   })
   @HandleLogError
-  async handle (request: HttpRequest<undefined>): HandleResponse<UserEntity> {
+  async handle (request: HttpRequest): HandleResponse<UserEntity> {
     const token = request.query?.token as string
 
     const userId = await this.decrypter.decrypt(token)

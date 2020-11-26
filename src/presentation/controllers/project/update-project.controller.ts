@@ -12,7 +12,7 @@ import { UpdateProjectUseCase } from '@/domain/usecases'
 import { ProjectDto } from '@/domain/protocols'
 
 @Injectable()
-export class UpdateProjectController implements Controller<ProjectEntity> {
+export class UpdateProjectController implements Controller<ProjectDto, ProjectEntity> {
 
   constructor (
     @Inject() private readonly updateProjectUseCase: UpdateProjectUseCase

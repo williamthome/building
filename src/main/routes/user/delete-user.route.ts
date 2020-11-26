@@ -2,14 +2,14 @@ import { Inject, InjectableArray } from '@/shared/dependency-injection'
 import { AuthMiddleware } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { DeleteUserController } from '@/presentation/controllers'
-import { Controller, HttpMethods } from '@/presentation/protocols'
+import { HttpMethods } from '@/presentation/protocols'
 import { UserEntity } from '@/domain/entities'
 
 @InjectableArray('routes')
-export class DeleteUserRoute implements Route<UserEntity> {
+export class DeleteUserRoute implements Route<undefined, UserEntity> {
   constructor (
     @Inject(DeleteUserController)
-    public readonly controller: Controller<UserEntity>,
+    public readonly controller: DeleteUserController,
 
     @Inject(AuthMiddleware)
     private readonly authMiddleware: Middleware

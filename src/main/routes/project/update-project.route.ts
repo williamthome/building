@@ -2,17 +2,18 @@ import { Inject, InjectableArray } from '@/shared/dependency-injection'
 import { ActiveCompanyMiddleware, AuthMiddleware, RequirementsMiddleware } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { UpdateProjectController } from '@/presentation/controllers'
-import { Controller, HttpMethods } from '@/presentation/protocols'
+import { HttpMethods } from '@/presentation/protocols'
 import { ProjectEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
+import { ProjectDto } from '@/domain/protocols'
 
 @InjectableArray('routes')
-export class UpdateProjectRoute implements Route<ProjectEntity> {
+export class UpdateProjectRoute implements Route<ProjectDto, ProjectEntity> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageProjects)
 
   constructor (
     @Inject(UpdateProjectController)
-    public readonly controller: Controller<ProjectEntity>,
+    public readonly controller: UpdateProjectController,
 
     @Inject(AuthMiddleware)
     private readonly authMiddleware: Middleware,

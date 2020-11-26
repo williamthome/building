@@ -2,17 +2,17 @@ import { Inject, InjectableArray } from '@/shared/dependency-injection'
 import { ActiveCompanyMiddleware, AuthMiddleware, CompanyRoleMiddleware } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { DeleteCompanyController } from '@/presentation/controllers'
-import { Controller, HttpMethods } from '@/presentation/protocols'
+import { HttpMethods } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
 import { CompanyRole } from '@/shared/constants'
 
 @InjectableArray('routes')
-export class DeleteCompanyRoute implements Route<CompanyEntity> {
+export class DeleteCompanyRoute implements Route<undefined, CompanyEntity> {
   companyRoleMiddleware = new CompanyRoleMiddleware(CompanyRole.owner)
 
   constructor (
     @Inject(DeleteCompanyController)
-    public readonly controller: Controller<CompanyEntity>,
+    public readonly controller: DeleteCompanyController,
 
     @Inject(AuthMiddleware)
     private readonly authMiddleware: Middleware,

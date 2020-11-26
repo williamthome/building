@@ -2,14 +2,18 @@ import { Inject, InjectableArray } from '@/shared/dependency-injection'
 import { AuthMiddleware } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { AddCompanyController } from '@/presentation/controllers'
-import { Controller, HttpMethods } from '@/presentation/protocols'
+import { HttpMethods } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
+import { CompanyDto } from '@/domain/protocols'
 
 @InjectableArray('routes')
-export class AddCompanyRoute implements Route<CompanyEntity> {
+export class AddCompanyRoute implements Route<CompanyDto, CompanyEntity> {
   constructor (
-    @Inject(AddCompanyController) public readonly controller: Controller<CompanyEntity>,
-    @Inject(AuthMiddleware) public readonly authMiddleware: Middleware
+    @Inject(AddCompanyController)
+    public readonly controller: AddCompanyController,
+
+    @Inject(AuthMiddleware)
+    public readonly authMiddleware: Middleware
   ) { }
 
   get method(): HttpMethods { return 'POST' }

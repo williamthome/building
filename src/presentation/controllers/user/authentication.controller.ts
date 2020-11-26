@@ -10,7 +10,7 @@ import { Encrypter, HashComparer } from '@/data/protocols/cryptography'
 import { EntityNotFoundError, PasswordDoNotMatchError } from '@/presentation/errors'
 
 @Injectable()
-export class AuthenticationController implements Controller<UserEntity> {
+export class AuthenticationController implements Controller<AuthDto, UserEntity> {
 
   constructor (
     @Inject() private readonly getUserByEmailUseCase: GetUserByEmailUseCase,

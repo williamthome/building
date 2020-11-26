@@ -2,7 +2,7 @@ import { Inject, InjectableArray } from '@/shared/dependency-injection'
 import { AuthMiddleware, ParamIdMatchActiveCompanyIdMiddleware, RequirementsMiddleware } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { AddCompanyMemberController } from '@/presentation/controllers'
-import { Controller, HttpMethods } from '@/presentation/protocols'
+import { HttpMethods } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 import { Member } from '@/domain/entities/nested'
@@ -13,7 +13,7 @@ export class AddCompanyMemberRoute implements Route<Member, CompanyEntity> {
 
   constructor (
     @Inject(AddCompanyMemberController)
-    public readonly controller: Controller<Member, CompanyEntity>,
+    public readonly controller: AddCompanyMemberController,
 
     @Inject(AuthMiddleware)
     private readonly authMiddleware: Middleware,

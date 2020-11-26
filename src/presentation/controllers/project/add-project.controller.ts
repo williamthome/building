@@ -12,7 +12,7 @@ import { ProjectDto } from '@/domain/protocols'
 import { EntityNotFoundError } from '@/presentation/errors'
 
 @Injectable()
-export class AddProjectController implements Controller<ProjectEntity> {
+export class AddProjectController implements Controller<ProjectDto, ProjectEntity> {
 
   constructor (
     @Inject() private readonly addProjectUseCase: AddProjectUseCase,

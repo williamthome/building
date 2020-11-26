@@ -12,7 +12,7 @@ import { UpdateBuildingUseCase } from '@/domain/usecases'
 import { BuildingDto } from '@/domain/protocols'
 
 @Injectable()
-export class UpdateBuildingController implements Controller<BuildingEntity> {
+export class UpdateBuildingController implements Controller<BuildingDto, BuildingEntity> {
 
   constructor (
     @Inject() private readonly updateBuildingUseCase: UpdateBuildingUseCase

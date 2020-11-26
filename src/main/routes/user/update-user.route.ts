@@ -2,14 +2,15 @@ import { Inject, InjectableArray } from '@/shared/dependency-injection'
 import { AuthMiddleware, } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { UpdateUserController } from '@/presentation/controllers'
-import { Controller, HttpMethods } from '@/presentation/protocols'
+import { HttpMethods } from '@/presentation/protocols'
 import { UserEntity } from '@/domain/entities'
+import { UserDto } from '@/domain/protocols'
 
 @InjectableArray('routes')
-export class UpdateUserRoute implements Route<UserEntity> {
+export class UpdateUserRoute implements Route<UserDto, UserEntity> {
   constructor (
     @Inject(UpdateUserController)
-    public readonly controller: Controller<UserEntity>,
+    public readonly controller: UpdateUserController,
 
     @Inject(AuthMiddleware)
     private readonly authMiddleware: Middleware

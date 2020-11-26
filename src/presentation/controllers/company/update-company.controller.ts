@@ -12,7 +12,7 @@ import { UpdateCompanyUseCase } from '@/domain/usecases'
 import { CompanyDto } from '@/domain/protocols'
 
 @Injectable()
-export class UpdateCompanyController implements Controller<CompanyEntity> {
+export class UpdateCompanyController implements Controller<CompanyDto, CompanyEntity> {
 
   constructor (
     @Inject() private readonly updateCompanyUseCase: UpdateCompanyUseCase
