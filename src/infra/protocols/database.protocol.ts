@@ -3,27 +3,40 @@ import { CollectionName, Unpacked } from '@/shared/types'
 
 export interface Database {
   dbUrl: string
-  connect: () => Promise<void>
-  disconnect: () => Promise<void>
   isConnected: boolean
+
+  connect: () => Promise<void>
+
+  disconnect: () => Promise<void>
+
+  clearCollection: (collectionName: CollectionName) => Promise<void>
+
   addOne: <TModel extends Model, TOptions = unknown> (
     payload: Partial<TModel>,
     collectionName: CollectionName,
     options?: TOptions
-  ) => Promise<TModel>,
-  updateOne: <TModel extends Model, TOptions = unknown> (
-    id: Model['id'],
-    payload: Partial<TModel>,
-    collectionName: CollectionName,
-    options?: TOptions
-  ) => Promise<TModel | null>,
+  ) => Promise<TModel>
+
   getOneBy: <TModel extends Model, TValue, TOptions = unknown> (
     field: keyof TModel,
     toSearch: TValue,
     collectionName: CollectionName,
     options?: TOptions
-  ) => Promise<TModel | null>,
-  clearCollection: (collectionName: CollectionName) => Promise<void>
+  ) => Promise<TModel | null>
+
+  updateOne: <TModel extends Model, TOptions = unknown> (
+    id: Model['id'],
+    payload: Partial<TModel>,
+    collectionName: CollectionName,
+    options?: TOptions
+  ) => Promise<TModel | null>
+
+  deleteOne: <T extends Model, TOptions = unknown> (
+    id: Model['id'],
+    collectionName: CollectionName,
+    options?: TOptions
+  ) => Promise<T | null>
+
   pushOne: <T extends Model, K extends keyof T, TOptions = unknown> (
     id: Model['id'],
     arrayKey: K,
@@ -31,6 +44,7 @@ export interface Database {
     collectionName: CollectionName,
     options?: TOptions
   ) => Promise<T | null>
+
   pullOne: <T extends Model, K extends keyof T, TOptions = unknown> (
     id: Model['id'],
     arrayKey: K,
@@ -38,6 +52,7 @@ export interface Database {
     collectionName: CollectionName,
     options?: TOptions
   ) => Promise<T | null>
+
   setOne: <T extends Model, KArray extends keyof T, KMatch extends keyof Unpacked<T[KArray]>, TOptions = unknown> (
     id: Model['id'],
     arrayKey: KArray,

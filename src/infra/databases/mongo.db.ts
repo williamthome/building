@@ -1,4 +1,4 @@
-import { MongoClient, ClientSession, ObjectId, Collection, CollectionInsertOneOptions } from 'mongodb'
+import { MongoClient, ClientSession, ObjectId, Collection, CollectionInsertOneOptions, FindOneAndDeleteOption } from 'mongodb'
 import { Injectable, Inject } from '@/shared/dependency-injection'
 import { CollectionName, Unpacked } from '@/shared/types'
 import { Database } from '@/infra/protocols'
@@ -16,13 +16,19 @@ export class MongoDB implements Database {
   ) { }
 
   private makeMongoClient = async (uri: string): Promise<MongoClient> => {
-    return await new MongoClient(
-      uri,
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-      }
-    ).connect()
+    return await new MongoClient(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    }).connect()
+  }
+
+  get isConnected (): boolean {
+    return this._isConnected
+  }
+
+  private get session (): ClientSession {
+    if (!this._session) throw new Error('No session active')
+    return this._session
   }
 
   connect = async (): Promise<void> => {
@@ -45,15 +51,6 @@ export class MongoDB implements Database {
     this._session = undefined
     console.log('MongoDB sucessfully disconnected')
     this._isConnected = false
-  }
-
-  get isConnected (): boolean {
-    return this._isConnected
-  }
-
-  private get session (): ClientSession {
-    if (!this._session) throw new Error('No session active')
-    return this._session
   }
 
   startTransaction = async (): Promise<void> => {
@@ -87,6 +84,14 @@ export class MongoDB implements Database {
     return this._client!.db().collection(collectionName)
   }
 
+  clearCollection = async (collectionName: CollectionName): Promise<void> => {
+    if (process.env.NODE_ENV === 'production')
+      throw new AccessDeniedError()
+
+    const collection = await this.getCollection(collectionName)
+    await collection.deleteMany({})
+  }
+
   addOne = async <T extends Model> (
     payload: Partial<T>,
     collectionName: CollectionName,
@@ -102,6 +107,25 @@ export class MongoDB implements Database {
     )
     const model = data.ops[0]
     return this.map<T>(model)
+  }
+
+  getOneBy = async <T extends Model, V> (
+    field: keyof T,
+    toSearch: V,
+    collectionName: CollectionName,
+    options?: Omit<CollectionInsertOneOptions, 'session'>
+  ): Promise<T | null> => {
+    const collection = await this.getCollection(collectionName)
+    const model = await collection.findOne(
+      field === 'id'
+        ? { _id: new ObjectId(toSearch as unknown as Model['id']) }
+        : { [field]: toSearch },
+      {
+        ...options,
+        session: this.session
+      }
+    )
+    return model ? this.map<T>(model) : null
   }
 
   updateOne = async <T extends Model> (
@@ -128,31 +152,21 @@ export class MongoDB implements Database {
     return value ? this.map<T>(value) : null
   }
 
-  getOneBy = async <T extends Model, V> (
-    field: keyof T,
-    toSearch: V,
+  deleteOne = async <T extends Model> (
+    id: Model['id'],
     collectionName: CollectionName,
-    options?: Omit<CollectionInsertOneOptions, 'session'>
+    options?: Omit<FindOneAndDeleteOption<T>, 'session'>
   ): Promise<T | null> => {
     const collection = await this.getCollection(collectionName)
-    const model = await collection.findOne(
-      field === 'id'
-        ? { _id: new ObjectId(toSearch as unknown as Model['id']) }
-        : { [field]: toSearch },
+    const result = await collection.findOneAndDelete(
+      { _id: new ObjectId(id) },
       {
         ...options,
         session: this.session
       }
     )
-    return model ? this.map<T>(model) : null
-  }
-
-  clearCollection = async (collectionName: CollectionName): Promise<void> => {
-    if (process.env.NODE_ENV === 'production')
-      throw new AccessDeniedError()
-
-    const collection = await this.getCollection(collectionName)
-    await collection.deleteMany({})
+    const { value } = result
+    return value ? this.map<T>(value) : null
   }
 
   pushOne = async <T extends Model, K extends keyof T, TPayload extends Unpacked<T[K]>> (
