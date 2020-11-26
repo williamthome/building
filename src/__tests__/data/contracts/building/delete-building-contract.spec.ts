@@ -1,20 +1,23 @@
 import container from '@/shared/dependency-injection'
 import { DeleteBuildingContract } from '@/data/contracts'
-import { DeleteBuildingRepositorySpy } from '@/__tests__/data/__spys__'
+import { DeleteBuildingProjectsRepositorySpy, DeleteBuildingRepositorySpy } from '@/__tests__/data/__spys__'
 import fakeData from '@/__tests__/shared/fake-data'
 
 //#region Factories
 
 interface SutTypes {
   sut: DeleteBuildingContract
+  deleteBuildingProjectsRepositorySpy: DeleteBuildingProjectsRepositorySpy
   deleteBuildingRepositorySpy: DeleteBuildingRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
+  const deleteBuildingProjectsRepositorySpy = container.resolve<DeleteBuildingProjectsRepositorySpy>('deleteBuildingProjectsRepository')
   const deleteBuildingRepositorySpy = container.resolve<DeleteBuildingRepositorySpy>('deleteBuildingRepository')
   const sut = container.resolve(DeleteBuildingContract)
   return {
     sut,
+    deleteBuildingProjectsRepositorySpy,
     deleteBuildingRepositorySpy
   }
 }
@@ -23,8 +26,24 @@ const makeSut = (): SutTypes => {
 
 describe('DeleteBuilding Contract', () => {
   beforeEach(() => {
+    container.define('deleteBuildingProjectsRepository').asNewable(DeleteBuildingProjectsRepositorySpy).done()
     container.define('deleteBuildingRepository').asNewable(DeleteBuildingRepositorySpy).done()
     container.define(DeleteBuildingContract).asNewable(DeleteBuildingContract).done()
+  })
+
+  describe('DeleteBuildingProjects Repository', () => {
+    it('should be called with right value', async () => {
+      const { sut, deleteBuildingProjectsRepositorySpy } = makeSut()
+      const buildingId = fakeData.entity.id()
+      await sut.call(buildingId)
+      expect(deleteBuildingProjectsRepositorySpy.buildingId).toEqual(buildingId)
+    })
+
+    it('should throw if method throws', async () => {
+      const { sut, deleteBuildingProjectsRepositorySpy } = makeSut()
+      deleteBuildingProjectsRepositorySpy.shouldThrow = true
+      await expect(sut.call(fakeData.entity.id())).rejects.toThrow()
+    })
   })
 
   describe('DeleteBuilding Repository', () => {
