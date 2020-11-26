@@ -3,3 +3,4 @@ export type CollectionName =
  | 'companies'
  | 'errors'
  | 'buildings'
+ | 'projects'
