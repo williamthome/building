@@ -20,5 +20,8 @@ export default {
     city: (): string => faker.address.city(),
     state: (): string => faker.address.stateAbbr(),
     full: (): string => faker.address.streetAddress(true)
+  },
+  random: {
+    word: (): string => faker.random.word()
   }
 }
