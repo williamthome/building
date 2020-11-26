@@ -6,6 +6,7 @@ import { Address, addressKeys } from './nested'
 export interface UserEntity extends Entity {
   email: string
   password: string
+  verified: boolean
   accessToken?: string
   name: string
   address?: Address
@@ -16,6 +17,7 @@ export const userKeys: DeepFlattenPaths<UserEntity> = {
   id: 'id',
   email: 'email',
   password: 'password',
+  verified: 'verified',
   accessToken: 'accessToken',
   name: 'name',
   address: 'address',

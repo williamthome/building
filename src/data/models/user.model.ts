@@ -8,6 +8,7 @@ export class UserModel extends Model implements UserEntity {
     public readonly id: Model['id'],
     public readonly email: string,
     public readonly password: string,
+    public readonly verified: boolean,
     public readonly name: string,
     public readonly accessToken?: string,
     public readonly address?: Address,

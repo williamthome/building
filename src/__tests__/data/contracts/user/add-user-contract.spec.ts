@@ -2,7 +2,8 @@ import container from '@/shared/dependency-injection'
 import { AddUserContract } from '@/data/contracts'
 import { AddUserRepositorySpy, HasherSpy } from '@/__tests__/data/__spys__'
 import { mockUserModelDto } from '@/__tests__/data/__mocks__/models'
-import { UserDto } from '@/domain/protocols'
+import { ModelDto } from '@/data/protocols'
+import { UserModel } from '@/data/models'
 
 //#region Factories
 
@@ -32,14 +33,15 @@ describe('AddUser Contract', () => {
     container.define(AddUserContract).asNewable(AddUserContract).done()
   })
 
-  describe('AddUser Repository', () => {
-    it('should be called with right value', async () => {
+  fdescribe('AddUser Repository', () => {
+    fit('should be called with right value', async () => {
       const { sut, addUserRepositorySpy, hasherSpy } = makeSut()
       const dto = mockUserModelDto()
       await sut.call(dto)
-      const hashedDto: UserDto = {
+      const hashedDto: ModelDto<UserModel> = {
         ...dto,
-        password: hasherSpy.hashed
+        password: hasherSpy.hashed,
+        verified: false
       }
       expect(addUserRepositorySpy.userDto).toEqual(hashedDto)
     })

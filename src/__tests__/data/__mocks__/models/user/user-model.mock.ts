@@ -8,6 +8,7 @@ export const mockUserModel = (userDto?: ModelDto<UserModel>): UserModel => {
     id: fakeData.entity.id(),
     email: fakeData.person.email(),
     password: fakeData.entity.password(),
+    verified: false,
     accessToken: fakeData.entity.token(id, fakeData.entity.jwtSecret()),
     name: fakeData.person.fullName(),
     address: {

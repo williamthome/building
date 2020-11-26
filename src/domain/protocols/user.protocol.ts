@@ -1,7 +1,7 @@
 import { CompanyEntity, UserEntity } from '../entities'
 import { Member } from '../entities/nested'
 
-export type UserDto = Partial<Omit<UserEntity, 'id'>>
+export type UserDto = Partial<Omit<UserEntity, 'id' | 'verified'>>
 
 export type AuthDto = Pick<UserEntity, 'email' | 'password'>
 

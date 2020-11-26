@@ -20,7 +20,8 @@ export class AddUserContract implements AddUserUseCase {
     const hashedPassword = await this.hasher.hash(userDto.password || '')
     return await this.addUserRepository.addUser({
       ...userDto,
-      password: hashedPassword
+      password: hashedPassword,
+      verified: false
     })
   }
 }
