@@ -67,3 +67,28 @@ export const ValidateParams =
 
       return descriptor
     }
+
+export const ValidateQuery =
+  <TRequest, TResponse> (
+    { schema, keys, nullable = false }: ValidateSchemaOptions<HttpParameters>
+  ) =>
+    <TController extends Controller<TRequest, TResponse>> (
+      _controller: TController,
+      _methodKey: string | symbol,
+      descriptor: PropertyDescriptor
+    ): any => {
+      const originalMethod = descriptor.value
+
+      descriptor.value = async function (
+        httpRequest: HttpRequest<TRequest>
+      ): HandleResponse<TResponse> {
+        const { query } = httpRequest
+
+        const queryError = schemaError(query || {}, schema, nullable, keys)
+        if (queryError) return queryError
+
+        return await originalMethod.apply(this, [httpRequest])
+      }
+
+      return descriptor
+    }
