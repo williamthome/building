@@ -11,7 +11,7 @@ export class VerifyUserRoute implements Route<undefined, UserEntity> {
     public readonly controller: VerifyUserController
   ) { }
 
-  get method (): HttpMethods { return 'PATCH' }
+  get method (): HttpMethods { return 'POST' }
   get path (): string { return '/user/verify' }
   get middlewares (): Middleware[] { return [] }
 }

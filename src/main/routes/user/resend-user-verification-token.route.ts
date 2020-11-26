@@ -11,7 +11,7 @@ export class ResendUserVerificationTokenRoute implements Route<undefined, AddUse
     public readonly controller: ResendUserVerificationTokenController
   ) { }
 
-  get method (): HttpMethods { return 'POST' }
+  get method (): HttpMethods { return 'PATCH' }
   get path (): string { return '/user/verify' }
   get middlewares (): Middleware[] { return [] }
 }
