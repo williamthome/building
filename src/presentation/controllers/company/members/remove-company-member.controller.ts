@@ -8,7 +8,7 @@ import { HandleLogError, ValidateParams } from '@/presentation/decorators'
 import { AccessDeniedError, EntityNotFoundError, UserIsNotAMemberError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity } from '@/domain/entities'
-import { RemoveCompanyMemberUseCase } from '@/domain/usecases'
+import { GetUserByIdUseCase, RemoveCompanyMemberUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
 import { Member } from '@/domain/entities/nested'
 import { CompanyRole } from '@/shared/constants'
 
@@ -16,7 +16,9 @@ import { CompanyRole } from '@/shared/constants'
 export class RemoveCompanyMemberController implements Controller<undefined, CompanyEntity> {
 
   constructor (
-    @Inject() private readonly removeCompanyMemberUseCase: RemoveCompanyMemberUseCase
+    @Inject() private readonly getUserByIdUseCase: GetUserByIdUseCase,
+    @Inject() private readonly removeCompanyMemberUseCase: RemoveCompanyMemberUseCase,
+    @Inject() private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase
   ) { }
 
   @ValidateParams<undefined, CompanyEntity>({
@@ -42,9 +44,16 @@ export class RemoveCompanyMemberController implements Controller<undefined, Comp
     if (member.companyRole === CompanyRole.owner)
       return forbidden(new AccessDeniedError())
 
+    const user = await this.getUserByIdUseCase.call(userId)
+    if (!user)
+      return notFound(new EntityNotFoundError('User'))
+
     const updatedCompany = await this.removeCompanyMemberUseCase.call(companyId, userId)
     if (!updatedCompany)
       return notFound(new EntityNotFoundError('Company'))
+
+    if (user.activeCompanyId === companyId)
+      await this.updateUserActiveCompanyUseCase.call(userId, undefined)
 
     return ok(updatedCompany)
   }
