@@ -9,3 +9,8 @@ export interface UserRights {
   company: Pick<CompanyEntity, 'id' | 'members'>
   rights: Omit<Member, 'userId'>
 }
+
+export interface AddUserResponse {
+  user: UserEntity
+  verificationToken: string
+}
