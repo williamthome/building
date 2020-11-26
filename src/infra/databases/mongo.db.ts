@@ -5,7 +5,8 @@ import {
   Collection,
   CollectionInsertOneOptions,
   FindOneAndDeleteOption,
-  CommonOptions
+  CommonOptions,
+  FindOneOptions
 } from 'mongodb'
 import { Injectable, Inject } from '@/shared/dependency-injection'
 import { CollectionName, Unpacked } from '@/shared/types'
@@ -134,6 +135,30 @@ export class MongoDB implements Database {
       }
     )
     return model ? this.map<T>(model) : null
+  }
+
+  getManyByNested = async <T extends Model, KNested extends keyof T, KMatch extends keyof Unpacked<T[KNested]>> (
+    nestedKey: KNested,
+    matchKey: KMatch,
+    match: Unpacked<T[KNested]>[KMatch],
+    collectionName: CollectionName,
+    options?: Omit<FindOneOptions<T extends infer U ? U : T>, 'session'>
+  ): Promise<T[]> => {
+    const collection = await this.getCollection(collectionName)
+    const models = await collection.find(
+      {
+        [nestedKey]: {
+          $elemMatch: {
+            [matchKey]: match
+          }
+        }
+      },
+      {
+        ...options,
+        session: this.session
+      }
+    ).toArray()
+    return models?.map(model => this.map<T>(model))
   }
 
   updateOne = async <T extends Model> (

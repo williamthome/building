@@ -24,6 +24,14 @@ export interface Database {
     options?: TOptions
   ) => Promise<TModel | null>
 
+  getManyByNested: <T extends Model, KNested extends keyof T, KMatch extends keyof Unpacked<T[KNested]>, TOptions = unknown> (
+    nestedKey: KNested,
+    matchKey: KMatch,
+    match: Unpacked<T[KNested]>[KMatch],
+    collectionName: CollectionName,
+    options?: TOptions
+  ) => Promise<T[]>
+
   updateOne: <TModel extends Model, TOptions = unknown> (
     id: Model['id'],
     payload: Partial<TModel>,
