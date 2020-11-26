@@ -93,6 +93,7 @@ export class Fastify implements WebServer {
     body: req.body as T,
     headers: this.adaptHttpHeaders(req),
     params: req.params as HttpParameters,
+    query: req.query,
     loggedUserInfo: req.loggedUserInfo,
     activeCompanyInfo: req.activeCompanyInfo
   })
