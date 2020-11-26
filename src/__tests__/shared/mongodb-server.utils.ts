@@ -1,6 +1,6 @@
 import container from '@/shared/dependency-injection'
 import fakeData from './fake-data'
-import { CompanyModel, UserModel } from '@/data/models'
+import { BuildingModel, CompanyModel, UserModel } from '@/data/models'
 import { Database } from '@/infra/protocols'
 import { WebServer } from '@/main/protocols'
 import { Server } from '@/main/server'
@@ -10,7 +10,7 @@ import {
 } from 'mongodb-memory-server'
 
 // !! ONLY DATA LAYER !!
-import { mockCompanyEntityDto, mockUserEntityDto } from '../domain/__mocks__/entities'
+import { mockBuildingEntityDto, mockCompanyEntityDto, mockUserEntityDto } from '../domain/__mocks__/entities'
 
 export const db = (): Database => container.resolve<Database>('db')
 export const webServer = (): WebServer => container.resolve<WebServer>('webServer')
@@ -67,5 +67,15 @@ export const addCompany = async (user: UserModel): Promise<{
   return {
     owner,
     company
+  }
+}
+
+export const addBuilding = async (companyId: CompanyModel['id']): Promise<{
+  building: BuildingModel
+}> => {
+  const db = container.resolve<Database>('db')
+  const building = await db.addOne<BuildingModel>(mockBuildingEntityDto(companyId), 'buildings')
+  return {
+    building
   }
 }
