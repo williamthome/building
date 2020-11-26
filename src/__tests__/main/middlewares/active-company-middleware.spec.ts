@@ -1,9 +1,9 @@
 import container from '@/shared/dependency-injection'
 import fakeData from '@/__tests__/shared/fake-data'
 import { ActiveCompanyMiddleware } from '@/main/middlewares'
-import { forbidden, notFound, serverError, unauthorized } from '@/presentation/factories/http.factory'
+import { badRequest, forbidden, notFound, serverError } from '@/presentation/factories/http.factory'
 import { GetCompanyByIdUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
-import { AccessDeniedError, EntityNotFoundError } from '@/presentation/errors'
+import { AccessDeniedError, ActiveCompanyIsFalsyError, EntityNotFoundError } from '@/presentation/errors'
 import { HttpStatusCode } from '@/presentation/constants'
 import { HttpRequest } from '@/presentation/protocols'
 import { mockAuthorizationHeader } from '@/__tests__/presentation/__mocks__'
@@ -82,10 +82,10 @@ describe('ActiveCompany Middleware', () => {
     })
   })
 
-  it('should return unauthorized', async () => {
+  it('should return active company is falsy', async () => {
     const { sut } = makeSut()
     const response = await sut.handle({})
-    expect(response).toEqual(unauthorized())
+    expect(response).toEqual(badRequest(new ActiveCompanyIsFalsyError()))
   })
 
   it('should return ok', async () => {

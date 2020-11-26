@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Middleware, MiddlewareResponse } from '../protocols'
-import { forbidden, notFound, unauthorized } from '@/presentation/factories/http.factory'
+import { badRequest, forbidden, notFound } from '@/presentation/factories/http.factory'
 import { HttpRequest } from '@/presentation/protocols'
 import { HandleLogError } from '@/presentation/decorators'
 import { GetCompanyByIdUseCase } from '@/domain/usecases'
-import { AccessDeniedError, EntityNotFoundError } from '@/presentation/errors'
+import { AccessDeniedError, ActiveCompanyIsFalsyError, EntityNotFoundError } from '@/presentation/errors'
 import { okMiddleware } from '../helpers/middleware.helper'
 
 @Injectable()
@@ -17,8 +17,8 @@ export class ActiveCompanyMiddleware implements Middleware {
   @HandleLogError
   async handle<T> (httpRequest: HttpRequest<T>): MiddlewareResponse {
     const { loggedUserInfo } = httpRequest
-    if (!loggedUserInfo || !loggedUserInfo.id || !loggedUserInfo.activeCompanyId)
-      return unauthorized()
+    if (!loggedUserInfo?.activeCompanyId)
+      return badRequest(new ActiveCompanyIsFalsyError())
 
     const { id: userId, activeCompanyId } = loggedUserInfo
 
