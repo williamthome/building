@@ -21,7 +21,11 @@ export class DeleteBuildingContract implements DeleteBuildingUseCase {
   ) { }
 
   call = async (buildingId: BuildingEntity['id']): Promise<BuildingEntity | null> => {
+    const building = await this.deleteBuildingRepository.deleteBuilding(buildingId)
+    if (!building) return null
+
     await this.deleteBuildingProjectsRepository.deleteBuildingProjects(buildingId)
-    return await this.deleteBuildingRepository.deleteBuilding(buildingId)
+
+    return building
   }
 }
