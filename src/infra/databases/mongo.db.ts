@@ -202,6 +202,26 @@ export class MongoDB implements Database {
     return value ? this.map<T>(value) : null
   }
 
+  deleteOneBy = async <T extends Model, K extends keyof T> (
+    field: K,
+    toSearch: T[K],
+    collectionName: CollectionName,
+    options?: Omit<FindOneAndDeleteOption<T>, 'session'>
+  ): Promise<T | null> => {
+    const collection = await this.getCollection(collectionName)
+    const result = await collection.findOneAndDelete(
+      field === 'id'
+        ? { _id: new ObjectId(toSearch as unknown as Model['id']) }
+        : { [field]: toSearch },
+      {
+        ...options,
+        session: this.session
+      }
+    )
+    const { value } = result
+    return value ? this.map<T>(value) : null
+  }
+
   deleteMany = async <T extends Model, K extends keyof T> (
     field: K,
     match: T[K],

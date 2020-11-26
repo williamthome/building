@@ -45,6 +45,13 @@ export interface Database {
     options?: TOptions
   ) => Promise<T | null>
 
+  deleteOneBy: <T extends Model, K extends keyof T, TOptions = unknown> (
+    field: K,
+    toSearch: T[K],
+    collectionName: CollectionName,
+    options?: TOptions
+  ) => Promise<T | null>
+
   deleteMany: <T extends Model, K extends keyof T, TOptions = unknown> (
     field: K,
     match: T[K],
