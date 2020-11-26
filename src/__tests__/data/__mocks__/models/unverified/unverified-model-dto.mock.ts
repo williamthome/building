@@ -3,6 +3,6 @@ import { UnverifiedModel } from '@/data/models'
 import { ModelDto } from '@/data/protocols'
 
 export const mockUnverifiedModelDto = (): ModelDto<UnverifiedModel> => ({
-  token: fakeData.entity.token(fakeData.entity.id(), fakeData.entity.jwtSecret()),
+  userId: fakeData.entity.id(),
   expiresIn: new Date().getTime()
 })

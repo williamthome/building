@@ -1,13 +1,7 @@
-import { DeepFlattenPaths } from '@/shared/types/flatten'
 import { Entity } from '../protocols/entity.protocol'
+import { UserEntity } from './user.entity'
 
 export interface UnverifiedEntity extends Entity {
-  token: string
+  userId: UserEntity['id']
   expiresIn: number
-}
-
-export const unverifiedKeys: DeepFlattenPaths<UnverifiedEntity> = {
-  id: 'id',
-  token: 'token',
-  expiresIn: 'expiresIn'
 }
