@@ -1,4 +1,12 @@
-import { MongoClient, ClientSession, ObjectId, Collection, CollectionInsertOneOptions, FindOneAndDeleteOption } from 'mongodb'
+import {
+  MongoClient,
+  ClientSession,
+  ObjectId,
+  Collection,
+  CollectionInsertOneOptions,
+  FindOneAndDeleteOption,
+  CommonOptions
+} from 'mongodb'
 import { Injectable, Inject } from '@/shared/dependency-injection'
 import { CollectionName, Unpacked } from '@/shared/types'
 import { Database } from '@/infra/protocols'
@@ -167,6 +175,23 @@ export class MongoDB implements Database {
     )
     const { value } = result
     return value ? this.map<T>(value) : null
+  }
+
+  deleteMany = async <T extends Model, K extends keyof T> (
+    field: K,
+    match: T[K],
+    collectionName: CollectionName,
+    options?: Omit<CommonOptions, 'session'>
+  ): Promise<number> => {
+    const collection = await this.getCollection(collectionName)
+    const result = await collection.deleteMany(
+      { [field]: match },
+      {
+        ...options,
+        session: this.session
+      }
+    )
+    return result.deletedCount || 0
   }
 
   pushOne = async <T extends Model, K extends keyof T, TPayload extends Unpacked<T[K]>> (
