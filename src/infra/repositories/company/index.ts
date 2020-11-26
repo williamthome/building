@@ -1,4 +1,5 @@
+export * from './members'
 export * from './db-add-company.repository'
 export * from './db-update-company.repository'
 export * from './db-get-company-by-id.repository'
-export * from './members'
+export * from './db-delete-company-projects.repository'
