@@ -1,33 +1,34 @@
 import request from 'supertest'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { mockCompanyEntityDto } from '@/__tests__/domain/__mocks__/entities'
-import { addCompany, addUserAndAuthenticate, config, db, mongoInMemory, webServer } from '@/__tests__/shared/mongodb-server.utils'
-import { mockAuthorizationToken } from '@/__tests__/presentation/__mocks__'
+import { mongoUtils } from '@/__tests__/shared/mongo.utils'
 
 describe('UpdateCompany Route > PATCH /company', () => {
   beforeAll(async () => {
-    await config()
-    await webServer().listen()
-    await db().connect()
+    await mongoUtils.config()
+    await mongoUtils.webServer.listen()
+    await mongoUtils.db.connect()
   })
 
   beforeEach(async () => {
-    await db().clearCollection('companies')
-    await db().clearCollection('users')
+    await mongoUtils.db.clearCollection('companies')
+    await mongoUtils.db.clearCollection('users')
   })
 
   afterAll(async () => {
-    await db().disconnect()
-    await webServer().close()
-    await mongoInMemory().stop()
+    await mongoUtils.db.disconnect()
+    await mongoUtils.webServer.close()
+    await mongoUtils.mongoInMemory.stop()
   })
 
   it('shold return ok', async () => {
-    const { authenticatedUser, accessToken } = await addUserAndAuthenticate()
-    await addCompany(authenticatedUser)
-    await request(webServer().server())
+    await mongoUtils.addUser()
+    await mongoUtils.authenticate()
+    await mongoUtils.verify()
+    await mongoUtils.addCompany()
+    await request(mongoUtils.webServer.server())
       .patch('/company')
-      .set(HttpHeaderName.AUTHORIZATION, mockAuthorizationToken(accessToken))
+      .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
       .send(mockCompanyEntityDto())
       .expect(HttpStatusCode.OK)
   })

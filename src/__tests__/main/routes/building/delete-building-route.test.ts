@@ -1,37 +1,35 @@
 import request from 'supertest'
-import {
-  addBuilding, addCompany, addUserAndAuthenticate,
-  config, db, mongoInMemory, webServer
-} from '@/__tests__/shared/mongodb-server.utils'
+import { mongoUtils } from '@/__tests__/shared/mongo.utils'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
-import { mockAuthorizationToken } from '@/__tests__/presentation/__mocks__'
 
 describe('DeleteBuilding Route > DELETE /building/:id', () => {
   beforeAll(async () => {
-    await config()
-    await webServer().listen()
-    await db().connect()
+    await mongoUtils.config()
+    await mongoUtils.webServer.listen()
+    await mongoUtils.db.connect()
   })
 
   beforeEach(async () => {
-    await db().clearCollection('buildings')
-    await db().clearCollection('companies')
-    await db().clearCollection('users')
+    await mongoUtils.db.clearCollection('buildings')
+    await mongoUtils.db.clearCollection('companies')
+    await mongoUtils.db.clearCollection('users')
   })
 
   afterAll(async () => {
-    await db().disconnect()
-    await webServer().close()
-    await mongoInMemory().stop()
+    await mongoUtils.db.disconnect()
+    await mongoUtils.webServer.close()
+    await mongoUtils.mongoInMemory.stop()
   })
 
   it('shold return ok', async () => {
-    const { authenticatedUser, accessToken } = await addUserAndAuthenticate()
-    const { company } = await addCompany(authenticatedUser)
-    const { building } = await addBuilding(company.id)
-    await request(webServer().server())
-      .delete(`/building/${building.id}`)
-      .set(HttpHeaderName.AUTHORIZATION, mockAuthorizationToken(accessToken))
+    await mongoUtils.addUser()
+    await mongoUtils.authenticate()
+    await mongoUtils.verify()
+    await mongoUtils.addCompany()
+    await mongoUtils.addBuilding()
+    await request(mongoUtils.webServer.server())
+      .delete(`/building/${mongoUtils.building.id}`)
+      .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
       .expect(HttpStatusCode.OK)
   })
 })

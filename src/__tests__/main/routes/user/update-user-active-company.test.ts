@@ -1,32 +1,33 @@
 import request from 'supertest'
-import { addCompany, addUserAndAuthenticate, config, db, mongoInMemory, webServer } from '@/__tests__/shared/mongodb-server.utils'
+import { mongoUtils } from '@/__tests__/shared/mongo.utils'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
-import { mockAuthorizationToken } from '@/__tests__/presentation/__mocks__'
 
-describe('UpdateUserActiveCompany Route > PATCH /user/activeCompany/:companyId', () => {
+xdescribe('UpdateUserActiveCompany Route > PATCH /user/activeCompany/:companyId', () => {
   beforeAll(async () => {
-    await config()
-    await webServer().listen()
-    await db().connect()
+    await mongoUtils.config()
+    await mongoUtils.webServer.listen()
+    await mongoUtils.db.connect()
   })
 
   beforeEach(async () => {
-    await db().clearCollection('companies')
-    await db().clearCollection('users')
+    await mongoUtils.db.clearCollection('companies')
+    await mongoUtils.db.clearCollection('users')
   })
 
   afterAll(async () => {
-    await db().disconnect()
-    await webServer().close()
-    await mongoInMemory().stop()
+    await mongoUtils.db.disconnect()
+    await mongoUtils.webServer.close()
+    await mongoUtils.mongoInMemory.stop()
   })
 
-  xit('shold return no content', async () => {
-    const { authenticatedUser, accessToken } = await addUserAndAuthenticate()
-    const { company } = await addCompany(authenticatedUser)
-    return await request(webServer().server())
-      .patch(`/user/activeCompany/${company.id}`)
-      .set(HttpHeaderName.AUTHORIZATION, mockAuthorizationToken(accessToken))
+  it('shold return no content', async () => {
+    await mongoUtils.addUser()
+    await mongoUtils.authenticate()
+    await mongoUtils.verify()
+    await mongoUtils.addCompany()
+    await request(mongoUtils.webServer.server())
+      .patch(`/user/activeCompany/${mongoUtils.company.id}`)
+      .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
       .expect(HttpStatusCode.NO_CONTENT)
   })
 })

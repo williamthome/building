@@ -1,32 +1,32 @@
 import request from 'supertest'
-import { addUserAndAuthenticate, config, db, mongoInMemory, webServer } from '@/__tests__/shared/mongodb-server.utils'
+import { mongoUtils } from '@/__tests__/shared/mongo.utils'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities'
-import { mockAuthorizationToken } from '@/__tests__/presentation/__mocks__'
 
 describe('UpdateUser Route > PATCH /user', () => {
   beforeAll(async () => {
-    await config()
-    await webServer().listen()
-    await db().connect()
+    await mongoUtils.config()
+    await mongoUtils.webServer.listen()
+    await mongoUtils.db.connect()
   })
 
   beforeEach(async () => {
-    await db().clearCollection('companies')
-    await db().clearCollection('users')
+    await mongoUtils.db.clearCollection('companies')
+    await mongoUtils.db.clearCollection('users')
   })
 
   afterAll(async () => {
-    await db().disconnect()
-    await webServer().close()
-    await mongoInMemory().stop()
+    await mongoUtils.db.disconnect()
+    await mongoUtils.webServer.close()
+    await mongoUtils.mongoInMemory.stop()
   })
 
   it('shold return ok', async () => {
-    const { accessToken } = await addUserAndAuthenticate()
-    await request(webServer().server())
+    await mongoUtils.addUser()
+    await mongoUtils.authenticate()
+    await request(mongoUtils.webServer.server())
       .patch('/user')
-      .set(HttpHeaderName.AUTHORIZATION, mockAuthorizationToken(accessToken))
+      .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
       .send(mockUserEntityDto())
       .expect(HttpStatusCode.OK)
   })
