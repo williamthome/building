@@ -48,7 +48,7 @@ export const addUserAndAuthenticate = async (): Promise<{
   const user = await db.addOne<UserModel>(mockUserEntityDto(), 'users')
   const jwtSecret = container.resolve<string>('JWT_SECRET')
   const accessToken = fakeData.entity.token(user.id, jwtSecret)
-  const authenticatedUser = await db.updateOne<UserModel>(user.id, { accessToken }, 'users') as UserModel
+  const authenticatedUser = await db.updateOne<UserModel>(user.id, { accessToken, verified: true }, 'users') as UserModel
   return {
     authenticatedUser,
     accessToken

@@ -29,6 +29,7 @@ export class AuthMiddleware implements Middleware {
       {
         loggedUserInfo: {
           id: user.id,
+          verified: user.verified,
           activeCompanyId: user.activeCompanyId
         }
       }
