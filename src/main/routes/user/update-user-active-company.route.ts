@@ -1,5 +1,5 @@
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
-import { AuthMiddleware, } from '@/main/middlewares'
+import { AuthMiddleware, UserVerifiedMiddleware, } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { UpdateUserActiveCompanyController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
@@ -11,14 +11,18 @@ export class UpdateUserActiveCompanyRoute implements Route<undefined, null> {
     public readonly controller: UpdateUserActiveCompanyController,
 
     @Inject(AuthMiddleware)
-    private readonly authMiddleware: Middleware
+    private readonly authMiddleware: Middleware,
+
+    @Inject(UserVerifiedMiddleware)
+    private readonly userVerifiedMiddleware: Middleware
   ) { }
 
   get method (): HttpMethods { return 'PATCH' }
   get path (): string { return '/user/activeCompany/:companyId' }
   get middlewares (): Middleware[] {
     return [
-      this.authMiddleware
+      this.authMiddleware,
+      this.userVerifiedMiddleware
     ]
   }
 }

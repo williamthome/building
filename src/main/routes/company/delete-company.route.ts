@@ -1,5 +1,10 @@
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
-import { ActiveCompanyMiddleware, AuthMiddleware, CompanyRoleMiddleware } from '@/main/middlewares'
+import {
+  AuthMiddleware,
+  UserVerifiedMiddleware,
+  ActiveCompanyMiddleware,
+  CompanyRoleMiddleware
+} from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { DeleteCompanyController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
@@ -17,6 +22,9 @@ export class DeleteCompanyRoute implements Route<undefined, CompanyEntity> {
     @Inject(AuthMiddleware)
     private readonly authMiddleware: Middleware,
 
+    @Inject(UserVerifiedMiddleware)
+    private readonly userVerifiedMiddleware: Middleware,
+
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
   ) { }
@@ -26,6 +34,7 @@ export class DeleteCompanyRoute implements Route<undefined, CompanyEntity> {
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,
+      this.userVerifiedMiddleware,
       this.activeCompanyMiddleware,
       this.companyRoleMiddleware
     ]

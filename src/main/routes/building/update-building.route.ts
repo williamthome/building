@@ -1,5 +1,10 @@
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
-import { ActiveCompanyMiddleware, AuthMiddleware, RequirementsMiddleware } from '@/main/middlewares'
+import {
+  AuthMiddleware,
+  ActiveCompanyMiddleware,
+  UserVerifiedMiddleware,
+  RequirementsMiddleware
+} from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { UpdateBuildingController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
@@ -18,6 +23,9 @@ export class UpdateBuildingRoute implements Route<BuildingDto, BuildingEntity> {
     @Inject(AuthMiddleware)
     private readonly authMiddleware: Middleware,
 
+    @Inject(UserVerifiedMiddleware)
+    private readonly userVerifiedMiddleware: Middleware,
+
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
   ) { }
@@ -27,6 +35,7 @@ export class UpdateBuildingRoute implements Route<BuildingDto, BuildingEntity> {
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,
+      this.userVerifiedMiddleware,
       this.activeCompanyMiddleware,
       this.requirementsMiddleware
     ]

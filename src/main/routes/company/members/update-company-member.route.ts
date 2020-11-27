@@ -1,5 +1,10 @@
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
-import { AuthMiddleware, ParamIdMatchActiveCompanyIdMiddleware, RequirementsMiddleware } from '@/main/middlewares'
+import {
+  AuthMiddleware,
+  UserVerifiedMiddleware,
+  RequirementsMiddleware,
+  ParamIdMatchActiveCompanyIdMiddleware
+} from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { UpdateCompanyMemberController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
@@ -18,6 +23,9 @@ export class UpdateCompanyMemberRoute implements Route<MemberEntity, CompanyEnti
     @Inject(AuthMiddleware)
     private readonly authMiddleware: Middleware,
 
+    @Inject(UserVerifiedMiddleware)
+    private readonly userVerifiedMiddleware: Middleware,
+
     @Inject(ParamIdMatchActiveCompanyIdMiddleware)
     private readonly paramIdMatchActiveCompanyIdMiddleware: ParamIdMatchActiveCompanyIdMiddleware
   ) { }
@@ -27,6 +35,7 @@ export class UpdateCompanyMemberRoute implements Route<MemberEntity, CompanyEnti
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,
+      this.userVerifiedMiddleware,
       this.requirementsMiddleware,
       this.paramIdMatchActiveCompanyIdMiddleware
     ]

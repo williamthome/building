@@ -1,5 +1,10 @@
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
-import { ActiveCompanyMiddleware, AuthMiddleware, RequirementsMiddleware } from '@/main/middlewares'
+import {
+  AuthMiddleware,
+  UserVerifiedMiddleware,
+  ActiveCompanyMiddleware,
+  RequirementsMiddleware
+} from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { DeleteBuildingController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
@@ -17,6 +22,9 @@ export class DeleteBuildingRoute implements Route<undefined, BuildingEntity> {
     @Inject(AuthMiddleware)
     private readonly authMiddleware: Middleware,
 
+    @Inject(UserVerifiedMiddleware)
+    private readonly userVerifiedMiddleware: Middleware,
+
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
   ) { }
@@ -26,6 +34,7 @@ export class DeleteBuildingRoute implements Route<undefined, BuildingEntity> {
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,
+      this.userVerifiedMiddleware,
       this.activeCompanyMiddleware,
       this.requirementsMiddleware
     ]

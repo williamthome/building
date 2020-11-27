@@ -1,5 +1,5 @@
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
-import { AuthMiddleware } from '@/main/middlewares'
+import { AuthMiddleware, UserVerifiedMiddleware } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { AddCompanyController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
@@ -13,10 +13,18 @@ export class AddCompanyRoute implements Route<CompanyDto, CompanyEntity> {
     public readonly controller: AddCompanyController,
 
     @Inject(AuthMiddleware)
-    public readonly authMiddleware: Middleware
+    public readonly authMiddleware: Middleware,
+
+    @Inject(UserVerifiedMiddleware)
+    private readonly userVerifiedMiddleware: Middleware
   ) { }
 
-  get method(): HttpMethods { return 'POST' }
-  get path(): string { return '/company' }
-  get middlewares(): Middleware[] { return [this.authMiddleware] }
+  get method (): HttpMethods { return 'POST' }
+  get path (): string { return '/company' }
+  get middlewares (): Middleware[] {
+    return [
+      this.authMiddleware,
+      this.userVerifiedMiddleware
+    ]
+  }
 }
