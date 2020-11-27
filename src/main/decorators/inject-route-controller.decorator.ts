@@ -5,7 +5,7 @@ import { TransactionController } from './transaction-controller.decorator'
 
 type ControllerConstructor<TRequest, TResponse> = new(...args: any[]) => Controller<TRequest, TResponse>
 
-export const InjectTransaction = <TRequest, TResponse> (controller: ControllerConstructor<TRequest, TResponse>) => <T extends Route<TRequest, TResponse>> (
+export const InjectRouteController = <TRequest, TResponse> (newableController: ControllerConstructor<TRequest, TResponse>) => <T extends Route<TRequest, TResponse>> (
   target: T,
   _propertyKey: string | symbol,
   parameterIndex: number
@@ -20,13 +20,15 @@ export const InjectTransaction = <TRequest, TResponse> (controller: ControllerCo
 
   const key = getArgumentNames()[parameterIndex]
 
-  if (key !== 'controller')
-    throw new Error('Use transaction decorator for controller parameter in route constructor')
-
-  Inject(controller)
+  Inject(newableController)
 
   Object.defineProperty((target as any).prototype, key, {
-    get: () => new TransactionController(container.resolve<Controller<TRequest, TResponse>>(controller)),
-    set: () => new Error('Property controller in route is readonly')
+    get: function () {
+      const controller = container.resolve<Controller<TRequest, TResponse>>(newableController)
+      return controller.usesTransaction
+        ? new TransactionController(controller)
+        : controller
+    },
+    set: () => new Error(`Property ${key} in route is readonly`)
   })
 }
