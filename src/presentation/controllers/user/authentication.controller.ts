@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
-import { UserEntity } from '@/domain/entities'
-import { AuthDto } from '@/domain/protocols'
+import { AuthDto, UserEntityResponse } from '@/domain/protocols'
 import { GetUserByEmailUseCase, UpdateUserAccessTokenUseCase } from '@/domain/usecases/user'
 import { HandleLogError, ValidateBody } from '@/presentation/decorators'
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
@@ -8,9 +7,10 @@ import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocol
 import { authSchema } from '@/presentation/schemas'
 import { Encrypter, HashComparer } from '@/data/protocols/cryptography'
 import { EntityNotFoundError, PasswordDoNotMatchError } from '@/presentation/errors'
+import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
 @Injectable()
-export class AuthenticationController implements Controller<AuthDto, UserEntity> {
+export class AuthenticationController implements Controller<AuthDto, UserEntityResponse> {
 
   constructor (
     @Inject() private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
@@ -19,7 +19,7 @@ export class AuthenticationController implements Controller<AuthDto, UserEntity>
     @Inject() private readonly updateUserAccessTokenUseCase: UpdateUserAccessTokenUseCase
   ) { }
 
-  @ValidateBody<AuthDto, UserEntity>({
+  @ValidateBody<AuthDto, UserEntityResponse>({
     schema: authSchema,
     keys: {
       email: 'email',
@@ -27,7 +27,7 @@ export class AuthenticationController implements Controller<AuthDto, UserEntity>
     }
   })
   @HandleLogError
-  async handle (request: HttpRequest<AuthDto>): HandleResponse<UserEntity> {
+  async handle (request: HttpRequest<AuthDto>): HandleResponse<UserEntityResponse> {
     const authDto = request.body as AuthDto
     const user = await this.getUserByEmailUseCase.call(authDto.email)
 
@@ -48,6 +48,6 @@ export class AuthenticationController implements Controller<AuthDto, UserEntity>
 
     user.accessToken = accessToken
 
-    return ok(user)
+    return ok(userWithoutPassword(user))
   }
 }

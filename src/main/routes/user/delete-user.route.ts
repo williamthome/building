@@ -3,10 +3,10 @@ import { AuthMiddleware } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { DeleteUserController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
-import { UserEntity } from '@/domain/entities'
+import { UserEntityResponse } from '@/domain/protocols'
 
 @InjectableArray('routes')
-export class DeleteUserRoute implements Route<undefined, UserEntity> {
+export class DeleteUserRoute implements Route<undefined, UserEntityResponse> {
   constructor (
     @Inject(DeleteUserController)
     public readonly controller: DeleteUserController,

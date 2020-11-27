@@ -6,7 +6,8 @@ import { Encrypter, Hasher } from '@/data/protocols/cryptography'
 // < Only Domain
 import { UserEntity } from '@/domain/entities'
 import { AddUserUseCase } from '@/domain/usecases'
-import { AddUserResponse, UserDto } from '@/domain/protocols'
+import { UserVerificationToken, UserDto } from '@/domain/protocols'
+import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
 @Injectable('addUserUseCase')
 export class AddUserContract implements AddUserUseCase {
@@ -16,9 +17,9 @@ export class AddUserContract implements AddUserUseCase {
     @Inject() private readonly addUserRepository: AddUserRepository,
     @Inject() private readonly addUnverifiedRepository: AddUnverifiedRepository,
     @Inject() private readonly encrypter: Encrypter
-  ) {}
+  ) { }
 
-  call = async (userDto: UserDto): Promise<AddUserResponse> => {
+  call = async (userDto: UserDto): Promise<UserVerificationToken> => {
     const hashedPassword = await this.hasher.hash(userDto.password as UserEntity['password'])
     const user = await this.addUserRepository.addUser({
       ...userDto,
@@ -36,6 +37,9 @@ export class AddUserContract implements AddUserUseCase {
 
     const verificationToken = await this.encrypter.encrypt(user.id)
 
-    return { user, verificationToken }
+    return {
+      user: userWithoutPassword(user),
+      verificationToken
+    }
   }
 }

@@ -2,10 +2,10 @@ import { Inject, InjectableArray } from '@/shared/dependency-injection'
 import { Middleware, Route } from '@/main/protocols'
 import { ResendUserVerificationTokenController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
-import { AddUserResponse } from '@/domain/protocols'
+import { UserVerificationToken } from '@/domain/protocols'
 
 @InjectableArray('routes')
-export class ResendUserVerificationTokenRoute implements Route<undefined, AddUserResponse> {
+export class ResendUserVerificationTokenRoute implements Route<undefined, UserVerificationToken> {
   constructor (
     @Inject(ResendUserVerificationTokenController)
     public readonly controller: ResendUserVerificationTokenController

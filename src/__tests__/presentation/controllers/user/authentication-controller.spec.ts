@@ -12,6 +12,7 @@ import { UserEntity } from '@/domain/entities'
 
 // !! Move to domain layer !!
 import { EncrypterSpy, HashComparerSpy } from '@/__tests__/data/__spys__'
+import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
 //#region Factories
 
@@ -143,7 +144,7 @@ describe('AddUser Controller', () => {
     const httpRequest = mockHttpRequest()
     getUserByEmailUseCase.override = { password: httpRequest.body?.password }
     const response = await sut.handle(httpRequest)
-    expect(response).toEqual(ok(getUserByEmailUseCase.userEntity))
+    expect(response).toEqual(ok(userWithoutPassword(getUserByEmailUseCase.userEntity as UserEntity)))
     expect((response.body as UserEntity).accessToken).toBe(encrypter.encrypted)
   })
 })

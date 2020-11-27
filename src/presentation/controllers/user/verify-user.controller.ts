@@ -10,9 +10,11 @@ import { UserEntity } from '@/domain/entities'
 import { GetUserByIdUseCase, VerifyUserUseCase } from '@/domain/usecases'
 import { isString, required } from '@/presentation/validations'
 import { Decrypter } from '@/data/protocols/cryptography'
+import { UserEntityResponse } from '@/domain/protocols'
+import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
 @Injectable()
-export class VerifyUserController implements Controller<undefined, UserEntity> {
+export class VerifyUserController implements Controller<undefined, UserEntityResponse> {
 
   constructor (
     @Inject() private readonly decrypter: Decrypter,
@@ -20,7 +22,7 @@ export class VerifyUserController implements Controller<undefined, UserEntity> {
     @Inject() private readonly verifyUserUseCase: VerifyUserUseCase
   ) { }
 
-  @ValidateQuery<undefined, UserEntity>({
+  @ValidateQuery<undefined, UserEntityResponse>({
     schema: {
       token: {
         validations: [
@@ -34,7 +36,7 @@ export class VerifyUserController implements Controller<undefined, UserEntity> {
     }
   })
   @HandleLogError
-  async handle (request: HttpRequest): HandleResponse<UserEntity> {
+  async handle (request: HttpRequest): HandleResponse<UserEntityResponse> {
     const token = request.query?.token as string
 
     const userId = await this.decrypter.decrypt(token)
@@ -46,8 +48,8 @@ export class VerifyUserController implements Controller<undefined, UserEntity> {
     if (user.verified)
       return badRequest(new UserAlreadyVerifiedError())
 
-    user = await this.verifyUserUseCase.call(userId)
+    user = await this.verifyUserUseCase.call(userId) as UserEntity
 
-    return ok(user)
+    return ok(userWithoutPassword(user))
   }
 }

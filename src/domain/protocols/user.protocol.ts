@@ -10,7 +10,9 @@ export interface UserRights {
   rights: Omit<Member, 'userId'>
 }
 
-export interface AddUserResponse {
-  user: UserEntity
+export type UserEntityResponse = Omit<UserEntity, 'password'>
+
+export interface UserVerificationToken {
+  user: UserEntityResponse
   verificationToken: string
 }

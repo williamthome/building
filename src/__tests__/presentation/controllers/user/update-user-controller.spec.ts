@@ -10,6 +10,8 @@ import { HttpRequest } from '@/presentation/protocols'
 import { UserDto } from '@/domain/protocols'
 import { UpdateUserUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
 import { mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities'
+import { userWithoutPassword } from '@/domain/helpers/user.helper'
+import { UserEntity } from '@/domain/entities'
 
 //#region Factories
 
@@ -73,6 +75,6 @@ describe('UpdateUser Controller', () => {
   it('shold return ok with updated user on body', async () => {
     const { sut, updateUserUseCaseSpy } = makeSut()
     const response = await sut.handle(mockHttpRequest())
-    expect(response).toEqual(ok(updateUserUseCaseSpy.userEntity))
+    expect(response).toEqual(ok(userWithoutPassword(updateUserUseCaseSpy.userEntity as UserEntity)))
   })
 })

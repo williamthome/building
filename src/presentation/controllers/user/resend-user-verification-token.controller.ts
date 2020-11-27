@@ -8,13 +8,14 @@ import { EntityNotFoundError, UserAlreadyVerifiedError } from '@/presentation/er
 import { isEmail, isString, required } from '@/presentation/validations'
 // < Out: only domain layer
 import { GetUserByEmailUseCase, ResendUserVerificationTokenUseCase } from '@/domain/usecases'
-import { AddUserResponse } from '@/domain/protocols'
+import { UserVerificationToken } from '@/domain/protocols'
 
 // !! ONLY DATA LAYER ""
 import { Encrypter } from '@/data/protocols/cryptography'
+import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
 @Injectable()
-export class ResendUserVerificationTokenController implements Controller<undefined, AddUserResponse> {
+export class ResendUserVerificationTokenController implements Controller<undefined, UserVerificationToken> {
 
   constructor (
     @Inject() private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
@@ -22,7 +23,7 @@ export class ResendUserVerificationTokenController implements Controller<undefin
     @Inject() private readonly encrypter: Encrypter
   ) { }
 
-  @ValidateQuery<undefined, AddUserResponse>({
+  @ValidateQuery<undefined, UserVerificationToken>({
     schema: {
       email: {
         validations: [
@@ -37,7 +38,7 @@ export class ResendUserVerificationTokenController implements Controller<undefin
     }
   })
   @HandleLogError
-  async handle (request: HttpRequest): HandleResponse<AddUserResponse> {
+  async handle (request: HttpRequest): HandleResponse<UserVerificationToken> {
     const email = request.query?.email as string
 
     const user = await this.getUserByEmailUseCase.call(email)
@@ -52,7 +53,7 @@ export class ResendUserVerificationTokenController implements Controller<undefin
     await this.resendUserVerificationTokenUseCase.call(email, verificationToken)
 
     return ok({
-      user,
+      user: userWithoutPassword(user),
       verificationToken
     })
   }

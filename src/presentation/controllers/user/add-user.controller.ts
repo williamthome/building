@@ -8,23 +8,26 @@ import { HandleLogError, ValidateBody } from '@/presentation/decorators'
 // < Out: only domain layer
 import { userKeys } from '@/domain/entities'
 import { AddUserUseCase } from '@/domain/usecases'
-import { AddUserResponse, UserDto } from '@/domain/protocols'
+import { UserVerificationToken, UserDto } from '@/domain/protocols'
 
 @Injectable()
-export class AddUserController implements Controller<UserDto, AddUserResponse> {
+export class AddUserController implements Controller<UserDto, UserVerificationToken> {
 
   constructor (
     @Inject() private readonly addUserUseCase: AddUserUseCase
   ) { }
 
-  @ValidateBody<UserDto, AddUserResponse>({
+  @ValidateBody<UserDto, UserVerificationToken>({
     schema: userSchema,
     keys: userKeys
   })
   @HandleLogError
-  async handle (request: HttpRequest<UserDto>): HandleResponse<AddUserResponse> {
+  async handle (request: HttpRequest<UserDto>): HandleResponse<UserVerificationToken> {
     const userDto = request.body as UserDto
-    const newUser = await this.addUserUseCase.call(userDto)
-    return ok(newUser)
+    const { user: userWithoutPassword, verificationToken } = await this.addUserUseCase.call(userDto)
+    return ok({
+      user: userWithoutPassword,
+      verificationToken
+    })
   }
 }

@@ -4,6 +4,7 @@ import { AddUnverifiedRepositorySpy, AddUserRepositorySpy, EncrypterSpy, HasherS
 import { mockUserModelDto } from '@/__tests__/data/__mocks__/models'
 import { ModelDto } from '@/data/protocols'
 import { UserModel } from '@/data/models'
+import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
 //#region Factories
 
@@ -108,7 +109,7 @@ describe('AddUser Contract', () => {
   it('shold return a new user', async () => {
     const { sut, addUserRepositorySpy, encrypterSpy } = makeSut()
     const response = await sut.call(mockUserModelDto())
-    expect(response.user).toEqual(addUserRepositorySpy.userModel)
+    expect(response.user).toEqual(userWithoutPassword(addUserRepositorySpy.userModel as UserModel))
     expect(response.verificationToken).toBe(encrypterSpy.encrypted)
   })
 })

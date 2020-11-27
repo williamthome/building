@@ -9,29 +9,30 @@ import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { UserEntity, userKeys } from '@/domain/entities'
 import { UpdateUserUseCase } from '@/domain/usecases'
-import { UserDto } from '@/domain/protocols'
+import { UserDto, UserEntityResponse } from '@/domain/protocols'
+import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
 @Injectable()
-export class UpdateUserController implements Controller<UserDto, UserEntity> {
+export class UpdateUserController implements Controller<UserDto, UserEntityResponse> {
 
   constructor (
     @Inject() private readonly updateUserUseCase: UpdateUserUseCase
   ) { }
 
-  @ValidateBody<UserDto, UserEntity>({
+  @ValidateBody<UserDto, UserEntityResponse>({
     schema: userSchema,
     keys: userKeys,
     nullable: true
   })
   @HandleLogError
-  async handle (request: HttpRequest<UserDto>): HandleResponse<UserEntity> {
+  async handle (request: HttpRequest<UserDto>): HandleResponse<UserEntityResponse> {
     const userId = request.loggedUserInfo?.id as UserEntity['id']
     const userDto = request.body as UserDto
 
-    const udpatedUser = await this.updateUserUseCase.call(userId, userDto)
-    if (!udpatedUser)
+    const user = await this.updateUserUseCase.call(userId, userDto)
+    if (!user)
       return notFound(new EntityNotFoundError('User'))
 
-    return ok(udpatedUser)
+    return ok(userWithoutPassword(user))
   }
 }

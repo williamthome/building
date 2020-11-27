@@ -55,6 +55,6 @@ describe('AddUser Controller', () => {
   it('shold return ok with a new user on body', async () => {
     const { sut, addUserUseCaseSpy } = makeSut()
     const response = await sut.handle(mockHttpRequest())
-    expect(response).toEqual(ok(addUserUseCaseSpy.userEntity))
+    expect(response).toEqual(ok(addUserUseCaseSpy.userVerificationToken))
   })
 })
