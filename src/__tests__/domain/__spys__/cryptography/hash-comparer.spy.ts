@@ -1,4 +1,4 @@
-import { HashComparer } from '@/data/protocols/cryptography'
+import { HashComparer } from '@/domain/protocols/cryptography'
 
 export class HashComparerSpy implements HashComparer {
   plaintext?: string

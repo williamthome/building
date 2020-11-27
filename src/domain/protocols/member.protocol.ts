@@ -1,3 +1,3 @@
-import { Member } from '../entities/nested'
+import { MemberEntity } from '../entities/nested'
 
-export type MemberDto = Partial<Omit<Member, 'userId'>>
+export type MemberDto = Partial<Omit<MemberEntity, 'userId'>>

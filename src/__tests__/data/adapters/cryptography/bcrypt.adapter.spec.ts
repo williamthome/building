@@ -1,9 +1,6 @@
 import bcrypt from 'bcrypt'
-// : Shared
 import fakeData from '@/__tests__/shared/fake-data'
-// > In: infra layer
-import { BcryptAdapter } from '@/infra/cryptography'
-// < Out: only data layer
+import { BcryptAdapter } from '@/data/adapters'
 
 // #region Factory
 

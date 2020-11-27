@@ -1,9 +1,6 @@
 import jwt from 'jsonwebtoken'
-// : Shared
 import { Inject, Injectable } from '@/shared/dependency-injection'
-// > In: infra layer
-// < Out: only data layer
-import { Decrypter, Encrypter } from '@/data/protocols/cryptography'
+import { Decrypter, Encrypter } from '@/domain/protocols/cryptography'
 
 @Injectable('encrypter')
 @Injectable('decrypter')

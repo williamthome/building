@@ -1,6 +1,6 @@
 import { CompanyModel } from '@/data/models'
-import { Member } from '@/domain/entities/nested'
+import { MemberModel } from '@/data/models/nested'
 
 export interface AddCompanyMemberRepository {
-  addCompanyMember: (companyId: CompanyModel['id'], member: Member) => Promise<CompanyModel | null>
+  addCompanyMember: (companyId: CompanyModel['id'], member: MemberModel) => Promise<CompanyModel | null>
 }

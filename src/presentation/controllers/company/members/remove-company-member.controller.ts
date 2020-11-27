@@ -9,7 +9,7 @@ import { AccessDeniedError, EntityNotFoundError, UserIsNotAMemberError } from '@
 // < Out: only domain layer
 import { CompanyEntity } from '@/domain/entities'
 import { GetUserByIdUseCase, RemoveCompanyMemberUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
-import { Member } from '@/domain/entities/nested'
+import { MemberEntity } from '@/domain/entities/nested'
 import { CompanyRole } from '@/shared/constants'
 
 @Injectable()
@@ -33,9 +33,9 @@ export class RemoveCompanyMemberController implements Controller<undefined, Comp
   })
   @HandleLogError
   async handle (request: HttpRequest<undefined>): HandleResponse<CompanyEntity> {
-    const userId = request.params?.userId as Member['userId']
+    const userId = request.params?.userId as MemberEntity['userId']
     const companyId = request.params?.id as CompanyEntity['id']
-    const members = request.activeCompanyInfo?.members as Member[]
+    const members = request.activeCompanyInfo?.members as MemberEntity[]
 
     const member = members.find(companyMember => userId === companyMember.userId)
     if (!member)

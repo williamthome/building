@@ -2,12 +2,13 @@
 import { Injectable, Inject } from '@/shared/dependency-injection'
 // > Data
 import { AddUserRepository, AddUnverifiedRepository } from '@/data/repositories'
-import { Encrypter, Hasher } from '@/data/protocols/cryptography'
+import { Hasher } from '@/data/protocols/cryptography'
 // < Only Domain
 import { UserEntity } from '@/domain/entities'
 import { AddUserUseCase } from '@/domain/usecases'
 import { UserVerificationToken, UserDto } from '@/domain/protocols'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
+import { Encrypter } from '@/domain/protocols/cryptography'
 
 @Injectable('addUserUseCase')
 export class AddUserContract implements AddUserUseCase {

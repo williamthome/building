@@ -9,9 +9,7 @@ import { isEmail, isString, required } from '@/presentation/validations'
 // < Out: only domain layer
 import { GetUserByEmailUseCase, ResendUserVerificationTokenUseCase } from '@/domain/usecases'
 import { UserVerificationToken } from '@/domain/protocols'
-
-// !! ONLY DATA LAYER ""
-import { Encrypter } from '@/data/protocols/cryptography'
+import { Encrypter } from '@/domain/protocols/cryptography'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
 @Injectable()

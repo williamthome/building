@@ -1,5 +1,5 @@
 import { UserEntity } from '@/domain/entities'
-import { Member } from '@/domain/entities/nested'
+import { MemberEntity } from '@/domain/entities/nested'
 
 export type LoggedUserInfo =
   Partial<
@@ -9,7 +9,7 @@ export type LoggedUserInfo =
     >
   >
   & Partial<
-    Pick<Member,
+    Pick<MemberEntity,
       | 'companyRole'
       | 'features'
     >

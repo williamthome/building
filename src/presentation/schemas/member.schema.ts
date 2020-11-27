@@ -1,10 +1,10 @@
 import { Schema } from '../protocols'
 import { isNumber, isString, range, required } from '../validations'
-import { Member } from '@/domain/entities/nested'
+import { MemberEntity } from '@/domain/entities/nested'
 import { AllUserFeatures, CompanyRole } from '@/shared/constants'
 import { firstEnumValue, lastEnumValue } from '@/shared/helpers/enum.helper'
 
-export const memberSchema: Schema<Member> = {
+export const memberSchema: Schema<MemberEntity> = {
   userId: {
     validations: [
       required,

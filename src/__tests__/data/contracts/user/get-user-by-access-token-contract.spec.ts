@@ -1,7 +1,8 @@
 import container from '@/shared/dependency-injection'
-import { GetUserByAccessTokenContract } from '@/data/contracts'
-import { DecrypterSpy, GetUserByIdRepositorySpy } from '@/__tests__/data/__spys__'
 import fakeData from '@/__tests__/shared/fake-data'
+import { GetUserByAccessTokenContract } from '@/data/contracts'
+import { GetUserByIdRepositorySpy } from '@/__tests__/data/__spys__'
+import { DecrypterSpy } from '@/__tests__/domain/__spys__/cryptography'
 
 //#region Factories
 

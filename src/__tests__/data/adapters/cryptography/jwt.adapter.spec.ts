@@ -1,10 +1,7 @@
 import jwt from 'jsonwebtoken'
-// : Shared
-import fakeData from '@/__tests__/shared/fake-data'
 import container from '@/shared/dependency-injection'
-// > In: infra layer
-import { JwtAdapter } from '@/infra/cryptography'
-// < Out: only data layer
+import fakeData from '@/__tests__/shared/fake-data'
+import { JwtAdapter } from '@/data/adapters'
 
 // #region Factories
 

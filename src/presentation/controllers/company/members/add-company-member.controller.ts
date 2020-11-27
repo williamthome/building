@@ -9,27 +9,27 @@ import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity } from '@/domain/entities'
 import { AddCompanyMemberUseCase } from '@/domain/usecases'
-import { Member, memberKeys } from '@/domain/entities/nested'
+import { MemberEntity, memberKeys } from '@/domain/entities/nested'
 
 @Injectable()
-export class AddCompanyMemberController implements Controller<Member, CompanyEntity> {
+export class AddCompanyMemberController implements Controller<MemberEntity, CompanyEntity> {
 
   constructor (
     @Inject() private readonly addCompanyMemberUseCase: AddCompanyMemberUseCase
   ) { }
 
-  @ValidateBody<Member, CompanyEntity>({
+  @ValidateBody<MemberEntity, CompanyEntity>({
     schema: memberSchema,
     keys: memberKeys
   })
-  @ValidateParams<Member, CompanyEntity>({
+  @ValidateParams<MemberEntity, CompanyEntity>({
     schema: idParamSchema,
     keys: idParamKeys
   })
   @HandleLogError
-  async handle (request: HttpRequest<Member>): HandleResponse<CompanyEntity> {
+  async handle (request: HttpRequest<MemberEntity>): HandleResponse<CompanyEntity> {
     const companyId = request.params?.id as CompanyEntity['id']
-    const member = request.body as Member
+    const member = request.body as MemberEntity
 
     const updatedCompany = await this.addCompanyMemberUseCase.call(companyId, member)
     if (!updatedCompany)

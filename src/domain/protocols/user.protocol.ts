@@ -1,13 +1,13 @@
 import { CompanyEntity, UserEntity } from '../entities'
-import { Member } from '../entities/nested'
+import { MemberEntity } from '../entities/nested'
 
 export type UserDto = Partial<Omit<UserEntity, 'id' | 'verified'>>
 
 export type AuthDto = Pick<UserEntity, 'email' | 'password'>
 
-export interface UserRights {
+export interface UserEntityRights {
   company: Pick<CompanyEntity, 'id' | 'members'>
-  rights: Omit<Member, 'userId'>
+  rights: Omit<MemberEntity, 'userId'>
 }
 
 export type UserEntityResponse = Omit<UserEntity, 'password'>

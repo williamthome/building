@@ -1,10 +1,8 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
+import { Database } from '@/infra/protocols'
 import { CompanyModel } from '@/data/models'
 import { AddCompanyMemberRepository } from '@/data/repositories'
-import { Database } from '@/infra/protocols'
-
-// !! MOVE TO DATA LAYER !!
-import { Member } from '@/domain/entities/nested'
+import { MemberModel } from '@/data/models/nested'
 
 @Injectable('addCompanyMemberRepository')
 export class DbAddCompanyMemberRepository implements AddCompanyMemberRepository {
@@ -12,7 +10,7 @@ export class DbAddCompanyMemberRepository implements AddCompanyMemberRepository 
     @Inject('db') private readonly db: Database
   ) { }
 
-  addCompanyMember = async (companyId: CompanyModel['id'], member: Member): Promise<CompanyModel | null> => {
+  addCompanyMember = async (companyId: CompanyModel['id'], member: MemberModel): Promise<CompanyModel | null> => {
     return await this.db.pushOne<CompanyModel, 'members'>(companyId, 'members', member, 'companies')
   }
 }

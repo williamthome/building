@@ -1,7 +1,7 @@
 import { DeepFlattenPaths } from '@/shared/types/flatten'
 import { Entity } from '../protocols/entity.protocol'
 import { CompanyEntity } from './company.entity'
-import { Address, addressKeys } from './nested'
+import { AddressEntity, addressKeys } from './nested'
 
 export interface UserEntity extends Entity {
   email: string
@@ -9,7 +9,7 @@ export interface UserEntity extends Entity {
   verified: boolean
   accessToken?: string
   name: string
-  address?: Address
+  address?: AddressEntity
   activeCompanyId?: CompanyEntity['id']
 }
 

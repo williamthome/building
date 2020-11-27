@@ -5,9 +5,9 @@ import { HandleLogError, ValidateBody } from '@/presentation/decorators'
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { authSchema } from '@/presentation/schemas'
-import { Encrypter, HashComparer } from '@/data/protocols/cryptography'
 import { EntityNotFoundError, PasswordDoNotMatchError } from '@/presentation/errors'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
+import { Encrypter, HashComparer } from '@/domain/protocols/cryptography'
 
 @Injectable()
 export class AuthenticationController implements Controller<AuthDto, UserEntityResponse> {

@@ -1,15 +1,13 @@
-import container from '@/shared/dependency-injection'
-import fakeData from './fake-data'
-import { BuildingModel, CompanyModel, UserModel } from '@/data/models'
-import { Database } from '@/infra/protocols'
-import { WebServer } from '@/main/protocols'
-import { Server } from '@/main/server'
 import {
   // MongoMemoryReplSet,
   MongoMemoryServer
 } from 'mongodb-memory-server'
-
-// !! ONLY DATA LAYER !!
+import fakeData from './fake-data'
+import container from '@/shared/dependency-injection'
+import { Server } from '@/main/server'
+import { WebServer } from '@/main/protocols'
+import { Database } from '@/infra/protocols'
+import { BuildingModel, CompanyModel, UserModel } from '@/data/models'
 import { mockBuildingEntityDto, mockCompanyEntityDto, mockUserEntityDto } from '../domain/__mocks__/entities'
 
 export const db = (): Database => container.resolve<Database>('db')

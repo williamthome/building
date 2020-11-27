@@ -5,7 +5,7 @@ import { GetUserByIdRepository } from '@/data/repositories'
 // < Only Domain
 import { GetUserByAccessTokenUseCase } from '@/domain/usecases'
 import { UserEntity } from '@/domain/entities'
-import { Decrypter } from '@/data/protocols/cryptography'
+import { Decrypter } from '@/domain/protocols/cryptography'
 
 @Injectable('getUserByAccessTokenUseCase')
 export class GetUserByAccessTokenContract implements GetUserByAccessTokenUseCase {

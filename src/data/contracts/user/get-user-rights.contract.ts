@@ -5,7 +5,7 @@ import { GetUserRightsRepository } from '@/data/repositories'
 // < Only Domain
 import { GetUserRightsUseCase } from '@/domain/usecases'
 import { UserEntity } from '@/domain/entities'
-import { UserRights } from '@/domain/protocols'
+import { UserEntityRights } from '@/domain/protocols'
 
 @Injectable('getUserRightsUseCase')
 export class GetUserRightsContract implements GetUserRightsUseCase {
@@ -14,7 +14,7 @@ export class GetUserRightsContract implements GetUserRightsUseCase {
     @Inject() private readonly getUserRightsRepository: GetUserRightsRepository
   ) {}
 
-  call = async (id: UserEntity['id']): Promise<UserRights[]> => {
+  call = async (id: UserEntity['id']): Promise<UserEntityRights[]> => {
     return await this.getUserRightsRepository.getUserRights(id)
   }
 }

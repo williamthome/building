@@ -1,4 +1,4 @@
-import { Encrypter } from '@/data/protocols/cryptography'
+import { Encrypter } from '@/domain/protocols/cryptography'
 
 export class EncrypterSpy implements Encrypter {
   plaintext?: string

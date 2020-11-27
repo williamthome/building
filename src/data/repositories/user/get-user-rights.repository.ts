@@ -1,6 +1,5 @@
-import { UserModel } from '@/data/models'
-import { UserRights } from '@/domain/protocols'
+import { UserModel, UserModelRights } from '@/data/models'
 
 export interface GetUserRightsRepository {
-  getUserRights: (id: UserModel['id']) => Promise<UserRights[]>
+  getUserRights: (id: UserModel['id']) => Promise<UserModelRights[]>
 }

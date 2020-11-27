@@ -5,10 +5,10 @@ import { UpdateCompanyMemberController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
-import { Member } from '@/domain/entities/nested'
+import { MemberEntity } from '@/domain/entities/nested'
 
 @InjectableArray('routes')
-export class UpdateCompanyMemberRoute implements Route<Member, CompanyEntity> {
+export class UpdateCompanyMemberRoute implements Route<MemberEntity, CompanyEntity> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageCompanyData)
 
   constructor (

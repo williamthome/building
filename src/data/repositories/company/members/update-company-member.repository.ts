@@ -1,7 +1,6 @@
 import { CompanyModel } from '@/data/models'
-import { Member } from '@/domain/entities/nested'
-import { MemberDto } from '@/domain/protocols'
+import { MemberModel } from '@/data/models/nested'
 
 export interface UpdateCompanyMemberRepository {
-  updateCompanyMember: (companyId: CompanyModel['id'], memberId: Member['userId'], memberDto: MemberDto) => Promise<CompanyModel | null>
+  updateCompanyMember: (companyId: CompanyModel['id'], memberId: MemberModel['userId'], memberDto: Partial<MemberModel>) => Promise<CompanyModel | null>
 }

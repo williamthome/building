@@ -1,9 +1,7 @@
 import bcrypt from 'bcrypt'
-// : Shared
 import { Injectable } from '@/shared/dependency-injection'
-// > In: infra layer
-// < Out: only data layer
-import { Hasher, HashComparer } from '@/data/protocols/cryptography'
+import { Hasher } from '@/data/protocols/cryptography'
+import { HashComparer } from '@/domain/protocols/cryptography'
 
 @Injectable('hasher')
 @Injectable('hashComparer')

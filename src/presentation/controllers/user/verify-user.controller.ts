@@ -5,12 +5,12 @@ import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocol
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
 import { HandleLogError, ValidateQuery } from '@/presentation/decorators'
 import { EntityNotFoundError, UserAlreadyVerifiedError } from '@/presentation/errors'
+import { isString, required } from '@/presentation/validations'
 // < Out: only domain layer
 import { UserEntity } from '@/domain/entities'
 import { GetUserByIdUseCase, VerifyUserUseCase } from '@/domain/usecases'
-import { isString, required } from '@/presentation/validations'
-import { Decrypter } from '@/data/protocols/cryptography'
 import { UserEntityResponse } from '@/domain/protocols'
+import { Decrypter } from '@/domain/protocols/cryptography'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
 @Injectable()

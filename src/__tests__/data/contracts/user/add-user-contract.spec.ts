@@ -1,10 +1,11 @@
 import container from '@/shared/dependency-injection'
 import { AddUserContract } from '@/data/contracts'
-import { AddUnverifiedRepositorySpy, AddUserRepositorySpy, EncrypterSpy, HasherSpy } from '@/__tests__/data/__spys__'
-import { mockUserModelDto } from '@/__tests__/data/__mocks__/models'
-import { ModelDto } from '@/data/protocols'
 import { UserModel } from '@/data/models'
+import { ModelDto } from '@/data/protocols'
+import { AddUnverifiedRepositorySpy, AddUserRepositorySpy, HasherSpy } from '@/__tests__/data/__spys__'
+import { mockUserModelDto } from '@/__tests__/data/__mocks__/models'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
+import { EncrypterSpy } from '@/__tests__/domain/__spys__/cryptography'
 
 //#region Factories
 

@@ -1,6 +1,6 @@
 import faker from 'faker'
 import jwt from 'jsonwebtoken'
-import { JwtAdapter } from '@/infra/cryptography'
+import { JwtAdapter } from '@/data/adapters'
 
 // see: https://rawgit.com/Marak/faker.js/master/examples/browser/index.html#
 

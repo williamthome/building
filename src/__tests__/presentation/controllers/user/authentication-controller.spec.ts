@@ -7,11 +7,9 @@ import { EntityNotFoundError, PasswordDoNotMatchError } from '@/presentation/err
 // < Out: only domain layer
 import { mockAuthDto } from '@/__tests__/domain/__mocks__/entities'
 import { GetUserByEmailUseCaseSpy, UpdateUserAccessTokenUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
+import { EncrypterSpy, HashComparerSpy } from '@/__tests__/domain/__spys__/cryptography'
 import { AuthDto } from '@/domain/protocols'
 import { UserEntity } from '@/domain/entities'
-
-// !! Move to domain layer !!
-import { EncrypterSpy, HashComparerSpy } from '@/__tests__/data/__spys__'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
 //#region Factories

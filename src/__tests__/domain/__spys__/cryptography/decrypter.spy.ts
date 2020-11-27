@@ -1,4 +1,4 @@
-import { Decrypter } from '@/data/protocols/cryptography'
+import { Decrypter } from '@/domain/protocols/cryptography'
 
 export class DecrypterSpy implements Decrypter {
   ciphertext?: string

@@ -1,10 +1,7 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Database } from '@/infra/protocols'
-import { CompanyModel, UserModel } from '@/data/models'
+import { CompanyModel, UserModel, UserModelRights } from '@/data/models'
 import { GetUserRightsRepository } from '@/data/repositories'
-
-// !! ONLY DATA LAYER !!
-import { UserRights } from '@/domain/protocols'
 
 @Injectable('getUserRightsRepository')
 export class DbGetUserRightsRepository implements GetUserRightsRepository {
@@ -12,9 +9,9 @@ export class DbGetUserRightsRepository implements GetUserRightsRepository {
     @Inject('db') private readonly db: Database
   ) {}
 
-  getUserRights = async (id: UserModel['id']): Promise<UserRights[]> => {
+  getUserRights = async (id: UserModel['id']): Promise<UserModelRights[]> => {
     const companies = await this.db.getManyByNested<CompanyModel, 'members', 'userId'>('members', 'userId', id, 'companies')
-    const userRights: UserRights[] = []
+    const userRights: UserModelRights[] = []
     for (const { id: companyId, members } of companies) {
       for (const { userId, companyRole, features } of members) {
         if (userId === id) {

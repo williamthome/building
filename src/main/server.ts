@@ -9,7 +9,7 @@ export class Server {
   private importDepencencyInjections = async (): Promise<void> => {
     await import('@/infra/databases')
     await import('@/infra/repositories')
-    await import('@/infra/cryptography')
+    await import('@/data/adapters/cryptography')
     await import('@/data/contracts')
     await import('@/main/middlewares')
     await import('@/main/routes')

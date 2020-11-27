@@ -1,6 +1,6 @@
 import { UserEntity } from '@/domain/entities'
-import { UserRights } from '@/domain/protocols'
+import { UserEntityRights } from '@/domain/protocols'
 
 export interface GetUserRightsUseCase {
-  call: (id: UserEntity['id']) => Promise<UserRights[]>
+  call: (id: UserEntity['id']) => Promise<UserEntityRights[]>
 }
