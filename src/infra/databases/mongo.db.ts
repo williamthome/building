@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   MongoClient,
   ClientSession,
@@ -40,6 +41,13 @@ export class MongoDB implements Database {
     return this._session
   }
 
+  private map = <T extends Model> (data: any): T => {
+    const { _id, ...rest } = data
+    const id = (_id as ObjectId).toHexString()
+    const mapped: T = { id, ...rest }
+    return mapped
+  }
+
   connect = async (): Promise<void> => {
     console.log('Connecting to MongoDB...')
     this._client = await this.makeMongoClient(this.dbUrl)
@@ -77,20 +85,12 @@ export class MongoDB implements Database {
     console.log('Transaction aborted')
   }
 
-  private map = <T extends Model> (data: any): T => {
-    const { _id, ...rest } = data
-    const id = (_id as ObjectId).toHexString()
-    const mapped: T = { id, ...rest }
-    return mapped
-  }
-
   getCollection = async <T> (collectionName: CollectionName): Promise<Collection<T>> => {
     if (!this._client || !this.isConnected) {
       console.warn('Mongo isn\'t connected. Reconnecting...')
       await this.connect()
     }
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this._client!.db().collection(collectionName)
+    return (this._client as MongoClient).db().collection(collectionName)
   }
 
   clearCollection = async (collectionName: CollectionName): Promise<void> => {
