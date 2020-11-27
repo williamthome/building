@@ -4,13 +4,14 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { idParamKeys, idParamSchema } from '@/presentation/schemas'
-import { HandleLogError, ValidateParams } from '@/presentation/decorators'
+import { HandleLogError, UsesTransaction, ValidateParams } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { BuildingEntity } from '@/domain/entities'
 import { DeleteBuildingUseCase } from '@/domain/usecases'
 
 @Injectable()
+@UsesTransaction
 export class DeleteBuildingController implements Controller<undefined, BuildingEntity> {
 
   constructor (
