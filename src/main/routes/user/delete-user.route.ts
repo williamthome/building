@@ -1,4 +1,5 @@
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
+import { InjectTransaction } from '@/main/decorators'
 import { AuthMiddleware } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { DeleteUserController } from '@/presentation/controllers'
@@ -8,7 +9,7 @@ import { UserEntityResponse } from '@/domain/protocols'
 @InjectableArray('routes')
 export class DeleteUserRoute implements Route<undefined, UserEntityResponse> {
   constructor (
-    @Inject(DeleteUserController)
+    @InjectTransaction(DeleteUserController)
     public readonly controller: DeleteUserController,
 
     @Inject(AuthMiddleware)

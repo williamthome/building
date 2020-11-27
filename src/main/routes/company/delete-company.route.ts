@@ -1,4 +1,5 @@
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
+import { InjectTransaction } from '@/main/decorators'
 import {
   AuthMiddleware,
   UserVerifiedMiddleware,
@@ -16,7 +17,7 @@ export class DeleteCompanyRoute implements Route<undefined, CompanyEntity> {
   companyRoleMiddleware = new CompanyRoleMiddleware(CompanyRole.owner)
 
   constructor (
-    @Inject(DeleteCompanyController)
+    @InjectTransaction(DeleteCompanyController)
     public readonly controller: DeleteCompanyController,
 
     @Inject(AuthMiddleware)

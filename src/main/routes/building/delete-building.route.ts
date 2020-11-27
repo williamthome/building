@@ -1,4 +1,5 @@
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
+import { UserFeatures } from '@/shared/constants'
 import {
   AuthMiddleware,
   UserVerifiedMiddleware,
@@ -6,17 +7,17 @@ import {
   RequirementsMiddleware
 } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
+import { InjectTransaction } from '@/main/decorators'
 import { DeleteBuildingController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
 import { BuildingEntity } from '@/domain/entities'
-import { UserFeatures } from '@/shared/constants'
 
 @InjectableArray('routes')
 export class DeleteBuildingRoute implements Route<undefined, BuildingEntity> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageBuildings)
 
   constructor (
-    @Inject(DeleteBuildingController)
+    @InjectTransaction(DeleteBuildingController)
     public readonly controller: DeleteBuildingController,
 
     @Inject(AuthMiddleware)

@@ -4,7 +4,7 @@ import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 
 describe('DeleteBuilding Route > DELETE /building/:id', () => {
   beforeAll(async () => {
-    await mongoUtils.config()
+    await mongoUtils.config({ replSet: true })
     await mongoUtils.webServer.listen()
     await mongoUtils.db.connect()
   })
