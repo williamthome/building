@@ -9,6 +9,12 @@ export interface Database {
 
   disconnect: () => Promise<void>
 
+  startTransaction: () => Promise<void>
+
+  commitTransaction: () => Promise<void>
+
+  rollback: () => Promise<void>
+
   clearCollection: (collectionName: CollectionName) => Promise<void>
 
   addOne: <TModel extends Model, TOptions = unknown> (
