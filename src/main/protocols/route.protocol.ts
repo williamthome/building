@@ -5,6 +5,5 @@ export interface Route<TRequest, TResponse = TRequest> {
   method: HttpMethods
   path: string
   controller: Controller<TRequest, TResponse>
-  permissions?: number
   middlewares: Middleware[]
 }
