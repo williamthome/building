@@ -7,11 +7,19 @@ import container from '@/shared/dependency-injection'
 import { Server } from '@/main/server'
 import { WebServer } from '@/main/protocols'
 import { Database } from '@/infra/protocols'
-import { BuildingModel, CompanyModel, UserModel } from '@/data/models'
 import { mockAuthorizationToken } from '../presentation/__mocks__'
+import { BuildingModel, CompanyModel, UserModel } from '@/data/models'
+import { Hasher } from '@/data/protocols/cryptography'
 import { mockBuildingEntityDto, mockCompanyEntityDto, mockUserEntityDto } from '../domain/__mocks__/entities'
 import { AuthDto } from '@/domain/protocols'
-import { Hasher } from '@/data/protocols/cryptography'
+
+interface MongoUtilsOptions {
+  replSet?: boolean
+}
+
+const defaultOptions: MongoUtilsOptions = {
+  replSet: false
+}
 
 class MongoUtils {
   private _replSet?: boolean
@@ -49,12 +57,12 @@ class MongoUtils {
     return this._building
   }
 
-  config = async (replSet = false): Promise<MongoUtils> => {
-    this._replSet = replSet
+  config = async (opts = defaultOptions): Promise<void> => {
+    this._replSet = opts.replSet
 
     let mongoInMemory: MongoMemoryReplSet | MongoMemoryServer
 
-    if (replSet) {
+    if (this._replSet) {
       mongoInMemory = new MongoMemoryReplSet({
         replSet: {
           storageEngine: 'wiredTiger',
@@ -77,8 +85,6 @@ class MongoUtils {
     container.define('webServer').as(server.app.webServer).pinned().done()
     container.define('db').as(server.app.db).pinned().done()
     container.define('DB_URL').as(uri).pinned().done()
-
-    return this
   }
 
   addUser = async (authDto?: AuthDto): Promise<UserModel> => {
