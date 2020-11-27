@@ -6,6 +6,7 @@ import {
   ParamIdMatchActiveCompanyIdMiddleware
 } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
+import { InjectRouteController } from '@/main/decorators'
 import { AddCompanyMemberController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
@@ -17,7 +18,7 @@ export class AddCompanyMemberRoute implements Route<MemberEntity, CompanyEntity>
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageCompanyData)
 
   constructor (
-    @Inject(AddCompanyMemberController)
+    @InjectRouteController(AddCompanyMemberController)
     public readonly controller: AddCompanyMemberController,
 
     @Inject(AuthMiddleware)

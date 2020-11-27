@@ -1,6 +1,7 @@
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
 import { AuthMiddleware, } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
+import { InjectRouteController } from '@/main/decorators'
 import { UpdateUserController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
 import { UserDto, UserEntityResponse } from '@/domain/protocols'
@@ -8,7 +9,7 @@ import { UserDto, UserEntityResponse } from '@/domain/protocols'
 @InjectableArray('routes')
 export class UpdateUserRoute implements Route<UserDto, UserEntityResponse> {
   constructor (
-    @Inject(UpdateUserController)
+    @InjectRouteController(UpdateUserController)
     public readonly controller: UpdateUserController,
 
     @Inject(AuthMiddleware)

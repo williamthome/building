@@ -6,6 +6,7 @@ import {
   RequirementsMiddleware
 } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
+import { InjectRouteController } from '@/main/decorators'
 import { AddProjectController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
 import { ProjectEntity } from '@/domain/entities'
@@ -17,7 +18,7 @@ export class AddProjectRoute implements Route<ProjectDto, ProjectEntity> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageProjects)
 
   constructor (
-    @Inject(AddProjectController)
+    @InjectRouteController(AddProjectController)
     public readonly controller: AddProjectController,
 
     @Inject(AuthMiddleware)

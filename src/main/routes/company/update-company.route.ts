@@ -6,6 +6,7 @@ import {
   RequirementsMiddleware,
 } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
+import { InjectRouteController } from '@/main/decorators'
 import { UpdateCompanyController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
@@ -17,7 +18,7 @@ export class UpdateCompanyRoute implements Route<CompanyDto, CompanyEntity> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageCompanyData)
 
   constructor (
-    @Inject(UpdateCompanyController)
+    @InjectRouteController(UpdateCompanyController)
     public readonly controller: UpdateCompanyController,
 
     @Inject(AuthMiddleware)

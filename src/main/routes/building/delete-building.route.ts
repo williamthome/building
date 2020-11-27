@@ -7,7 +7,7 @@ import {
   RequirementsMiddleware
 } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
-import { InjectTransaction } from '@/main/decorators'
+import { InjectRouteController } from '@/main/decorators'
 import { DeleteBuildingController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
 import { BuildingEntity } from '@/domain/entities'
@@ -17,7 +17,7 @@ export class DeleteBuildingRoute implements Route<undefined, BuildingEntity> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageBuildings)
 
   constructor (
-    @InjectTransaction(DeleteBuildingController)
+    @InjectRouteController(DeleteBuildingController)
     public readonly controller: DeleteBuildingController,
 
     @Inject(AuthMiddleware)

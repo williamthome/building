@@ -6,6 +6,7 @@ import {
   RequirementsMiddleware
 } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
+import { InjectRouteController } from '@/main/decorators'
 import { DeleteProjectController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
 import { ProjectEntity } from '@/domain/entities'
@@ -16,7 +17,7 @@ export class DeleteProjectRoute implements Route<undefined, ProjectEntity> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageProjects)
 
   constructor (
-    @Inject(DeleteProjectController)
+    @InjectRouteController(DeleteProjectController)
     public readonly controller: DeleteProjectController,
 
     @Inject(AuthMiddleware)

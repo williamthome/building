@@ -6,6 +6,7 @@ import {
   RequirementsMiddleware
 } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
+import { InjectRouteController } from '@/main/decorators'
 import { UpdateBuildingController } from '@/presentation/controllers'
 import { HttpMethods } from '@/presentation/protocols'
 import { BuildingEntity } from '@/domain/entities'
@@ -17,7 +18,7 @@ export class UpdateBuildingRoute implements Route<BuildingDto, BuildingEntity> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageBuildings)
 
   constructor (
-    @Inject(UpdateBuildingController)
+    @InjectRouteController(UpdateBuildingController)
     public readonly controller: UpdateBuildingController,
 
     @Inject(AuthMiddleware)
