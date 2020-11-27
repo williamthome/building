@@ -8,7 +8,7 @@ export default {
   entity: {
     id: (): string => faker.random.uuid(),
     password: (): string => faker.random.uuid(),
-    token: (value: string, secret: string): string => jwt.sign({ [JwtAdapter.key]: value }, secret),
+    token: (value: string, secret = 'tokenSecret'): string => jwt.sign({ [JwtAdapter.key]: value }, secret),
     jwtSecret: (): string => faker.random.word()
   },
   person: {
