@@ -48,7 +48,7 @@ describe('Requirements Middleware', () => {
     const { sut } = makeSut()
     const response = await sut.handle({
       loggedUserInfo: {
-        companyRole: CompanyRole.employee,
+        companyRole: CompanyRole.user,
         features: UserFeatures.None
       }
     })
@@ -70,7 +70,7 @@ describe('Requirements Middleware', () => {
     const { sut } = makeSut()
     const response = await sut.handle({
       loggedUserInfo: {
-        companyRole: CompanyRole.employee,
+        companyRole: CompanyRole.user,
         features: AllUserFeatures
       }
     })
