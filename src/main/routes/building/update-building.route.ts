@@ -5,13 +5,17 @@ import {
   UserVerifiedMiddleware,
   RequirementsMiddleware
 } from '@/main/middlewares'
-import { Middleware, Route } from '@/main/protocols'
+import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { UpdateBuildingController } from '@/presentation/controllers'
-import { HttpMethod } from '@/presentation/protocols'
 import { BuildingEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 import { BuildingDto } from '@/domain/protocols'
+
+export const updateBuildingPath = new RoutePath(
+  'PATCH',
+  '/building/:id'
+)
 
 @InjectableArray('routes')
 export class UpdateBuildingRoute implements Route<BuildingDto, BuildingEntity> {
@@ -31,8 +35,7 @@ export class UpdateBuildingRoute implements Route<BuildingDto, BuildingEntity> {
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get method (): HttpMethod { return 'PATCH' }
-  get path (): string { return '/building/:id' }
+  get path (): RoutePath { return updateBuildingPath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,

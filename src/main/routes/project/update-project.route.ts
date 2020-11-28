@@ -5,13 +5,17 @@ import {
   ActiveCompanyMiddleware,
   RequirementsMiddleware
 } from '@/main/middlewares'
-import { Middleware, Route } from '@/main/protocols'
+import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { UpdateProjectController } from '@/presentation/controllers'
-import { HttpMethod } from '@/presentation/protocols'
 import { ProjectEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 import { ProjectDto } from '@/domain/protocols'
+
+export const updateProjectPath = new RoutePath(
+  'PATCH',
+  '/project/:id'
+)
 
 @InjectableArray('routes')
 export class UpdateProjectRoute implements Route<ProjectDto, ProjectEntity> {
@@ -31,8 +35,7 @@ export class UpdateProjectRoute implements Route<ProjectDto, ProjectEntity> {
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get method (): HttpMethod { return 'PATCH' }
-  get path (): string { return '/project/:id' }
+  get path (): RoutePath { return updateProjectPath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,

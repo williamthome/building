@@ -2,10 +2,11 @@ import request from 'supertest'
 import { HttpStatusCode } from '@/presentation/constants'
 import { mockAuthDto } from '@/__tests__/domain/__mocks__/entities'
 import { mongoUtils } from '@/__tests__/shared/mongo.utils'
+import { authenticationPath } from '@/main/routes'
 
-describe('Authentication Route > POST /login', () => {
+describe(`Authentication Route > ${authenticationPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.config()
+    await mongoUtils.config({ routePath: authenticationPath })
     await mongoUtils.webServer.listen()
     await mongoUtils.db.connect()
   })
@@ -24,7 +25,7 @@ describe('Authentication Route > POST /login', () => {
     const authDto = mockAuthDto()
     await mongoUtils.addUser(authDto)
     await request(mongoUtils.webServer.server())
-      .post('/login')
+      .post(authenticationPath.urn)
       .send(authDto)
       .expect(HttpStatusCode.OK)
   })

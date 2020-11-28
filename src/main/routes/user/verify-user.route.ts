@@ -1,9 +1,13 @@
 import { InjectableArray } from '@/shared/dependency-injection'
-import { Middleware, Route } from '@/main/protocols'
+import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { VerifyUserController } from '@/presentation/controllers'
-import { HttpMethod } from '@/presentation/protocols'
 import { UserEntityResponse } from '@/domain/protocols'
+
+export const verifyUserPath = new RoutePath(
+  'POST',
+  '/user/verify'
+)
 
 @InjectableArray('routes')
 export class VerifyUserRoute implements Route<undefined, UserEntityResponse> {
@@ -12,7 +16,6 @@ export class VerifyUserRoute implements Route<undefined, UserEntityResponse> {
     public readonly controller: VerifyUserController
   ) { }
 
-  get method (): HttpMethod { return 'POST' }
-  get path (): string { return '/user/verify' }
+  get path (): RoutePath { return verifyUserPath }
   get middlewares (): Middleware[] { return [] }
 }

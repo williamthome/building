@@ -1,10 +1,14 @@
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
 import { AuthMiddleware, } from '@/main/middlewares'
-import { Middleware, Route } from '@/main/protocols'
+import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { UpdateUserController } from '@/presentation/controllers'
-import { HttpMethod } from '@/presentation/protocols'
 import { UserDto, UserEntityResponse } from '@/domain/protocols'
+
+export const updateUserPath = new RoutePath(
+  'PATCH',
+  '/user'
+)
 
 @InjectableArray('routes')
 export class UpdateUserRoute implements Route<UserDto, UserEntityResponse> {
@@ -16,8 +20,7 @@ export class UpdateUserRoute implements Route<UserDto, UserEntityResponse> {
     private readonly authMiddleware: Middleware
   ) { }
 
-  get method (): HttpMethod { return 'PATCH' }
-  get path (): string { return '/user' }
+  get path (): RoutePath { return updateUserPath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware

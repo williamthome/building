@@ -5,20 +5,17 @@ import {
 import fakeData from './fake-data'
 import container from '@/shared/dependency-injection'
 import { Server } from '@/main/server'
-import { WebServer } from '@/main/protocols'
+import { Route, RoutePath, WebServer } from '@/main/protocols'
 import { Database } from '@/infra/protocols'
 import { mockAuthorizationToken } from '../presentation/__mocks__'
 import { BuildingModel, CompanyModel, UserModel } from '@/data/models'
 import { Hasher } from '@/data/protocols/cryptography'
 import { mockBuildingEntityDto, mockCompanyEntityDto, mockUserEntityDto } from '../domain/__mocks__/entities'
 import { AuthDto } from '@/domain/protocols'
+import { TransactionController } from '@/main/decorators'
 
 interface MongoUtilsOptions {
-  replSet?: boolean
-}
-
-const defaultOptions: MongoUtilsOptions = {
-  replSet: false
+  routePath: RoutePath
 }
 
 class MongoUtils {
@@ -57,18 +54,30 @@ class MongoUtils {
     return this._building
   }
 
-  config = async (opts = defaultOptions): Promise<void> => {
-    this._replSet = opts.replSet
+  config = async ({ routePath }: MongoUtilsOptions): Promise<void> => {
+    const server = await new Server().config()
+
+    container.define(Server).as(server).pinned().done()
+    container.define('webServer').as(server.app.webServer).pinned().done()
+    container.define('db').as(server.app.db).pinned().done()
+
+    const routes = container.resolveArray<Route<unknown, unknown>>('routes')
+
+    const route = routes.find(route => routePath === route.path)
+    if (!route)
+      throw new Error(`Route ${routePath.describe} not injected`)
 
     let mongoInMemory: MongoMemoryReplSet | MongoMemoryServer
+
+    this._replSet = route.controller instanceof TransactionController
+      ? route.controller.controller.usesTransaction
+      : route.controller.usesTransaction
 
     if (this._replSet) {
       mongoInMemory = new MongoMemoryReplSet({
         replSet: {
           storageEngine: 'wiredTiger',
-          count: 2,
-          name: 'rstest',
-          dbName: 'building-test'
+          count: 2
         }
       })
       await mongoInMemory.waitUntilRunning()
@@ -79,11 +88,6 @@ class MongoUtils {
     }
 
     const uri = await mongoInMemory.getUri()
-    const server = await new Server().config()
-
-    container.define(Server).as(server).pinned().done()
-    container.define('webServer').as(server.app.webServer).pinned().done()
-    container.define('db').as(server.app.db).pinned().done()
     container.define('DB_URL').as(uri).pinned().done()
   }
 

@@ -5,12 +5,16 @@ import {
   ActiveCompanyMiddleware,
   CompanyRoleMiddleware
 } from '@/main/middlewares'
-import { Middleware, Route } from '@/main/protocols'
+import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { DeleteCompanyController } from '@/presentation/controllers'
-import { HttpMethod } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
 import { CompanyRole } from '@/shared/constants'
+
+export const deleteCompanyPath = new RoutePath(
+  'DELETE',
+  '/company'
+)
 
 @InjectableArray('routes')
 export class DeleteCompanyRoute implements Route<undefined, CompanyEntity> {
@@ -30,8 +34,7 @@ export class DeleteCompanyRoute implements Route<undefined, CompanyEntity> {
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get method (): HttpMethod { return 'DELETE' }
-  get path (): string { return '/company' }
+  get path (): RoutePath { return deleteCompanyPath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,

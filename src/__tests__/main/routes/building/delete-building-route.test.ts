@@ -1,10 +1,11 @@
 import request from 'supertest'
 import { mongoUtils } from '@/__tests__/shared/mongo.utils'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
+import { deleteBuildingPath } from '@/main/routes'
 
-describe('DeleteBuilding Route > DELETE /building/:id', () => {
+describe(`DeleteBuilding Route > ${deleteBuildingPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.config({ replSet: true })
+    await mongoUtils.config({ routePath: deleteBuildingPath })
     await mongoUtils.webServer.listen()
     await mongoUtils.db.connect()
   })
@@ -21,6 +22,11 @@ describe('DeleteBuilding Route > DELETE /building/:id', () => {
     await mongoUtils.mongoInMemory.stop()
   })
 
+  const makeURN = (): string => deleteBuildingPath
+    .fillURN()
+    .params({ id: mongoUtils.building.id })
+    .urn
+
   it('shold return ok', async () => {
     await mongoUtils.addUser()
     await mongoUtils.authenticate()
@@ -28,7 +34,7 @@ describe('DeleteBuilding Route > DELETE /building/:id', () => {
     await mongoUtils.addCompany()
     await mongoUtils.addBuilding()
     await request(mongoUtils.webServer.server())
-      .delete(`/building/${mongoUtils.building.id}`)
+      .delete(makeURN())
       .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
       .expect(HttpStatusCode.OK)
   })

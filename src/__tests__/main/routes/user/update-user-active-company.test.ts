@@ -1,10 +1,11 @@
 import request from 'supertest'
 import { mongoUtils } from '@/__tests__/shared/mongo.utils'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
+import { updateUserActiveCompanyPath } from '@/main/routes'
 
-xdescribe('UpdateUserActiveCompany Route > PATCH /user/activeCompany/:companyId', () => {
+xdescribe(`UpdateUserActiveCompany Route > ${updateUserActiveCompanyPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.config()
+    await mongoUtils.config({ routePath: updateUserActiveCompanyPath })
     await mongoUtils.webServer.listen()
     await mongoUtils.db.connect()
   })
@@ -20,13 +21,17 @@ xdescribe('UpdateUserActiveCompany Route > PATCH /user/activeCompany/:companyId'
     await mongoUtils.mongoInMemory.stop()
   })
 
+  const makeURN = (): string => updateUserActiveCompanyPath.fillURN()
+    .params({ companyId: mongoUtils.company.id })
+    .urn
+
   it('shold return no content', async () => {
     await mongoUtils.addUser()
     await mongoUtils.authenticate()
     await mongoUtils.verify()
     await mongoUtils.addCompany()
     await request(mongoUtils.webServer.server())
-      .patch(`/user/activeCompany/${mongoUtils.company.id}`)
+      .patch(makeURN())
       .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
       .expect(HttpStatusCode.NO_CONTENT)
   })

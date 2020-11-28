@@ -6,12 +6,16 @@ import {
   RequirementsMiddleware
 } from '@/main/middlewares'
 import { InjectRouteController } from '@/main/decorators'
-import { Middleware, Route } from '@/main/protocols'
+import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { AddBuildingController } from '@/presentation/controllers'
-import { HttpMethod } from '@/presentation/protocols'
 import { BuildingEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 import { BuildingDto } from '@/domain/protocols'
+
+export const addBuildingPath = new RoutePath(
+  'POST',
+  '/building'
+)
 
 @InjectableArray('routes')
 export class AddBuildingRoute implements Route<BuildingDto, BuildingEntity> {
@@ -31,8 +35,7 @@ export class AddBuildingRoute implements Route<BuildingDto, BuildingEntity> {
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get method (): HttpMethod { return 'POST' }
-  get path (): string { return '/building' }
+  get path (): RoutePath { return addBuildingPath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,

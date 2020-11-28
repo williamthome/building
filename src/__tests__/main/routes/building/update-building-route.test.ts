@@ -2,10 +2,11 @@ import request from 'supertest'
 import { mongoUtils } from '@/__tests__/shared/mongo.utils'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { mockBuildingEntityDto } from '@/__tests__/domain/__mocks__/entities'
+import { updateBuildingPath } from '@/main/routes'
 
-describe('UpdateBuilding Route > PATCH /building/:id', () => {
+describe(`UpdateBuilding Route > ${updateBuildingPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.config()
+    await mongoUtils.config({ routePath: updateBuildingPath })
     await mongoUtils.webServer.listen()
     await mongoUtils.db.connect()
   })
@@ -22,6 +23,11 @@ describe('UpdateBuilding Route > PATCH /building/:id', () => {
     await mongoUtils.mongoInMemory.stop()
   })
 
+  const makeURN = (): string => updateBuildingPath
+    .fillURN()
+    .params({ id: mongoUtils.building.id })
+    .urn
+
   it('shold return ok', async () => {
     await mongoUtils.addUser()
     await mongoUtils.authenticate()
@@ -29,7 +35,7 @@ describe('UpdateBuilding Route > PATCH /building/:id', () => {
     await mongoUtils.addCompany()
     await mongoUtils.addBuilding()
     await request(mongoUtils.webServer.server())
-      .patch(`/building/${mongoUtils.building.id}`)
+      .patch(makeURN())
       .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
       .send(mockBuildingEntityDto())
       .expect(HttpStatusCode.OK)

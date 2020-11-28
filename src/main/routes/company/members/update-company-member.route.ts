@@ -5,13 +5,17 @@ import {
   RequirementsMiddleware,
   ParamIdMatchActiveCompanyIdMiddleware
 } from '@/main/middlewares'
-import { Middleware, Route } from '@/main/protocols'
+import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { UpdateCompanyMemberController } from '@/presentation/controllers'
-import { HttpMethod } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 import { MemberEntity } from '@/domain/entities/nested'
+
+export const updateCompanyMemberPath = new RoutePath(
+  'PATCH',
+  '/company/:id/members/:userId'
+)
 
 @InjectableArray('routes')
 export class UpdateCompanyMemberRoute implements Route<MemberEntity, CompanyEntity> {
@@ -31,8 +35,7 @@ export class UpdateCompanyMemberRoute implements Route<MemberEntity, CompanyEnti
     private readonly paramIdMatchActiveCompanyIdMiddleware: ParamIdMatchActiveCompanyIdMiddleware
   ) { }
 
-  get method (): HttpMethod { return 'PATCH' }
-  get path (): string { return '/company/:id/members/:userId' }
+  get path (): RoutePath { return updateCompanyMemberPath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,

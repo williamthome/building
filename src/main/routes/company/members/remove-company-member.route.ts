@@ -5,12 +5,16 @@ import {
   RequirementsMiddleware,
   ParamIdMatchActiveCompanyIdMiddleware
 } from '@/main/middlewares'
-import { Middleware, Route } from '@/main/protocols'
+import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { RemoveCompanyMemberController } from '@/presentation/controllers'
-import { HttpMethod } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
+
+export const removeCompanyMemberPath = new RoutePath(
+  'DELETE',
+  '/company/:id/members/:userId'
+)
 
 @InjectableArray('routes')
 export class RemoveCompanyMemberRoute implements Route<undefined, CompanyEntity> {
@@ -30,8 +34,7 @@ export class RemoveCompanyMemberRoute implements Route<undefined, CompanyEntity>
     private readonly paramIdMatchActiveCompanyIdMiddleware: ParamIdMatchActiveCompanyIdMiddleware
   ) { }
 
-  get method (): HttpMethod { return 'DELETE' }
-  get path (): string { return '/company/:id/members/:userId' }
+  get path (): RoutePath { return removeCompanyMemberPath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,

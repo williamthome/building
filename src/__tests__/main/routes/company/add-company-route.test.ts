@@ -2,10 +2,11 @@ import request from 'supertest'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { mockCompanyEntityDto } from '@/__tests__/domain/__mocks__/entities'
 import { mongoUtils } from '@/__tests__/shared/mongo.utils'
+import { addCompanyPath } from '@/main/routes'
 
-describe('AddCompany Route > POST /company', () => {
+describe(`AddCompany Route > ${addCompanyPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.config()
+    await mongoUtils.config({ routePath: addCompanyPath })
     await mongoUtils.webServer.listen()
     await mongoUtils.db.connect()
   })
@@ -26,7 +27,7 @@ describe('AddCompany Route > POST /company', () => {
     await mongoUtils.authenticate()
     await mongoUtils.verify()
     await request(mongoUtils.webServer.server())
-      .post('/company')
+      .post(addCompanyPath.urn)
       .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
       .send(mockCompanyEntityDto())
       .expect(HttpStatusCode.OK)

@@ -2,10 +2,11 @@ import request from 'supertest'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { mockCompanyEntityDto } from '@/__tests__/domain/__mocks__/entities'
 import { mongoUtils } from '@/__tests__/shared/mongo.utils'
+import { updateCompanyPath } from '@/main/routes'
 
-describe('UpdateCompany Route > PATCH /company', () => {
+describe(`UpdateCompany Route > ${updateCompanyPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.config()
+    await mongoUtils.config({ routePath: updateCompanyPath })
     await mongoUtils.webServer.listen()
     await mongoUtils.db.connect()
   })
@@ -27,7 +28,7 @@ describe('UpdateCompany Route > PATCH /company', () => {
     await mongoUtils.verify()
     await mongoUtils.addCompany()
     await request(mongoUtils.webServer.server())
-      .patch('/company')
+      .patch(updateCompanyPath.urn)
       .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
       .send(mockCompanyEntityDto())
       .expect(HttpStatusCode.OK)

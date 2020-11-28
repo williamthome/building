@@ -2,10 +2,11 @@ import request from 'supertest'
 import { HttpStatusCode } from '@/presentation/constants'
 import { mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities'
 import { mongoUtils } from '@/__tests__/shared/mongo.utils'
+import { addUserPath } from '@/main/routes'
 
-describe('AddUser Route > POST /user', () => {
+describe(`AddUser Route > ${addUserPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.config()
+    await mongoUtils.config({ routePath: addUserPath })
     await mongoUtils.webServer.listen()
     await mongoUtils.db.connect()
   })
@@ -22,7 +23,7 @@ describe('AddUser Route > POST /user', () => {
 
   it('shold return ok', async () => {
     await request(mongoUtils.webServer.server())
-      .post('/user')
+      .post(addUserPath.urn)
       .send(mockUserEntityDto())
       .expect(HttpStatusCode.OK)
   })

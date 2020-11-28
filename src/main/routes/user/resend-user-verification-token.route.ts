@@ -1,9 +1,13 @@
 import { InjectableArray } from '@/shared/dependency-injection'
-import { Middleware, Route } from '@/main/protocols'
+import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { ResendUserVerificationTokenController } from '@/presentation/controllers'
-import { HttpMethod } from '@/presentation/protocols'
 import { UserVerificationToken } from '@/domain/protocols'
+
+export const resendUserVerificationTokenPath = new RoutePath(
+  'PATCH',
+  '/user/verify'
+)
 
 @InjectableArray('routes')
 export class ResendUserVerificationTokenRoute implements Route<undefined, UserVerificationToken> {
@@ -12,7 +16,6 @@ export class ResendUserVerificationTokenRoute implements Route<undefined, UserVe
     public readonly controller: ResendUserVerificationTokenController
   ) { }
 
-  get method (): HttpMethod { return 'PATCH' }
-  get path (): string { return '/user/verify' }
+  get path (): RoutePath { return resendUserVerificationTokenPath }
   get middlewares (): Middleware[] { return [] }
 }

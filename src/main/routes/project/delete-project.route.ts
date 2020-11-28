@@ -5,12 +5,16 @@ import {
   ActiveCompanyMiddleware,
   RequirementsMiddleware
 } from '@/main/middlewares'
-import { Middleware, Route } from '@/main/protocols'
+import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { DeleteProjectController } from '@/presentation/controllers'
-import { HttpMethod } from '@/presentation/protocols'
 import { ProjectEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
+
+export const deleteProjectPath = new RoutePath(
+  'DELETE',
+  '/project/:id'
+)
 
 @InjectableArray('routes')
 export class DeleteProjectRoute implements Route<undefined, ProjectEntity> {
@@ -30,8 +34,7 @@ export class DeleteProjectRoute implements Route<undefined, ProjectEntity> {
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get method (): HttpMethod { return 'DELETE' }
-  get path (): string { return '/project/:id' }
+  get path (): RoutePath { return deleteProjectPath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,

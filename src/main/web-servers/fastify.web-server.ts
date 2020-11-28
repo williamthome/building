@@ -42,7 +42,7 @@ export class Fastify implements WebServer {
 
     this.routes.map((route, index) => {
       this.adaptRoute(route, this.fastifyInstance)
-      console.log(`Route ${index + 1}/${this.routes.length} injected - ${route.path} ${route.method}`)
+      console.log(`Route ${index + 1}/${this.routes.length} injected - ${route.path.describe}`)
     })
   }
 
@@ -55,8 +55,8 @@ export class Fastify implements WebServer {
     fastifyInstance: FastifyInstance
   ): FastifyInstance => {
     return fastifyInstance.route({
-      method: route.method,
-      url: route.path,
+      method: route.path.method,
+      url: route.path.urn,
       handler: this.adaptHttpResponse(route.controller),
       preHandler: this.adaptMiddlewares<T>(route.middlewares)
     })

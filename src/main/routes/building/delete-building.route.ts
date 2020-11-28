@@ -6,11 +6,15 @@ import {
   ActiveCompanyMiddleware,
   RequirementsMiddleware
 } from '@/main/middlewares'
-import { Middleware, Route } from '@/main/protocols'
+import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { DeleteBuildingController } from '@/presentation/controllers'
-import { HttpMethod } from '@/presentation/protocols'
 import { BuildingEntity } from '@/domain/entities'
+
+export const deleteBuildingPath = new RoutePath(
+  'DELETE',
+  '/building/:id'
+)
 
 @InjectableArray('routes')
 export class DeleteBuildingRoute implements Route<undefined, BuildingEntity> {
@@ -30,8 +34,7 @@ export class DeleteBuildingRoute implements Route<undefined, BuildingEntity> {
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get method (): HttpMethod { return 'DELETE' }
-  get path (): string { return '/building/:id' }
+  get path (): RoutePath { return deleteBuildingPath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,
