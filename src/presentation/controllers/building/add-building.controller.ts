@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { ok } from '@/presentation/factories/http.factory'
 import { buildingSchema } from '@/presentation/schemas'
-import { HandleLogError, ValidateBody } from '@/presentation/decorators'
+import { HandleError, ValidateBody } from '@/presentation/decorators'
 // < Out: only domain layer
 import { BuildingEntity, buildingKeys, CompanyEntity } from '@/domain/entities'
 import { AddBuildingUseCase } from '@/domain/usecases'
@@ -21,7 +21,7 @@ export class AddBuildingController implements Controller<BuildingDto, BuildingEn
     schema: buildingSchema,
     keys: buildingKeys
   })
-  @HandleLogError
+  @HandleError
   async handle (request: HttpRequest<BuildingDto>): HandleResponse<BuildingEntity> {
     const companyId = request.activeCompanyInfo?.id as CompanyEntity['id']
     const buildingDto = request.body as BuildingDto

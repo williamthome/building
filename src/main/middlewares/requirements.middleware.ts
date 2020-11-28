@@ -3,7 +3,7 @@ import { Middleware, MiddlewareResponse } from '../protocols'
 import { hasRequirements } from '../helpers/middleware.helper'
 import { noContent, unauthorized } from '@/presentation/factories/http.factory'
 import { HttpRequest } from '@/presentation/protocols'
-import { HandleLogError } from '@/presentation/decorators'
+import { HandleError } from '@/presentation/decorators'
 
 export class RequirementsMiddleware implements Middleware {
 
@@ -11,7 +11,7 @@ export class RequirementsMiddleware implements Middleware {
     private readonly requirements: UserFeatures
   ) { }
 
-  @HandleLogError
+  @HandleError
   async handle<T> (httpRequest: HttpRequest<T>): MiddlewareResponse {
     return hasRequirements(httpRequest, this.requirements)
       ? noContent()

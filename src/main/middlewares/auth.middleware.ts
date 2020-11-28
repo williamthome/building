@@ -3,7 +3,7 @@ import { Middleware, MiddlewareResponse } from '../protocols'
 import { EntityNotFoundError } from '@/presentation/errors'
 import { notFound, unauthorized } from '@/presentation/factories/http.factory'
 import { HttpRequest } from '@/presentation/protocols'
-import { HandleLogError } from '@/presentation/decorators'
+import { HandleError } from '@/presentation/decorators'
 import { GetUserByAccessTokenUseCase } from '@/domain/usecases'
 import { authorizationToken, okMiddleware } from '../helpers/middleware.helper'
 
@@ -14,7 +14,7 @@ export class AuthMiddleware implements Middleware {
     @Inject() private readonly getUserByAccessTokenUseCase: GetUserByAccessTokenUseCase
   ) { }
 
-  @HandleLogError
+  @HandleError
   async handle<T> (httpRequest: HttpRequest<T>): MiddlewareResponse {
     const accessToken = authorizationToken(httpRequest)
     if (!accessToken)

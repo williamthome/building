@@ -5,7 +5,7 @@ import { UserFeatures, CompanyRole } from '@/shared/constants'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { ok } from '@/presentation/factories/http.factory'
 import { companySchema } from '@/presentation/schemas'
-import { HandleLogError, ValidateBody } from '@/presentation/decorators'
+import { HandleError, ValidateBody } from '@/presentation/decorators'
 // < Out: only domain layer
 import { CompanyEntity, companyKeys, UserEntity } from '@/domain/entities'
 import { AddCompanyUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
@@ -23,7 +23,7 @@ export class AddCompanyController implements Controller<CompanyDto, CompanyEntit
     schema: companySchema,
     keys: companyKeys
   })
-  @HandleLogError
+  @HandleError
   async handle (request: HttpRequest<CompanyDto>): HandleResponse<CompanyEntity> {
     const companyDto = request.body as CompanyDto
     const loggedUserId = request.loggedUserInfo?.id as UserEntity['id']

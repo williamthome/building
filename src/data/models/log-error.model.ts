@@ -5,7 +5,7 @@ export class LogErrorModel extends Model implements LogErrorEntity {
   constructor (
     public readonly id: Model['id'],
     public readonly stack: Error['stack'],
-    public readonly date: Date
+    public readonly date: number
   ) {
     super(id)
   }

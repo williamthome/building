@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
-import { HandleLogError, UsesTransaction, ValidateQuery } from '@/presentation/decorators'
+import { HandleError, UsesTransaction, ValidateQuery } from '@/presentation/decorators'
 import { EntityNotFoundError, UserAlreadyVerifiedError } from '@/presentation/errors'
 import { isString, required } from '@/presentation/validations'
 // < Out: only domain layer
@@ -36,7 +36,7 @@ export class VerifyUserController implements Controller<undefined, UserEntityRes
       token: 'token'
     }
   })
-  @HandleLogError
+  @HandleError
   async handle (request: HttpRequest): HandleResponse<UserEntityResponse> {
     const token = request.query?.token as string
 

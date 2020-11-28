@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 import { AuthDto, UserEntityResponse } from '@/domain/protocols'
 import { GetUserByEmailUseCase, UpdateUserAccessTokenUseCase } from '@/domain/usecases/user'
-import { HandleLogError, ValidateBody } from '@/presentation/decorators'
+import { HandleError, ValidateBody } from '@/presentation/decorators'
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { authSchema } from '@/presentation/schemas'
@@ -26,7 +26,7 @@ export class AuthenticationController implements Controller<AuthDto, UserEntityR
       password: 'password'
     }
   })
-  @HandleLogError
+  @HandleError
   async handle (request: HttpRequest<AuthDto>): HandleResponse<UserEntityResponse> {
     const authDto = request.body as AuthDto
     const user = await this.getUserByEmailUseCase.call(authDto.email)

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Middleware, MiddlewareResponse } from '../protocols'
 import { badRequest, forbidden, notFound } from '@/presentation/factories/http.factory'
 import { HttpRequest } from '@/presentation/protocols'
-import { HandleLogError } from '@/presentation/decorators'
+import { HandleError } from '@/presentation/decorators'
 import { GetCompanyByIdUseCase } from '@/domain/usecases'
 import { AccessDeniedError, ActiveCompanyIsFalsyError, EntityNotFoundError } from '@/presentation/errors'
 import { okMiddleware } from '../helpers/middleware.helper'
@@ -14,7 +14,7 @@ export class ActiveCompanyMiddleware implements Middleware {
     @Inject() private readonly getCompanyByIdUseCase: GetCompanyByIdUseCase
   ) { }
 
-  @HandleLogError
+  @HandleError
   async handle<T> (httpRequest: HttpRequest<T>): MiddlewareResponse {
     const { loggedUserInfo } = httpRequest
     if (!loggedUserInfo?.activeCompanyId)

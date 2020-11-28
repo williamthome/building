@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { forbidden, noContent, notFound } from '@/presentation/factories/http.factory'
 import { idParamSchemaOptions } from '@/presentation/schemas'
-import { HandleLogError, ValidateParams } from '@/presentation/decorators'
+import { HandleError, ValidateParams } from '@/presentation/decorators'
 // < Out: only domain layer
 import { CompanyEntity, UserEntity } from '@/domain/entities'
 import { GetCompanyByIdUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
@@ -26,7 +26,7 @@ export class UpdateUserActiveCompanyController implements Controller<undefined, 
       companyId: 'companyId'
     }
   })
-  @HandleLogError
+  @HandleError
   async handle (request: HttpRequest): HandleResponse {
     const companyId = request.params?.companyId as CompanyEntity['id']
     const userId = request.loggedUserInfo?.id as UserEntity['id']

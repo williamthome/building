@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { projectSchema, idParamKeys, idParamSchema } from '@/presentation/schemas'
-import { HandleLogError, ValidateBody, ValidateParams } from '@/presentation/decorators'
+import { HandleError, ValidateBody, ValidateParams } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { ProjectEntity, projectKeys } from '@/domain/entities'
@@ -27,7 +27,7 @@ export class UpdateProjectController implements Controller<ProjectDto, ProjectEn
     schema: idParamSchema,
     keys: idParamKeys
   })
-  @HandleLogError
+  @HandleError
   async handle (request: HttpRequest<ProjectDto>): HandleResponse<ProjectEntity> {
     const projectId = request.params?.id as ProjectEntity['id']
     const projectDto = request.body as ProjectDto

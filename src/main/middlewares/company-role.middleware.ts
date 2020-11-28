@@ -1,7 +1,7 @@
 import { Middleware, MiddlewareResponse } from '../protocols'
 import { noContent, unauthorized } from '@/presentation/factories/http.factory'
 import { HttpRequest } from '@/presentation/protocols'
-import { HandleLogError } from '@/presentation/decorators'
+import { HandleError } from '@/presentation/decorators'
 import { CompanyRole } from '@/shared/constants'
 import { hasPermission } from '../helpers/middleware.helper'
 
@@ -11,7 +11,7 @@ export class CompanyRoleMiddleware implements Middleware {
     private readonly companyRole: CompanyRole | CompanyRole[]
   ) { }
 
-  @HandleLogError
+  @HandleError
   async handle <T> (httpRequest: HttpRequest<T>): MiddlewareResponse {
     return hasPermission(httpRequest, this.companyRole)
       ? noContent()

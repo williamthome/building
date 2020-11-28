@@ -5,7 +5,7 @@ import { CompanyRole } from '@/shared/constants'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, forbidden, notFound, ok } from '@/presentation/factories/http.factory'
 import { idParamKeys, idParamSchema, idParamSchemaOptions, memberSchema } from '@/presentation/schemas'
-import { HandleLogError, ValidateBody, ValidateParams } from '@/presentation/decorators'
+import { HandleError, ValidateBody, ValidateParams } from '@/presentation/decorators'
 import { AccessDeniedError, EntityNotFoundError, UserIsNotAMemberError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity } from '@/domain/entities'
@@ -35,7 +35,7 @@ export class UpdateCompanyMemberController implements Controller<MemberDto, Comp
       userId: 'userId'
     }
   })
-  @HandleLogError
+  @HandleError
   async handle (request: HttpRequest<MemberDto>): HandleResponse<CompanyEntity> {
     const userId = request.params?.userId as MemberEntity['userId']
     const companyId = request.params?.id as CompanyEntity['id']

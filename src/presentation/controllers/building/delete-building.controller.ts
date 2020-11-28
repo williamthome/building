@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { idParamKeys, idParamSchema } from '@/presentation/schemas'
-import { HandleLogError, UsesTransaction, ValidateParams } from '@/presentation/decorators'
+import { HandleError, UsesTransaction, ValidateParams } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { BuildingEntity } from '@/domain/entities'
@@ -22,7 +22,7 @@ export class DeleteBuildingController implements Controller<undefined, BuildingE
     schema: idParamSchema,
     keys: idParamKeys
   })
-  @HandleLogError
+  @HandleError
   async handle (request: HttpRequest): HandleResponse<BuildingEntity> {
     const buildingId = request.params?.id as BuildingEntity['id']
 

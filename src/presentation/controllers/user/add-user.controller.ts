@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, ok } from '@/presentation/factories/http.factory'
 import { userSchema } from '@/presentation/schemas'
-import { HandleLogError, ValidateBody } from '@/presentation/decorators'
+import { HandleError, ValidateBody } from '@/presentation/decorators'
 import { UserAlreadyRegisteredError } from '@/presentation/errors'
 // < Out: only domain layer
 import { userKeys } from '@/domain/entities'
@@ -23,7 +23,7 @@ export class AddUserController implements Controller<UserDto, UserVerificationTo
     schema: userSchema,
     keys: userKeys
   })
-  @HandleLogError
+  @HandleError
   async handle (request: HttpRequest<UserDto>): HandleResponse<UserVerificationToken> {
     const userDto = request.body as UserDto
 

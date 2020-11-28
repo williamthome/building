@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { HandleLogError, UsesTransaction } from '@/presentation/decorators'
+import { HandleError, UsesTransaction } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { UserEntity } from '@/domain/entities'
@@ -19,7 +19,7 @@ export class DeleteUserController implements Controller<undefined, UserEntityRes
     @Inject() private readonly deleteUserUseCase: DeleteUserUseCase
   ) { }
 
-  @HandleLogError
+  @HandleError
   async handle (request: HttpRequest): HandleResponse<UserEntityResponse> {
     const id = request.loggedUserInfo?.id as UserEntity['id']
 

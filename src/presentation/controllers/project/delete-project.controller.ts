@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { idParamKeys, idParamSchema } from '@/presentation/schemas'
-import { HandleLogError, ValidateParams } from '@/presentation/decorators'
+import { HandleError, ValidateParams } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { ProjectEntity } from '@/domain/entities'
@@ -21,7 +21,7 @@ export class DeleteProjectController implements Controller<undefined, ProjectEnt
     schema: idParamSchema,
     keys: idParamKeys
   })
-  @HandleLogError
+  @HandleError
   async handle (request: HttpRequest): HandleResponse<ProjectEntity> {
     const id = request.params?.id as ProjectEntity['id']
 
