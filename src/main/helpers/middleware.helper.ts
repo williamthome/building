@@ -55,6 +55,7 @@ export const hasRequirements = <T> (httpRequest: HttpRequest<T>, requirements: U
     loggedUserInfo.features !== undefined &&
     (
       loggedUserInfo.companyRole === CompanyRole.owner ||
+      loggedUserInfo.companyRole === CompanyRole.master ||
       hasFeatures(loggedUserInfo.features, requirements)
     )
 }
