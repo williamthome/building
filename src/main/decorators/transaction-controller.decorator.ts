@@ -13,7 +13,7 @@ export class TransactionController<TRequest, TResponse> implements Controller<TR
   private readonly logErrorUseCase!: LogErrorUseCase
 
   constructor (
-    private readonly controller: Controller<TRequest, TResponse>
+    public readonly controller: Controller<TRequest, TResponse>
   ) { }
 
   handle = async (request: HttpRequest<TRequest>): HandleResponse<TResponse> => {
