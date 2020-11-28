@@ -3,7 +3,7 @@ import { AuthMiddleware, UserVerifiedMiddleware } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { AddCompanyController } from '@/presentation/controllers'
-import { HttpMethods } from '@/presentation/protocols'
+import { HttpMethod } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
 import { CompanyDto } from '@/domain/protocols'
 
@@ -20,7 +20,7 @@ export class AddCompanyRoute implements Route<CompanyDto, CompanyEntity> {
     private readonly userVerifiedMiddleware: Middleware
   ) { }
 
-  get method (): HttpMethods { return 'POST' }
+  get method (): HttpMethod { return 'POST' }
   get path (): string { return '/company' }
   get middlewares (): Middleware[] {
     return [

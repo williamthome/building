@@ -8,7 +8,7 @@ import {
 import { Middleware, Route } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { DeleteCompanyController } from '@/presentation/controllers'
-import { HttpMethods } from '@/presentation/protocols'
+import { HttpMethod } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
 import { CompanyRole } from '@/shared/constants'
 
@@ -30,7 +30,7 @@ export class DeleteCompanyRoute implements Route<undefined, CompanyEntity> {
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get method (): HttpMethods { return 'DELETE' }
+  get method (): HttpMethod { return 'DELETE' }
   get path (): string { return '/company' }
   get middlewares (): Middleware[] {
     return [

@@ -8,7 +8,7 @@ import {
 import { Middleware, Route } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { UpdateCompanyMemberController } from '@/presentation/controllers'
-import { HttpMethods } from '@/presentation/protocols'
+import { HttpMethod } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 import { MemberEntity } from '@/domain/entities/nested'
@@ -31,7 +31,7 @@ export class UpdateCompanyMemberRoute implements Route<MemberEntity, CompanyEnti
     private readonly paramIdMatchActiveCompanyIdMiddleware: ParamIdMatchActiveCompanyIdMiddleware
   ) { }
 
-  get method (): HttpMethods { return 'PATCH' }
+  get method (): HttpMethod { return 'PATCH' }
   get path (): string { return '/company/:id/members/:userId' }
   get middlewares (): Middleware[] {
     return [

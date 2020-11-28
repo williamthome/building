@@ -8,7 +8,7 @@ import {
 import { InjectRouteController } from '@/main/decorators'
 import { Middleware, Route } from '@/main/protocols'
 import { AddBuildingController } from '@/presentation/controllers'
-import { HttpMethods } from '@/presentation/protocols'
+import { HttpMethod } from '@/presentation/protocols'
 import { BuildingEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 import { BuildingDto } from '@/domain/protocols'
@@ -31,7 +31,7 @@ export class AddBuildingRoute implements Route<BuildingDto, BuildingEntity> {
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get method (): HttpMethods { return 'POST' }
+  get method (): HttpMethod { return 'POST' }
   get path (): string { return '/building' }
   get middlewares (): Middleware[] {
     return [

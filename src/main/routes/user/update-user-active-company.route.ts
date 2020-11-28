@@ -3,7 +3,7 @@ import { AuthMiddleware, UserVerifiedMiddleware, } from '@/main/middlewares'
 import { Middleware, Route } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { UpdateUserActiveCompanyController } from '@/presentation/controllers'
-import { HttpMethods } from '@/presentation/protocols'
+import { HttpMethod } from '@/presentation/protocols'
 
 @InjectableArray('routes')
 export class UpdateUserActiveCompanyRoute implements Route<undefined, null> {
@@ -18,7 +18,7 @@ export class UpdateUserActiveCompanyRoute implements Route<undefined, null> {
     private readonly userVerifiedMiddleware: Middleware
   ) { }
 
-  get method (): HttpMethods { return 'PATCH' }
+  get method (): HttpMethod { return 'PATCH' }
   get path (): string { return '/user/activeCompany/:companyId' }
   get middlewares (): Middleware[] {
     return [

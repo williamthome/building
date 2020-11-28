@@ -9,7 +9,7 @@ export type HttpParameters = Record<string, string>
 
 export type HttpQuery = Record<string, string>
 
-export type HttpMethods = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 
 export interface HttpRequest<T = undefined> {
   body?: T

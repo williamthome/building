@@ -8,7 +8,7 @@ import {
 import { Middleware, Route } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { UpdateBuildingController } from '@/presentation/controllers'
-import { HttpMethods } from '@/presentation/protocols'
+import { HttpMethod } from '@/presentation/protocols'
 import { BuildingEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 import { BuildingDto } from '@/domain/protocols'
@@ -31,7 +31,7 @@ export class UpdateBuildingRoute implements Route<BuildingDto, BuildingEntity> {
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get method (): HttpMethods { return 'PATCH' }
+  get method (): HttpMethod { return 'PATCH' }
   get path (): string { return '/building/:id' }
   get middlewares (): Middleware[] {
     return [

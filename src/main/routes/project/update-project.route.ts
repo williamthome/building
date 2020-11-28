@@ -8,7 +8,7 @@ import {
 import { Middleware, Route } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { UpdateProjectController } from '@/presentation/controllers'
-import { HttpMethods } from '@/presentation/protocols'
+import { HttpMethod } from '@/presentation/protocols'
 import { ProjectEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 import { ProjectDto } from '@/domain/protocols'
@@ -31,7 +31,7 @@ export class UpdateProjectRoute implements Route<ProjectDto, ProjectEntity> {
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get method (): HttpMethods { return 'PATCH' }
+  get method (): HttpMethod { return 'PATCH' }
   get path (): string { return '/project/:id' }
   get middlewares (): Middleware[] {
     return [

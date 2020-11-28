@@ -8,7 +8,7 @@ import {
 import { Middleware, Route } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { AddCompanyMemberController } from '@/presentation/controllers'
-import { HttpMethods } from '@/presentation/protocols'
+import { HttpMethod } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 import { MemberEntity } from '@/domain/entities/nested'
@@ -31,7 +31,7 @@ export class AddCompanyMemberRoute implements Route<MemberEntity, CompanyEntity>
     private readonly paramIdMatchActiveCompanyIdMiddleware: ParamIdMatchActiveCompanyIdMiddleware
   ) { }
 
-  get method (): HttpMethods { return 'POST' }
+  get method (): HttpMethod { return 'POST' }
   get path (): string { return '/company/:id/members' }
   get middlewares (): Middleware[] {
     return [

@@ -1,8 +1,8 @@
 import { Middleware } from './middleware.protocol'
-import { Controller, HttpMethods } from '@/presentation/protocols'
+import { Controller, HttpMethod } from '@/presentation/protocols'
 
 export interface Route<TRequest, TResponse = TRequest> {
-  method: HttpMethods
+  method: HttpMethod
   path: string
   controller: Controller<TRequest, TResponse>
   middlewares: Middleware[]

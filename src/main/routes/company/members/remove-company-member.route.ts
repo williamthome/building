@@ -8,7 +8,7 @@ import {
 import { Middleware, Route } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { RemoveCompanyMemberController } from '@/presentation/controllers'
-import { HttpMethods } from '@/presentation/protocols'
+import { HttpMethod } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 
@@ -30,7 +30,7 @@ export class RemoveCompanyMemberRoute implements Route<undefined, CompanyEntity>
     private readonly paramIdMatchActiveCompanyIdMiddleware: ParamIdMatchActiveCompanyIdMiddleware
   ) { }
 
-  get method (): HttpMethods { return 'DELETE' }
+  get method (): HttpMethod { return 'DELETE' }
   get path (): string { return '/company/:id/members/:userId' }
   get middlewares (): Middleware[] {
     return [

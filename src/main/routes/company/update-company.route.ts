@@ -8,7 +8,7 @@ import {
 import { Middleware, Route } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { UpdateCompanyController } from '@/presentation/controllers'
-import { HttpMethods } from '@/presentation/protocols'
+import { HttpMethod } from '@/presentation/protocols'
 import { CompanyEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 import { CompanyDto } from '@/domain/protocols'
@@ -31,7 +31,7 @@ export class UpdateCompanyRoute implements Route<CompanyDto, CompanyEntity> {
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get method (): HttpMethods { return 'PATCH' }
+  get method (): HttpMethod { return 'PATCH' }
   get path (): string { return '/company' }
   get middlewares (): Middleware[] {
     return [
