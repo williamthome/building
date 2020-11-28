@@ -4,7 +4,7 @@ import { CompanyRole } from '@/shared/constants'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, forbidden, notFound, ok } from '@/presentation/factories/http.factory'
-import { idParamKeys, idParamSchema, idParamSchemaOptions, memberSchema } from '@/presentation/schemas'
+import { idParamKeys, idParamSchema, memberSchema } from '@/presentation/schemas'
 import { HandleError, ValidateBody, ValidateParams } from '@/presentation/decorators'
 import { AccessDeniedError, EntityNotFoundError, UserIsNotAMemberError } from '@/presentation/errors'
 // < Out: only domain layer
@@ -26,20 +26,14 @@ export class UpdateCompanyMemberController implements Controller<MemberDto, Comp
     nullable: true
   })
   @ValidateParams<MemberDto, CompanyEntity>({
-    schema: {
-      ...idParamSchema,
-      userId: idParamSchemaOptions
-    },
-    keys: {
-      ...idParamKeys,
-      userId: 'userId'
-    }
+    schema: idParamSchema,
+    keys: idParamKeys
   })
   @HandleError
   async handle (request: HttpRequest<MemberDto>): HandleResponse<CompanyEntity> {
-    const userId = request.params?.userId as MemberEntity['userId']
-    const companyId = request.params?.id as CompanyEntity['id']
+    const companyId = request.activeCompanyInfo?.id as CompanyEntity['id']
     const members = request.activeCompanyInfo?.members as MemberEntity[]
+    const userId = request.params?.id as MemberEntity['userId']
     const memberDto = request.body as MemberDto
 
     const member = members.find(companyMember => userId === companyMember.userId)

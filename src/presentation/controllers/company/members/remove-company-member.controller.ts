@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, forbidden, notFound, ok } from '@/presentation/factories/http.factory'
-import { idParamKeys, idParamSchema, idParamSchemaOptions } from '@/presentation/schemas'
+import { idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { HandleError, ValidateParams } from '@/presentation/decorators'
 import { AccessDeniedError, EntityNotFoundError, UserIsNotAMemberError } from '@/presentation/errors'
 // < Out: only domain layer
@@ -22,19 +22,13 @@ export class RemoveCompanyMemberController implements Controller<undefined, Comp
   ) { }
 
   @ValidateParams<undefined, CompanyEntity>({
-    schema: {
-      ...idParamSchema,
-      userId: idParamSchemaOptions
-    },
-    keys: {
-      ...idParamKeys,
-      userId: 'userId'
-    }
+    schema: idParamSchema,
+    keys: idParamKeys
   })
   @HandleError
   async handle (request: HttpRequest<undefined>): HandleResponse<CompanyEntity> {
-    const userId = request.params?.userId as MemberEntity['userId']
-    const companyId = request.params?.id as CompanyEntity['id']
+    const companyId = request.activeCompanyInfo?.id as CompanyEntity['id']
+    const userId = request.params?.id as MemberEntity['userId']
     const members = request.activeCompanyInfo?.members as MemberEntity[]
 
     const member = members.find(companyMember => userId === companyMember.userId)

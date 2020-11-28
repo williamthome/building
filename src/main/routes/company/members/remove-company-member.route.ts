@@ -3,7 +3,7 @@ import {
   AuthMiddleware,
   UserVerifiedMiddleware,
   RequirementsMiddleware,
-  ParamIdMatchActiveCompanyIdMiddleware
+  ActiveCompanyMiddleware
 } from '@/main/middlewares'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
@@ -13,7 +13,7 @@ import { UserFeatures } from '@/shared/constants'
 
 export const removeCompanyMemberPath = new RoutePath(
   'DELETE',
-  '/company/:id/members/:userId'
+  '/member/:id'
 )
 
 @InjectableArray('routes')
@@ -30,8 +30,8 @@ export class RemoveCompanyMemberRoute implements Route<undefined, CompanyEntity>
     @Inject(UserVerifiedMiddleware)
     private readonly userVerifiedMiddleware: Middleware,
 
-    @Inject(ParamIdMatchActiveCompanyIdMiddleware)
-    private readonly paramIdMatchActiveCompanyIdMiddleware: ParamIdMatchActiveCompanyIdMiddleware
+    @Inject(ActiveCompanyMiddleware)
+    private readonly activeCompanyMiddleware: Middleware
   ) { }
 
   get path (): RoutePath { return removeCompanyMemberPath }
@@ -39,8 +39,8 @@ export class RemoveCompanyMemberRoute implements Route<undefined, CompanyEntity>
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,
-      this.requirementsMiddleware,
-      this.paramIdMatchActiveCompanyIdMiddleware
+      this.activeCompanyMiddleware,
+      this.requirementsMiddleware
     ]
   }
 }

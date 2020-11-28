@@ -3,7 +3,7 @@ import {
   AuthMiddleware,
   UserVerifiedMiddleware,
   RequirementsMiddleware,
-  ParamIdMatchActiveCompanyIdMiddleware
+  ActiveCompanyMiddleware
 } from '@/main/middlewares'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
@@ -14,7 +14,7 @@ import { MemberEntity } from '@/domain/entities/nested'
 
 export const addCompanyMemberPath = new RoutePath(
   'POST',
-  '/company/:id/members'
+  '/member'
 )
 
 @InjectableArray('routes')
@@ -31,8 +31,8 @@ export class AddCompanyMemberRoute implements Route<MemberEntity, CompanyEntity>
     @Inject(UserVerifiedMiddleware)
     private readonly userVerifiedMiddleware: Middleware,
 
-    @Inject(ParamIdMatchActiveCompanyIdMiddleware)
-    private readonly paramIdMatchActiveCompanyIdMiddleware: ParamIdMatchActiveCompanyIdMiddleware
+    @Inject(ActiveCompanyMiddleware)
+    private readonly activeCompanyMiddleware: Middleware
   ) { }
 
   get path (): RoutePath { return addCompanyMemberPath }
@@ -40,8 +40,8 @@ export class AddCompanyMemberRoute implements Route<MemberEntity, CompanyEntity>
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,
-      this.requirementsMiddleware,
-      this.paramIdMatchActiveCompanyIdMiddleware
+      this.activeCompanyMiddleware,
+      this.requirementsMiddleware
     ]
   }
 }
