@@ -2,10 +2,10 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
-import { notFound, ok } from '@/presentation/factories/http.factory'
+import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
 import { memberSchema } from '@/presentation/schemas'
 import { HandleError, ValidateBody } from '@/presentation/decorators'
-import { EntityNotFoundError } from '@/presentation/errors'
+import { EntityNotFoundError, UserAlreadyAMemberError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity } from '@/domain/entities'
 import { AddCompanyMemberUseCase } from '@/domain/usecases'
@@ -25,7 +25,12 @@ export class AddCompanyMemberController implements Controller<MemberEntity, Comp
   @HandleError
   async handle (request: HttpRequest<MemberEntity>): HandleResponse<CompanyEntity> {
     const companyId = request.activeCompanyInfo?.id as CompanyEntity['id']
+    const members = request.activeCompanyInfo?.members as MemberEntity[]
     const member = request.body as MemberEntity
+
+    const alreadyAMember = members.some(companyMember => member.userId === companyMember.userId)
+    if (alreadyAMember)
+      return badRequest(new UserAlreadyAMemberError())
 
     const updatedCompany = await this.addCompanyMemberUseCase.call(companyId, member)
     if (!updatedCompany)

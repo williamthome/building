@@ -6,7 +6,13 @@ import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocol
 import { badRequest, forbidden, notFound, ok } from '@/presentation/factories/http.factory'
 import { idParamKeys, idParamSchema, memberSchema } from '@/presentation/schemas'
 import { HandleError, ValidateBody, ValidateParams } from '@/presentation/decorators'
-import { AccessDeniedError, EntityNotFoundError, UserIsNotAMemberError } from '@/presentation/errors'
+import {
+  AccessDeniedError,
+  CanNotAddMoreOwnesrError,
+  CanNotModifyOwnerError,
+  EntityNotFoundError,
+  UserIsNotAMemberError
+} from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity } from '@/domain/entities'
 import { UpdateCompanyMemberUseCase } from '@/domain/usecases'
@@ -31,6 +37,7 @@ export class UpdateCompanyMemberController implements Controller<MemberDto, Comp
   })
   @HandleError
   async handle (request: HttpRequest<MemberDto>): HandleResponse<CompanyEntity> {
+    const loggedUserCompanyRole = request.loggedUserInfo?.companyRole
     const companyId = request.activeCompanyInfo?.id as CompanyEntity['id']
     const members = request.activeCompanyInfo?.members as MemberEntity[]
     const userId = request.params?.id as MemberEntity['userId']
@@ -41,6 +48,12 @@ export class UpdateCompanyMemberController implements Controller<MemberDto, Comp
       return badRequest(new UserIsNotAMemberError())
 
     if (member.companyRole === CompanyRole.owner)
+      return forbidden(new CanNotModifyOwnerError())
+
+    if (memberDto.companyRole === CompanyRole.owner)
+      return forbidden(new CanNotAddMoreOwnesrError())
+
+    if (memberDto.companyRole === CompanyRole.master && loggedUserCompanyRole !== CompanyRole.master)
       return forbidden(new AccessDeniedError())
 
     const updatedCompany = await this.updateCompanyMemberUseCase.call(companyId, userId, memberDto)

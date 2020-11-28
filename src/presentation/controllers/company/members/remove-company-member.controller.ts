@@ -5,7 +5,7 @@ import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocol
 import { badRequest, forbidden, notFound, ok } from '@/presentation/factories/http.factory'
 import { idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { HandleError, ValidateParams } from '@/presentation/decorators'
-import { AccessDeniedError, EntityNotFoundError, UserIsNotAMemberError } from '@/presentation/errors'
+import { CanNotDeleteOwnerError, EntityNotFoundError, UserIsNotAMemberError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity } from '@/domain/entities'
 import { GetUserByIdUseCase, RemoveCompanyMemberUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
@@ -28,15 +28,15 @@ export class RemoveCompanyMemberController implements Controller<undefined, Comp
   @HandleError
   async handle (request: HttpRequest<undefined>): HandleResponse<CompanyEntity> {
     const companyId = request.activeCompanyInfo?.id as CompanyEntity['id']
-    const userId = request.params?.id as MemberEntity['userId']
     const members = request.activeCompanyInfo?.members as MemberEntity[]
+    const userId = request.params?.id as MemberEntity['userId']
 
     const member = members.find(companyMember => userId === companyMember.userId)
     if (!member)
       return badRequest(new UserIsNotAMemberError())
 
     if (member.companyRole === CompanyRole.owner)
-      return forbidden(new AccessDeniedError())
+      return forbidden(new CanNotDeleteOwnerError())
 
     const user = await this.getUserByIdUseCase.call(userId)
     if (!user)
