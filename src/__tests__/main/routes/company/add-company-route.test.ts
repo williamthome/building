@@ -13,6 +13,7 @@ describe(`AddCompany Route > ${addCompanyPath.describe}`, () => {
 
   beforeEach(async () => {
     await mongoUtils.db.clearCollection('companies')
+    await mongoUtils.db.clearCollection('plans')
     await mongoUtils.db.clearCollection('users')
   })
 
@@ -26,10 +27,11 @@ describe(`AddCompany Route > ${addCompanyPath.describe}`, () => {
     await mongoUtils.addUser()
     await mongoUtils.authenticate()
     await mongoUtils.verify()
+    await mongoUtils.addPlan()
     await request(mongoUtils.webServer.server())
       .post(addCompanyPath.urn)
       .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
-      .send(mockCompanyEntityDto())
+      .send(mockCompanyEntityDto({ planId: mongoUtils.plan.id }))
       .expect(HttpStatusCode.OK)
   })
 })

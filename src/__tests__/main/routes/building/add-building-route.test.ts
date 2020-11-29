@@ -14,6 +14,7 @@ describe(`AddBuilding Route > ${addBuildingPath.describe}`, () => {
   beforeEach(async () => {
     await mongoUtils.db.clearCollection('buildings')
     await mongoUtils.db.clearCollection('companies')
+    await mongoUtils.db.clearCollection('plans')
     await mongoUtils.db.clearCollection('users')
   })
 
