@@ -1,12 +1,18 @@
 import fakeData from '@/__tests__/shared/fake-data'
-import { CompanyEntity, UserEntity } from '@/domain/entities'
+import { CompanyEntity, PlanEntity, UserEntity } from '@/domain/entities'
 import { CompanyRole, UserFeatures } from '@/shared/constants'
+import { mockPlanEntity } from '../plan'
 
-export const mockCompanyEntityDto = (owner?: UserEntity): Omit<CompanyEntity, 'id'> => ({
-  planId: fakeData.plans.unlimited().id,
+export const mockCompanyEntityDto = (
+  { planId, ownerId }: {
+    planId?: PlanEntity['id'],
+    ownerId?: UserEntity['id']
+  } = {}
+): Omit<CompanyEntity, 'id'> => ({
+  planId: planId || mockPlanEntity().id,
   name: fakeData.person.fullName(),
   members: [{
-    userId: owner ? owner.id : fakeData.entity.id(),
+    userId: ownerId || fakeData.entity.id(),
     companyRole: CompanyRole.owner,
     features: UserFeatures.None
   }]

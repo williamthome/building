@@ -1,11 +1,8 @@
 import faker from 'faker'
 import jwt from 'jsonwebtoken'
 import { JwtAdapter } from '@/data/adapters'
-import { PlanEntity } from '@/domain/entities'
 
 // see: https://rawgit.com/Marak/faker.js/master/examples/browser/index.html#
-
-const unlimitedPlanId = faker.random.uuid()
 
 export default {
   entity: {
@@ -26,12 +23,5 @@ export default {
   },
   random: {
     word: (): string => faker.random.word()
-  },
-  plans: {
-    unlimited: (): PlanEntity => ({
-      id: unlimitedPlanId,
-      limit: 'unlimited',
-      value: 'free'
-    })
   }
 }
