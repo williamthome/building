@@ -2,7 +2,7 @@ import container from '@/shared/dependency-injection'
 import fakeData from '@/__tests__/shared/fake-data'
 import { ActiveCompanyMiddleware } from '@/main/middlewares'
 import { badRequest, forbidden, notFound, serverError } from '@/presentation/factories/http.factory'
-import { GetCompanyByIdUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
+import { GetCompanyByIdUseCaseSpy, GetPlanByIdUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
 import { AccessDeniedError, ActiveCompanyIsFalsyError, EntityNotFoundError } from '@/presentation/errors'
 import { HttpStatusCode } from '@/presentation/constants'
 import { HttpRequest } from '@/presentation/protocols'
@@ -25,14 +25,26 @@ const mockHttpRequest = (): HttpRequest<unknown> => ({
 interface SutTypes {
   sut: ActiveCompanyMiddleware
   getCompanyByIdUseCaseSpy: GetCompanyByIdUseCaseSpy
+  getPlanByIdUseCaseSpy: GetPlanByIdUseCaseSpy
 }
 
 const makeSut = (): SutTypes => {
   const getCompanyByIdUseCaseSpy = container.resolve<GetCompanyByIdUseCaseSpy>('getCompanyByIdUseCase')
+  const getPlanByIdUseCaseSpy = container.resolve<GetPlanByIdUseCaseSpy>('getPlanByIdUseCase')
   const sut = container.resolve(ActiveCompanyMiddleware)
+
+  getCompanyByIdUseCaseSpy.override = {
+    members: [{
+      userId: ownerId,
+      companyRole: CompanyRole.owner,
+      features: UserFeatures.None
+    }]
+  }
+
   return {
     sut,
-    getCompanyByIdUseCaseSpy
+    getCompanyByIdUseCaseSpy,
+    getPlanByIdUseCaseSpy
   }
 }
 
@@ -41,19 +53,13 @@ const makeSut = (): SutTypes => {
 describe('ActiveCompany Middleware', () => {
   beforeEach(() => {
     container.define('getCompanyByIdUseCase').asNewable(GetCompanyByIdUseCaseSpy).done()
+    container.define('getPlanByIdUseCase').asNewable(GetPlanByIdUseCaseSpy).done()
     container.define(ActiveCompanyMiddleware).asNewable(ActiveCompanyMiddleware).done()
   })
 
   describe('GetCompanyById UseCase', () => {
     it('should been called with right values', async () => {
       const { sut, getCompanyByIdUseCaseSpy } = makeSut()
-      getCompanyByIdUseCaseSpy.override = {
-        members: [{
-          userId: ownerId,
-          companyRole: CompanyRole.owner,
-          features: UserFeatures.None
-        }]
-      }
       await sut.handle(mockHttpRequest())
       expect(getCompanyByIdUseCaseSpy.id).toBe(activeCompanyId)
     })
@@ -82,6 +88,28 @@ describe('ActiveCompany Middleware', () => {
     })
   })
 
+  describe('GetPlanById UseCase', () => {
+    it('should been called with right values', async () => {
+      const { sut, getCompanyByIdUseCaseSpy, getPlanByIdUseCaseSpy } = makeSut()
+      await sut.handle(mockHttpRequest())
+      expect(getPlanByIdUseCaseSpy.id).toBe(getCompanyByIdUseCaseSpy.companyEntity?.planId)
+    })
+
+    it('should return server error if throws', async () => {
+      const { sut, getPlanByIdUseCaseSpy } = makeSut()
+      getPlanByIdUseCaseSpy.shouldThrow = true
+      const response = await sut.handle(mockHttpRequest())
+      expect(response).toEqual(serverError(new Error()))
+    })
+
+    it('should return plan not found', async () => {
+      const { sut, getPlanByIdUseCaseSpy } = makeSut()
+      getPlanByIdUseCaseSpy.shouldReturnNull = true
+      const response = await sut.handle(mockHttpRequest())
+      expect(response).toEqual(notFound(new EntityNotFoundError('Plan')))
+    })
+  })
+
   it('should return active company is falsy', async () => {
     const { sut } = makeSut()
     const response = await sut.handle({})
@@ -89,14 +117,7 @@ describe('ActiveCompany Middleware', () => {
   })
 
   it('should return ok', async () => {
-    const { sut, getCompanyByIdUseCaseSpy } = makeSut()
-    getCompanyByIdUseCaseSpy.override = {
-      members: [{
-        userId: ownerId,
-        companyRole: CompanyRole.owner,
-        features: UserFeatures.None
-      }]
-    }
+    const { sut } = makeSut()
     const response = await sut.handle(mockHttpRequest())
     expect(response.statusCode).toBe(HttpStatusCode.OK)
   })

@@ -1,17 +1,21 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Middleware, MiddlewareResponse } from '../protocols'
+import { okMiddleware } from '../helpers/middleware.helper'
 import { badRequest, forbidden, notFound } from '@/presentation/factories/http.factory'
 import { HttpRequest } from '@/presentation/protocols'
 import { HandleError } from '@/presentation/decorators'
-import { GetCompanyByIdUseCase } from '@/domain/usecases'
 import { AccessDeniedError, ActiveCompanyIsFalsyError, EntityNotFoundError } from '@/presentation/errors'
-import { okMiddleware } from '../helpers/middleware.helper'
+import { GetCompanyByIdUseCase, GetPlanByIdUseCase } from '@/domain/usecases'
 
 @Injectable()
 export class ActiveCompanyMiddleware implements Middleware {
 
   constructor (
-    @Inject() private readonly getCompanyByIdUseCase: GetCompanyByIdUseCase
+    @Inject()
+    private readonly getCompanyByIdUseCase: GetCompanyByIdUseCase,
+
+    @Inject()
+    private readonly getPlanByIdUseCase: GetPlanByIdUseCase
   ) { }
 
   @HandleError
@@ -30,6 +34,10 @@ export class ActiveCompanyMiddleware implements Middleware {
     if (!member)
       return forbidden(new AccessDeniedError())
 
+    const plan = await this.getPlanByIdUseCase.call(activeCompany.planId)
+    if (!plan)
+      return notFound(new EntityNotFoundError('Plan'))
+
     return okMiddleware(
       httpRequest,
       {
@@ -39,7 +47,8 @@ export class ActiveCompanyMiddleware implements Middleware {
         },
         activeCompanyInfo: {
           id: activeCompany?.id,
-          members: activeCompany?.members
+          members: activeCompany?.members,
+          limit: plan.limit
         }
       }
     )
