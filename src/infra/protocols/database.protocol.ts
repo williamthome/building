@@ -43,6 +43,13 @@ export interface Database {
     options?: TOptions
   ) => Promise<TModel[]>
 
+  getDocumentCountBy: <T extends Model, K extends keyof Omit<T, 'id'>, TOptions = unknown> (
+    field: K,
+    match: T[K],
+    collectionName: CollectionName,
+    options?: TOptions
+  ) => Promise<number>
+
   updateOne: <TModel extends Model, TOptions = unknown> (
     id: Model['id'],
     payload: Partial<TModel>,

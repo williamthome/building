@@ -9,6 +9,7 @@ import {
   CommonOptions,
   FindOneOptions,
   FindOneAndUpdateOption,
+  MongoCountPreferences,
 } from 'mongodb'
 import { Injectable, Inject } from '@/shared/dependency-injection'
 import { CollectionName, collectionNames, Unpacked } from '@/shared/types'
@@ -186,6 +187,25 @@ export class MongoDB implements Database {
       }
     ).toArray()
     return models.map(model => this.map<T>(model))
+  }
+
+  getDocumentCountBy = async <T extends Model, K extends keyof Omit<T, 'id'>> (
+    field: K,
+    match: T[K],
+    collectionName: CollectionName,
+    options?: Omit<MongoCountPreferences, 'session'>
+  ): Promise<number> => {
+    const collection = await this.getCollection(collectionName)
+    const count = await collection.countDocuments(
+      {
+        [field]: match
+      },
+      {
+        ...options,
+        session: this.session
+      }
+    )
+    return count
   }
 
   updateOne = async <T extends Model> (
