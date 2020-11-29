@@ -32,7 +32,7 @@ describe(`UpdateCompany Route > ${updateCompanyPath.describe}`, () => {
     await request(mongoUtils.webServer.server())
       .patch(updateCompanyPath.urn)
       .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
-      .send(mockCompanyEntityDto())
+      .send(mockCompanyEntityDto({ planId: mongoUtils.plan.id }))
       .expect(HttpStatusCode.OK)
   })
 })
