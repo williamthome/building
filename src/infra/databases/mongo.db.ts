@@ -7,10 +7,11 @@ import {
   CollectionInsertOneOptions,
   FindOneAndDeleteOption,
   CommonOptions,
-  FindOneOptions
+  FindOneOptions,
+  FindOneAndUpdateOption,
 } from 'mongodb'
 import { Injectable, Inject } from '@/shared/dependency-injection'
-import { CollectionName, Unpacked } from '@/shared/types'
+import { CollectionName, collectionNames, Unpacked } from '@/shared/types'
 import { Database } from '@/infra/protocols'
 import { Model } from '@/data/protocols'
 import { AccessDeniedError } from '@/presentation/errors'
@@ -48,9 +49,21 @@ export class MongoDB implements Database {
     return mapped
   }
 
+  private createCollections = async (): Promise<void> => {
+    const collections = await this._client?.db().collections() || []
+    for (const collectionName of collectionNames) {
+      const collectionExists = collections.some(
+        (collection) => collection.collectionName === collectionName
+      )
+      if (!collectionExists)
+        await this._client?.db().createCollection(collectionName)
+    }
+  }
+
   connect = async (): Promise<void> => {
     console.log('Connecting to MongoDB...')
     this._client = await this.makeMongoClient(this.dbUrl)
+    await this.createCollections()
     this._session = this._client.startSession()
     console.log('Successfully connected to MongoDB')
     this._isConnected = true
@@ -122,7 +135,7 @@ export class MongoDB implements Database {
     field: keyof T,
     toSearch: V,
     collectionName: CollectionName,
-    options?: Omit<CollectionInsertOneOptions, 'session'>
+    options?: Omit<FindOneOptions<unknown>, 'session'>
   ): Promise<T | null> => {
     const collection = await this.getCollection(collectionName)
     const model = await collection.findOne(
@@ -142,7 +155,7 @@ export class MongoDB implements Database {
     matchKey: KMatch,
     match: Unpacked<T[KNested]>[KMatch],
     collectionName: CollectionName,
-    options?: Omit<FindOneOptions<T extends infer U ? U : T>, 'session'>
+    options?: Omit<FindOneOptions<unknown>, 'session'>
   ): Promise<T[]> => {
     const collection = await this.getCollection(collectionName)
     const models = await collection.find(
@@ -163,9 +176,9 @@ export class MongoDB implements Database {
 
   getAll = async <T extends Model> (
     collectionName: CollectionName,
-    options?: Omit<CollectionInsertOneOptions, 'session'>
+    options?: Omit<FindOneOptions<unknown>, 'session'>
   ): Promise<T[]> => {
-    const collection = await this.getCollection<T>(collectionName)
+    const collection = await this.getCollection(collectionName)
     const models = await collection.find({},
       {
         ...options,
@@ -179,7 +192,7 @@ export class MongoDB implements Database {
     id: Model['id'],
     payload: Partial<T>,
     collectionName: CollectionName,
-    options?: Omit<CollectionInsertOneOptions, 'session'>
+    options?: Omit<FindOneAndUpdateOption<T>, 'session'>
   ): Promise<T | null> => {
     const collection = await this.getCollection(collectionName)
 
@@ -258,7 +271,7 @@ export class MongoDB implements Database {
     arrayKey: K,
     payload: TPayload,
     collectionName: CollectionName,
-    options?: Omit<CollectionInsertOneOptions, 'session'>
+    options?: Omit<FindOneAndUpdateOption<T>, 'session'>
   ): Promise<T | null> => {
     const collection = await this.getCollection(collectionName)
     const result = await collection.findOneAndUpdate(
@@ -283,7 +296,7 @@ export class MongoDB implements Database {
     arrayKey: K,
     payload: Partial<Unpacked<T[K]>>,
     collectionName: CollectionName,
-    options?: Omit<CollectionInsertOneOptions, 'session'>
+    options?: Omit<FindOneAndUpdateOption<T>, 'session'>
   ): Promise<T | null> => {
     const collection = await this.getCollection(collectionName)
     const result = await collection.findOneAndUpdate(
@@ -310,7 +323,7 @@ export class MongoDB implements Database {
     match: Unpacked<T[KArray]>[KMatch],
     payload: Partial<Unpacked<T[KArray]>>,
     collectionName: CollectionName,
-    options?: Omit<CollectionInsertOneOptions, 'session'>
+    options?: Omit<FindOneAndUpdateOption<T>, 'session'>
   ): Promise<T | null> => {
     const collection = await this.getCollection(collectionName)
 
