@@ -4,6 +4,7 @@ import { ModelDto } from '@/data/protocols'
 import { CompanyRole, UserFeatures } from '@/shared/constants'
 
 export const mockCompanyModelDto = (): ModelDto<CompanyModel> => ({
+  planId: fakeData.entity.id(),
   name: fakeData.person.fullName(),
   members: [{
     userId: fakeData.entity.id(),
