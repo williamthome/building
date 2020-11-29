@@ -38,6 +38,11 @@ export interface Database {
     options?: TOptions
   ) => Promise<T[]>
 
+  getAll: <TModel extends Model, TOptions = unknown> (
+    collectionName: CollectionName,
+    options?: TOptions
+  ) => Promise<TModel[]>
+
   updateOne: <TModel extends Model, TOptions = unknown> (
     id: Model['id'],
     payload: Partial<TModel>,

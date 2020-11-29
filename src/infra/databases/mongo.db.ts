@@ -161,6 +161,20 @@ export class MongoDB implements Database {
     return models?.map(model => this.map<T>(model))
   }
 
+  getAll = async <T extends Model> (
+    collectionName: CollectionName,
+    options?: Omit<CollectionInsertOneOptions, 'session'>
+  ): Promise<T[]> => {
+    const collection = await this.getCollection<T>(collectionName)
+    const models = await collection.find({},
+      {
+        ...options,
+        session: this.session
+      }
+    ).toArray()
+    return models.map(model => this.map<T>(model))
+  }
+
   updateOne = async <T extends Model> (
     id: Model['id'],
     payload: Partial<T>,
