@@ -5,3 +5,4 @@ export type CollectionName =
  | 'errors'
  | 'buildings'
  | 'projects'
+ | 'plans'
