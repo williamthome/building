@@ -8,9 +8,9 @@ import { Server } from '@/main/server'
 import { Route, RoutePath, WebServer } from '@/main/protocols'
 import { Database } from '@/infra/protocols'
 import { mockAuthorizationToken } from '../presentation/__mocks__'
-import { BuildingModel, CompanyModel, UserModel } from '@/data/models'
+import { BuildingModel, CompanyModel, PlanModel, UserModel } from '@/data/models'
 import { Hasher } from '@/data/protocols/cryptography'
-import { mockBuildingEntityDto, mockCompanyEntityDto, mockUserEntityDto } from '../domain/__mocks__/entities'
+import { mockBuildingEntityDto, mockCompanyEntityDto, mockUserEntityDto, mockPlanEntityDto } from '../domain/__mocks__/entities'
 import { AuthDto } from '@/domain/protocols'
 import { TransactionController } from '@/main/decorators'
 
@@ -22,6 +22,7 @@ class MongoUtils {
   private _replSet?: boolean
   private _user?: UserModel | null
   private _accessToken?: UserModel['accessToken']
+  private _plan?: PlanModel | null
   private _company?: CompanyModel | null
   private _building?: BuildingModel | null
 
@@ -44,6 +45,10 @@ class MongoUtils {
   }
   get authorizationToken (): string {
     return mockAuthorizationToken(this.accessToken)
+  }
+  get plan (): PlanModel {
+    if (!this._plan) throw new Error('Undefined unlimited plan')
+    return this._plan
   }
   get company (): CompanyModel {
     if (!this._company) throw new Error('Undefined company')
@@ -109,8 +114,18 @@ class MongoUtils {
     this._user = await this.db.updateOne<UserModel>(this.user.id, { verified: true }, 'users')
   }
 
+  addPlan = async (): Promise<PlanModel> => {
+    this._plan = await this.db.addOne<PlanModel>(mockPlanEntityDto(), 'plans')
+    return this._plan
+  }
+
   addCompany = async (): Promise<CompanyModel> => {
-    this._company = await this.db.addOne<CompanyModel>(mockCompanyEntityDto(this.user), 'companies')
+    this._company = await this.db.addOne<CompanyModel>(mockCompanyEntityDto(
+      {
+        planId: this.plan.id,
+        ownerId: this.user.id
+      }
+    ), 'companies')
     await this.db.updateOne<UserModel>(this.user.id, { activeCompanyId: this._company.id }, 'users')
     return this._company
   }

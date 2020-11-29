@@ -26,6 +26,7 @@ describe(`UpdateCompany Route > ${updateCompanyPath.describe}`, () => {
     await mongoUtils.addUser()
     await mongoUtils.authenticate()
     await mongoUtils.verify()
+    await mongoUtils.addPlan()
     await mongoUtils.addCompany()
     await request(mongoUtils.webServer.server())
       .patch(updateCompanyPath.urn)

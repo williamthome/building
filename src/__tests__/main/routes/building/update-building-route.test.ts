@@ -32,6 +32,7 @@ describe(`UpdateBuilding Route > ${updateBuildingPath.describe}`, () => {
     await mongoUtils.addUser()
     await mongoUtils.authenticate()
     await mongoUtils.verify()
+    await mongoUtils.addPlan()
     await mongoUtils.addCompany()
     await mongoUtils.addBuilding()
     await request(mongoUtils.webServer.server())
