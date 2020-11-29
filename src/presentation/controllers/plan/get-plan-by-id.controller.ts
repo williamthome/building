@@ -7,14 +7,14 @@ import { idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { HandleError, ValidateParams } from '@/presentation/decorators'
 // < Out: only domain layer
 import { PlanEntity } from '@/domain/entities'
-import { GetPlanUseCase } from '@/domain/usecases'
+import { GetPlanByIdUseCase } from '@/domain/usecases'
 import { EntityNotFoundError } from '@/presentation/errors'
 
 @Injectable()
-export class GetPlanController implements Controller<undefined, PlanEntity> {
+export class GetPlanByIdController implements Controller<undefined, PlanEntity> {
 
   constructor (
-    @Inject() private readonly getPlanUseCase: GetPlanUseCase,
+    @Inject() private readonly getPlanByIdUseCase: GetPlanByIdUseCase,
   ) { }
 
   @ValidateParams<undefined, PlanEntity>({
@@ -25,7 +25,7 @@ export class GetPlanController implements Controller<undefined, PlanEntity> {
   async handle (request: HttpRequest<undefined>): HandleResponse<PlanEntity> {
     const id = request.params?.id as PlanEntity['id']
 
-    const plan = await this.getPlanUseCase.call(id)
+    const plan = await this.getPlanByIdUseCase.call(id)
     if (!plan)
       return notFound(new EntityNotFoundError('Plan'))
 
