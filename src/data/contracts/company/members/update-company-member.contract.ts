@@ -6,7 +6,7 @@ import { UpdateCompanyMemberRepository } from '@/data/repositories'
 import { CompanyEntity } from '@/domain/entities'
 import { UpdateCompanyMemberUseCase } from '@/domain/usecases'
 import { MemberEntity } from '@/domain/entities/nested'
-import { MemberDto } from '@/domain/protocols'
+import { MemberEntityDto } from '@/domain/protocols'
 
 @Injectable('updateCompanyMemberUseCase')
 export class UpdateCompanyMemberContract implements UpdateCompanyMemberUseCase {
@@ -15,7 +15,7 @@ export class UpdateCompanyMemberContract implements UpdateCompanyMemberUseCase {
     @Inject() private readonly updateCompanyMemberRepository: UpdateCompanyMemberRepository
   ) {}
 
-  call = async (companyId: CompanyEntity['id'], memberId: MemberEntity['userId'], memberDto: MemberDto): Promise<CompanyEntity | null> => {
+  call = async (companyId: CompanyEntity['id'], memberId: MemberEntity['userId'], memberDto: MemberEntityDto): Promise<CompanyEntity | null> => {
     return await this.updateCompanyMemberRepository.updateCompanyMember(companyId, memberId, memberDto)
   }
 }

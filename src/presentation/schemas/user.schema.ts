@@ -1,8 +1,8 @@
 import { Schema } from '../protocols'
 import { isEmail, isObject, isString, minLength, required } from '../validations'
-import { UserDto } from '@/domain/protocols'
+import { UserEntityDto } from '@/domain/protocols'
 
-export const userSchema: Schema<Required<UserDto>> = {
+export const userSchema: Schema<Required<UserEntityDto>> = {
   email: {
     validations: [
       required,

@@ -4,7 +4,7 @@ import { Injectable, Inject } from '@/shared/dependency-injection'
 import { LogErrorRepository } from '@/data/repositories'
 // < Only Domain
 import { LogErrorUseCase } from '@/domain/usecases'
-import { LogErrorDto } from '@/domain/protocols'
+import { LogErrorEntityDto } from '@/domain/protocols'
 
 @Injectable('logErrorUseCase')
 export class LogErrorContract implements LogErrorUseCase {
@@ -13,7 +13,7 @@ export class LogErrorContract implements LogErrorUseCase {
     @Inject() private readonly logErrorRepository: LogErrorRepository
   ) {}
 
-  call = async (logErrorDto: LogErrorDto): Promise<void> => {
+  call = async (logErrorDto: LogErrorEntityDto): Promise<void> => {
     await this.logErrorRepository.logError(logErrorDto)
   }
 }

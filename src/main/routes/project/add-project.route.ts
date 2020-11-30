@@ -10,7 +10,7 @@ import { InjectRouteController } from '@/main/decorators'
 import { AddProjectController } from '@/presentation/controllers'
 import { ProjectEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
-import { ProjectDto } from '@/domain/protocols'
+import { ProjectEntityDto } from '@/domain/protocols'
 
 export const addProjectPath = new RoutePath(
   'POST',
@@ -18,7 +18,7 @@ export const addProjectPath = new RoutePath(
 )
 
 @InjectableArray('routes')
-export class AddProjectRoute implements Route<ProjectDto, ProjectEntity> {
+export class AddProjectRoute implements Route<ProjectEntityDto, ProjectEntity> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageProjects)
 
   constructor (

@@ -1,3 +1,4 @@
 import { BuildingEntity } from '../entities'
+import { EntityDto } from './entity.protocol'
 
-export type BuildingDto = Partial<Omit<BuildingEntity, 'id' | 'companyId'>>
+export type BuildingDto = EntityDto<BuildingEntity | Omit<BuildingEntity, 'companyId'>>

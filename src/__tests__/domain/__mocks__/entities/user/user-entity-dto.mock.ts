@@ -1,7 +1,7 @@
 import fakeData from '@/__tests__/shared/fake-data'
-import { AuthDto, UserDto } from '@/domain/protocols'
+import { AuthEntityDto, UserEntityDto } from '@/domain/protocols'
 
-export const mockUserEntityDto = (authDto?: AuthDto): UserDto => ({
+export const mockUserEntityDto = (authDto?: AuthEntityDto): UserEntityDto => ({
   email: fakeData.person.email(),
   password: fakeData.entity.password(),
   accessToken: fakeData.entity.token(fakeData.entity.id(), fakeData.entity.jwtSecret()),

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
-import { AuthDto, UserEntityResponse } from '@/domain/protocols'
+import { AuthEntityDto, UserEntityResponse } from '@/domain/protocols'
 import { GetUserByEmailUseCase, UpdateUserAccessTokenUseCase } from '@/domain/usecases/user'
 import { HandleError, ValidateBody } from '@/presentation/decorators'
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
@@ -10,7 +10,7 @@ import { userWithoutPassword } from '@/domain/helpers/user.helper'
 import { Encrypter, HashComparer } from '@/domain/protocols/cryptography'
 
 @Injectable()
-export class AuthenticationController implements Controller<AuthDto, UserEntityResponse> {
+export class AuthenticationController implements Controller<AuthEntityDto, UserEntityResponse> {
 
   constructor (
     @Inject() private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
@@ -19,7 +19,7 @@ export class AuthenticationController implements Controller<AuthDto, UserEntityR
     @Inject() private readonly updateUserAccessTokenUseCase: UpdateUserAccessTokenUseCase
   ) { }
 
-  @ValidateBody<AuthDto, UserEntityResponse>({
+  @ValidateBody<AuthEntityDto, UserEntityResponse>({
     schema: authSchema,
     keys: {
       email: 'email',
@@ -27,8 +27,8 @@ export class AuthenticationController implements Controller<AuthDto, UserEntityR
     }
   })
   @HandleError
-  async handle (request: HttpRequest<AuthDto>): HandleResponse<UserEntityResponse> {
-    const authDto = request.body as AuthDto
+  async handle (request: HttpRequest<AuthEntityDto>): HandleResponse<UserEntityResponse> {
+    const authDto = request.body as AuthEntityDto
     const user = await this.getUserByEmailUseCase.call(authDto.email)
 
     if (!user)

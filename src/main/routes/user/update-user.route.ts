@@ -3,7 +3,7 @@ import { AuthMiddleware, } from '@/main/middlewares'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { UpdateUserController } from '@/presentation/controllers'
-import { UserDto, UserEntityResponse } from '@/domain/protocols'
+import { UserEntityDto, UserEntityResponse } from '@/domain/protocols'
 
 export const updateUserPath = new RoutePath(
   'PATCH',
@@ -11,7 +11,7 @@ export const updateUserPath = new RoutePath(
 )
 
 @InjectableArray('routes')
-export class UpdateUserRoute implements Route<UserDto, UserEntityResponse> {
+export class UpdateUserRoute implements Route<UserEntityDto, UserEntityResponse> {
   constructor (
     @InjectRouteController(UpdateUserController)
     public readonly controller: UpdateUserController,

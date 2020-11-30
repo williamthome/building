@@ -1,18 +1,18 @@
 import { UserEntity } from '@/domain/entities'
-import { UserDto } from '@/domain/protocols'
+import { UserEntityDto } from '@/domain/protocols'
 import { UpdateUserUseCase } from '@/domain/usecases'
 import { mockUserEntity } from '@/__tests__/domain/__mocks__/entities'
 
 export class UpdateUserUseCaseSpy implements UpdateUserUseCase {
   userId?: UserEntity['id']
-  userDto?:  UserDto
+  userDto?:  UserEntityDto
   userEntity?: UserEntity | null
   shouldReturnNull = false
   shouldThrow = false
 
   call = async (
     userId: UserEntity['id'],
-    userDto: UserDto
+    userDto: UserEntityDto
   ): Promise<UserEntity | null> => {
     this.userId = userId
     this.userDto = userDto

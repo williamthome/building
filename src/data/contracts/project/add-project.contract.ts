@@ -5,7 +5,7 @@ import { AddProjectRepository } from '@/data/repositories'
 // < Only Domain
 import { ProjectEntity, CompanyEntity } from '@/domain/entities'
 import { AddProjectUseCase } from '@/domain/usecases'
-import { ProjectDto } from '@/domain/protocols'
+import { ProjectEntityDto } from '@/domain/protocols'
 
 @Injectable('addProjectUseCase')
 export class AddProjectContract implements AddProjectUseCase {
@@ -15,7 +15,7 @@ export class AddProjectContract implements AddProjectUseCase {
   ) { }
 
   call = async (
-    projectDto: ProjectDto,
+    projectDto: ProjectEntityDto,
     companyId: CompanyEntity['id']
   ): Promise<ProjectEntity> => {
     return await this.addProjectRepository.addProject({

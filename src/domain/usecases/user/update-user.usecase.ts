@@ -1,6 +1,6 @@
 import { UserEntity } from '@/domain/entities'
-import { UserDto } from '@/domain/protocols'
+import { UserEntityDto } from '@/domain/protocols'
 
 export interface UpdateUserUseCase {
-  call: (userId: UserEntity['id'], userDto: UserDto) => Promise<UserEntity | null>
+  call: (userId: UserEntity['id'], userDto: UserEntityDto) => Promise<UserEntity | null>
 }

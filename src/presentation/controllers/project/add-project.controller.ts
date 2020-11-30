@@ -8,11 +8,11 @@ import { HandleError, ValidateBody } from '@/presentation/decorators'
 // < Out: only domain layer
 import { ProjectEntity, projectKeys, CompanyEntity, BuildingEntity, PlanEntity } from '@/domain/entities'
 import { AddProjectUseCase, GetBuildingByIdUseCase, GetCompanyProjectCountUseCase } from '@/domain/usecases'
-import { ProjectDto } from '@/domain/protocols'
+import { ProjectEntityDto } from '@/domain/protocols'
 import { EntityNotFoundError, PlanLimitExceededError } from '@/presentation/errors'
 
 @Injectable()
-export class AddProjectController implements Controller<ProjectDto, ProjectEntity> {
+export class AddProjectController implements Controller<ProjectEntityDto, ProjectEntity> {
 
   constructor (
     @Inject()
@@ -25,12 +25,12 @@ export class AddProjectController implements Controller<ProjectDto, ProjectEntit
     private readonly getBuildingByIdUseCase: GetBuildingByIdUseCase
   ) { }
 
-  @ValidateBody<ProjectDto, ProjectEntity>({
+  @ValidateBody<ProjectEntityDto, ProjectEntity>({
     schema: projectSchema,
     keys: projectKeys
   })
   @HandleError
-  async handle (request: HttpRequest<ProjectDto>): HandleResponse<ProjectEntity> {
+  async handle (request: HttpRequest<ProjectEntityDto>): HandleResponse<ProjectEntity> {
     const planLimits = request.activeCompanyInfo?.limit as PlanEntity['limit']
     const companyId = request.activeCompanyInfo?.id as CompanyEntity['id']
 
@@ -40,7 +40,7 @@ export class AddProjectController implements Controller<ProjectDto, ProjectEntit
         return forbidden(new PlanLimitExceededError('projects'))
     }
 
-    const projectDto = request.body as ProjectDto
+    const projectDto = request.body as ProjectEntityDto
     const buildingId = projectDto.buildingId as BuildingEntity['id']
 
     const building = await this.getBuildingByIdUseCase.call(buildingId)

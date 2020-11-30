@@ -1,5 +1,5 @@
-import { LogErrorDto } from '@/domain/protocols'
+import { LogErrorEntityDto } from '@/domain/protocols'
 
 export interface LogErrorUseCase {
-  call: (logErrorDto: LogErrorDto) => Promise<void>
+  call: (logErrorDto: LogErrorEntityDto) => Promise<void>
 }

@@ -5,7 +5,7 @@ import { UpdateProjectRepository } from '@/data/repositories'
 // < Only Domain
 import { ProjectEntity } from '@/domain/entities'
 import { UpdateProjectUseCase } from '@/domain/usecases'
-import { ProjectDto } from '@/domain/protocols'
+import { ProjectEntityDto } from '@/domain/protocols'
 
 @Injectable('updateProjectUseCase')
 export class UpdateProjectContract implements UpdateProjectUseCase {
@@ -14,7 +14,7 @@ export class UpdateProjectContract implements UpdateProjectUseCase {
     @Inject() private readonly updateProjectRepository: UpdateProjectRepository
   ) {}
 
-  call = async (projectId: ProjectEntity['id'], projectDto: ProjectDto): Promise<ProjectEntity | null> => {
+  call = async (projectId: ProjectEntity['id'], projectDto: ProjectEntityDto): Promise<ProjectEntity | null> => {
     return await this.updateProjectRepository.updateProject(projectId, projectDto)
   }
 }

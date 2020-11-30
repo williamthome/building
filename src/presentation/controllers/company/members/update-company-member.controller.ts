@@ -17,31 +17,31 @@ import {
 import { CompanyEntity } from '@/domain/entities'
 import { UpdateCompanyMemberUseCase } from '@/domain/usecases'
 import { MemberEntity, memberKeys } from '@/domain/entities/nested'
-import { MemberDto } from '@/domain/protocols'
+import { MemberEntityDto } from '@/domain/protocols'
 
 @Injectable()
-export class UpdateCompanyMemberController implements Controller<MemberDto, CompanyEntity> {
+export class UpdateCompanyMemberController implements Controller<MemberEntityDto, CompanyEntity> {
 
   constructor (
     @Inject() private readonly updateCompanyMemberUseCase: UpdateCompanyMemberUseCase
   ) { }
 
-  @ValidateBody<MemberDto, CompanyEntity>({
+  @ValidateBody<MemberEntityDto, CompanyEntity>({
     schema: memberSchema,
     keys: memberKeys,
     nullable: true
   })
-  @ValidateParams<MemberDto, CompanyEntity>({
+  @ValidateParams<MemberEntityDto, CompanyEntity>({
     schema: idParamSchema,
     keys: idParamKeys
   })
   @HandleError
-  async handle (request: HttpRequest<MemberDto>): HandleResponse<CompanyEntity> {
+  async handle (request: HttpRequest<MemberEntityDto>): HandleResponse<CompanyEntity> {
     const loggedUserCompanyRole = request.loggedUserInfo?.companyRole
     const companyId = request.activeCompanyInfo?.id as CompanyEntity['id']
     const members = request.activeCompanyInfo?.members as MemberEntity[]
     const userId = request.params?.id as MemberEntity['userId']
-    const memberDto = request.body as MemberDto
+    const memberDto = request.body as MemberEntityDto
 
     const member = members.find(companyMember => userId === companyMember.userId)
     if (!member)

@@ -1,8 +1,8 @@
 import fakeData from '@/__tests__/shared/fake-data'
 import { UserEntity } from '@/domain/entities'
-import { UserDto } from '@/domain/protocols'
+import { UserEntityDto } from '@/domain/protocols'
 
-export const mockUserEntity = (userDto?: Partial<UserDto>): UserEntity => {
+export const mockUserEntity = (userDto?: Partial<UserEntityDto>): UserEntity => {
   const id = fakeData.entity.id()
   return {
     id,

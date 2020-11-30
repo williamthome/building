@@ -1,5 +1,5 @@
-import { UserVerificationToken, UserDto } from '@/domain/protocols'
+import { UserVerificationToken, UserEntityDto } from '@/domain/protocols'
 
 export interface AddUserUseCase {
-  call: (userDto: UserDto) => Promise<UserVerificationToken>
+  call: (userDto: UserEntityDto) => Promise<UserVerificationToken>
 }

@@ -2,7 +2,7 @@ import { InjectableArray } from '@/shared/dependency-injection'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { AuthenticationController } from '@/presentation/controllers'
-import { AuthDto, UserEntityResponse } from '@/domain/protocols'
+import { AuthEntityDto, UserEntityResponse } from '@/domain/protocols'
 
 export const authenticationPath = new RoutePath(
   'POST',
@@ -10,7 +10,7 @@ export const authenticationPath = new RoutePath(
 )
 
 @InjectableArray('routes')
-export class AuthenticationRoute implements Route<AuthDto, UserEntityResponse> {
+export class AuthenticationRoute implements Route<AuthEntityDto, UserEntityResponse> {
   constructor (
     @InjectRouteController(AuthenticationController)
     public readonly controller: AuthenticationController

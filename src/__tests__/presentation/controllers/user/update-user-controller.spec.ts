@@ -7,7 +7,7 @@ import { notFound, ok, serverError } from '@/presentation/factories/http.factory
 import { EntityNotFoundError } from '@/presentation/errors'
 import { HttpRequest } from '@/presentation/protocols'
 // < Out: only domain layer
-import { UserDto } from '@/domain/protocols'
+import { UserEntityDto } from '@/domain/protocols'
 import { UpdateUserUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
 import { mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
@@ -17,7 +17,7 @@ import { UserEntity } from '@/domain/entities'
 
 const userId = fakeData.entity.id()
 const userDto = mockUserEntityDto()
-const mockHttpRequest = (): HttpRequest<UserDto> => ({
+const mockHttpRequest = (): HttpRequest<UserEntityDto> => ({
   body: userDto,
   params: {
     id: userId

@@ -9,28 +9,28 @@ import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { ProjectEntity, projectKeys } from '@/domain/entities'
 import { UpdateProjectUseCase } from '@/domain/usecases'
-import { ProjectDto } from '@/domain/protocols'
+import { ProjectEntityDto } from '@/domain/protocols'
 
 @Injectable()
-export class UpdateProjectController implements Controller<ProjectDto, ProjectEntity> {
+export class UpdateProjectController implements Controller<ProjectEntityDto, ProjectEntity> {
 
   constructor (
     @Inject() private readonly updateProjectUseCase: UpdateProjectUseCase
   ) { }
 
-  @ValidateBody<ProjectDto, ProjectEntity>({
+  @ValidateBody<ProjectEntityDto, ProjectEntity>({
     schema: projectSchema,
     keys: projectKeys,
     nullable: true
   })
-  @ValidateParams<ProjectDto, ProjectEntity>({
+  @ValidateParams<ProjectEntityDto, ProjectEntity>({
     schema: idParamSchema,
     keys: idParamKeys
   })
   @HandleError
-  async handle (request: HttpRequest<ProjectDto>): HandleResponse<ProjectEntity> {
+  async handle (request: HttpRequest<ProjectEntityDto>): HandleResponse<ProjectEntity> {
     const projectId = request.params?.id as ProjectEntity['id']
-    const projectDto = request.body as ProjectDto
+    const projectDto = request.body as ProjectEntityDto
 
     const udpatedProject = await this.updateProjectUseCase.call(projectId, projectDto)
     if (!udpatedProject)

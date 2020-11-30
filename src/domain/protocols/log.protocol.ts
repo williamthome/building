@@ -1,3 +1,4 @@
+import { EntityDto } from './entity.protocol'
 import { LogErrorEntity } from '../entities'
 
-export type LogErrorDto = Omit<LogErrorEntity, 'id'>
+export type LogErrorEntityDto = EntityDto<LogErrorEntity>

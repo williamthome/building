@@ -5,7 +5,7 @@ import { UpdateUserRepository } from '@/data/repositories'
 // < Only Domain
 import { UserEntity } from '@/domain/entities'
 import { UpdateUserUseCase } from '@/domain/usecases'
-import { UserDto } from '@/domain/protocols'
+import { UserEntityDto } from '@/domain/protocols'
 
 @Injectable('updateUserUseCase')
 export class UpdateUserContract implements UpdateUserUseCase {
@@ -14,7 +14,7 @@ export class UpdateUserContract implements UpdateUserUseCase {
     @Inject() private readonly updateUserRepository: UpdateUserRepository
   ) {}
 
-  call = async (userId: UserEntity['id'],userDto: UserDto): Promise<UserEntity | null> => {
+  call = async (userId: UserEntity['id'],userDto: UserEntityDto): Promise<UserEntity | null> => {
     return await this.updateUserRepository.updateUser(userId, userDto)
   }
 }

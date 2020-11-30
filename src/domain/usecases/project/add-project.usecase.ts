@@ -1,9 +1,9 @@
 import { ProjectEntity, CompanyEntity } from '@/domain/entities'
-import { ProjectDto } from '@/domain/protocols'
+import { ProjectEntityDto } from '@/domain/protocols'
 
 export interface AddProjectUseCase {
   call: (
-    projectDto: ProjectDto,
+    projectDto: ProjectEntityDto,
     companyId: CompanyEntity['id']
   ) => Promise<ProjectEntity>
 }

@@ -8,14 +8,14 @@ import { EntityNotFoundError, PasswordDoNotMatchError } from '@/presentation/err
 import { mockAuthDto } from '@/__tests__/domain/__mocks__/entities'
 import { GetUserByEmailUseCaseSpy, UpdateUserAccessTokenUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
 import { EncrypterSpy, HashComparerSpy } from '@/__tests__/domain/__spys__/cryptography'
-import { AuthDto } from '@/domain/protocols'
+import { AuthEntityDto } from '@/domain/protocols'
 import { UserEntity } from '@/domain/entities'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
 //#region Factories
 
 const authDto = mockAuthDto()
-const mockHttpRequest = (): HttpRequest<AuthDto> => ({
+const mockHttpRequest = (): HttpRequest<AuthEntityDto> => ({
   body: authDto
 })
 

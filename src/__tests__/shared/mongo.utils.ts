@@ -11,7 +11,7 @@ import { mockAuthorizationToken } from '../presentation/__mocks__'
 import { BuildingModel, CompanyModel, PlanModel, UserModel } from '@/data/models'
 import { Hasher } from '@/data/protocols/cryptography'
 import { mockBuildingEntityDto, mockCompanyEntityDto, mockUserEntityDto, mockPlanEntityDto } from '../domain/__mocks__/entities'
-import { AuthDto } from '@/domain/protocols'
+import { AuthEntityDto } from '@/domain/protocols'
 import { TransactionController } from '@/main/decorators'
 
 interface MongoUtilsOptions {
@@ -96,7 +96,7 @@ class MongoUtils {
     container.define('DB_URL').as(uri).pinned().done()
   }
 
-  addUser = async (authDto?: AuthDto): Promise<UserModel> => {
+  addUser = async (authDto?: AuthEntityDto): Promise<UserModel> => {
     const userDto = mockUserEntityDto(authDto)
     const hasher = container.resolve<Hasher>('hasher')
     const hashedPassword = await hasher.hash(userDto.password as string)
