@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Database } from '@/infra/protocols'
-import { CompanyModel, UserModel, UserModelRights } from '@/data/models'
+import { CompanyModel, UserModel } from '@/data/models'
 import { GetUserRightsRepository } from '@/data/repositories'
+import { UserModelRights } from '@/data/protocols'
 
 @Injectable('getUserRightsRepository')
 export class DbGetUserRightsRepository implements GetUserRightsRepository {

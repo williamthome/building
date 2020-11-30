@@ -1,6 +1,5 @@
-import { ModelDto } from '@/data/protocols'
-import { LogErrorModel } from '@/data/models'
+import { LogErrorModelDto } from '@/data/protocols'
 
 export interface LogErrorRepository {
-  logError: (logErrorDto: ModelDto<LogErrorModel>) => Promise<void>
+  logError: (logErrorDto: LogErrorModelDto) => Promise<void>
 }

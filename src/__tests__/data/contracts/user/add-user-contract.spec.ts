@@ -1,11 +1,11 @@
 import container from '@/shared/dependency-injection'
 import { AddUserContract } from '@/data/contracts'
 import { UserModel } from '@/data/models'
-import { ModelDto } from '@/data/protocols'
 import { AddUnverifiedRepositorySpy, AddUserRepositorySpy, HasherSpy } from '@/__tests__/data/__spys__'
 import { mockUserModelDto } from '@/__tests__/data/__mocks__/models'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
 import { EncrypterSpy } from '@/__tests__/domain/__spys__/cryptography'
+import { UserModelDto } from '@/data/protocols'
 
 //#region Factories
 
@@ -63,7 +63,7 @@ describe('AddUser Contract', () => {
       const { sut, addUserRepositorySpy, hasherSpy } = makeSut()
       const dto = mockUserModelDto()
       await sut.call(dto)
-      const hashedDto: ModelDto<UserModel> = {
+      const hashedDto: UserModelDto = {
         ...dto,
         password: hasherSpy.hashed,
         verified: false

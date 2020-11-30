@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
-import { ModelDto } from '@/data/protocols'
 import { CompanyModel } from '@/data/models'
 import { AddCompanyRepository } from '@/data/repositories'
 import { Database } from '@/infra/protocols'
+import { CompanyModelDto } from '@/data/protocols'
 
 @Injectable('addCompanyRepository')
 export class DbAddCompanyRepository implements AddCompanyRepository {
@@ -10,7 +10,7 @@ export class DbAddCompanyRepository implements AddCompanyRepository {
     @Inject('db') private readonly db: Database
   ) {}
 
-  addCompany = async (companyDto: ModelDto<CompanyModel>): Promise<CompanyModel> => {
+  addCompany = async (companyDto: CompanyModelDto): Promise<CompanyModel> => {
     return await this.db.addOne<CompanyModel>(companyDto, 'companies')
   }
 }

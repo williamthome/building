@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
-import { ModelDto } from '@/data/protocols'
 import { ProjectModel } from '@/data/models'
 import { AddProjectRepository } from '@/data/repositories'
 import { Database } from '@/infra/protocols'
+import { ProjectModelDto } from '@/data/protocols'
 
 @Injectable('addProjectRepository')
 export class DbAddProjectRepository implements AddProjectRepository {
@@ -10,7 +10,7 @@ export class DbAddProjectRepository implements AddProjectRepository {
     @Inject('db') private readonly db: Database
   ) {}
 
-  addProject = async (projectDto: ModelDto<ProjectModel>): Promise<ProjectModel> => {
+  addProject = async (projectDto: ProjectModelDto): Promise<ProjectModel> => {
     return await this.db.addOne<ProjectModel>(projectDto, 'projects')
   }
 }

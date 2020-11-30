@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
-import { ModelDto } from '@/data/protocols'
 import { UserModel } from '@/data/models'
 import { UpdateUserRepository } from '@/data/repositories'
 import { Database } from '@/infra/protocols'
+import { UserModelDto } from '@/data/protocols'
 
 @Injectable('updateUserRepository')
 export class DbUpdateUserRepository implements UpdateUserRepository {
@@ -12,7 +12,7 @@ export class DbUpdateUserRepository implements UpdateUserRepository {
 
   updateUser = async (
     userId: UserModel['id'],
-    userDto: ModelDto<UserModel>
+    userDto: UserModelDto
   ): Promise<UserModel | null> => {
     return await this.db.updateOne<UserModel>(userId, userDto, 'users')
   }

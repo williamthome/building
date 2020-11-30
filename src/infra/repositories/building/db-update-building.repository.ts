@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
-import { ModelDto } from '@/data/protocols'
 import { BuildingModel } from '@/data/models'
 import { UpdateBuildingRepository } from '@/data/repositories'
 import { Database } from '@/infra/protocols'
+import { BuildingModelDto } from '@/data/protocols'
 
 @Injectable('updateBuildingRepository')
 export class DbUpdateBuildingRepository implements UpdateBuildingRepository {
@@ -12,7 +12,7 @@ export class DbUpdateBuildingRepository implements UpdateBuildingRepository {
 
   updateBuilding = async (
     buildingId: BuildingModel['id'],
-    buildingDto: ModelDto<BuildingModel>
+    buildingDto: BuildingModelDto
   ): Promise<BuildingModel | null> => {
     return await this.db.updateOne<BuildingModel>(buildingId, buildingDto, 'buildings')
   }

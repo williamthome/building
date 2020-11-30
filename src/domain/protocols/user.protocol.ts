@@ -1,14 +1,15 @@
 import { EntityDto } from './entity.protocol'
-import { CompanyEntity, UserEntity } from '../entities'
-import { MemberEntity } from '../entities/nested'
+import { UserEntity } from '../entities'
+import { MemberEntityDto } from './member.protocol'
+import { CompanyEntityMembers } from './company.protocol'
 
 export type UserEntityDto = EntityDto<UserEntity | Omit<UserEntity, 'verified'>>
 
 export type AuthEntityDto = Pick<UserEntity, 'email' | 'password'>
 
 export interface UserEntityRights {
-  company: Pick<CompanyEntity, 'id' | 'members'>
-  rights: Omit<MemberEntity, 'userId'>
+  company: CompanyEntityMembers
+  rights: MemberEntityDto
 }
 
 export type UserEntityResponse = Omit<UserEntity, 'password'>

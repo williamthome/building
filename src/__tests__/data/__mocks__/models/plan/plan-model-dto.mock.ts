@@ -1,7 +1,6 @@
-import { PlanModel } from '@/data/models'
-import { ModelDto } from '@/data/protocols'
+import { PlanModelDto } from '@/data/protocols'
 
-export const mockPlanModelDto = (): ModelDto<PlanModel> => ({
+export const mockPlanModelDto = (): PlanModelDto => ({
   limit: 'unlimited',
   value: 'free'
 })

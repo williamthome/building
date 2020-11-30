@@ -1,10 +1,10 @@
 import fakeData from '@/__tests__/shared/fake-data'
 import { CompanyModel } from '@/data/models'
-import { ModelDto } from '@/data/protocols'
 import { CompanyRole, UserFeatures } from '@/shared/constants'
 import { mockPlanModel } from '../plan'
+import { CompanyModelDto } from '@/data/protocols'
 
-export const mockCompanyModel = (companyDto?: ModelDto<CompanyModel>): CompanyModel => ({
+export const mockCompanyModel = (companyDto?: CompanyModelDto): CompanyModel => ({
   id: fakeData.entity.id(),
   planId: mockPlanModel().id,
   name: fakeData.person.fullName(),

@@ -3,8 +3,7 @@ import { AddBuildingContract } from '@/data/contracts'
 import { AddBuildingRepositorySpy } from '@/__tests__/data/__spys__'
 import { mockBuildingModelDto } from '@/__tests__/data/__mocks__/models'
 import fakeData from '@/__tests__/shared/fake-data'
-import { ModelDto } from '@/data/protocols'
-import { BuildingModel } from '@/data/models'
+import { BuildingModelDto } from '@/data/protocols'
 
 //#region Factories
 
@@ -37,7 +36,7 @@ describe('AddBuilding Contract', () => {
       const id = fakeData.entity.id()
       await sut.call(dto, id)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { companyId, ...buildingDto } = addBuildingRepositorySpy.buildingDto as ModelDto<BuildingModel>
+      const { companyId, ...buildingDto } = addBuildingRepositorySpy.buildingDto as BuildingModelDto
       expect(buildingDto).toEqual(dto)
     })
 

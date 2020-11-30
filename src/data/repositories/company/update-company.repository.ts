@@ -1,9 +1,9 @@
-import { ModelDto } from '@/data/protocols'
+import { CompanyModelDto } from '@/data/protocols'
 import { CompanyModel } from '@/data/models'
 
 export interface UpdateCompanyRepository {
   updateCompany: (
     companyId: CompanyModel['id'],
-    companyDto: ModelDto<CompanyModel>
+    companyDto: CompanyModelDto
   ) => Promise<CompanyModel | null>
 }

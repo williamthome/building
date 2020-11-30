@@ -1,7 +1,6 @@
 import fakeData from '@/__tests__/shared/fake-data'
-import { BuildingModel } from '@/data/models'
-import { ModelDto } from '@/data/protocols'
+import { BuildingModelDto } from '@/data/protocols'
 
-export const mockBuildingModelDto = (): ModelDto<BuildingModel> => ({
+export const mockBuildingModelDto = (): BuildingModelDto => ({
   title: fakeData.random.word()
 })

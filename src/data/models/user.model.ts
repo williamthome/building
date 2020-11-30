@@ -1,9 +1,7 @@
 import { CompanyModel } from './company.model'
 import { Model } from '../protocols'
-import { MemberModel } from './nested'
 import { UserEntity } from '@/domain/entities'
 import { AddressEntity } from '@/domain/entities/nested'
-import { UserEntityRights } from '@/domain/protocols'
 
 export class UserModel extends Model implements UserEntity {
   constructor (
@@ -18,11 +16,4 @@ export class UserModel extends Model implements UserEntity {
   ) {
     super(id)
   }
-}
-
-export class UserModelRights implements UserEntityRights {
-  constructor (
-    public readonly company: Pick<CompanyModel, 'id' | 'members'>,
-    public readonly rights: Omit<MemberModel, 'userId'>
-  ) { }
 }
