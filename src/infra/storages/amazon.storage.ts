@@ -1,32 +1,48 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Storage } from '../protocols'
-import { S3 } from 'aws-sdk'
+import { config, S3 } from 'aws-sdk'
 
 @Injectable('storage')
 export class AmazonStorage implements Storage {
-  private s3: S3
 
   constructor (
-    @Inject('AWS_ACCESS_KEY_ID') accessKeyId: string,
-    @Inject('AWS_SECRET_ACCESS_KEY') secretAccessKey: string,
-    @Inject('AWS_REGION') region: string,
-    @Inject('AWS_BUCKET') private readonly bucket: string
+    @Inject('AWS_ACCESS_KEY_ID')
+    private readonly accessKeyId: string,
+
+    @Inject('AWS_SECRET_ACCESS_KEY')
+    private readonly secretAccessKey: string,
+
+    @Inject('AWS_REGION')
+    private readonly region: string,
+
+    @Inject('AWS_BUCKET')
+    private readonly bucket: string
   ) {
-    this.s3 = new S3({
-      region,
+    config.update({
+      region: this.region,
       credentials: {
-        accessKeyId,
-        secretAccessKey
+        accessKeyId: this.accessKeyId,
+        secretAccessKey: this.secretAccessKey
       }
     })
   }
 
   upload = async (fileName: string, fileData: any): Promise<void> => {
-    const response = await this.s3.upload({
-      Bucket: this.bucket,
-      Key: fileName,
-      Body: fileData
+    const response = await new S3.ManagedUpload({
+      params: {
+        Bucket: this.bucket,
+        Key: fileName,
+        Body: fileData
+      }
     }).promise()
     console.log(`File uploaded at ${response.Location}`)
+  }
+
+  download = async (filename: string): Promise<void> => {
+    const response = await new S3().getObject({
+      Bucket: this.bucket,
+      Key: filename
+    }).promise()
+    console.log(`File download size ${response.ContentLength}`)
   }
 }
