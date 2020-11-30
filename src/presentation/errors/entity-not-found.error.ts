@@ -1,4 +1,4 @@
-import { EntityName } from '@/domain/protocols'
+import { EntityName } from '@/shared/types'
 
 export class EntityNotFoundError extends Error {
   constructor (entityName: EntityName) {

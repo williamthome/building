@@ -12,7 +12,8 @@ import {
   MongoCountPreferences,
 } from 'mongodb'
 import { Injectable, Inject } from '@/shared/dependency-injection'
-import { CollectionName, collectionNames, Unpacked } from '@/shared/types'
+import { CollectionName, Unpacked } from '@/shared/types'
+import { collectionNames } from '@/shared/constants'
 import { Database } from '@/infra/protocols'
 import { Model } from '@/data/protocols'
 import { AccessDeniedError } from '@/presentation/errors'

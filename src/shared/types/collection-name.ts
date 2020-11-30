@@ -1,11 +1,3 @@
-export const collectionNames = [
-  'users',
-  'unverified',
-  'companies',
-  'errors',
-  'buildings',
-  'projects',
-  'plans'
-] as const
+import { collectionNames } from '../constants'
 
 export type CollectionName = typeof collectionNames[number]

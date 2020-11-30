@@ -1,4 +1,5 @@
-export * from './omit-on-indexed'
-export * from './flatten'
 export * from './collection-name'
+export * from './entity-name'
+export * from './flatten'
+export * from './omit-on-indexed'
 export * from './unpacked'
