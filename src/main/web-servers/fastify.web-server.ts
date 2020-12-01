@@ -1,7 +1,10 @@
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler } from 'fastify'
+import multer from 'fastify-multer'
+import { File as MulterFile } from 'fastify-multer/lib/interfaces'
 import { Injectable, Inject } from '@/shared/dependency-injection'
 import { AdaptMiddlewareHttpRequest, Middleware, Route, WebServer } from '../protocols'
-import { Controller, HttpHeaders, HttpParameters } from '@/presentation/protocols'
+import { Controller, HttpHeaders, HttpParameters, RequestFile } from '@/presentation/protocols'
+import { isRequestFile } from '@/presentation/helpers/file.helper'
 
 @Injectable('webServer')
 export class Fastify implements WebServer {
@@ -14,6 +17,7 @@ export class Fastify implements WebServer {
     @Inject() public readonly routes: Route<unknown>[]
   ) {
     this.fastifyInstance = fastify()
+    this.fastifyInstance.register(multer.contentParser)
     this.injectRoutes()
   }
 
@@ -58,7 +62,10 @@ export class Fastify implements WebServer {
       method: route.path.method,
       url: route.path.urn,
       handler: this.adaptHttpResponse(route.controller),
-      preHandler: this.adaptMiddlewares<T>(route.middlewares)
+      preHandler: [
+        multer().any(),
+        ...this.adaptMiddlewares<T>(route.middlewares)
+      ]
     })
   }
 
@@ -95,7 +102,8 @@ export class Fastify implements WebServer {
     params: req.params as HttpParameters,
     query: req.query,
     loggedUserInfo: req.loggedUserInfo,
-    activeCompanyInfo: req.activeCompanyInfo
+    activeCompanyInfo: req.activeCompanyInfo,
+    files: this.adaptRequestFiles(req.files || [])
   })
 
   adaptHttpResponse = <T> (controller: Controller<T>) => {
@@ -122,5 +130,30 @@ export class Fastify implements WebServer {
       }
     }
     return headers
+  }
+
+  private adaptFile = (file: MulterFile): RequestFile => {
+    if (!file.buffer)
+      throw new Error('Buffer of file is undefined')
+
+    if (!file.size)
+      throw new Error('Size of file is undefined')
+
+    return  {
+      name: file.originalname,
+      buffer: file.buffer,
+      mimeType: file.mimetype
+    }
+  }
+
+  adaptRequestFiles = (files: MulterFile[] | RequestFile[]): RequestFile[] => {
+    const adapted: RequestFile[] = []
+    for (const file of files) {
+      adapted.push(isRequestFile(file)
+        ? file
+        : this.adaptFile(file)
+      )
+    }
+    return adapted
   }
 }

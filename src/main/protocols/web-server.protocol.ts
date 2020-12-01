@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { HttpRequest } from '@/presentation/protocols'
+import { HttpRequest, RequestFile } from '@/presentation/protocols'
 import {
   RouteAdapter,
   HttpResponseAdapter,
@@ -21,12 +21,13 @@ extends
 {
   port: number
   routes: Route<unknown>[]
+  isListening: boolean
   server: () => any
   listen: () => Promise<void>
   ready: () => Promise<void>
   close: () => Promise<void>
   injectRoutes: () => void
-  isListening: boolean
+  adaptRequestFiles: (files: any[]) => RequestFile[]
 }
 
 export type AdaptMiddlewareHttpRequest<T> = { [K in keyof Required<HttpRequest<T>>]: any }
