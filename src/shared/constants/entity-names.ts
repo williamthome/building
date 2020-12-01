@@ -5,5 +5,6 @@ export const entityNames = [
   'Error',
   'Building',
   'Project',
-  'Plan'
+  'Plan',
+  'File'
 ] as const
