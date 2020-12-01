@@ -1,6 +1,5 @@
 import { HttpHeaderName, HttpStatusCode } from '../constants'
-import { ActiveCompanyInfo } from './active-company-info.protocol'
-import { LoggedUserInfo } from './logged-user-info.protocol'
+import { LoggedUserInfo, ActiveCompanyInfo, RequestFile } from '.'
 
 // export type HttpHeaders = { [P in HttpHeaderName]?: string | undefined }
 export type HttpHeaders = Partial<Record<HttpHeaderName | string, string>>
@@ -18,6 +17,7 @@ export interface HttpRequest<T = undefined> {
   query?: HttpQuery
   loggedUserInfo?: LoggedUserInfo
   activeCompanyInfo?: ActiveCompanyInfo
+  files?: RequestFile[]
 }
 
 export interface HttpResponse<T = null> {

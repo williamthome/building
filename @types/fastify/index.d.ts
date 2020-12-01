@@ -1,5 +1,5 @@
 import fastify from 'fastify'
-import { LoggedUserInfo, ActiveCompanyInfo } from '../../src/presentation/protocols'
+import { LoggedUserInfo, ActiveCompanyInfo, RequestFile } from '../../src/presentation/protocols'
 
 declare module 'fastify' {
   export interface FastifyRequest<
@@ -9,5 +9,6 @@ declare module 'fastify' {
     > {
     loggedUserInfo?: LoggedUserInfo
     activeCompanyInfo?: ActiveCompanyInfo
+    files?: RequestFile[]
   }
 }
