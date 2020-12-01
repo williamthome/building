@@ -1,6 +1,7 @@
+import { config, S3 } from 'aws-sdk'
 import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Storage } from '../protocols'
-import { config, S3 } from 'aws-sdk'
+import { StorageDownloadFile, StorageUploadFile } from '@/data/protocols'
 
 @Injectable('storage')
 export class AmazonStorage implements Storage {
@@ -27,22 +28,49 @@ export class AmazonStorage implements Storage {
     })
   }
 
-  upload = async (fileName: string, fileData: any): Promise<void> => {
-    const response = await new S3.ManagedUpload({
-      params: {
-        Bucket: this.bucket,
-        Key: fileName,
-        Body: fileData
-      }
-    }).promise()
-    console.log(`File uploaded at ${response.Location}`)
+  upload = async (
+    file: StorageUploadFile,
+    buffer: StorageDownloadFile['buffer'],
+    fileName: string
+  ): Promise<StorageDownloadFile['url'] | Error> => {
+    try {
+      const path: string = [
+        file.reference,
+        file.referenceId,
+        fileName
+      ].join('/')
+      const key = encodeURI(path)
+
+      const { Location: url } = await new S3.ManagedUpload({
+        params: {
+          Bucket: this.bucket,
+          Key: key,
+          Body: buffer,
+          ContentType: file.mimeType
+        }
+      }).promise()
+
+      return url
+    } catch (error) {
+      console.error(error)
+      return error
+    }
   }
 
-  download = async (filename: string): Promise<void> => {
+  download = async (url: StorageDownloadFile['url']): Promise<StorageDownloadFile | null> => {
     const response = await new S3().getObject({
       Bucket: this.bucket,
-      Key: filename
+      Key: url
     }).promise()
-    console.log(`File download size ${response.ContentLength}`)
+
+    const { Body, ContentType } = response
+
+    return Body instanceof Buffer && typeof ContentType === 'string'
+      ? {
+        url: decodeURI(url),
+        buffer: Body,
+        mimeType: ContentType
+      }
+      : null
   }
 }
