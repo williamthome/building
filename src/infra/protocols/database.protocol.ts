@@ -30,6 +30,13 @@ export interface Database {
     options?: TOptions
   ) => Promise<TModel | null>
 
+  getManyBy: <TModel extends Model, TValue, TOptions = unknown> (
+    field: keyof TModel,
+    toSearch: TValue,
+    collectionName: CollectionName,
+    options?: TOptions
+  ) => Promise<TModel[]>
+
   getManyByNested: <T extends Model, KNested extends keyof T, KMatch extends keyof Unpacked<T[KNested]>, TOptions = unknown> (
     nestedKey: KNested,
     matchKey: KMatch,

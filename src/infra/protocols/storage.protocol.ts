@@ -1,13 +1,23 @@
-import { StorageDownloadFile, StorageUploadFile } from '@/data/protocols'
+import { FileModel } from '@/data/models'
+
+export type StorageUploadFile = Required<
+  Pick<FileModel,
+    | 'reference'
+    | 'referenceId'
+    | 'mimeType'
+    | 'name'
+  >
+>
+
+export type StorageDownloadFile = Omit<StorageUploadFile, 'mimeType'>
 
 export interface Storage {
   upload: (
     file: StorageUploadFile,
-    buffer: StorageDownloadFile['buffer'],
-    fileName: string
-  ) => Promise<StorageDownloadFile['url'] | Error>
+    buffer: Buffer
+  ) => Promise<void | Error>
 
   download: (
-    url: StorageDownloadFile['url']
-  ) => Promise<StorageDownloadFile | null>
+    file: StorageDownloadFile
+  ) => Promise<Buffer>
 }

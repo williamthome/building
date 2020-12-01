@@ -4,7 +4,7 @@ import { Entity } from '../protocols'
 export interface FileEntity extends Entity {
   reference: CollectionName
   referenceId: Entity['id']
-  url: string
+  name: string
   mimeType: string
   sizeInBytes: number
 }

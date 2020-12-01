@@ -6,7 +6,7 @@ export class FileModel extends Model implements FileEntity {
     public readonly id: FileEntity['id'],
     public readonly reference: FileEntity['reference'],
     public readonly referenceId: FileEntity['referenceId'],
-    public readonly url: FileEntity['url'],
+    public readonly name: FileEntity['name'],
     public readonly mimeType: FileEntity['mimeType'],
     public readonly sizeInBytes: FileEntity['sizeInBytes']
   ) {

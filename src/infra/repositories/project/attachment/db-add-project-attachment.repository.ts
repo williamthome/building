@@ -19,9 +19,7 @@ export class DbAddProjectAttachmentRepository implements AddProjectAttachmentRep
       {
         reference: 'projects',
         referenceId: projectId,
-        sizeInBytes: fileDto.sizeInBytes,
-        mimeType: fileDto.mimeType,
-        url: fileDto.url
+        ...fileDto
       },
       'files'
     )

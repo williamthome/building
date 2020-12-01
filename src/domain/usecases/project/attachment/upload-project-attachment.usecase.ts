@@ -1,3 +1,10 @@
-import { UploadFileUseCase } from '@/domain/protocols'
+import { FileEntity, ProjectEntity } from '@/domain/entities'
 
-export type UploadProjectAttachmentUseCase = UploadFileUseCase
+export interface UploadProjectAttachmentUseCase {
+  call: (
+    projectId: ProjectEntity['id'],
+    mimeType: FileEntity['mimeType'],
+    buffer: Buffer,
+    fileName: FileEntity['name']
+  ) => Promise<FileEntity | Error>
+}

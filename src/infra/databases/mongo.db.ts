@@ -152,6 +152,25 @@ export class MongoDB implements Database {
     return model ? this.map<T>(model) : null
   }
 
+  getManyBy = async <T extends Model, V> (
+    field: keyof T,
+    toSearch: V,
+    collectionName: CollectionName,
+    options?: Omit<FindOneOptions<unknown>, 'session'>
+  ): Promise<T[]> => {
+    const collection = await this.getCollection(collectionName)
+    const models = await collection.find(
+      field === 'id'
+        ? { _id: new ObjectId(toSearch as unknown as Model['id']) }
+        : { [field]: toSearch },
+      {
+        ...options,
+        session: this.session
+      }
+    ).toArray()
+    return models.map(model => this.map<T>(model))
+  }
+
   getManyByNested = async <T extends Model, KNested extends keyof T, KMatch extends keyof Unpacked<T[KNested]>> (
     nestedKey: KNested,
     matchKey: KMatch,

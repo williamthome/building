@@ -1,3 +1,10 @@
-import { UploadFileBucket } from '@/data/protocols'
+import { FileModel, ProjectModel } from '@/data/models'
 
-export type UploadProjectAttachmentBucket = UploadFileBucket
+export interface UploadProjectAttachmentBucket {
+  uploadProjectAttachment: (
+    projectId: ProjectModel['id'],
+    buffer: Buffer,
+    mimeType: FileModel['mimeType'],
+    fileName: FileModel['name']
+  ) => Promise<void | Error>
+}

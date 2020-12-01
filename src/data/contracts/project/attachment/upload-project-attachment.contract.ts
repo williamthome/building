@@ -22,20 +22,20 @@ export class UploadProjectAttachmentContract implements UploadProjectAttachmentU
     projectId: ProjectEntity['id'],
     mimeType: FileEntity['mimeType'],
     buffer: Buffer,
-    fileName: string
+    fileName: FileEntity['name']
   ): Promise<FileEntity | Error> => {
-    const url = await this.uploadProjectAttachmentBucket
-      .uploadFile(projectId, buffer, mimeType, fileName)
+    const uploadError = await this.uploadProjectAttachmentBucket
+      .uploadProjectAttachment(projectId, buffer, mimeType, fileName)
 
-    if (url instanceof Error)
-      return url
+    if (uploadError)
+      return uploadError
 
     return await this.addProjectAttachmentRepository
       .addProjectAttachment(
         projectId,
         {
+          name: fileName,
           mimeType,
-          url,
           sizeInBytes: buffer.byteLength
         }
       )

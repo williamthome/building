@@ -1,5 +1,4 @@
 import { FileEntity } from '@/domain/entities'
-import { UploadFileUseCase } from '@/domain/protocols'
 import { requestFileKeys, RequestFile, UploadFileResponse } from '../protocols'
 
 const ByteConverter = {
@@ -17,7 +16,12 @@ export const isRequestFile = (obj: any): obj is RequestFile =>
 export const uploadResult = async (
   files: RequestFile[],
   referenceId: FileEntity['referenceId'],
-  uploadUseCase: UploadFileUseCase
+  useCaseCall: (
+    referenceId: FileEntity['referenceId'],
+    mimeType: FileEntity['mimeType'],
+    buffer: Buffer,
+    fileName: FileEntity['name']
+  ) => Promise<FileEntity | Error>
 ): Promise<UploadFileResponse> => {
   const result: UploadFileResponse = {
     uploads: [],
@@ -25,7 +29,7 @@ export const uploadResult = async (
   }
 
   for (const file of files) {
-    const uploaded = await uploadUseCase.call(
+    const uploaded = await useCaseCall(
       referenceId,
       file.mimeType,
       file.buffer,
