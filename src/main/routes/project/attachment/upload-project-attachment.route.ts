@@ -1,25 +1,30 @@
 import { Inject, InjectableArray } from '@/shared/dependency-injection'
+import { UserFeatures } from '@/shared/constants'
 import {
   AuthMiddleware,
   UserVerifiedMiddleware,
   ActiveCompanyMiddleware,
-  RequirementsMiddleware
+  RequirementsMiddleware,
+  RequestFileMiddleware
 } from '@/main/middlewares'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { UploadProjectAttachmentController } from '@/presentation/controllers'
-import { ProjectEntity } from '@/domain/entities'
-import { UserFeatures } from '@/shared/constants'
-import { ProjectEntityDto } from '@/domain/protocols'
+import { UploadFileResponse } from '@/presentation/protocols'
+import { mbToBytes } from '@/presentation/helpers/file.helper'
 
 export const uploadProjectAttachmentPath = new RoutePath(
   'POST',
-  '/project/attachment'
+  '/project/:id/attachment'
 )
 
 @InjectableArray('routes')
-export class UploadProjectAttachmentRoute implements Route<ProjectEntityDto, ProjectEntity> {
-  requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageProjects)
+export class UploadProjectAttachmentRoute implements Route<undefined, UploadFileResponse> {
+  private readonly requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageProjects)
+  private readonly requestFileMiddleware = new RequestFileMiddleware({
+    count: 1,
+    sizeInBytes: mbToBytes(5)
+  })
 
   constructor (
     @InjectRouteController(UploadProjectAttachmentController)
@@ -41,7 +46,8 @@ export class UploadProjectAttachmentRoute implements Route<ProjectEntityDto, Pro
       this.authMiddleware,
       this.userVerifiedMiddleware,
       this.activeCompanyMiddleware,
-      this.requirementsMiddleware
+      this.requirementsMiddleware,
+      this.requestFileMiddleware
     ]
   }
 }
