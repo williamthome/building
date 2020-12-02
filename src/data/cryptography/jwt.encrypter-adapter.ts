@@ -4,7 +4,7 @@ import { Decrypter, Encrypter } from '@/domain/protocols/cryptography'
 
 @Injectable('encrypter')
 @Injectable('decrypter')
-export class JwtAdapter implements Encrypter, Decrypter {
+export class JwtEncrypterAdapter implements Encrypter, Decrypter {
   static key = 'data'
 
   constructor (
@@ -12,11 +12,11 @@ export class JwtAdapter implements Encrypter, Decrypter {
   ) {}
 
   encrypt = async (value: string): Promise<string> => {
-    return jwt.sign({ [JwtAdapter.key]: value }, this.secret)
+    return jwt.sign({ [JwtEncrypterAdapter.key]: value }, this.secret)
   }
 
   decrypt = async (value: string): Promise<string> => {
     const decrypted = jwt.verify(value, this.secret) as Record<string, any>
-    return decrypted[JwtAdapter.key]
+    return decrypted[JwtEncrypterAdapter.key]
   }
 }

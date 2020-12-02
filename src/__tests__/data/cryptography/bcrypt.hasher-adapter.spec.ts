@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import fakeData from '@/__tests__/shared/fake-data'
-import { BcryptAdapter } from '@/data/adapters'
+import { BcryptHasherAdapter } from '@/data/cryptography'
 
 // #region Factory
 
@@ -17,12 +17,12 @@ jest.mock('bcrypt', () => ({
 }))
 
 interface SutTypes {
-  sut: BcryptAdapter
+  sut: BcryptHasherAdapter
 }
 
 const salt = 12
 const makeSut = (): SutTypes => {
-  const sut = new BcryptAdapter(salt)
+  const sut = new BcryptHasherAdapter(salt)
   return {
     sut
   }

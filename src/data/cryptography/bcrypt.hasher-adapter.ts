@@ -5,7 +5,7 @@ import { HashComparer } from '@/domain/protocols/cryptography'
 
 @Injectable('hasher')
 @Injectable('hashComparer')
-export class BcryptAdapter implements Hasher, HashComparer {
+export class BcryptHasherAdapter implements Hasher, HashComparer {
   constructor (
     private readonly salt: number = 12
   ) {}

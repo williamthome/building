@@ -1,4 +1,3 @@
-import { hasFeatures } from '@/shared/helpers/user-features.helper'
 import { UserFeatures, CompanyRole } from '@/shared/constants'
 import { MiddlewareContent } from '../protocols'
 import { ok } from '@/presentation/factories/http.factory'
@@ -45,6 +44,13 @@ export const authorizationToken = <T> (httpRequest: HttpRequest<T>): string | un
   return authorization && authorization.startsWith('Bearer ')
     ? authorization.substring(7)
     : undefined
+}
+
+export const hasFeatures = (
+  have: UserFeatures | number,
+  needed: UserFeatures | number
+): boolean => {
+  return (have & needed) === needed
 }
 
 export const hasRequirements = <T> (httpRequest: HttpRequest<T>, requirements: UserFeatures): boolean => {

@@ -1,14 +1,14 @@
 import jwt from 'jsonwebtoken'
 import container from '@/shared/dependency-injection'
 import fakeData from '@/__tests__/shared/fake-data'
-import { JwtAdapter } from '@/data/adapters'
+import { JwtEncrypterAdapter } from '@/data/cryptography'
 
 // #region Factories
 
 const fakeSecret = fakeData.entity.jwtSecret()
 const fakeId = fakeData.entity.id()
 const fakeToken = 'encrypted'
-const fakeVerifiedToken = { [JwtAdapter.key]: 'decrypted' }
+const fakeVerifiedToken = { [JwtEncrypterAdapter.key]: 'decrypted' }
 
 jest.mock('jsonwebtoken', () => ({
   sign (): string {
@@ -16,16 +16,16 @@ jest.mock('jsonwebtoken', () => ({
   },
 
   verify (): string {
-    return fakeVerifiedToken[JwtAdapter.key]
+    return fakeVerifiedToken[JwtEncrypterAdapter.key]
   }
 }))
 
 interface SutTypes {
-  sut: JwtAdapter
+  sut: JwtEncrypterAdapter
 }
 
 const makeSut = (): SutTypes => {
-  const sut = container.resolve<JwtAdapter>('encrypter')
+  const sut = container.resolve<JwtEncrypterAdapter>('encrypter')
   return {
     sut
   }
@@ -35,8 +35,8 @@ const makeSut = (): SutTypes => {
 
 describe('JWT Adapter', () => {
   beforeEach(() => {
-    container.define('encrypter').asNewable(JwtAdapter).done()
-    container.define('decrypter').asNewable(JwtAdapter).done()
+    container.define('encrypter').asNewable(JwtEncrypterAdapter).done()
+    container.define('decrypter').asNewable(JwtEncrypterAdapter).done()
     container.define('JWT_SECRET').as(fakeSecret).done()
   })
 
@@ -45,7 +45,7 @@ describe('JWT Adapter', () => {
       const { sut } = makeSut()
       const signSpy = jest.spyOn(jwt, 'sign')
       await sut.encrypt(fakeId)
-      expect(signSpy).toHaveBeenCalledWith({ [JwtAdapter.key]: fakeId }, fakeSecret)
+      expect(signSpy).toHaveBeenCalledWith({ [JwtEncrypterAdapter.key]: fakeId }, fakeSecret)
     })
 
     it('Should returns a token on success', async () => {
