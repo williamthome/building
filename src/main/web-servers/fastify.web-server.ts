@@ -1,4 +1,4 @@
-import fastify, { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler } from 'fastify'
+import fastify, { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler, RawServerBase } from 'fastify'
 import multer from 'fastify-multer'
 import { File as MulterFile } from 'fastify-multer/lib/interfaces'
 import { Injectable, Inject } from '@/shared/dependency-injection'
@@ -7,21 +7,32 @@ import { Controller, HttpHeaders, HttpParameters, RequestFile } from '@/presenta
 import { isRequestFile } from '@/presentation/helpers/file.helper'
 
 @Injectable('webServer')
-export class Fastify implements WebServer {
+export class Fastify implements WebServer
+<
+FastifyRequest,
+FastifyReply,
+preHandlerHookHandler,
+FastifyInstance,
+RawServerBase,
+MulterFile
+> {
   private _isListening = false
 
   private readonly fastifyInstance: FastifyInstance
 
   constructor (
-    @Inject('PORT') public readonly port: number,
-    @Inject() public readonly routes: Route<unknown>[]
+    @Inject('PORT')
+    public readonly port: number,
+
+    @Inject()
+    public readonly routes: Route<unknown, unknown>[]
   ) {
     this.fastifyInstance = fastify()
     this.fastifyInstance.register(multer.contentParser)
     this.injectRoutes()
   }
 
-  server = (): unknown => {
+  server = (): RawServerBase => {
     return this.fastifyInstance.server
   }
 
@@ -54,8 +65,8 @@ export class Fastify implements WebServer {
     return this._isListening
   }
 
-  adaptRoute = <T> (
-    route: Route<T>,
+  adaptRoute = <TReq, TRes> (
+    route: Route<TReq, TRes>,
     fastifyInstance: FastifyInstance
   ): FastifyInstance => {
     return fastifyInstance.route({
@@ -64,23 +75,23 @@ export class Fastify implements WebServer {
       handler: this.adaptHttpResponse(route.controller),
       preHandler: [
         multer().any(),
-        ...this.adaptMiddlewares<T>(route.middlewares)
+        ...this.adaptMiddlewares<TReq>(route.middlewares)
       ]
     })
   }
 
-  adaptMiddlewares = <T> (middlewares: Middleware[]): preHandlerHookHandler[] => {
+  private adaptMiddlewares = <TReq> (middlewares: Middleware[]): preHandlerHookHandler[] => {
     const adapted: preHandlerHookHandler[] = []
     for (const middleware of middlewares)
-      adapted.push(this.adaptMiddleware<T>(middleware))
+      adapted.push(this.adaptMiddleware<TReq>(middleware))
     return adapted
   }
 
-  adaptMiddleware = <T> (middleware: Middleware): preHandlerHookHandler => {
+  adaptMiddleware = <TReq> (middleware: Middleware): preHandlerHookHandler => {
     return async (req: FastifyRequest, res: FastifyReply): Promise<void> => {
-      const httpRequest = this.adaptHttpRequest(req)
+      const httpRequest = this.adaptHttpRequest<TReq>(req)
 
-      const { statusCode, body: middlewareContent } = await middleware.handle<T>(httpRequest)
+      const { statusCode, body: middlewareContent } = await middleware.handle<TReq>(httpRequest)
 
       if (middlewareContent instanceof Error) {
         res.status(statusCode).send({
@@ -96,8 +107,8 @@ export class Fastify implements WebServer {
     }
   }
 
-  adaptHttpRequest = <T> (req: FastifyRequest): AdaptMiddlewareHttpRequest<T> => ({
-    body: req.body as T,
+  adaptHttpRequest = <TReq> (req: FastifyRequest): AdaptMiddlewareHttpRequest<TReq> => ({
+    body: req.body as TReq,
     headers: this.adaptHttpHeaders(req),
     params: req.params as HttpParameters,
     query: req.query,
@@ -106,9 +117,9 @@ export class Fastify implements WebServer {
     files: this.adaptRequestFiles(req.files || [])
   })
 
-  adaptHttpResponse = <T> (controller: Controller<T>) => {
+  adaptHttpResponse = <TReq, TRes> (controller: Controller<TReq, TRes>) => {
     return async (req: FastifyRequest, res: FastifyReply): Promise<FastifyReply> => {
-      const httpRequest = this.adaptHttpRequest(req)
+      const httpRequest = this.adaptHttpRequest<TReq>(req)
       const httpResponse = await controller.handle(httpRequest)
       return httpResponse.body instanceof Error
         ? res.status(httpResponse.statusCode).send({ error: httpResponse.body.message })
@@ -139,7 +150,7 @@ export class Fastify implements WebServer {
     if (!file.size)
       throw new Error('Size of file is undefined')
 
-    return  {
+    return {
       name: file.originalname,
       buffer: file.buffer,
       mimeType: file.mimetype
