@@ -2,6 +2,7 @@
 import { Injectable, Inject } from '@/shared/dependency-injection'
 // > Data
 import {
+  DeleteBuildingPhasesRepository,
   DeleteBuildingProjectsRepository,
   DeleteBuildingRepository
 } from '@/data/repositories'
@@ -17,6 +18,9 @@ export class DeleteBuildingContract implements DeleteBuildingUseCase {
     private readonly deleteBuildingProjectsRepository: DeleteBuildingProjectsRepository,
 
     @Inject()
+    private readonly deleteBuildingPhasesRepository: DeleteBuildingPhasesRepository,
+
+    @Inject()
     private readonly deleteBuildingRepository: DeleteBuildingRepository
   ) { }
 
@@ -25,6 +29,7 @@ export class DeleteBuildingContract implements DeleteBuildingUseCase {
     if (!building) return null
 
     await this.deleteBuildingProjectsRepository.deleteBuildingProjects(buildingId)
+    await this.deleteBuildingPhasesRepository.deleteBuildingPhases(buildingId)
 
     return building
   }

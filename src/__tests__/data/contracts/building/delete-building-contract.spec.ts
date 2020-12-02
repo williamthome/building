@@ -1,6 +1,10 @@
 import container from '@/shared/dependency-injection'
 import { DeleteBuildingContract } from '@/data/contracts'
-import { DeleteBuildingProjectsRepositorySpy, DeleteBuildingRepositorySpy } from '@/__tests__/data/__spys__'
+import {
+  DeleteBuildingPhasesRepositorySpy,
+  DeleteBuildingProjectsRepositorySpy,
+  DeleteBuildingRepositorySpy
+} from '@/__tests__/data/__spys__'
 import fakeData from '@/__tests__/shared/fake-data'
 
 //#region Factories
@@ -8,16 +12,19 @@ import fakeData from '@/__tests__/shared/fake-data'
 interface SutTypes {
   sut: DeleteBuildingContract
   deleteBuildingProjectsRepositorySpy: DeleteBuildingProjectsRepositorySpy
+  deleteBuildingPhasesRepositorySpy: DeleteBuildingPhasesRepositorySpy
   deleteBuildingRepositorySpy: DeleteBuildingRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
   const deleteBuildingProjectsRepositorySpy = container.resolve<DeleteBuildingProjectsRepositorySpy>('deleteBuildingProjectsRepository')
+  const deleteBuildingPhasesRepositorySpy = container.resolve<DeleteBuildingPhasesRepositorySpy>('deleteBuildingPhasesRepository')
   const deleteBuildingRepositorySpy = container.resolve<DeleteBuildingRepositorySpy>('deleteBuildingRepository')
   const sut = container.resolve(DeleteBuildingContract)
   return {
     sut,
     deleteBuildingProjectsRepositorySpy,
+    deleteBuildingPhasesRepositorySpy,
     deleteBuildingRepositorySpy
   }
 }
@@ -27,6 +34,7 @@ const makeSut = (): SutTypes => {
 describe('DeleteBuilding Contract', () => {
   beforeEach(() => {
     container.define('deleteBuildingProjectsRepository').asNewable(DeleteBuildingProjectsRepositorySpy).done()
+    container.define('deleteBuildingPhasesRepository').asNewable(DeleteBuildingPhasesRepositorySpy).done()
     container.define('deleteBuildingRepository').asNewable(DeleteBuildingRepositorySpy).done()
     container.define(DeleteBuildingContract).asNewable(DeleteBuildingContract).done()
   })
@@ -42,6 +50,21 @@ describe('DeleteBuilding Contract', () => {
     it('should throw if method throws', async () => {
       const { sut, deleteBuildingProjectsRepositorySpy } = makeSut()
       deleteBuildingProjectsRepositorySpy.shouldThrow = true
+      await expect(sut.call(fakeData.entity.id())).rejects.toThrow()
+    })
+  })
+
+  describe('DeleteBuildingPhases Repository', () => {
+    it('should be called with right value', async () => {
+      const { sut, deleteBuildingPhasesRepositorySpy } = makeSut()
+      const buildingId = fakeData.entity.id()
+      await sut.call(buildingId)
+      expect(deleteBuildingPhasesRepositorySpy.buildingId).toEqual(buildingId)
+    })
+
+    it('should throw if method throws', async () => {
+      const { sut, deleteBuildingPhasesRepositorySpy } = makeSut()
+      deleteBuildingPhasesRepositorySpy.shouldThrow = true
       await expect(sut.call(fakeData.entity.id())).rejects.toThrow()
     })
   })
