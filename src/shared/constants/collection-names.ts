@@ -7,5 +7,8 @@ export const collectionNames = [
   'projects',
   'plans',
   'files',
-  'phases'
+  'phases',
+  'customers',
+  'properties',
+  'technicians'
 ] as const

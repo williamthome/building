@@ -2,6 +2,9 @@ export type PlanLimit =
   | 'unlimited'
   | {
     member: number
+    customer: number
+    property: number
+    technician: number
     building: number
     phase: number
     project: number

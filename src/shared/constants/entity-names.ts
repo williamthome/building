@@ -7,5 +7,8 @@ export const entityNames = [
   'Project',
   'Plan',
   'File',
-  'Phase'
+  'Phase',
+  'Customer',
+  'Property',
+  'Technician'
 ] as const

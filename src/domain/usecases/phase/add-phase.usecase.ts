@@ -3,7 +3,7 @@ import { PhaseEntityDto } from '@/domain/protocols'
 
 export interface AddPhaseUseCase {
   call: (
-    projectDto: PhaseEntityDto,
+    dto: PhaseEntityDto,
     companyId: CompanyEntity['id']
   ) => Promise<PhaseEntity>
 }
