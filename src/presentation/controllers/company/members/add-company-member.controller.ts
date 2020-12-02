@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, forbidden, notFound, ok } from '@/presentation/factories/http.factory'
 import { memberSchema } from '@/presentation/schemas'
-import { HandleError, ValidateBody } from '@/presentation/decorators'
+import { HandleError, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError, PlanLimitExceededError, UserAlreadyAMemberError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity, PlanEntity } from '@/domain/entities'
@@ -22,29 +22,33 @@ export class AddCompanyMemberController implements Controller<MemberEntity, Comp
     private readonly addCompanyMemberUseCase: AddCompanyMemberUseCase
   ) { }
 
-  @ValidateBody<MemberEntity, CompanyEntity>({
-    schema: memberSchema,
-    keys: memberKeys
+  @Validate<MemberEntity, CompanyEntity>({
+    body: {
+      schema: memberSchema,
+      keys: memberKeys
+    }
   })
   @HandleError
   async handle (request: HttpRequest<MemberEntity>): HandleResponse<CompanyEntity> {
-    const planLimits = request.activeCompanyInfo?.limit as PlanEntity['limit']
-    const companyId = request.activeCompanyInfo?.id as CompanyEntity['id']
+    const activeCompanyPlanLimits = request.activeCompanyInfo?.limit as PlanEntity['limit']
+    const activeCompanyId = request.activeCompanyInfo?.id as CompanyEntity['id']
 
-    if (planLimits !== 'unlimited') {
-      const memberCount = await this.getCompanyMemberCountUseCase.call(companyId)
-      if (memberCount === planLimits.member)
+    if (activeCompanyPlanLimits !== 'unlimited') {
+      const activeCompanyMemberCount = await this.getCompanyMemberCountUseCase.call(activeCompanyId)
+      if (activeCompanyMemberCount === activeCompanyPlanLimits.member)
         return forbidden(new PlanLimitExceededError('members'))
     }
 
-    const members = request.activeCompanyInfo?.members as MemberEntity[]
-    const member = request.body as MemberEntity
+    const activeCompanyMembers = request.activeCompanyInfo?.members as MemberEntity[]
+    const requestMemberDto = request.body as MemberEntity
 
-    const alreadyAMember = members.some(companyMember => member.userId === companyMember.userId)
+    const alreadyAMember = activeCompanyMembers.some(
+      companyMember => requestMemberDto.userId === companyMember.userId
+    )
     if (alreadyAMember)
       return badRequest(new UserAlreadyAMemberError())
 
-    const updatedCompany = await this.addCompanyMemberUseCase.call(companyId, member)
+    const updatedCompany = await this.addCompanyMemberUseCase.call(activeCompanyId, requestMemberDto)
     if (!updatedCompany)
       return notFound(new EntityNotFoundError('Company'))
 

@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { idParamKeys, idParamSchema } from '@/presentation/schemas'
-import { HandleError, ValidateParams } from '@/presentation/decorators'
+import { HandleError, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { ProjectEntity } from '@/domain/entities'
@@ -17,18 +17,20 @@ export class DeleteProjectController implements Controller<undefined, ProjectEnt
     @Inject() private readonly deleteProjectUseCase: DeleteProjectUseCase
   ) { }
 
-  @ValidateParams<undefined, ProjectEntity>({
-    schema: idParamSchema,
-    keys: idParamKeys
+  @Validate<undefined, ProjectEntity>({
+    params: {
+      schema: idParamSchema,
+      keys: idParamKeys
+    }
   })
   @HandleError
   async handle (request: HttpRequest): HandleResponse<ProjectEntity> {
-    const id = request.params?.id as ProjectEntity['id']
+    const requestPhaseId = request.params?.id as ProjectEntity['id']
 
-    const deleted = await this.deleteProjectUseCase.call(id)
-    if (!deleted)
+    const deletedProject = await this.deleteProjectUseCase.call(requestPhaseId)
+    if (!deletedProject)
       return notFound(new EntityNotFoundError('Project'))
 
-    return ok(deleted)
+    return ok(deletedProject)
   }
 }

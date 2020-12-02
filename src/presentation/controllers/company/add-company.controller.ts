@@ -5,7 +5,7 @@ import { UserFeatures, CompanyRole } from '@/shared/constants'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { companySchema } from '@/presentation/schemas'
-import { HandleError, UsesTransaction, ValidateBody } from '@/presentation/decorators'
+import { HandleError, UsesTransaction, Validate } from '@/presentation/decorators'
 // < Out: only domain layer
 import { CompanyEntity, companyKeys, PlanEntity, UserEntity } from '@/domain/entities'
 import { AddCompanyUseCase, GetPlanByIdUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
@@ -27,30 +27,32 @@ export class AddCompanyController implements Controller<CompanyDto, CompanyEntit
     private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase,
   ) { }
 
-  @ValidateBody<CompanyDto, CompanyEntity>({
-    schema: companySchema,
-    keys: companyKeys
+  @Validate<CompanyDto, CompanyEntity>({
+    body: {
+      schema: companySchema,
+      keys: companyKeys
+    }
   })
   @HandleError
   async handle (request: HttpRequest<CompanyDto>): HandleResponse<CompanyEntity> {
     const loggedUserId = request.loggedUserInfo?.id as UserEntity['id']
-    const companyDto = request.body as CompanyDto
-    const planId = companyDto.planId as PlanEntity['id']
+    const requestCompanyDto = request.body as CompanyDto
+    const requestCompanyDtoPlanId = requestCompanyDto.planId as PlanEntity['id']
 
-    const plan = await this.getPlanByIdUseCase.call(planId)
-    if (!plan)
+    const findedPlan = await this.getPlanByIdUseCase.call(requestCompanyDtoPlanId)
+    if (!findedPlan)
       return notFound(new EntityNotFoundError('Plan'))
 
-    companyDto.members = [{
+    requestCompanyDto.members = [{
       userId: loggedUserId,
       companyRole: CompanyRole.owner,
       features: UserFeatures.None
     }]
 
-    const company = await this.addCompanyUseCase.call(companyDto)
+    const createdCompany = await this.addCompanyUseCase.call(requestCompanyDto)
 
-    await this.updateUserActiveCompanyUseCase.call(loggedUserId, company.id)
+    await this.updateUserActiveCompanyUseCase.call(loggedUserId, createdCompany.id)
 
-    return ok(company)
+    return ok(createdCompany)
   }
 }

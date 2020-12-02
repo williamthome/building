@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { buildingSchema, idParamKeys, idParamSchema } from '@/presentation/schemas'
-import { HandleError, ValidateBody, ValidateParams } from '@/presentation/decorators'
+import { HandleError, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { BuildingEntity, buildingKeys } from '@/domain/entities'
@@ -18,21 +18,23 @@ export class UpdateBuildingController implements Controller<BuildingDto, Buildin
     @Inject() private readonly updateBuildingUseCase: UpdateBuildingUseCase
   ) { }
 
-  @ValidateBody<BuildingDto, BuildingEntity>({
-    schema: buildingSchema,
-    keys: buildingKeys,
-    nullable: true
-  })
-  @ValidateParams<BuildingDto, BuildingEntity>({
-    schema: idParamSchema,
-    keys: idParamKeys
+  @Validate<BuildingDto, BuildingEntity>({
+    body: {
+      schema: buildingSchema,
+      keys: buildingKeys,
+      nullable: true
+    },
+    params: {
+      schema: idParamSchema,
+      keys: idParamKeys
+    }
   })
   @HandleError
   async handle (request: HttpRequest<BuildingDto>): HandleResponse<BuildingEntity> {
-    const buildingId = request.params?.id as BuildingEntity['id']
-    const buildingDto = request.body as BuildingDto
+    const requestBuildingId = request.params?.id as BuildingEntity['id']
+    const requestBuildingDto = request.body as BuildingDto
 
-    const udpatedBuilding = await this.updateBuildingUseCase.call(buildingId, buildingDto)
+    const udpatedBuilding = await this.updateBuildingUseCase.call(requestBuildingId, requestBuildingDto)
     if (!udpatedBuilding)
       return notFound(new EntityNotFoundError('Building'))
 

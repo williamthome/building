@@ -19,12 +19,12 @@ export class DeleteCompanyController implements Controller<undefined, CompanyEnt
 
   @HandleError
   async handle (request: HttpRequest): HandleResponse<CompanyEntity> {
-    const id = request.activeCompanyInfo?.id as CompanyEntity['id']
+    const requestCompanyId = request.activeCompanyInfo?.id as CompanyEntity['id']
 
-    const company = await this.deleteCompanyUseCase.call(id)
-    if (!company)
+    const deletedCompany = await this.deleteCompanyUseCase.call(requestCompanyId)
+    if (!deletedCompany)
       return notFound(new EntityNotFoundError('Company'))
 
-    return ok(company)
+    return ok(deletedCompany)
   }
 }

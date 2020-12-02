@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { phaseSchema, idParamKeys, idParamSchema } from '@/presentation/schemas'
-import { HandleError, ValidateBody, ValidateParams } from '@/presentation/decorators'
+import { HandleError, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { PhaseEntity, phaseKeys } from '@/domain/entities'
@@ -18,21 +18,23 @@ export class UpdatePhaseController implements Controller<PhaseEntityDto, PhaseEn
     @Inject() private readonly updatePhaseUseCase: UpdatePhaseUseCase
   ) { }
 
-  @ValidateBody<PhaseEntityDto, PhaseEntity>({
-    schema: phaseSchema,
-    keys: phaseKeys,
-    nullable: true
-  })
-  @ValidateParams<PhaseEntityDto, PhaseEntity>({
-    schema: idParamSchema,
-    keys: idParamKeys
+  @Validate<PhaseEntityDto, PhaseEntity>({
+    body: {
+      schema: phaseSchema,
+      keys: phaseKeys,
+      nullable: true
+    },
+    params: {
+      schema: idParamSchema,
+      keys: idParamKeys
+    }
   })
   @HandleError
   async handle (request: HttpRequest<PhaseEntityDto>): HandleResponse<PhaseEntity> {
-    const phaseId = request.params?.id as PhaseEntity['id']
-    const phaseDto = request.body as PhaseEntityDto
+    const requestPhaseId = request.params?.id as PhaseEntity['id']
+    const requestPhaseDto = request.body as PhaseEntityDto
 
-    const udpatedPhase = await this.updatePhaseUseCase.call(phaseId, phaseDto)
+    const udpatedPhase = await this.updatePhaseUseCase.call(requestPhaseId, requestPhaseDto)
     if (!udpatedPhase)
       return notFound(new EntityNotFoundError('Phase'))
 

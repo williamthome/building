@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { userSchema } from '@/presentation/schemas'
-import { HandleError, ValidateBody } from '@/presentation/decorators'
+import { HandleError, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { UserEntity, userKeys } from '@/domain/entities'
@@ -19,20 +19,24 @@ export class UpdateUserController implements Controller<UserEntityDto, UserEntit
     @Inject() private readonly updateUserUseCase: UpdateUserUseCase
   ) { }
 
-  @ValidateBody<UserEntityDto, UserEntityResponse>({
-    schema: userSchema,
-    keys: userKeys,
-    nullable: true
+  @Validate<UserEntityDto, UserEntityResponse>({
+    body: {
+      schema: userSchema,
+      keys: userKeys,
+      nullable: true
+    }
   })
   @HandleError
   async handle (request: HttpRequest<UserEntityDto>): HandleResponse<UserEntityResponse> {
-    const userId = request.loggedUserInfo?.id as UserEntity['id']
-    const userDto = request.body as UserEntityDto
+    const loggedUserId = request.loggedUserInfo?.id as UserEntity['id']
+    const requestUserDto = request.body as UserEntityDto
 
-    const user = await this.updateUserUseCase.call(userId, userDto)
-    if (!user)
+    const findedUser = await this.updateUserUseCase.call(loggedUserId, requestUserDto)
+    if (!findedUser)
       return notFound(new EntityNotFoundError('User'))
 
-    return ok(userWithoutPassword(user))
+    const findedUserWithoutPassword = userWithoutPassword(findedUser)
+
+    return ok(findedUserWithoutPassword)
   }
 }

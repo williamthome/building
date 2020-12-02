@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { forbidden, notFound, ok } from '@/presentation/factories/http.factory'
 import { phaseSchema } from '@/presentation/schemas'
-import { HandleError, ValidateBody } from '@/presentation/decorators'
+import { HandleError, Validate } from '@/presentation/decorators'
 // < Out: only domain layer
 import { PhaseEntity, phaseKeys, CompanyEntity, BuildingEntity, PlanEntity } from '@/domain/entities'
 import { AddPhaseUseCase, GetBuildingByIdUseCase, GetCompanyPhaseCountUseCase } from '@/domain/usecases'
@@ -25,29 +25,32 @@ export class AddPhaseController implements Controller<PhaseEntityDto, PhaseEntit
     private readonly getBuildingByIdUseCase: GetBuildingByIdUseCase
   ) { }
 
-  @ValidateBody<PhaseEntityDto, PhaseEntity>({
-    schema: phaseSchema,
-    keys: phaseKeys
+  @Validate<PhaseEntityDto, PhaseEntity>({
+    body: {
+      schema: phaseSchema,
+      keys: phaseKeys
+    }
   })
   @HandleError
   async handle (request: HttpRequest<PhaseEntityDto>): HandleResponse<PhaseEntity> {
-    const planLimits = request.activeCompanyInfo?.limit as PlanEntity['limit']
-    const companyId = request.activeCompanyInfo?.id as CompanyEntity['id']
+    const activeCompanyId = request.activeCompanyInfo?.id as CompanyEntity['id']
+    const activeCompanyPlanLimits = request.activeCompanyInfo?.limit as PlanEntity['limit']
 
-    if (planLimits !== 'unlimited') {
-      const phaseCount = await this.getCompanyPhaseCountUseCase.call(companyId)
-      if (phaseCount === planLimits.phase)
+    if (activeCompanyPlanLimits !== 'unlimited') {
+      const activeCompanyPhaseCount = await this.getCompanyPhaseCountUseCase.call(activeCompanyId)
+      if (activeCompanyPhaseCount === activeCompanyPlanLimits.phase)
         return forbidden(new PlanLimitExceededError('phases'))
     }
 
-    const phaseDto = request.body as PhaseEntityDto
-    const buildingId = phaseDto.buildingId as BuildingEntity['id']
+    const requestPhaseDto = request.body as PhaseEntityDto
+    const requestBuildingId = requestPhaseDto.buildingId as BuildingEntity['id']
 
-    const building = await this.getBuildingByIdUseCase.call(buildingId)
-    if (!building)
+    const findedBuilding = await this.getBuildingByIdUseCase.call(requestBuildingId)
+    if (!findedBuilding)
       return notFound(new EntityNotFoundError('Building'))
 
-    const newPhase = await this.addPhaseUseCase.call(phaseDto, companyId)
-    return ok(newPhase)
+    const createdPhase = await this.addPhaseUseCase.call(requestPhaseDto, activeCompanyId)
+
+    return ok(createdPhase)
   }
 }

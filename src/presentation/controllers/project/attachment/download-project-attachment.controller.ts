@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { HandleError, ValidateParams } from '@/presentation/decorators'
+import { HandleError, Validate } from '@/presentation/decorators'
 import { idParamKeys, idParamSchema, idParamSchemaOptions } from '@/presentation/schemas'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
@@ -18,25 +18,27 @@ export class DownloadProjectAttachmentController implements Controller<undefined
     private readonly downloadProjectAttachmentUseCase: DownloadProjectAttachmentUseCase
   ) { }
 
-  @ValidateParams<undefined, Buffer>({
-    schema: {
-      ...idParamSchema,
-      attachmentId: idParamSchemaOptions
-    },
-    keys: {
-      ...idParamKeys,
-      attachmentId: 'attachmentId'
+  @Validate<undefined, Buffer>({
+    params: {
+      schema: {
+        ...idParamSchema,
+        attachmentId: idParamSchemaOptions
+      },
+      keys: {
+        ...idParamKeys,
+        attachmentId: 'attachmentId'
+      }
     }
   })
   @HandleError
   async handle (request: HttpRequest): HandleResponse<Buffer> {
-    const projectId = request.params?.id as ProjectEntity['id']
-    const attachmentId = request.params?.attachmentId as FileEntity['id']
+    const requestProjectId = request.params?.id as ProjectEntity['id']
+    const requestAttachmentId = request.params?.attachmentId as FileEntity['id']
 
-    const fille = await this.downloadProjectAttachmentUseCase.call(projectId, attachmentId)
-    if (!fille)
+    const downloadedAttachment = await this.downloadProjectAttachmentUseCase.call(requestProjectId, requestAttachmentId)
+    if (!downloadedAttachment)
       return notFound(new EntityNotFoundError('File'))
 
-    return ok(fille)
+    return ok(downloadedAttachment)
   }
 }

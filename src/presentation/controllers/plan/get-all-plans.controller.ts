@@ -17,7 +17,8 @@ export class GetAllPlansController implements Controller<undefined, PlanEntity[]
 
   @HandleError
   async handle (): HandleResponse<PlanEntity[]> {
-    const plans = await this.getAllPlansUseCase.call()
-    return ok(plans)
+    const allPlans = await this.getAllPlansUseCase.call()
+
+    return ok(allPlans)
   }
 }

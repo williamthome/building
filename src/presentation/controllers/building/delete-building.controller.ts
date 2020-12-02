@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { idParamKeys, idParamSchema } from '@/presentation/schemas'
-import { HandleError, UsesTransaction, ValidateParams } from '@/presentation/decorators'
+import { HandleError, UsesTransaction, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { BuildingEntity } from '@/domain/entities'
@@ -18,18 +18,20 @@ export class DeleteBuildingController implements Controller<undefined, BuildingE
     @Inject() private readonly deleteBuildingUseCase: DeleteBuildingUseCase
   ) { }
 
-  @ValidateParams<undefined, BuildingEntity>({
-    schema: idParamSchema,
-    keys: idParamKeys
+  @Validate<undefined, BuildingEntity>({
+    params: {
+      schema: idParamSchema,
+      keys: idParamKeys
+    }
   })
   @HandleError
   async handle (request: HttpRequest): HandleResponse<BuildingEntity> {
-    const buildingId = request.params?.id as BuildingEntity['id']
+    const requestBuildingId = request.params?.id as BuildingEntity['id']
 
-    const udpatedBuilding = await this.deleteBuildingUseCase.call(buildingId)
-    if (!udpatedBuilding)
+    const deletedBuilding = await this.deleteBuildingUseCase.call(requestBuildingId)
+    if (!deletedBuilding)
       return notFound(new EntityNotFoundError('Building'))
 
-    return ok(udpatedBuilding)
+    return ok(deletedBuilding)
   }
 }

@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
-import { HandleError, UsesTransaction, ValidateQuery } from '@/presentation/decorators'
+import { HandleError, UsesTransaction, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError, UserAlreadyVerifiedError } from '@/presentation/errors'
 import { isString, required } from '@/presentation/validations'
 // < Out: only domain layer
@@ -23,34 +23,38 @@ export class VerifyUserController implements Controller<undefined, UserEntityRes
     @Inject() private readonly verifyUserUseCase: VerifyUserUseCase
   ) { }
 
-  @ValidateQuery<undefined, UserEntityResponse>({
-    schema: {
-      token: {
-        validations: [
-          required,
-          isString
-        ]
+  @Validate<undefined, UserEntityResponse>({
+    query: {
+      schema: {
+        token: {
+          validations: [
+            required,
+            isString
+          ]
+        }
+      },
+      keys: {
+        token: 'token'
       }
-    },
-    keys: {
-      token: 'token'
     }
   })
   @HandleError
   async handle (request: HttpRequest): HandleResponse<UserEntityResponse> {
-    const token = request.query?.token as string
+    const requestToken = request.query?.token as string
 
-    const userId = await this.decrypter.decrypt(token)
+    const requestUserId = await this.decrypter.decrypt(requestToken)
 
-    let user = await this.getUserByIdUseCase.call(userId)
-    if (!user)
+    const findedUser = await this.getUserByIdUseCase.call(requestUserId)
+    if (!findedUser)
       return notFound(new EntityNotFoundError('User'))
 
-    if (user.verified)
+    if (findedUser.verified)
       return badRequest(new UserAlreadyVerifiedError())
 
-    user = await this.verifyUserUseCase.call(userId) as UserEntity
+    const findedUserVerified = await this.verifyUserUseCase.call(requestUserId) as UserEntity
 
-    return ok(userWithoutPassword(user))
+    const findedUserWithoutPassword = userWithoutPassword(findedUserVerified)
+
+    return ok(findedUserWithoutPassword)
   }
 }

@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { forbidden, ok } from '@/presentation/factories/http.factory'
 import { buildingSchema } from '@/presentation/schemas'
-import { HandleError, ValidateBody } from '@/presentation/decorators'
+import { HandleError, Validate } from '@/presentation/decorators'
 // < Out: only domain layer
 import { BuildingEntity, buildingKeys, CompanyEntity, PlanEntity } from '@/domain/entities'
 import { AddBuildingUseCase, GetCompanyBuildingCountUseCase } from '@/domain/usecases'
@@ -22,23 +22,27 @@ export class AddBuildingController implements Controller<BuildingDto, BuildingEn
     private readonly addBuildingUseCase: AddBuildingUseCase
   ) { }
 
-  @ValidateBody<BuildingDto, BuildingEntity>({
-    schema: buildingSchema,
-    keys: buildingKeys
+  @Validate<BuildingDto, BuildingEntity>({
+    body: {
+      schema: buildingSchema,
+      keys: buildingKeys
+    }
   })
   @HandleError
   async handle (request: HttpRequest<BuildingDto>): HandleResponse<BuildingEntity> {
-    const planLimits = request.activeCompanyInfo?.limit as PlanEntity['limit']
-    const companyId = request.activeCompanyInfo?.id as CompanyEntity['id']
+    const activeCompanyPlanLimits = request.activeCompanyInfo?.limit as PlanEntity['limit']
+    const activeCompanyId = request.activeCompanyInfo?.id as CompanyEntity['id']
 
-    if (planLimits !== 'unlimited') {
-      const buildingCount = await this.getCompanyBuildingCountUseCase.call(companyId)
-      if (buildingCount === planLimits.building)
+    if (activeCompanyPlanLimits !== 'unlimited') {
+      const activeCompanyBuildingCount = await this.getCompanyBuildingCountUseCase.call(activeCompanyId)
+      if (activeCompanyBuildingCount === activeCompanyPlanLimits.building)
         return forbidden(new PlanLimitExceededError('buildings'))
     }
 
-    const buildingDto = request.body as BuildingDto
-    const newBuilding = await this.addBuildingUseCase.call(buildingDto, companyId)
-    return ok(newBuilding)
+    const requestBuildingDto = request.body as BuildingDto
+
+    const createdBuilding = await this.addBuildingUseCase.call(requestBuildingDto, activeCompanyId)
+
+    return ok(createdBuilding)
   }
 }

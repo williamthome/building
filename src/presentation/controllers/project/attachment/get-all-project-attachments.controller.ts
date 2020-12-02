@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { HandleError, ValidateParams } from '@/presentation/decorators'
+import { HandleError, Validate } from '@/presentation/decorators'
 import { idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
@@ -19,18 +19,20 @@ export class GetAllProjectAttachmentsController implements Controller<undefined,
     private readonly getAllProjectAttachmentsUseCase: GetAllProjectAttachmentsUseCase
   ) { }
 
-  @ValidateParams<undefined, FileResponse[]>({
-    schema: idParamSchema,
-    keys: idParamKeys
+  @Validate<undefined, FileResponse[]>({
+    params: {
+      schema: idParamSchema,
+      keys: idParamKeys
+    }
   })
   @HandleError
   async handle (request: HttpRequest): HandleResponse<FileResponse[]> {
-    const projectId = request.params?.id as ProjectEntity['id']
+    const requestProjectId = request.params?.id as ProjectEntity['id']
 
-    const files = await this.getAllProjectAttachmentsUseCase.call(projectId)
-    if (!files)
+    const allProjectAttachments = await this.getAllProjectAttachmentsUseCase.call(requestProjectId)
+    if (!allProjectAttachments)
       return notFound(new EntityNotFoundError('Project'))
 
-    return ok(files)
+    return ok(allProjectAttachments)
   }
 }

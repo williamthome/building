@@ -1,3 +1,3 @@
-export * from './validate-request.decorator'
+export * from './validate.decorator'
 export * from './handle-error.decorator'
 export * from './uses-transaction.decorator'

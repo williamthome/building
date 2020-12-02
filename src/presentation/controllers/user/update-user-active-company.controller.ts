@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { forbidden, noContent, notFound } from '@/presentation/factories/http.factory'
 import { idParamSchemaOptions } from '@/presentation/schemas'
-import { HandleError, ValidateParams } from '@/presentation/decorators'
+import { HandleError, Validate } from '@/presentation/decorators'
 // < Out: only domain layer
 import { CompanyEntity, UserEntity } from '@/domain/entities'
 import { GetCompanyByIdUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
@@ -18,28 +18,30 @@ export class UpdateUserActiveCompanyController implements Controller<undefined, 
     @Inject() private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase
   ) { }
 
-  @ValidateParams<undefined, null>({
-    schema: {
-      companyId: idParamSchemaOptions
-    },
-    keys: {
-      companyId: 'companyId'
+  @Validate({
+    params: {
+      schema: {
+        companyId: idParamSchemaOptions
+      },
+      keys: {
+        companyId: 'companyId'
+      }
     }
   })
   @HandleError
   async handle (request: HttpRequest): HandleResponse {
-    const companyId = request.params?.companyId as CompanyEntity['id']
-    const userId = request.loggedUserInfo?.id as UserEntity['id']
+    const loggedUserId = request.loggedUserInfo?.id as UserEntity['id']
+    const requestCompanyId = request.params?.companyId as CompanyEntity['id']
 
-    const company = await this.getCompanyByIdUseCase.call(companyId)
-    if (!company)
+    const findedCompany = await this.getCompanyByIdUseCase.call(requestCompanyId)
+    if (!findedCompany)
       return notFound(new EntityNotFoundError('Company'))
 
-    const member = company.members.find(companyMember => userId === companyMember.userId)
-    if (!member)
+    const loggedUserAsMemberOfFindedCompany = findedCompany.members.find(companyMember => loggedUserId === companyMember.userId)
+    if (!loggedUserAsMemberOfFindedCompany)
       return forbidden(new AccessDeniedError())
 
-    await this.updateUserActiveCompanyUseCase.call(userId, companyId)
+    await this.updateUserActiveCompanyUseCase.call(loggedUserId, requestCompanyId)
 
     return noContent()
   }

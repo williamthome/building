@@ -21,12 +21,14 @@ export class DeleteUserController implements Controller<undefined, UserEntityRes
 
   @HandleError
   async handle (request: HttpRequest): HandleResponse<UserEntityResponse> {
-    const id = request.loggedUserInfo?.id as UserEntity['id']
+    const loggedUserId = request.loggedUserInfo?.id as UserEntity['id']
 
-    const user = await this.deleteUserUseCase.call(id)
-    if (!user)
+    const deletedUser = await this.deleteUserUseCase.call(loggedUserId)
+    if (!deletedUser)
       return notFound(new EntityNotFoundError('User'))
 
-    return ok(userWithoutPassword(user))
+    const deletedUserWithoutPassword = userWithoutPassword(deletedUser)
+
+    return ok(deletedUserWithoutPassword)
   }
 }

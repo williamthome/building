@@ -5,7 +5,7 @@ import { CompanyRole } from '@/shared/constants'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, forbidden, notFound, ok } from '@/presentation/factories/http.factory'
 import { idParamKeys, idParamSchema, memberSchema } from '@/presentation/schemas'
-import { HandleError, ValidateBody, ValidateParams } from '@/presentation/decorators'
+import { HandleError, Validate } from '@/presentation/decorators'
 import {
   AccessDeniedError,
   CanNotAddMoreOwnesrError,
@@ -26,40 +26,45 @@ export class UpdateCompanyMemberController implements Controller<MemberEntityDto
     @Inject() private readonly updateCompanyMemberUseCase: UpdateCompanyMemberUseCase
   ) { }
 
-  @ValidateBody<MemberEntityDto, CompanyEntity>({
-    schema: memberSchema,
-    keys: memberKeys,
-    nullable: true
-  })
-  @ValidateParams<MemberEntityDto, CompanyEntity>({
-    schema: idParamSchema,
-    keys: idParamKeys
+  @Validate<MemberEntityDto, CompanyEntity>({
+    body: {
+      schema: memberSchema,
+      keys: memberKeys,
+      nullable: true
+    },
+    params: {
+      schema: idParamSchema,
+      keys: idParamKeys
+    }
   })
   @HandleError
   async handle (request: HttpRequest<MemberEntityDto>): HandleResponse<CompanyEntity> {
     const loggedUserCompanyRole = request.loggedUserInfo?.companyRole
-    const companyId = request.activeCompanyInfo?.id as CompanyEntity['id']
-    const members = request.activeCompanyInfo?.members as MemberEntity[]
-    const userId = request.params?.id as MemberEntity['userId']
-    const memberDto = request.body as MemberEntityDto
+    const activeCompanyId = request.activeCompanyInfo?.id as CompanyEntity['id']
+    const activeCompanyMembers = request.activeCompanyInfo?.members as MemberEntity[]
+    const requestUserId = request.params?.id as MemberEntity['userId']
+    const requestMemberDto = request.body as MemberEntityDto
 
-    const member = members.find(companyMember => userId === companyMember.userId)
-    if (!member)
+    const requestUserAsMember = activeCompanyMembers.find(companyMember => requestUserId === companyMember.userId)
+    if (!requestUserAsMember)
       return badRequest(new UserIsNotAMemberError())
 
-    if (member.companyRole === CompanyRole.owner)
+    if (requestUserAsMember.companyRole === CompanyRole.owner)
       return forbidden(new CanNotModifyOwnerError())
 
-    if (memberDto.companyRole === CompanyRole.owner)
+    if (requestMemberDto.companyRole === CompanyRole.owner)
       return forbidden(new CanNotAddMoreOwnesrError())
 
-    if (memberDto.companyRole === CompanyRole.master && loggedUserCompanyRole !== CompanyRole.master)
+    if (requestMemberDto.companyRole === CompanyRole.master &&
+      loggedUserCompanyRole !== CompanyRole.master)
       return forbidden(new AccessDeniedError())
 
-    const updatedCompany = await this.updateCompanyMemberUseCase.call(companyId, userId, memberDto)
-    if (!updatedCompany)
+    const activeCompanyWithUpdatedMember = await this.updateCompanyMemberUseCase.call(
+      activeCompanyId, requestUserId, requestMemberDto
+    )
+    if (!activeCompanyWithUpdatedMember)
       return notFound(new EntityNotFoundError('Company'))
 
-    return ok(updatedCompany)
+    return ok(activeCompanyWithUpdatedMember)
   }
 }

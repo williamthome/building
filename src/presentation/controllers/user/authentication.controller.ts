@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 import { AuthEntityDto, UserEntityResponse } from '@/domain/protocols'
 import { GetUserByEmailUseCase, UpdateUserAccessTokenUseCase } from '@/domain/usecases/user'
-import { HandleError, ValidateBody } from '@/presentation/decorators'
+import { HandleError, Validate } from '@/presentation/decorators'
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { authSchema } from '@/presentation/schemas'
@@ -19,35 +19,38 @@ export class AuthenticationController implements Controller<AuthEntityDto, UserE
     @Inject() private readonly updateUserAccessTokenUseCase: UpdateUserAccessTokenUseCase
   ) { }
 
-  @ValidateBody<AuthEntityDto, UserEntityResponse>({
-    schema: authSchema,
-    keys: {
-      email: 'email',
-      password: 'password'
+  @Validate<AuthEntityDto, UserEntityResponse>({
+    body: {
+      schema: authSchema,
+      keys: {
+        email: 'email',
+        password: 'password'
+      }
     }
   })
   @HandleError
   async handle (request: HttpRequest<AuthEntityDto>): HandleResponse<UserEntityResponse> {
-    const authDto = request.body as AuthEntityDto
-    const user = await this.getUserByEmailUseCase.call(authDto.email)
+    const requestAuthDto = request.body as AuthEntityDto
 
-    if (!user)
+    const findedUser = await this.getUserByEmailUseCase.call(requestAuthDto.email)
+    if (!findedUser)
       return notFound(new EntityNotFoundError('User'))
 
     const passwordMatch = await this.hashComparer.match(
-      authDto.password,
-      user.password
+      requestAuthDto.password,
+      findedUser.password
     )
-
     if (!passwordMatch)
       return badRequest(new PasswordDoNotMatchError())
 
-    const accessToken = await this.encrypter.encrypt(user.id)
+    const accessToken = await this.encrypter.encrypt(findedUser.id)
 
-    await this.updateUserAccessTokenUseCase.call(user.id, accessToken)
+    await this.updateUserAccessTokenUseCase.call(findedUser.id, accessToken)
 
-    user.accessToken = accessToken
+    findedUser.accessToken = accessToken
 
-    return ok(userWithoutPassword(user))
+    const authenticatedUserWithoutPassword = userWithoutPassword(findedUser)
+
+    return ok(authenticatedUserWithoutPassword)
   }
 }
