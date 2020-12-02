@@ -10,6 +10,7 @@ import { EntityNotFoundError } from '@/presentation/errors'
 import { ProjectEntity, projectKeys } from '@/domain/entities'
 import { UpdateProjectUseCase } from '@/domain/usecases'
 import { ProjectEntityDto } from '@/domain/protocols'
+import { BannedFields } from '@/presentation/decorators/banned-fields.decorator'
 
 @Injectable()
 export class UpdateProjectController implements Controller<ProjectEntityDto, ProjectEntity> {
@@ -18,6 +19,9 @@ export class UpdateProjectController implements Controller<ProjectEntityDto, Pro
     @Inject() private readonly updateProjectUseCase: UpdateProjectUseCase
   ) { }
 
+  @BannedFields<ProjectEntityDto, ProjectEntity>([
+    'buildingId'
+  ])
   @ValidateBody<ProjectEntityDto, ProjectEntity>({
     schema: projectSchema,
     keys: projectKeys,
