@@ -14,7 +14,7 @@ export class UpdatePhaseContract implements UpdatePhaseUseCase {
     @Inject() private readonly updatePhaseRepository: UpdatePhaseRepository
   ) {}
 
-  call = async (projectId: PhaseEntity['id'], projectDto: PhaseEntityDto): Promise<PhaseEntity | null> => {
-    return await this.updatePhaseRepository.updatePhase(projectId, projectDto)
+  call = async (id: PhaseEntity['id'], dto: PhaseEntityDto): Promise<PhaseEntity | null> => {
+    return await this.updatePhaseRepository.updatePhase(id, dto)
   }
 }

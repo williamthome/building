@@ -3,7 +3,7 @@ import { PhaseModel } from '@/data/models'
 
 export interface UpdatePhaseRepository {
   updatePhase: (
-    projectId: PhaseModel['id'],
-    projectDto: PhaseModelDto
+    id: PhaseModel['id'],
+    dto: PhaseModelDto
   ) => Promise<PhaseModel | null>
 }

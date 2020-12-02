@@ -15,11 +15,11 @@ export class AddPhaseContract implements AddPhaseUseCase {
   ) { }
 
   call = async (
-    projectDto: PhaseEntityDto,
+    dto: PhaseEntityDto,
     companyId: CompanyEntity['id']
   ): Promise<PhaseEntity> => {
     return await this.addPhaseRepository.addPhase({
-      ...projectDto,
+      ...dto,
       companyId
     })
   }
