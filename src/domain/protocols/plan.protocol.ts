@@ -3,6 +3,7 @@ export type PlanLimit =
   | {
     member: number
     building: number
+    phase: number
     project: number
     storage: number
   }
