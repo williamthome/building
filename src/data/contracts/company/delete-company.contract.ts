@@ -6,7 +6,8 @@ import {
   DeleteCompanyProjectsRepository,
   DeleteCompanyBuildingsRepository,
   GetUserByIdRepository,
-  UpdateUserActiveCompanyRepository
+  UpdateUserActiveCompanyRepository,
+  DeleteCompanyPhasesRepository
 } from '@/data/repositories'
 // < Only Domain
 import { CompanyEntity } from '@/domain/entities'
@@ -23,6 +24,9 @@ export class DeleteCompanyContract implements DeleteCompanyUseCase {
     private readonly deleteCompanyProjectsRepository: DeleteCompanyProjectsRepository,
 
     @Inject()
+    private readonly deleteCompanyPhasesRepository: DeleteCompanyPhasesRepository,
+
+    @Inject()
     private readonly deleteCompanyBuildingsRepository: DeleteCompanyBuildingsRepository,
 
     @Inject()
@@ -37,6 +41,7 @@ export class DeleteCompanyContract implements DeleteCompanyUseCase {
     if (!company) return null
 
     await this.deleteCompanyProjectsRepository.deleteCompanyProjects(companyId)
+    await this.deleteCompanyPhasesRepository.deleteCompanyPhases(companyId)
     await this.deleteCompanyBuildingsRepository.deleteCompanyBuildings(companyId)
 
     for (const { userId } of company.members) {
