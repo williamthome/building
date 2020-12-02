@@ -1,16 +1,21 @@
 export type Flatten<T> = NonObjectPropertiesOf<T> & SubPropertiesOf<T>
 
 export type NonObjectKeysOf<T> = {
-  [K in keyof T]: T[K] extends Array<any> ?
-  K :
-  T[K] extends Record<string, any> ? never : K
+  [K in keyof T]: T[K] extends Array<any>
+  ? K
+  : T[K] extends Record<PropertyKey, any> ? K : K
 }[keyof T]
+// export type NonObjectKeysOf<T> = {
+//   [K in keyof T]: T[K] extends Array<any> ?
+//   K :
+//   T[K] extends Record<PropertyKey, any> ? never : K
+// }[keyof T]
 
 export type NonObjectPropertiesOf<T> = Pick<T, NonObjectKeysOf<T>>
 
 export type ValuesOf<T> = T[keyof T]
 export type ObjectValuesOf<T> = Exclude<
-  Extract<ValuesOf<T>, Record<string, any>>,
+  Extract<ValuesOf<T>, Record<PropertyKey, any>>,
   Array<any>
 >
 
