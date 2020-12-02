@@ -1,3 +1,4 @@
+import { ProjectStatus } from '@/shared/constants'
 import { DeepFlattenPaths } from '@/shared/types'
 import { Entity } from '../protocols'
 import { BuildingEntity } from './building.entity'
@@ -9,6 +10,7 @@ export interface ProjectEntity extends Entity {
   buildingId: BuildingEntity['id']
   phaseId: PhaseEntity['id']
   title: string
+  status: ProjectStatus
 }
 
 export const projectKeys: DeepFlattenPaths<ProjectEntity> = {
@@ -16,5 +18,6 @@ export const projectKeys: DeepFlattenPaths<ProjectEntity> = {
   companyId: 'companyId',
   buildingId: 'buildingId',
   phaseId: 'phaseId',
-  title: 'title'
+  title: 'title',
+  status: 'status'
 }

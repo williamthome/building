@@ -1,8 +1,9 @@
+import { ProjectStatus } from '@/shared/constants'
 import { Model } from '../protocols'
-import { ProjectEntity } from '@/domain/entities'
 import { CompanyModel } from './company.model'
 import { BuildingModel } from './building.model'
 import { PhaseModel } from './phase.model'
+import { ProjectEntity } from '@/domain/entities'
 
 export class ProjectModel extends Model implements ProjectEntity {
   constructor (
@@ -10,7 +11,8 @@ export class ProjectModel extends Model implements ProjectEntity {
     public readonly companyId: CompanyModel['id'],
     public readonly buildingId: BuildingModel['id'],
     public readonly phaseId: PhaseModel['id'],
-    public readonly title: string
+    public readonly title: string,
+    public readonly status: ProjectStatus
   ) {
     super(id)
   }
