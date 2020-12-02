@@ -5,6 +5,7 @@ import { idParamSchemaOptions } from './params'
 
 export const projectSchema: EntitySchema<Omit<ProjectEntity, 'companyId'>> = {
   buildingId: idParamSchemaOptions,
+  phaseId: idParamSchemaOptions,
   title: {
     validations: [
       required,

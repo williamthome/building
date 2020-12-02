@@ -25,10 +25,10 @@ export class DeleteProjectController implements Controller<undefined, ProjectEnt
   async handle (request: HttpRequest): HandleResponse<ProjectEntity> {
     const id = request.params?.id as ProjectEntity['id']
 
-    const udpatedProject = await this.deleteProjectUseCase.call(id)
-    if (!udpatedProject)
+    const deleted = await this.deleteProjectUseCase.call(id)
+    if (!deleted)
       return notFound(new EntityNotFoundError('Project'))
 
-    return ok(udpatedProject)
+    return ok(deleted)
   }
 }

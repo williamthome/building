@@ -6,8 +6,8 @@ import { forbidden, notFound, ok } from '@/presentation/factories/http.factory'
 import { projectSchema } from '@/presentation/schemas'
 import { HandleError, ValidateBody } from '@/presentation/decorators'
 // < Out: only domain layer
-import { ProjectEntity, projectKeys, CompanyEntity, BuildingEntity, PlanEntity } from '@/domain/entities'
-import { AddProjectUseCase, GetBuildingByIdUseCase, GetCompanyProjectCountUseCase } from '@/domain/usecases'
+import { ProjectEntity, projectKeys, CompanyEntity, BuildingEntity, PlanEntity, PhaseEntity } from '@/domain/entities'
+import { AddProjectUseCase, GetBuildingByIdUseCase, GetCompanyProjectCountUseCase, GetPhaseByIdUseCase } from '@/domain/usecases'
 import { ProjectEntityDto } from '@/domain/protocols'
 import { EntityNotFoundError, PlanLimitExceededError } from '@/presentation/errors'
 
@@ -22,7 +22,10 @@ export class AddProjectController implements Controller<ProjectEntityDto, Projec
     private readonly addProjectUseCase: AddProjectUseCase,
 
     @Inject()
-    private readonly getBuildingByIdUseCase: GetBuildingByIdUseCase
+    private readonly getBuildingByIdUseCase: GetBuildingByIdUseCase,
+
+    @Inject()
+    private readonly getPhaseByIdUseCase: GetPhaseByIdUseCase
   ) { }
 
   @ValidateBody<ProjectEntityDto, ProjectEntity>({
@@ -41,13 +44,19 @@ export class AddProjectController implements Controller<ProjectEntityDto, Projec
     }
 
     const projectDto = request.body as ProjectEntityDto
-    const buildingId = projectDto.buildingId as BuildingEntity['id']
 
+    const buildingId = projectDto.buildingId as BuildingEntity['id']
     const building = await this.getBuildingByIdUseCase.call(buildingId)
     if (!building)
       return notFound(new EntityNotFoundError('Building'))
 
-    const newProject = await this.addProjectUseCase.call(projectDto, companyId)
-    return ok(newProject)
+    const phaseId = projectDto.phaseId as PhaseEntity['id']
+    const phase = await this.getPhaseByIdUseCase.call(phaseId)
+    if (!phase)
+      return notFound(new EntityNotFoundError('Phase'))
+
+    const created = await this.addProjectUseCase.call(projectDto, companyId)
+
+    return ok(created)
   }
 }

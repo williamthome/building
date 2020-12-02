@@ -32,10 +32,10 @@ export class UpdateProjectController implements Controller<ProjectEntityDto, Pro
     const projectId = request.params?.id as ProjectEntity['id']
     const projectDto = request.body as ProjectEntityDto
 
-    const udpatedProject = await this.updateProjectUseCase.call(projectId, projectDto)
-    if (!udpatedProject)
+    const updated = await this.updateProjectUseCase.call(projectId, projectDto)
+    if (!updated)
       return notFound(new EntityNotFoundError('Project'))
 
-    return ok(udpatedProject)
+    return ok(updated)
   }
 }
