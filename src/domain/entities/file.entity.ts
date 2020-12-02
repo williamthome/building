@@ -1,7 +1,7 @@
 import { CollectionName } from '@/shared/types'
-import { Entity } from '../protocols'
+import { Entity, LimitedEntity } from '../protocols'
 
-export interface FileEntity extends Entity {
+export interface FileEntity extends LimitedEntity {
   reference: CollectionName
   referenceId: Entity['id']
   name: string

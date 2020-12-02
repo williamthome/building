@@ -1,7 +1,7 @@
-import { CompanyModel } from './company.model'
 import { Model } from '../protocols'
 import { UserEntity } from '@/domain/entities'
-import { AddressEntity } from '@/domain/entities/nested'
+import { CompanyModel } from './company.model'
+import { AddressModel } from './nested'
 
 export class UserModel extends Model implements UserEntity {
   constructor (
@@ -11,7 +11,7 @@ export class UserModel extends Model implements UserEntity {
     public readonly verified: boolean,
     public readonly name: string,
     public readonly accessToken?: string,
-    public readonly address?: AddressEntity,
+    public readonly address?: AddressModel,
     public readonly activeCompanyId?: CompanyModel['id']
   ) {
     super(id)

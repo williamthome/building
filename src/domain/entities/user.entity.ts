@@ -1,5 +1,4 @@
-import { DeepFlattenPaths } from '@/shared/types/flatten'
-import { Entity } from '../protocols/entity.protocol'
+import { Entity, EntityKeys } from '../protocols/entity.protocol'
 import { CompanyEntity } from './company.entity'
 import { AddressEntity, addressKeys } from './nested'
 
@@ -13,7 +12,7 @@ export interface UserEntity extends Entity {
   activeCompanyId?: CompanyEntity['id']
 }
 
-export const userKeys: DeepFlattenPaths<UserEntity> = {
+export const userKeys: EntityKeys<UserEntity> = {
   id: 'id',
   email: 'email',
   password: 'password',

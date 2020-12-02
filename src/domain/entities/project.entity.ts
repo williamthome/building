@@ -1,19 +1,16 @@
-import { ProjectStatus } from '@/shared/constants'
-import { DeepFlattenPaths } from '@/shared/types'
-import { Entity } from '../protocols'
+import { LimitedEntity, LimitedEntityKeys } from '../protocols'
 import { BuildingEntity } from './building.entity'
-import { CompanyEntity } from './company.entity'
 import { PhaseEntity } from './phase.entity'
+import { ProjectStatus } from '@/shared/constants'
 
-export interface ProjectEntity extends Entity {
-  companyId: CompanyEntity['id']
+export interface ProjectEntity extends LimitedEntity {
   buildingId: BuildingEntity['id']
   phaseId: PhaseEntity['id']
   title: string
   status: ProjectStatus
 }
 
-export const projectKeys: DeepFlattenPaths<ProjectEntity> = {
+export const projectKeys: LimitedEntityKeys<ProjectEntity> = {
   id: 'id',
   companyId: 'companyId',
   buildingId: 'buildingId',

@@ -1,5 +1,4 @@
-import { DeepFlattenPaths } from '@/shared/types'
-import { Entity } from '../protocols'
+import { Entity, EntityKeys } from '../protocols'
 import { MemberEntity } from './nested'
 import { PlanEntity } from './plan.entity'
 
@@ -9,7 +8,7 @@ export interface CompanyEntity extends Entity {
   members: MemberEntity[]
 }
 
-export const companyKeys: DeepFlattenPaths<CompanyEntity> = {
+export const companyKeys: EntityKeys<CompanyEntity> = {
   id: 'id',
   planId: 'planId',
   name: 'name',

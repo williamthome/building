@@ -1,11 +1,11 @@
 import { ProjectStatus } from '@/shared/constants'
-import { Model } from '../protocols'
+import { LimitedModel, Model } from '../protocols'
 import { CompanyModel } from './company.model'
 import { BuildingModel } from './building.model'
 import { PhaseModel } from './phase.model'
 import { ProjectEntity } from '@/domain/entities'
 
-export class ProjectModel extends Model implements ProjectEntity {
+export class ProjectModel extends LimitedModel implements ProjectEntity {
   constructor (
     public readonly id: Model['id'],
     public readonly companyId: CompanyModel['id'],
@@ -14,6 +14,6 @@ export class ProjectModel extends Model implements ProjectEntity {
     public readonly title: string,
     public readonly status: ProjectStatus
   ) {
-    super(id)
+    super(id, companyId)
   }
 }

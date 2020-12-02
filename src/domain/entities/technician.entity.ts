@@ -1,14 +1,11 @@
-import { DeepFlattenPaths } from '@/shared/types'
-import { CompanyEntity } from '.'
-import { Entity } from '../protocols'
+import { LimitedEntity, LimitedEntityKeys } from '../protocols'
 
-export interface TechnicianEntity extends Entity {
-  companyId: CompanyEntity['id']
+export interface TechnicianEntity extends LimitedEntity {
   name: string
   technicalRegisters: string[]
 }
 
-export const technicianKeys: DeepFlattenPaths<TechnicianEntity> = {
+export const technicianKeys: LimitedEntityKeys<TechnicianEntity> = {
   id: 'id',
   companyId: 'companyId',
   name: 'name',
