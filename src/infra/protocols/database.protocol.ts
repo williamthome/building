@@ -50,7 +50,7 @@ export interface Database {
     options?: TOptions
   ) => Promise<TModel[]>
 
-  getDocumentCountBy: <T extends Model, K extends keyof Omit<T, 'id'>, TOptions = unknown> (
+  getDocumentCountBy: <T extends Omit<Model, 'id'>, K extends keyof T, TOptions = unknown> (
     field: K,
     match: T[K],
     collectionName: CollectionName,

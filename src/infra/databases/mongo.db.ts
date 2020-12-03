@@ -209,7 +209,7 @@ export class MongoDB implements Database {
     return models.map(model => this.map<T>(model))
   }
 
-  getDocumentCountBy = async <T extends Model, K extends keyof Omit<T, 'id'>> (
+  getDocumentCountBy = async <T extends Omit<Model, 'id'>, K extends keyof T> (
     field: K,
     match: T[K],
     collectionName: CollectionName,
