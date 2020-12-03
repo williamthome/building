@@ -39,7 +39,7 @@ export interface ValidateOptions
   body?: ValidateSchemaOptions<TBody>
   params?: ValidateSchemaOptions<TParams>
   query?: ValidateSchemaOptions<TQuery>,
-  limited?: LimitedEntityOptions
+  limited?: LimitedEntityOptions | 'storage'
 }
 
 export abstract class BaseValidation<T extends Validation> implements Validation {

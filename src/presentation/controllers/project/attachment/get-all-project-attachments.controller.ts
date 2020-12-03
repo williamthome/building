@@ -9,10 +9,10 @@ import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { GetAllProjectAttachmentsUseCase } from '@/domain/usecases'
 import { ProjectEntity } from '@/domain/entities'
-import { FileResponse } from '@/domain/protocols'
+import { FileEntityResponse } from '@/domain/protocols'
 
 @Injectable()
-export class GetAllProjectAttachmentsController implements Controller<undefined, FileResponse[]> {
+export class GetAllProjectAttachmentsController implements Controller<undefined, FileEntityResponse[]> {
 
   constructor (
     @Inject()
@@ -20,13 +20,13 @@ export class GetAllProjectAttachmentsController implements Controller<undefined,
   ) { }
 
   @HandleError
-  @Validate<undefined, FileResponse[]>({
+  @Validate<undefined, FileEntityResponse[]>({
     params: {
       schema: idParamSchema,
       keys: idParamKeys
     }
   })
-  async handle (request: HttpRequest): HandleResponse<FileResponse[]> {
+  async handle (request: HttpRequest): HandleResponse<FileEntityResponse[]> {
     const requestProjectId = request.params?.id as ProjectEntity['id']
 
     const allProjectAttachments = await this.getAllProjectAttachmentsUseCase.call(requestProjectId)

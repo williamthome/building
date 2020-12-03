@@ -1,6 +1,6 @@
 import { FileEntity } from '../entities'
 
-export type FileResponse =
+export type FileEntityResponse =
   | Pick<FileEntity,
     | 'id'
     | 'name'

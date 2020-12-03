@@ -8,16 +8,15 @@ import { idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { EntityNotFoundError } from '@/presentation/errors'
 import { uploadResult } from '@/presentation/helpers/file.helper'
 // < Out: only domain layer
-import { GetAllProjectAttachmentsUseCase, UploadProjectAttachmentUseCase } from '@/domain/usecases'
+import {  GetProjectByIdUseCase, UploadProjectAttachmentUseCase } from '@/domain/usecases'
 import { ProjectEntity } from '@/domain/entities'
-import { validateStoragePlanLimit } from '@/presentation/helpers/validation.helper'
 
 @Injectable()
 export class UploadProjectAttachmentController implements Controller<undefined, UploadFileResponse> {
 
   constructor (
     @Inject()
-    private readonly getAllProjectAttachmentsUseCase: GetAllProjectAttachmentsUseCase,
+    private readonly getProjectByIdUseCase: GetProjectByIdUseCase,
 
     @Inject()
     private readonly uploadProjectAttachmentUseCase: UploadProjectAttachmentUseCase
@@ -25,6 +24,7 @@ export class UploadProjectAttachmentController implements Controller<undefined, 
 
   @HandleError
   @Validate<undefined, UploadFileResponse>({
+    limited: 'storage',
     params: {
       schema: idParamSchema,
       keys: idParamKeys
@@ -34,13 +34,9 @@ export class UploadProjectAttachmentController implements Controller<undefined, 
     const requestProjectId = request.params?.id as ProjectEntity['id']
     const requestAttachments = request.files as RequestFile[]
 
-    const allProjectAttachments = await this.getAllProjectAttachmentsUseCase.call(requestProjectId)
-    if (!allProjectAttachments)
+    const findedProject = await this.getProjectByIdUseCase.call(requestProjectId)
+    if (!findedProject)
       return notFound(new EntityNotFoundError('Project'))
-
-    const storageValidationError = await validateStoragePlanLimit(request, allProjectAttachments)
-    if (storageValidationError)
-      return storageValidationError
 
     const uploadedResult = await uploadResult(
       requestAttachments,

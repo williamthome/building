@@ -5,7 +5,7 @@ import { GetAllProjectAttachmentsRepository } from '@/data/repositories'
 // < Only Domain
 import { GetAllProjectAttachmentsUseCase } from '@/domain/usecases'
 import { ProjectEntity } from '@/domain/entities'
-import { FileResponse } from '@/domain/protocols'
+import { FileEntityResponse } from '@/domain/protocols'
 
 @Injectable('getAllProjectAttachmentsUseCase')
 export class GetAllProjectAttachmentsContract implements GetAllProjectAttachmentsUseCase {
@@ -17,7 +17,7 @@ export class GetAllProjectAttachmentsContract implements GetAllProjectAttachment
 
   call = async (
     projectId: ProjectEntity['id']
-  ): Promise<FileResponse[] | null> => {
+  ): Promise<FileEntityResponse[] | null> => {
     const attachments = await this.getAllProjectAttachmentsRepository.getAllProjectAttachments(projectId)
     if (!attachments)
       return null

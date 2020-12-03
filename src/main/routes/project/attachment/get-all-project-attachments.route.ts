@@ -7,7 +7,7 @@ import {
 import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectRouteController } from '@/main/decorators'
 import { GetAllProjectAttachmentsController } from '@/presentation/controllers'
-import { FileResponse } from '@/domain/protocols'
+import { FileEntityResponse } from '@/domain/protocols'
 
 export const getProjectAttachmentsPath = new RoutePath(
   'GET',
@@ -15,7 +15,7 @@ export const getProjectAttachmentsPath = new RoutePath(
 )
 
 @InjectableArray('routes')
-export class GetProjectAttachmentsRoute implements Route<undefined, FileResponse[]> {
+export class GetProjectAttachmentsRoute implements Route<undefined, FileEntityResponse[]> {
   constructor (
     @InjectRouteController(GetAllProjectAttachmentsController)
     public readonly controller: GetAllProjectAttachmentsController,

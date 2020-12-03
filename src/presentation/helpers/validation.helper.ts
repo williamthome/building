@@ -22,9 +22,9 @@ import { BannedFieldError, MissingBodyError, PlanLimitExceededError } from '../e
 import { bytesToMB } from './file.helper'
 // < Out: only domain layer
 import { CompanyEntity, PlanEntity } from '@/domain/entities'
-import { GetEntityCountForPlanLimitUseCase } from '@/domain/usecases'
+import { GetEntityCountForPlanLimitUseCase, GetFilesByReferenceIdUseCase } from '@/domain/usecases'
 import { MemberEntity } from '@/domain/entities/nested'
-import { FileResponse } from '@/domain/protocols'
+import { Entity } from '@/domain/protocols'
 
 export const schemaError = <TObj extends Record<PropertyKey, any>, TSchema extends Record<PropertyKey, any> = TObj> (
   obj: TObj,
@@ -146,7 +146,7 @@ export const validateBody = <TRequest> (
   if (error) return error
 }
 
-export const validatePlanLimit = async <TRequest> (
+export const validateEntityPlanLimit = async <TRequest> (
   httpRequest: HttpRequest<TRequest>,
   { reference, collectionName }: LimitedEntityOptions,
   payload?: number
@@ -181,24 +181,29 @@ const companyEntityCount = async <TRequest> (
 }
 
 export const validateStoragePlanLimit = async <TRequest> (
-  httpRequest: HttpRequest<TRequest>,
-  payload: FileResponse[] | number,
+  httpRequest: HttpRequest<TRequest>
 ): Promise<void | HttpResponse<Error>> => {
+  const requestParamId = httpRequest.params?.id as Entity['id']
   const requestFiles = httpRequest.files as RequestFile[]
+
+  const getFilesByReferenceIdUseCase =
+    container.resolve<GetFilesByReferenceIdUseCase>(
+      'getFilesByReferenceIdUseCase'
+    )
+  const files = await getFilesByReferenceIdUseCase.call(requestParamId)
+  if (files.length === 0) return
 
   const totalRequestFilesSizeInBytes = requestFiles.reduce(
     (total, { buffer }) => total + buffer.byteLength, 0
   )
   const totalRequestFilesSizeInMegabytes = bytesToMB(totalRequestFilesSizeInBytes)
-  const totalProjectFilesSizeInBytes = typeof payload === 'number'
-    ? payload
-    : payload.reduce(
-      (total, { sizeInBytes }) => total + sizeInBytes, 0
-    )
+  const totalProjectFilesSizeInBytes = files.reduce(
+    (total, { sizeInBytes }) => total + sizeInBytes, 0
+  )
   const totalProjectFilesSizeInMegabytes = bytesToMB(totalProjectFilesSizeInBytes)
   const totalFilesSizeInMegabytes = totalRequestFilesSizeInMegabytes + totalProjectFilesSizeInMegabytes
 
-  const storageValidationError = await validatePlanLimit(
+  const storageValidationError = await validateEntityPlanLimit(
     httpRequest,
     {
       reference: 'storageMb',

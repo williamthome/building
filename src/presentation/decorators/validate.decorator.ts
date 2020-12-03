@@ -8,8 +8,9 @@ import {
 import {
   validateBody,
   validateParams,
-  validatePlanLimit,
-  validateQuery
+  validateEntityPlanLimit,
+  validateQuery,
+  validateStoragePlanLimit
 } from '../helpers/validation.helper'
 // < Out: only domain layer
 
@@ -35,7 +36,9 @@ export const Validate =
         const { body, params, query } = httpRequest
 
         if (limited) {
-          const limitedError = await validatePlanLimit(httpRequest, limited)
+          const limitedError = limited === 'storage'
+            ? await validateStoragePlanLimit(httpRequest)
+            : await validateEntityPlanLimit(httpRequest, limited)
           if (limitedError) return limitedError
         }
 
