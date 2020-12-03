@@ -19,13 +19,13 @@ export class GetAllProjectAttachmentsController implements Controller<undefined,
     private readonly getAllProjectAttachmentsUseCase: GetAllProjectAttachmentsUseCase
   ) { }
 
+  @HandleError
   @Validate<undefined, FileResponse[]>({
     params: {
       schema: idParamSchema,
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest): HandleResponse<FileResponse[]> {
     const requestProjectId = request.params?.id as ProjectEntity['id']
 

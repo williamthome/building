@@ -17,13 +17,13 @@ export class DeleteCustomerController implements Controller<undefined, CustomerE
     @Inject() private readonly deleteCustomerUseCase: DeleteCustomerUseCase
   ) { }
 
+  @HandleError
   @Validate<undefined, CustomerEntity>({
     params: {
       schema: idParamSchema,
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest): HandleResponse<CustomerEntity> {
     const requestCustomerId = request.params?.id as CustomerEntity['id']
 

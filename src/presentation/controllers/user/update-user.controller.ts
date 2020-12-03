@@ -19,6 +19,7 @@ export class UpdateUserController implements Controller<UserEntityDto, UserEntit
     @Inject() private readonly updateUserUseCase: UpdateUserUseCase
   ) { }
 
+  @HandleError
   @Validate<UserEntityDto, UserEntityResponse>({
     body: {
       schema: userSchema,
@@ -26,7 +27,6 @@ export class UpdateUserController implements Controller<UserEntityDto, UserEntit
       nullable: true
     }
   })
-  @HandleError
   async handle (request: HttpRequest<UserEntityDto>): HandleResponse<UserEntityResponse> {
     const loggedUserId = request.loggedUserInfo?.id as UserEntity['id']
     const requestUserDto = request.body as UserEntityDto

@@ -15,17 +15,20 @@ import { UserVerificationToken, UserEntityDto } from '@/domain/protocols'
 export class AddUserController implements Controller<UserEntityDto, UserVerificationToken> {
 
   constructor (
-    @Inject() private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
-    @Inject() private readonly addUserUseCase: AddUserUseCase
+    @Inject()
+    private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
+
+    @Inject()
+    private readonly addUserUseCase: AddUserUseCase
   ) { }
 
+  @HandleError
   @Validate<UserEntityDto, UserVerificationToken>({
     body: {
       schema: userSchema,
       keys: userKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest<UserEntityDto>): HandleResponse<UserVerificationToken> {
     const requestUserDto = request.body as UserEntityDto
 

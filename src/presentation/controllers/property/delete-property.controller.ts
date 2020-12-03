@@ -17,13 +17,13 @@ export class DeletePropertyController implements Controller<undefined, PropertyE
     @Inject() private readonly deletePropertyUseCase: DeletePropertyUseCase
   ) { }
 
+  @HandleError
   @Validate<undefined, PropertyEntity>({
     params: {
       schema: idParamSchema,
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest): HandleResponse<PropertyEntity> {
     const requestPropertyId = request.params?.id as PropertyEntity['id']
 

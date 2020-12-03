@@ -18,13 +18,13 @@ export class DeleteBuildingController implements Controller<undefined, BuildingE
     @Inject() private readonly deleteBuildingUseCase: DeleteBuildingUseCase
   ) { }
 
+  @HandleError
   @Validate<undefined, BuildingEntity>({
     params: {
       schema: idParamSchema,
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest): HandleResponse<BuildingEntity> {
     const requestBuildingId = request.params?.id as BuildingEntity['id']
 

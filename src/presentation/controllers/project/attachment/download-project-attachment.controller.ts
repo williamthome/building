@@ -18,6 +18,7 @@ export class DownloadProjectAttachmentController implements Controller<undefined
     private readonly downloadProjectAttachmentUseCase: DownloadProjectAttachmentUseCase
   ) { }
 
+  @HandleError
   @Validate<undefined, Buffer>({
     params: {
       schema: {
@@ -30,7 +31,6 @@ export class DownloadProjectAttachmentController implements Controller<undefined
       }
     }
   })
-  @HandleError
   async handle (request: HttpRequest): HandleResponse<Buffer> {
     const requestProjectId = request.params?.id as ProjectEntity['id']
     const requestAttachmentId = request.params?.attachmentId as FileEntity['id']

@@ -19,6 +19,7 @@ export class UpdateCompanyController implements Controller<CompanyDto, CompanyEn
     private readonly updateCompanyUseCase: UpdateCompanyUseCase
   ) { }
 
+  @HandleError
   @Validate<CompanyDto, CompanyEntity>({
     body: {
       schema: companySchema,
@@ -27,7 +28,6 @@ export class UpdateCompanyController implements Controller<CompanyDto, CompanyEn
       banned: ['members', 'planId']
     }
   })
-  @HandleError
   async handle (request: HttpRequest<CompanyDto>): HandleResponse<CompanyEntity> {
     const activeCompanyId = request.activeCompanyInfo?.id as CompanyEntity['id']
     const requestCompanyDto = request.body as CompanyDto

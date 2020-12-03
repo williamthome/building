@@ -18,6 +18,7 @@ export class UpdateProjectController implements Controller<ProjectEntityDto, Pro
     @Inject() private readonly updateProjectUseCase: UpdateProjectUseCase
   ) { }
 
+  @HandleError
   @Validate<ProjectEntityDto, ProjectEntity>({
     body: {
       schema: projectSchema,
@@ -30,7 +31,6 @@ export class UpdateProjectController implements Controller<ProjectEntityDto, Pro
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest<ProjectEntityDto>): HandleResponse<ProjectEntity> {
     const requestProjectId = request.params?.id as ProjectEntity['id']
     const requestProjectDto = request.body as ProjectEntityDto

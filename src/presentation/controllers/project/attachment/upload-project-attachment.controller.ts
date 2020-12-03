@@ -22,13 +22,13 @@ export class UploadProjectAttachmentController implements Controller<undefined, 
     private readonly uploadProjectAttachmentUseCase: UploadProjectAttachmentUseCase
   ) { }
 
+  @HandleError
   @Validate<undefined, UploadFileResponse>({
     params: {
       schema: idParamSchema,
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest): HandleResponse<UploadFileResponse> {
     const requestProjectId = request.params?.id as ProjectEntity['id']
     const requestAttachments = request.files as RequestFile[]

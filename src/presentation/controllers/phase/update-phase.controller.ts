@@ -18,6 +18,7 @@ export class UpdatePhaseController implements Controller<PhaseEntityDto, PhaseEn
     @Inject() private readonly updatePhaseUseCase: UpdatePhaseUseCase
   ) { }
 
+  @HandleError
   @Validate<PhaseEntityDto, PhaseEntity>({
     body: {
       schema: phaseSchema,
@@ -29,7 +30,6 @@ export class UpdatePhaseController implements Controller<PhaseEntityDto, PhaseEn
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest<PhaseEntityDto>): HandleResponse<PhaseEntity> {
     const requestPhaseId = request.params?.id as PhaseEntity['id']
     const requestPhaseDto = request.body as PhaseEntityDto

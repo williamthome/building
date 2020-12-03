@@ -23,6 +23,7 @@ export class VerifyUserController implements Controller<undefined, UserEntityRes
     @Inject() private readonly verifyUserUseCase: VerifyUserUseCase
   ) { }
 
+  @HandleError
   @Validate<undefined, UserEntityResponse>({
     query: {
       schema: {
@@ -38,7 +39,6 @@ export class VerifyUserController implements Controller<undefined, UserEntityRes
       }
     }
   })
-  @HandleError
   async handle (request: HttpRequest): HandleResponse<UserEntityResponse> {
     const requestToken = request.query?.token as string
 

@@ -19,6 +19,7 @@ export class AuthenticationController implements Controller<AuthEntityDto, UserE
     @Inject() private readonly updateUserAccessTokenUseCase: UpdateUserAccessTokenUseCase
   ) { }
 
+  @HandleError
   @Validate<AuthEntityDto, UserEntityResponse>({
     body: {
       schema: authSchema,
@@ -28,7 +29,6 @@ export class AuthenticationController implements Controller<AuthEntityDto, UserE
       }
     }
   })
-  @HandleError
   async handle (request: HttpRequest<AuthEntityDto>): HandleResponse<UserEntityResponse> {
     const requestAuthDto = request.body as AuthEntityDto
 

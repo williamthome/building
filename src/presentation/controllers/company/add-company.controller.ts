@@ -27,13 +27,13 @@ export class AddCompanyController implements Controller<CompanyDto, CompanyEntit
     private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase,
   ) { }
 
+  @HandleError
   @Validate<CompanyDto, CompanyEntity>({
     body: {
       schema: companySchema,
       keys: companyKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest<CompanyDto>): HandleResponse<CompanyEntity> {
     const loggedUserId = request.loggedUserInfo?.id as UserEntity['id']
     const requestCompanyDto = request.body as CompanyDto

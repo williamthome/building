@@ -1,8 +1,14 @@
-import { badRequest, noContent } from '../factories/http.factory'
+// : Shared
+import container from '@/shared/dependency-injection'
+import { CollectionName, DeepFlattenPaths } from '@/shared/types'
+// > In: presentation layer
+import { badRequest, forbidden, noContent } from '../factories/http.factory'
 import {
   HttpParameters,
   HttpQuery,
+  HttpRequest,
   HttpResponse,
+  LimitedEntityOptions,
   Schema,
   SchemaOptions,
   ValidateSchemaOptions,
@@ -11,8 +17,11 @@ import {
 } from '../protocols'
 import { isNestedSchema } from './schema.helper'
 import { required } from '../validations'
-import { DeepFlattenPaths } from '@/shared/types'
-import { BannedFieldError, MissingBodyError } from '../errors'
+import { BannedFieldError, MissingBodyError, PlanLimitExceededError } from '../errors'
+// < Out: only domain layer
+import { CompanyEntity, PlanEntity } from '@/domain/entities'
+import { GetEntityCountForPlanLimitUseCase } from '@/domain/usecases'
+import { MemberEntity } from '@/domain/entities/nested'
 
 export const schemaError = <TObj extends Record<PropertyKey, any>, TSchema extends Record<PropertyKey, any> = TObj> (
   obj: TObj,
@@ -132,4 +141,35 @@ export const validateBody = <TRequest> (
 
   const error = schemaError<TRequest>(body, schema, nullable, keys)
   if (error) return error
+}
+
+export const validatePlanLimit = async <TRequest> (
+  httpRequest: HttpRequest<TRequest>,
+  { reference, collectionName }: LimitedEntityOptions
+): Promise<void | HttpResponse<Error>> => {
+  const activeCompanyPlanLimits = httpRequest.activeCompanyInfo?.limit as PlanEntity['limit']
+  if (activeCompanyPlanLimits !== 'unlimited') {
+    const activeCompanyEntityCount = await companyEntityCount(httpRequest, collectionName)
+    if (activeCompanyEntityCount === activeCompanyPlanLimits[reference])
+      return forbidden(new PlanLimitExceededError(collectionName))
+  }
+}
+
+const companyEntityCount = async <TRequest> (
+  httpRequest: HttpRequest<TRequest>,
+  collectionName: CollectionName | 'members'
+): Promise<number> => {
+  if (collectionName === 'members') {
+    const activeCompanyMembers = httpRequest.activeCompanyInfo?.members as MemberEntity[]
+    return activeCompanyMembers.length
+  } else {
+    const getEntityCountForPlanLimitUseCase =
+      container.resolve<GetEntityCountForPlanLimitUseCase>(
+        'getEntityCountForPlanLimitUseCase'
+      )
+    const activeCompanyId = httpRequest.activeCompanyInfo?.id as CompanyEntity['id']
+    return await getEntityCountForPlanLimitUseCase.call(
+      collectionName, activeCompanyId
+    )
+  }
 }

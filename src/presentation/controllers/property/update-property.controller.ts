@@ -18,6 +18,7 @@ export class UpdatePropertyController implements Controller<PropertyEntityDto, P
     @Inject() private readonly updatePropertyUseCase: UpdatePropertyUseCase
   ) { }
 
+  @HandleError
   @Validate<PropertyEntityDto, PropertyEntity>({
     body: {
       schema: propertySchema,
@@ -29,7 +30,6 @@ export class UpdatePropertyController implements Controller<PropertyEntityDto, P
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest<PropertyEntityDto>): HandleResponse<PropertyEntity> {
     const requestPropertyId = request.params?.id as PropertyEntity['id']
     const requestPropertyDto = request.body as PropertyEntityDto

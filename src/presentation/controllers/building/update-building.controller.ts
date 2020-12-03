@@ -18,6 +18,7 @@ export class UpdateBuildingController implements Controller<BuildingDto, Buildin
     @Inject() private readonly updateBuildingUseCase: UpdateBuildingUseCase
   ) { }
 
+  @HandleError
   @Validate<BuildingDto, BuildingEntity>({
     body: {
       schema: buildingSchema,
@@ -29,7 +30,6 @@ export class UpdateBuildingController implements Controller<BuildingDto, Buildin
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest<BuildingDto>): HandleResponse<BuildingEntity> {
     const requestBuildingId = request.params?.id as BuildingEntity['id']
     const requestBuildingDto = request.body as BuildingDto

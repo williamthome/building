@@ -18,6 +18,7 @@ export class UpdateTechnicianController implements Controller<TechnicianEntityDt
     @Inject() private readonly updateTechnicianUseCase: UpdateTechnicianUseCase
   ) { }
 
+  @HandleError
   @Validate<TechnicianEntityDto, TechnicianEntity>({
     body: {
       schema: technicianSchema,
@@ -29,7 +30,6 @@ export class UpdateTechnicianController implements Controller<TechnicianEntityDt
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest<TechnicianEntityDto>): HandleResponse<TechnicianEntity> {
     const requestTechnicianId = request.params?.id as TechnicianEntity['id']
     const requestTechnicianDto = request.body as TechnicianEntityDto

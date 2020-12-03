@@ -18,6 +18,7 @@ export class UpdateUserActiveCompanyController implements Controller<undefined, 
     @Inject() private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase
   ) { }
 
+  @HandleError
   @Validate({
     params: {
       schema: {
@@ -28,7 +29,6 @@ export class UpdateUserActiveCompanyController implements Controller<undefined, 
       }
     }
   })
-  @HandleError
   async handle (request: HttpRequest): HandleResponse {
     const loggedUserId = request.loggedUserInfo?.id as UserEntity['id']
     const requestCompanyId = request.params?.companyId as CompanyEntity['id']

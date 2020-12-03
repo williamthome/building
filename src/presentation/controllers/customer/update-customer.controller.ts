@@ -18,6 +18,7 @@ export class UpdateCustomerController implements Controller<CustomerEntityDto, C
     @Inject() private readonly updateCustomerUseCase: UpdateCustomerUseCase
   ) { }
 
+  @HandleError
   @Validate<CustomerEntityDto, CustomerEntity>({
     body: {
       schema: customerSchema,
@@ -29,7 +30,6 @@ export class UpdateCustomerController implements Controller<CustomerEntityDto, C
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest<CustomerEntityDto>): HandleResponse<CustomerEntity> {
     const requestCustomerId = request.params?.id as CustomerEntity['id']
     const requestCustomerDto = request.body as CustomerEntityDto

@@ -1,5 +1,4 @@
 export * from './members'
-export * from './limits'
 export * from './add-company.contract'
 export * from './update-company.contract'
 export * from './get-company-by-id.contract'

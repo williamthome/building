@@ -1,4 +1,5 @@
-import { DeepFlattenPaths } from '@/shared/types'
+import { PlanLimits } from '@/domain/protocols'
+import { CollectionName, DeepFlattenPaths } from '@/shared/types'
 import { HttpParameters, HttpQuery } from './http.protocol'
 import { Schema } from './schema.protocol'
 
@@ -24,6 +25,11 @@ export interface ValidateSchemaOptions<T extends Record<PropertyKey, any>> {
   banned?: Array<keyof T>
 }
 
+export interface LimitedEntityOptions {
+  reference: keyof PlanLimits,
+  collectionName: CollectionName | 'members'
+}
+
 export interface ValidateOptions
   <
   TBody extends Record<PropertyKey, any>,
@@ -32,7 +38,8 @@ export interface ValidateOptions
   > {
   body?: ValidateSchemaOptions<TBody>
   params?: ValidateSchemaOptions<TParams>
-  query?: ValidateSchemaOptions<TQuery>
+  query?: ValidateSchemaOptions<TQuery>,
+  limited?: LimitedEntityOptions
 }
 
 export abstract class BaseValidation<T extends Validation> implements Validation {

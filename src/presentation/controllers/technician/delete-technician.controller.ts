@@ -17,13 +17,13 @@ export class DeleteTechnicianController implements Controller<undefined, Technic
     @Inject() private readonly deleteTechnicianUseCase: DeleteTechnicianUseCase
   ) { }
 
+  @HandleError
   @Validate<undefined, TechnicianEntity>({
     params: {
       schema: idParamSchema,
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest): HandleResponse<TechnicianEntity> {
     const requestTechnicianId = request.params?.id as TechnicianEntity['id']
 

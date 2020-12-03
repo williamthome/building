@@ -17,13 +17,13 @@ export class DeleteProjectController implements Controller<undefined, ProjectEnt
     @Inject() private readonly deleteProjectUseCase: DeleteProjectUseCase
   ) { }
 
+  @HandleError
   @Validate<undefined, ProjectEntity>({
     params: {
       schema: idParamSchema,
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest): HandleResponse<ProjectEntity> {
     const requestPhaseId = request.params?.id as ProjectEntity['id']
 

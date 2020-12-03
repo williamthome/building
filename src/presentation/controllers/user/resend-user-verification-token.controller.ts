@@ -21,6 +21,7 @@ export class ResendUserVerificationTokenController implements Controller<undefin
     @Inject() private readonly encrypter: Encrypter
   ) { }
 
+  @HandleError
   @Validate<undefined, UserVerificationToken>({
     query: {
       schema: {
@@ -37,7 +38,6 @@ export class ResendUserVerificationTokenController implements Controller<undefin
       }
     }
   })
-  @HandleError
   async handle (request: HttpRequest): HandleResponse<UserVerificationToken> {
     const requestEmail = request.query?.email as string
 

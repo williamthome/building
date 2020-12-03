@@ -17,13 +17,13 @@ export class DeletePhaseController implements Controller<undefined, PhaseEntity>
     @Inject() private readonly deletePhaseUseCase: DeletePhaseUseCase
   ) { }
 
+  @HandleError
   @Validate<undefined, PhaseEntity>({
     params: {
       schema: idParamSchema,
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest): HandleResponse<PhaseEntity> {
     const requestPhaseId = request.params?.id as PhaseEntity['id']
 

@@ -8,6 +8,7 @@ import {
 import {
   validateBody,
   validateParams,
+  validatePlanLimit,
   validateQuery
 } from '../helpers/validation.helper'
 // < Out: only domain layer
@@ -17,7 +18,8 @@ export const Validate =
     {
       body: bodySchema,
       params: paramsSchema,
-      query: querySchema
+      query: querySchema,
+      limited
     }: ValidateOptions<TRequest>
   ) =>
     <TController extends Controller<TRequest, TResponse>> (
@@ -31,6 +33,11 @@ export const Validate =
         httpRequest: HttpRequest<TRequest>
       ): HandleResponse<TResponse> {
         const { body, params, query } = httpRequest
+
+        if (limited) {
+          const limitedError = await validatePlanLimit(httpRequest, limited)
+          if (limitedError) return limitedError
+        }
 
         if (paramsSchema) {
           const paramsError = validateParams(params, paramsSchema)

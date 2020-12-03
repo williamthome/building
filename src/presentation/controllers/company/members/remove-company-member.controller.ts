@@ -21,13 +21,13 @@ export class RemoveCompanyMemberController implements Controller<undefined, Comp
     @Inject() private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase
   ) { }
 
+  @HandleError
   @Validate<undefined, CompanyEntity>({
     params: {
       schema: idParamSchema,
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest<undefined>): HandleResponse<CompanyEntity> {
     const activeCompanyId = request.activeCompanyInfo?.id as CompanyEntity['id']
     const activeCompanyMembers = request.activeCompanyInfo?.members as MemberEntity[]

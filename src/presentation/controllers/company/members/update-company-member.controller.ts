@@ -26,6 +26,7 @@ export class UpdateCompanyMemberController implements Controller<MemberEntityDto
     @Inject() private readonly updateCompanyMemberUseCase: UpdateCompanyMemberUseCase
   ) { }
 
+  @HandleError
   @Validate<MemberEntityDto, CompanyEntity>({
     body: {
       schema: memberSchema,
@@ -37,7 +38,6 @@ export class UpdateCompanyMemberController implements Controller<MemberEntityDto
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest<MemberEntityDto>): HandleResponse<CompanyEntity> {
     const loggedUserCompanyRole = request.loggedUserInfo?.companyRole
     const activeCompanyId = request.activeCompanyInfo?.id as CompanyEntity['id']

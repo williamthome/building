@@ -17,13 +17,13 @@ export class GetPlanByIdController implements Controller<undefined, PlanEntity> 
     @Inject() private readonly getPlanByIdUseCase: GetPlanByIdUseCase,
   ) { }
 
+  @HandleError
   @Validate<undefined, PlanEntity>({
     params: {
       schema: idParamSchema,
       keys: idParamKeys
     }
   })
-  @HandleError
   async handle (request: HttpRequest<undefined>): HandleResponse<PlanEntity> {
     const requestPlanId = request.params?.id as PlanEntity['id']
 
