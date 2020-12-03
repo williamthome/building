@@ -22,10 +22,7 @@ export class AddCompanyMemberController implements Controller<MemberEntity, Comp
 
   @HandleError
   @Validate<MemberEntity, CompanyEntity>({
-    limited: {
-      reference: 'member',
-      collectionName: 'members'
-    },
+    planLimitFor: 'member',
     body: {
       schema: memberSchema,
       keys: memberKeys

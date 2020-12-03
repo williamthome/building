@@ -20,10 +20,7 @@ export class AddPropertyController implements Controller<PropertyEntityDto, Prop
 
   @HandleError
   @Validate<PropertyEntityDto, PropertyEntity>({
-    limited: {
-      reference: 'property',
-      collectionName: 'properties'
-    },
+    planLimitFor: 'property',
     body: {
       schema: propertySchema,
       keys: propertyKeys

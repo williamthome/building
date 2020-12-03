@@ -1,3 +1,5 @@
+import { CollectionName } from '@/shared/types'
+
 export interface PlanLimits {
   member: number
   customer: number
@@ -21,3 +23,16 @@ export type PlanLimit =
 export type PlanValue =
   | 'free'
   | PlanValues
+
+type PlanLimitCollectionName = { [K in keyof Required<PlanLimits>]: CollectionName | 'members' }
+
+export const planLimitCollectionName: PlanLimitCollectionName = {
+  member: 'members',
+  customer: 'customers',
+  property: 'properties',
+  technician: 'technicians',
+  building: 'buildings',
+  phase: 'phases',
+  project: 'projects',
+  storageMb: 'files'
+}

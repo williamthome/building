@@ -20,10 +20,7 @@ export class AddCustomerController implements Controller<CustomerEntityDto, Cust
 
   @HandleError
   @Validate<CustomerEntityDto, CustomerEntity>({
-    limited: {
-      reference: 'customer',
-      collectionName: 'customers'
-    },
+    planLimitFor: 'customer',
     body: {
       schema: customerSchema,
       keys: customerKeys

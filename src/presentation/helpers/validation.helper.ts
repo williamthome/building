@@ -8,7 +8,6 @@ import {
   HttpQuery,
   HttpRequest,
   HttpResponse,
-  LimitedEntityOptions,
   RequestFile,
   Schema,
   SchemaOptions,
@@ -25,7 +24,7 @@ import { bytesToMB } from './file.helper'
 import { CompanyEntity, PlanEntity } from '@/domain/entities'
 import { GetEntityCountForPlanLimitUseCase, GetFilesByReferenceIdUseCase } from '@/domain/usecases'
 import { MemberEntity } from '@/domain/entities/nested'
-import { Entity } from '@/domain/protocols'
+import { Entity, planLimitCollectionName, PlanLimits } from '@/domain/protocols'
 
 class ValidationHelper {
 
@@ -40,14 +39,14 @@ class ValidationHelper {
       body: bodySchema,
       params: paramsSchema,
       query: querySchema,
-      limited
+      planLimitFor: limited
     }: ValidateOptions<TRequest>,
     httpRequest: HttpRequest<TRequest>
   ): Promise<void | HttpResponse<null | Error>> => {
     const { body, params, query } = httpRequest
 
     if (limited) {
-      const limitedError = limited === 'storage'
+      const limitedError = limited === 'storageMb'
         ? await this.validateStoragePlanLimit(httpRequest)
         : await this.validateEntityPlanLimit(httpRequest, limited)
       if (limitedError) return limitedError
@@ -189,16 +188,17 @@ class ValidationHelper {
 
   validateEntityPlanLimit = async <TRequest> (
     httpRequest: HttpRequest<TRequest>,
-    { reference, collectionName }: LimitedEntityOptions,
+    limited: keyof PlanLimits,
     payload?: number
   ): Promise<void | HttpResponse<Error>> => {
     const activeCompanyPlanLimits = httpRequest.activeCompanyInfo?.limit as PlanEntity['limit']
+    const limitedCollectionName = planLimitCollectionName[limited]
     if (activeCompanyPlanLimits !== 'unlimited') {
       const activeCompanyLimitValue = payload !== undefined
         ? payload
-        : await this.companyEntityCount(httpRequest, collectionName)
-      if (activeCompanyLimitValue >= activeCompanyPlanLimits[reference])
-        return forbidden(new PlanLimitExceededError(collectionName))
+        : await this.companyEntityCount(httpRequest, limitedCollectionName)
+      if (activeCompanyLimitValue >= activeCompanyPlanLimits[limited])
+        return forbidden(new PlanLimitExceededError(limitedCollectionName))
     }
   }
 
@@ -238,10 +238,7 @@ class ValidationHelper {
 
     const storageValidationError = await this.validateEntityPlanLimit(
       httpRequest,
-      {
-        reference: 'storageMb',
-        collectionName: 'files'
-      },
+      'storageMb',
       totalFilesSizeInMegabytes
     )
     if (storageValidationError)

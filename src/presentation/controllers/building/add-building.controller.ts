@@ -20,10 +20,7 @@ export class AddBuildingController implements Controller<BuildingDto, BuildingEn
 
   @HandleError
   @Validate<BuildingDto, BuildingEntity>({
-    limited: {
-      reference: 'building',
-      collectionName: 'buildings'
-    },
+    planLimitFor: 'building',
     body: {
       schema: buildingSchema,
       keys: buildingKeys

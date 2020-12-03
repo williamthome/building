@@ -24,10 +24,7 @@ export class AddPhaseController implements Controller<PhaseEntityDto, PhaseEntit
 
   @HandleError
   @Validate<PhaseEntityDto, PhaseEntity>({
-    limited: {
-      reference: 'phase',
-      collectionName: 'phases'
-    },
+    planLimitFor: 'phase',
     body: {
       schema: phaseSchema,
       keys: phaseKeys

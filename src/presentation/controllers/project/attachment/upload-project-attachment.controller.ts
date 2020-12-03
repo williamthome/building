@@ -24,7 +24,7 @@ export class UploadProjectAttachmentController implements Controller<undefined, 
 
   @HandleError
   @Validate<undefined, UploadFileResponse>({
-    limited: 'storage',
+    planLimitFor: 'storageMb',
     params: {
       schema: idParamSchema,
       keys: idParamKeys

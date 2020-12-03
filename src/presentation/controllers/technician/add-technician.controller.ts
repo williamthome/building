@@ -20,10 +20,7 @@ export class AddTechnicianController implements Controller<TechnicianEntityDto, 
 
   @HandleError
   @Validate<TechnicianEntityDto, TechnicianEntity>({
-    limited: {
-      reference: 'technician',
-      collectionName: 'technicians'
-    },
+    planLimitFor: 'technician',
     body: {
       schema: technicianSchema,
       keys: technicianKeys

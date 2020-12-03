@@ -37,10 +37,7 @@ export class AddProjectController implements Controller<ProjectEntityDto, Projec
 
   @HandleError
   @Validate<ProjectEntityDto, ProjectEntity>({
-    limited: {
-      reference: 'project',
-      collectionName: 'projects'
-    },
+    planLimitFor: 'project',
     body: {
       schema: projectSchema,
       keys: projectKeys
