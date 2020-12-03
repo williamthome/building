@@ -25,6 +25,10 @@ const mockHttpRequest = (
       ? {
         building: buildingLimit,
         member: 1,
+        customer: 1,
+        phase: 1,
+        property: 1,
+        technician: 1,
         project: 1,
         storage: 0
       }

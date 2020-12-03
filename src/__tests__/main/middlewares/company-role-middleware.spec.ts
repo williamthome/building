@@ -36,7 +36,7 @@ describe('CompanyRole Middleware', () => {
     const { sut } = makeSut()
     const response = await sut.handle({
       loggedUserInfo: {
-        companyRole: CompanyRole.admin
+        companyRole: CompanyRole.master
       }
     })
     expect(response).toEqual(unauthorized())

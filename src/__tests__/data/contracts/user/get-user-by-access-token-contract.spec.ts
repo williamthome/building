@@ -39,7 +39,6 @@ describe('GetUserByAccessToken Contract', () => {
   describe('Decrypter', () => {
     it('should be called with right value', async () => {
       const { sut, decrypterSpy } = makeSut()
-      const id = fakeData.entity.id()
       const accessToken = fakeData.entity.token(fakeId, fakeSecret)
       await sut.call(accessToken)
       expect(decrypterSpy.ciphertext).toEqual(accessToken)
