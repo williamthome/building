@@ -22,7 +22,8 @@
     "test:integration:verbose": "npm run test:verbose -- --watch \"^(.*/)*(.*\\.)*(test)\\.ts$\"",
     "test:staged": "npm test -- --findRelatedTests",
     "test:ci": "npm test -- --coverage",
-    "test:clear": "npx jest --clearCache"
+    "test:clear": "npx jest --clearCache",
+    "eslint:test": "npx eslint --fix --cache --ext .ts src/__tests__/"
   },
   "keywords": [
     "building",
