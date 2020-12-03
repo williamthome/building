@@ -1,4 +1,4 @@
-import { makeValidationResult } from '../helpers/validation.helper'
+import { validationHelper } from '../helpers/validation.helper'
 import { BaseValidation, Validation, ValidationResult } from '../protocols'
 
 class IsObjectValidation extends BaseValidation<IsObjectValidation> {
@@ -11,7 +11,7 @@ class IsObjectValidation extends BaseValidation<IsObjectValidation> {
   ): ValidationResult => {
     const valid = (obj !== null || obj !== undefined) && key in obj && obj[key] === Object(obj[key])
     const errorMessage = `${this.isParam ? 'Param' : 'Field'} ${key} must be object type`
-    return makeValidationResult(
+    return validationHelper.makeValidationResult(
       valid,
       obj,
       key,

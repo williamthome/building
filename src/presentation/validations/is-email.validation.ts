@@ -1,4 +1,4 @@
-import { makeValidationResult } from '../helpers/validation.helper'
+import { validationHelper } from '../helpers/validation.helper'
 import { BaseValidation, Validation, ValidationResult } from '../protocols'
 
 // eslint-disable-next-line no-useless-escape
@@ -34,7 +34,7 @@ class IsEmailValidation extends BaseValidation<IsEmailValidation> {
   ): ValidationResult => {
     const valid = key in obj && typeof obj[key] === 'string' && obj[key] !== '' && this.validateEmail(obj[key] as string)
     const errorMessage = `${this.isParam ? 'Param' : 'Field'} ${key} is an invalid e-Mail address`
-    return makeValidationResult(
+    return validationHelper.makeValidationResult(
       valid,
       obj,
       key,

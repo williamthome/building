@@ -1,5 +1,5 @@
 // : Shared
-import container from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 import { CollectionName, DeepFlattenPaths } from '@/shared/types'
 // > In: presentation layer
 import { badRequest, forbidden, noContent } from '../factories/http.factory'
@@ -12,6 +12,7 @@ import {
   RequestFile,
   Schema,
   SchemaOptions,
+  ValidateOptions,
   ValidateSchemaOptions,
   Validation,
   ValidationResult
@@ -26,191 +27,226 @@ import { GetEntityCountForPlanLimitUseCase, GetFilesByReferenceIdUseCase } from 
 import { MemberEntity } from '@/domain/entities/nested'
 import { Entity } from '@/domain/protocols'
 
-export const schemaError = <TObj extends Record<PropertyKey, any>, TSchema extends Record<PropertyKey, any> = TObj> (
-  obj: TObj,
-  schema: Schema<TSchema>,
-  nullable: boolean,
-  keys?: DeepFlattenPaths<TSchema>,
-  banned?: Array<keyof TSchema>
-): HttpResponse<Error> | undefined => {
-  if (keys) deleteInexistentFields(obj, keys)
+class ValidationHelper {
 
-  for (const [field, value] of Object.entries(schema)) {
-    if (banned?.some(bannedField => field === bannedField))
-      return badRequest(new BannedFieldError(field))
+  @Inject()
+  private readonly getEntityCountForPlanLimitUseCase!: GetEntityCountForPlanLimitUseCase
 
-    if (nullable && !(field in obj)) continue
+  @Inject()
+  private readonly getFilesByReferenceIdUseCase!: GetFilesByReferenceIdUseCase
 
-    const fieldSchema = isNestedSchema(value) ? value : value as SchemaOptions
+  validateHttpRequest = async <TRequest> (
+    {
+      body: bodySchema,
+      params: paramsSchema,
+      query: querySchema,
+      limited
+    }: ValidateOptions<TRequest>,
+    httpRequest: HttpRequest<TRequest>
+  ): Promise<void | HttpResponse<null | Error>> => {
+    const { body, params, query } = httpRequest
 
-    const error = validationsError(obj, field, fieldSchema.validations)
-    if (error)
-      return error
+    if (limited) {
+      const limitedError = limited === 'storage'
+        ? await this.validateStoragePlanLimit(httpRequest)
+        : await this.validateEntityPlanLimit(httpRequest, limited)
+      if (limitedError) return limitedError
+    }
 
-    if (isNestedSchema(fieldSchema)) {
-      const nestedObj = obj[field]
-      if (!nestedObj && !requiredInValidations(fieldSchema.validations))
-        continue
+    if (paramsSchema) {
+      const paramsError = this.validateParams(params, paramsSchema)
+      if (paramsError) return paramsError
+    }
 
-      const nestedError = schemaError(nestedObj, fieldSchema.nested, nullable, keys as any)
-      if (nestedError)
-        return nestedError
+    if (querySchema) {
+      const queryError = this.validateQuery(query, querySchema)
+      if (queryError) return queryError
+    }
+
+    if (bodySchema) {
+      const bodyError = this.validateBody(body, bodySchema)
+      if (bodyError) return bodyError
     }
   }
-  return undefined
-}
 
-const deleteInexistentFields = <T extends Record<PropertyKey, any>> (
-  obj: Partial<T>,
-  keys: DeepFlattenPaths<T>
-): void => {
-  const objectKeys = Object.keys(obj) as string[]
-  const schemaKeys = Object.values(keys) as string[]
-  objectKeys.forEach(k => {
-    if (!schemaKeys.includes(k))
-      delete obj[k]
+  schemaError = <TObj extends Record<PropertyKey, any>, TSchema extends Record<PropertyKey, any> = TObj> (
+    obj: TObj,
+    schema: Schema<TSchema>,
+    nullable: boolean,
+    keys?: DeepFlattenPaths<TSchema>,
+    banned?: Array<keyof TSchema>
+  ): HttpResponse<Error> | undefined => {
+    if (keys) this.deleteInexistentFields(obj, keys)
+
+    for (const [field, value] of Object.entries(schema)) {
+      if (banned?.some(bannedField => field === bannedField))
+        return badRequest(new BannedFieldError(field))
+
+      if (nullable && !(field in obj)) continue
+
+      const fieldSchema = isNestedSchema(value) ? value : value as SchemaOptions
+
+      const error = this.validationsError(obj, field, fieldSchema.validations)
+      if (error)
+        return error
+
+      if (isNestedSchema(fieldSchema)) {
+        const nestedObj = obj[field]
+        if (!nestedObj && !this.requiredInValidations(fieldSchema.validations))
+          continue
+
+        const nestedError = this.schemaError(nestedObj, fieldSchema.nested, nullable, keys as any)
+        if (nestedError)
+          return nestedError
+      }
+    }
+    return undefined
+  }
+
+  private deleteInexistentFields = <T extends Record<PropertyKey, any>> (
+    obj: Partial<T>,
+    keys: DeepFlattenPaths<T>
+  ): void => {
+    const objectKeys = Object.keys(obj) as string[]
+    const schemaKeys = Object.values(keys) as string[]
+    objectKeys.forEach(k => {
+      if (!schemaKeys.includes(k))
+        delete obj[k]
+    })
+  }
+
+  private validationsError = <T extends Record<PropertyKey, any>> (
+    obj: T,
+    field: keyof T,
+    validations: Validation[]
+  ): HttpResponse<Error> | undefined => {
+    for (const validation of validations) {
+      const { valid, errorMessage } = validation.validate(obj, field, validations)
+      if (!valid)
+        return badRequest(new Error(errorMessage))
+    }
+    return undefined
+  }
+
+  requiredInValidations = (
+    validations?: Validation[]
+  ): boolean => validations ? validations.some(v => v === required) : false
+
+  validIfNotRequired = <T> (
+    valid: boolean,
+    obj: T,
+    field: keyof T,
+    validations?: Validation[]
+  ): boolean => !valid && !this.requiredInValidations(validations) && !(field in obj) ? true : valid
+
+  errorIfInvalid = (
+    valid: boolean,
+    messageMessage: string,
+    customMessage: string | undefined
+  ): string | undefined => valid ? undefined : customMessage || messageMessage
+
+  makeValidationResult = <T> (
+    valid: boolean,
+    obj: T,
+    field: keyof T,
+    errorMessage: string,
+    customErrorMessage: string | undefined,
+    validations?: Validation[]
+  ): ValidationResult => ({
+    valid: this.validIfNotRequired(valid, obj, field, validations),
+    errorMessage: this.errorIfInvalid(valid, errorMessage, customErrorMessage),
+    validations
   })
-}
 
-const validationsError = <T extends Record<PropertyKey, any>> (
-  obj: T,
-  field: keyof T,
-  validations: Validation[]
-): HttpResponse<Error> | undefined => {
-  for (const validation of validations) {
-    const { valid, errorMessage } = validation.validate(obj, field, validations)
-    if (!valid)
-      return badRequest(new Error(errorMessage))
+  validateParams = <TRequest> (
+    params: HttpParameters | undefined,
+    { schema, keys, nullable = false, banned }: ValidateSchemaOptions<TRequest>
+  ): void | HttpResponse<null | Error> => {
+    const error = this.schemaError(params || {}, schema, nullable, keys, banned)
+    if (error) return error
   }
-  return undefined
-}
 
-export const requiredInValidations = (
-  validations?: Validation[]
-): boolean => validations ? validations.some(v => v === required) : false
+  validateQuery = <TRequest> (
+    query: HttpQuery | undefined,
+    { schema, keys, nullable = false, banned }: ValidateSchemaOptions<TRequest>
+  ): void | HttpResponse<null | Error> => {
+    const error = this.schemaError(query || {}, schema, nullable, keys, banned)
+    if (error) return error
+  }
 
-export const validIfNotRequired = <T> (
-  valid: boolean,
-  obj: T,
-  field: keyof T,
-  validations?: Validation[]
-): boolean => !valid && !requiredInValidations(validations) && !(field in obj) ? true : valid
+  validateBody = <TRequest> (
+    body: TRequest | undefined,
+    { schema, keys, nullable = false }: ValidateSchemaOptions<TRequest>
+  ): void | HttpResponse<null | Error> => {
+    if (!body && !nullable)
+      return badRequest(new MissingBodyError())
 
-export const errorIfInvalid = (
-  valid: boolean,
-  messageMessage: string,
-  customMessage: string | undefined
-): string | undefined => valid ? undefined : customMessage || messageMessage
+    if (!body) return noContent()
 
-export const makeValidationResult = <T> (
-  valid: boolean,
-  obj: T,
-  field: keyof T,
-  errorMessage: string,
-  customErrorMessage: string | undefined,
-  validations?: Validation[]
-): ValidationResult => (
-    {
-      valid: validIfNotRequired(valid, obj, field, validations),
-      errorMessage: errorIfInvalid(valid, errorMessage, customErrorMessage),
-      validations
+    const error = this.schemaError<TRequest>(body, schema, nullable, keys)
+    if (error) return error
+  }
+
+  validateEntityPlanLimit = async <TRequest> (
+    httpRequest: HttpRequest<TRequest>,
+    { reference, collectionName }: LimitedEntityOptions,
+    payload?: number
+  ): Promise<void | HttpResponse<Error>> => {
+    const activeCompanyPlanLimits = httpRequest.activeCompanyInfo?.limit as PlanEntity['limit']
+    if (activeCompanyPlanLimits !== 'unlimited') {
+      const activeCompanyLimitValue = payload !== undefined
+        ? payload
+        : await this.companyEntityCount(httpRequest, collectionName)
+      if (activeCompanyLimitValue >= activeCompanyPlanLimits[reference])
+        return forbidden(new PlanLimitExceededError(collectionName))
     }
-  )
-
-export const validateParams = <TRequest> (
-  params: HttpParameters | undefined,
-  { schema, keys, nullable = false, banned }: ValidateSchemaOptions<TRequest>
-): void | HttpResponse<null | Error> => {
-  const error = schemaError(params || {}, schema, nullable, keys, banned)
-  if (error) return error
-}
-
-export const validateQuery = <TRequest> (
-  query: HttpQuery | undefined,
-  { schema, keys, nullable = false, banned }: ValidateSchemaOptions<TRequest>
-): void | HttpResponse<null | Error> => {
-  const error = schemaError(query || {}, schema, nullable, keys, banned)
-  if (error) return error
-}
-
-export const validateBody = <TRequest> (
-  body: TRequest | undefined,
-  { schema, keys, nullable = false }: ValidateSchemaOptions<TRequest>
-): void | HttpResponse<null | Error> => {
-  if (!body && !nullable)
-    return badRequest(new MissingBodyError())
-
-  if (!body) return noContent()
-
-  const error = schemaError<TRequest>(body, schema, nullable, keys)
-  if (error) return error
-}
-
-export const validateEntityPlanLimit = async <TRequest> (
-  httpRequest: HttpRequest<TRequest>,
-  { reference, collectionName }: LimitedEntityOptions,
-  payload?: number
-): Promise<void | HttpResponse<Error>> => {
-  const activeCompanyPlanLimits = httpRequest.activeCompanyInfo?.limit as PlanEntity['limit']
-  if (activeCompanyPlanLimits !== 'unlimited') {
-    const activeCompanyLimitValue = payload !== undefined
-      ? payload
-      : await companyEntityCount(httpRequest, collectionName)
-    if (activeCompanyLimitValue >= activeCompanyPlanLimits[reference])
-      return forbidden(new PlanLimitExceededError(collectionName))
   }
-}
 
-const companyEntityCount = async <TRequest> (
-  httpRequest: HttpRequest<TRequest>,
-  collectionName: CollectionName | 'members'
-): Promise<number> => {
-  if (collectionName === 'members') {
-    const activeCompanyMembers = httpRequest.activeCompanyInfo?.members as MemberEntity[]
-    return activeCompanyMembers.length
-  } else {
-    const getEntityCountForPlanLimitUseCase =
-      container.resolve<GetEntityCountForPlanLimitUseCase>(
-        'getEntityCountForPlanLimitUseCase'
+  private companyEntityCount = async <TRequest> (
+    httpRequest: HttpRequest<TRequest>,
+    collectionName: CollectionName | 'members'
+  ): Promise<number> => {
+    if (collectionName === 'members') {
+      const activeCompanyMembers = httpRequest.activeCompanyInfo?.members as MemberEntity[]
+      return activeCompanyMembers.length
+    } else {
+      const activeCompanyId = httpRequest.activeCompanyInfo?.id as CompanyEntity['id']
+      return await this.getEntityCountForPlanLimitUseCase.call(
+        collectionName, activeCompanyId
       )
-    const activeCompanyId = httpRequest.activeCompanyInfo?.id as CompanyEntity['id']
-    return await getEntityCountForPlanLimitUseCase.call(
-      collectionName, activeCompanyId
+    }
+  }
+
+  validateStoragePlanLimit = async <TRequest> (
+    httpRequest: HttpRequest<TRequest>
+  ): Promise<void | HttpResponse<Error>> => {
+    const requestParamId = httpRequest.params?.id as Entity['id']
+    const requestFiles = httpRequest.files as RequestFile[]
+
+    const files = await this.getFilesByReferenceIdUseCase.call(requestParamId)
+    if (files.length === 0) return
+
+    const totalRequestFilesSizeInBytes = requestFiles.reduce(
+      (total, { buffer }) => total + buffer.byteLength, 0
     )
+    const totalRequestFilesSizeInMegabytes = bytesToMB(totalRequestFilesSizeInBytes)
+    const totalProjectFilesSizeInBytes = files.reduce(
+      (total, { sizeInBytes }) => total + sizeInBytes, 0
+    )
+    const totalProjectFilesSizeInMegabytes = bytesToMB(totalProjectFilesSizeInBytes)
+    const totalFilesSizeInMegabytes = totalRequestFilesSizeInMegabytes + totalProjectFilesSizeInMegabytes
+
+    const storageValidationError = await this.validateEntityPlanLimit(
+      httpRequest,
+      {
+        reference: 'storageMb',
+        collectionName: 'files'
+      },
+      totalFilesSizeInMegabytes
+    )
+    if (storageValidationError)
+      return storageValidationError
   }
 }
 
-export const validateStoragePlanLimit = async <TRequest> (
-  httpRequest: HttpRequest<TRequest>
-): Promise<void | HttpResponse<Error>> => {
-  const requestParamId = httpRequest.params?.id as Entity['id']
-  const requestFiles = httpRequest.files as RequestFile[]
-
-  const getFilesByReferenceIdUseCase =
-    container.resolve<GetFilesByReferenceIdUseCase>(
-      'getFilesByReferenceIdUseCase'
-    )
-  const files = await getFilesByReferenceIdUseCase.call(requestParamId)
-  if (files.length === 0) return
-
-  const totalRequestFilesSizeInBytes = requestFiles.reduce(
-    (total, { buffer }) => total + buffer.byteLength, 0
-  )
-  const totalRequestFilesSizeInMegabytes = bytesToMB(totalRequestFilesSizeInBytes)
-  const totalProjectFilesSizeInBytes = files.reduce(
-    (total, { sizeInBytes }) => total + sizeInBytes, 0
-  )
-  const totalProjectFilesSizeInMegabytes = bytesToMB(totalProjectFilesSizeInBytes)
-  const totalFilesSizeInMegabytes = totalRequestFilesSizeInMegabytes + totalProjectFilesSizeInMegabytes
-
-  const storageValidationError = await validateEntityPlanLimit(
-    httpRequest,
-    {
-      reference: 'storageMb',
-      collectionName: 'files'
-    },
-    totalFilesSizeInMegabytes
-  )
-  if (storageValidationError)
-    return storageValidationError
-}
+export const validationHelper = new ValidationHelper()

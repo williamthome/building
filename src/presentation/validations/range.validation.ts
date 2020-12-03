@@ -1,4 +1,4 @@
-import { makeValidationResult } from '../helpers/validation.helper'
+import { validationHelper } from '../helpers/validation.helper'
 import { BaseValidation, Validation, ValidationResult } from '../protocols'
 
 class RangeValidation extends BaseValidation<RangeValidation> {
@@ -27,7 +27,7 @@ class RangeValidation extends BaseValidation<RangeValidation> {
       (obj[key] as number) >= this._min &&
       (obj[key] as number) <= this._max
     const errorMessage = `${this.isParam ? 'Param' : 'Field'} ${key} must be between ${this._min} and ${this._max}`
-    return makeValidationResult(
+    return validationHelper.makeValidationResult(
       valid,
       obj,
       key,

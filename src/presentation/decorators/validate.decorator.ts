@@ -5,23 +5,12 @@ import {
   HttpRequest,
   ValidateOptions
 } from '../protocols'
-import {
-  validateBody,
-  validateParams,
-  validateEntityPlanLimit,
-  validateQuery,
-  validateStoragePlanLimit
-} from '../helpers/validation.helper'
+import { validationHelper } from '../helpers/validation.helper'
 // < Out: only domain layer
 
 export const Validate =
   <TRequest = undefined, TResponse = null> (
-    {
-      body: bodySchema,
-      params: paramsSchema,
-      query: querySchema,
-      limited
-    }: ValidateOptions<TRequest>
+    validateOptions: ValidateOptions<TRequest>
   ) =>
     <TController extends Controller<TRequest, TResponse>> (
       _controller: TController,
@@ -33,29 +22,9 @@ export const Validate =
       descriptor.value = async function (
         httpRequest: HttpRequest<TRequest>
       ): HandleResponse<TResponse> {
-        const { body, params, query } = httpRequest
-
-        if (limited) {
-          const limitedError = limited === 'storage'
-            ? await validateStoragePlanLimit(httpRequest)
-            : await validateEntityPlanLimit(httpRequest, limited)
-          if (limitedError) return limitedError
-        }
-
-        if (paramsSchema) {
-          const paramsError = validateParams(params, paramsSchema)
-          if (paramsError) return paramsError
-        }
-
-        if (querySchema) {
-          const queryError = validateQuery(query, querySchema)
-          if (queryError) return queryError
-        }
-
-        if (bodySchema) {
-          const bodyError = validateBody(body, bodySchema)
-          if (bodyError) return bodyError
-        }
+        const validationError = await validationHelper.validateHttpRequest(validateOptions, httpRequest)
+        if (validationError)
+          return validationError
 
         return await originalMethod.apply(this, [httpRequest])
       }

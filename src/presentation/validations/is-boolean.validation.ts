@@ -1,4 +1,4 @@
-import { makeValidationResult } from '../helpers/validation.helper'
+import { validationHelper } from '../helpers/validation.helper'
 import { BaseValidation, Validation, ValidationResult } from '../protocols'
 
 class IsBooleanValidation extends BaseValidation<IsBooleanValidation> {
@@ -11,7 +11,7 @@ class IsBooleanValidation extends BaseValidation<IsBooleanValidation> {
   ): ValidationResult => {
     const valid = key in obj && typeof obj[key] === 'boolean'
     const errorMessage = `${this.isParam ? 'Param' : 'Field'} ${key} must be boolean type`
-    return makeValidationResult(
+    return validationHelper.makeValidationResult(
       valid,
       obj,
       key,

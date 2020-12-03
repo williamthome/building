@@ -1,4 +1,4 @@
-import { makeValidationResult } from '../helpers/validation.helper'
+import { validationHelper } from '../helpers/validation.helper'
 import { BaseValidation, Validation, ValidationResult } from '../protocols'
 
 class MinLengthValidation extends BaseValidation<MinLengthValidation> {
@@ -13,7 +13,7 @@ class MinLengthValidation extends BaseValidation<MinLengthValidation> {
   ): ValidationResult => {
     const valid = key in obj && typeof obj[key] === 'string' && (obj[key] as string).length >= this.minLength
     const errorMessage = `${this.isParam ? 'Param' : 'Field'} ${key} must be at least ${this.minLength} characters`
-    return makeValidationResult(
+    return validationHelper.makeValidationResult(
       valid,
       obj,
       key,

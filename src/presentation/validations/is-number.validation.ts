@@ -1,4 +1,4 @@
-import { makeValidationResult } from '../helpers/validation.helper'
+import { validationHelper } from '../helpers/validation.helper'
 import { BaseValidation, Validation, ValidationResult } from '../protocols'
 
 class IsNumberValidation extends BaseValidation<IsNumberValidation> {
@@ -11,7 +11,7 @@ class IsNumberValidation extends BaseValidation<IsNumberValidation> {
   ): ValidationResult => {
     const valid = key in obj && typeof obj[key] === 'number'
     const errorMessage = `${this.isParam ? 'Param' : 'Field'} ${key} must be number type`
-    return makeValidationResult(
+    return validationHelper.makeValidationResult(
       valid,
       obj,
       key,
