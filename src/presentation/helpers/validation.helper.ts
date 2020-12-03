@@ -9,6 +9,7 @@ import {
   HttpRequest,
   HttpResponse,
   LimitedEntityOptions,
+  RequestFile,
   Schema,
   SchemaOptions,
   ValidateSchemaOptions,
@@ -18,10 +19,12 @@ import {
 import { isNestedSchema } from './schema.helper'
 import { required } from '../validations'
 import { BannedFieldError, MissingBodyError, PlanLimitExceededError } from '../errors'
+import { bytesToMB } from './file.helper'
 // < Out: only domain layer
 import { CompanyEntity, PlanEntity } from '@/domain/entities'
 import { GetEntityCountForPlanLimitUseCase } from '@/domain/usecases'
 import { MemberEntity } from '@/domain/entities/nested'
+import { FileResponse } from '@/domain/protocols'
 
 export const schemaError = <TObj extends Record<PropertyKey, any>, TSchema extends Record<PropertyKey, any> = TObj> (
   obj: TObj,
@@ -145,12 +148,15 @@ export const validateBody = <TRequest> (
 
 export const validatePlanLimit = async <TRequest> (
   httpRequest: HttpRequest<TRequest>,
-  { reference, collectionName }: LimitedEntityOptions
+  { reference, collectionName }: LimitedEntityOptions,
+  payload?: number
 ): Promise<void | HttpResponse<Error>> => {
   const activeCompanyPlanLimits = httpRequest.activeCompanyInfo?.limit as PlanEntity['limit']
   if (activeCompanyPlanLimits !== 'unlimited') {
-    const activeCompanyEntityCount = await companyEntityCount(httpRequest, collectionName)
-    if (activeCompanyEntityCount === activeCompanyPlanLimits[reference])
+    const activeCompanyLimitValue = payload !== undefined
+      ? payload
+      : await companyEntityCount(httpRequest, collectionName)
+    if (activeCompanyLimitValue >= activeCompanyPlanLimits[reference])
       return forbidden(new PlanLimitExceededError(collectionName))
   }
 }
@@ -172,4 +178,34 @@ const companyEntityCount = async <TRequest> (
       collectionName, activeCompanyId
     )
   }
+}
+
+export const validateStoragePlanLimit = async <TRequest> (
+  httpRequest: HttpRequest<TRequest>,
+  payload: FileResponse[] | number,
+): Promise<void | HttpResponse<Error>> => {
+  const requestFiles = httpRequest.files as RequestFile[]
+
+  const totalRequestFilesSizeInBytes = requestFiles.reduce(
+    (total, { buffer }) => total + buffer.byteLength, 0
+  )
+  const totalRequestFilesSizeInMegabytes = bytesToMB(totalRequestFilesSizeInBytes)
+  const totalProjectFilesSizeInBytes = typeof payload === 'number'
+    ? payload
+    : payload.reduce(
+      (total, { sizeInBytes }) => total + sizeInBytes, 0
+    )
+  const totalProjectFilesSizeInMegabytes = bytesToMB(totalProjectFilesSizeInBytes)
+  const totalFilesSizeInMegabytes = totalRequestFilesSizeInMegabytes + totalProjectFilesSizeInMegabytes
+
+  const storageValidationError = await validatePlanLimit(
+    httpRequest,
+    {
+      reference: 'storageMb',
+      collectionName: 'files'
+    },
+    totalFilesSizeInMegabytes
+  )
+  if (storageValidationError)
+    return storageValidationError
 }

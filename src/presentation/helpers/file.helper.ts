@@ -10,6 +10,8 @@ const ByteConverter = {
 
 export const mbToBytes = (mb: number): number => mb * ByteConverter.MB
 
+export const bytesToMB = (bytes: number): number => bytes * 0.00000095367432
+
 export const isRequestFile = (obj: any): obj is RequestFile =>
   obj !== undefined && requestFileKeys.every(key => key in obj)
 

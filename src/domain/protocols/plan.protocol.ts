@@ -6,7 +6,7 @@ export interface PlanLimits {
   building: number
   phase: number
   project: number
-  storage: number
+  storageMb: number
 }
 
 export interface PlanValues {
