@@ -6,22 +6,15 @@ import { addBuildingPath } from '@/main/routes'
 
 describe(`AddBuilding Route > ${addBuildingPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.config({ routePath: addBuildingPath })
-    await mongoUtils.webServer.listen()
-    await mongoUtils.db.connect()
+    await mongoUtils.run({ routePath: addBuildingPath })
   })
 
   beforeEach(async () => {
-    await mongoUtils.db.clearCollection('buildings')
-    await mongoUtils.db.clearCollection('companies')
-    await mongoUtils.db.clearCollection('plans')
-    await mongoUtils.db.clearCollection('users')
+    await mongoUtils.clearCollections()
   })
 
   afterAll(async () => {
-    await mongoUtils.db.disconnect()
-    await mongoUtils.webServer.close()
-    await mongoUtils.mongoInMemory.stop()
+    await mongoUtils.stop()
   })
 
   it('shold return ok', async () => {

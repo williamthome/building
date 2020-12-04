@@ -6,21 +6,15 @@ import { addCompanyPath } from '@/main/routes'
 
 describe(`AddCompany Route > ${addCompanyPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.config({ routePath: addCompanyPath })
-    await mongoUtils.webServer.listen()
-    await mongoUtils.db.connect()
+    await mongoUtils.run({ routePath: addCompanyPath })
   })
 
   beforeEach(async () => {
-    await mongoUtils.db.clearCollection('companies')
-    await mongoUtils.db.clearCollection('plans')
-    await mongoUtils.db.clearCollection('users')
+    await mongoUtils.clearCollections()
   })
 
   afterAll(async () => {
-    await mongoUtils.db.disconnect()
-    await mongoUtils.webServer.close()
-    await mongoUtils.mongoInMemory.stop()
+    await mongoUtils.stop()
   })
 
   it('shold return ok', async () => {

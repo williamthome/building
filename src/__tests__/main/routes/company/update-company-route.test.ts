@@ -6,21 +6,15 @@ import { updateCompanyPath } from '@/main/routes'
 
 describe(`UpdateCompany Route > ${updateCompanyPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.config({ routePath: updateCompanyPath })
-    await mongoUtils.webServer.listen()
-    await mongoUtils.db.connect()
+    await mongoUtils.run({ routePath: updateCompanyPath })
   })
 
   beforeEach(async () => {
-    await mongoUtils.db.clearCollection('companies')
-    await mongoUtils.db.clearCollection('plans')
-    await mongoUtils.db.clearCollection('users')
+    await mongoUtils.clearCollections()
   })
 
   afterAll(async () => {
-    await mongoUtils.db.disconnect()
-    await mongoUtils.webServer.close()
-    await mongoUtils.mongoInMemory.stop()
+    await mongoUtils.stop()
   })
 
   it('shold return ok', async () => {
@@ -29,10 +23,11 @@ describe(`UpdateCompany Route > ${updateCompanyPath.describe}`, () => {
     await mongoUtils.verify()
     await mongoUtils.addPlan()
     await mongoUtils.addCompany()
+    const { members, planId, ...dto } = mockCompanyEntityDto({ planId: mongoUtils.plan.id })
     await request(mongoUtils.webServer.server())
       .patch(updateCompanyPath.urn)
       .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
-      .send(mockCompanyEntityDto({ planId: mongoUtils.plan.id }))
+      .send(dto)
       .expect(HttpStatusCode.OK)
   })
 })

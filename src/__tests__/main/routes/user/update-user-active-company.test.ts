@@ -5,20 +5,15 @@ import { updateUserActiveCompanyPath } from '@/main/routes'
 
 xdescribe(`UpdateUserActiveCompany Route > ${updateUserActiveCompanyPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.config({ routePath: updateUserActiveCompanyPath })
-    await mongoUtils.webServer.listen()
-    await mongoUtils.db.connect()
+    await mongoUtils.run({ routePath: updateUserActiveCompanyPath })
   })
 
   beforeEach(async () => {
-    await mongoUtils.db.clearCollection('companies')
-    await mongoUtils.db.clearCollection('users')
+    await mongoUtils.clearCollections()
   })
 
   afterAll(async () => {
-    await mongoUtils.db.disconnect()
-    await mongoUtils.webServer.close()
-    await mongoUtils.mongoInMemory.stop()
+    await mongoUtils.stop()
   })
 
   const makeURN = (): string => updateUserActiveCompanyPath.fillURN()

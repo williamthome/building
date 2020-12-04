@@ -5,22 +5,15 @@ import { deleteBuildingPath } from '@/main/routes'
 
 describe(`DeleteBuilding Route > ${deleteBuildingPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.config({ routePath: deleteBuildingPath })
-    await mongoUtils.webServer.listen()
-    await mongoUtils.db.connect()
+    await mongoUtils.run({ routePath: deleteBuildingPath })
   })
 
   beforeEach(async () => {
-    await mongoUtils.db.clearCollection('buildings')
-    await mongoUtils.db.clearCollection('companies')
-    await mongoUtils.db.clearCollection('plans')
-    await mongoUtils.db.clearCollection('users')
+    await mongoUtils.clearCollections()
   })
 
   afterAll(async () => {
-    await mongoUtils.db.disconnect()
-    await mongoUtils.webServer.close()
-    await mongoUtils.mongoInMemory.stop()
+    await mongoUtils.stop()
   })
 
   const makeURN = (): string => deleteBuildingPath

@@ -6,22 +6,15 @@ import { updateBuildingPath } from '@/main/routes'
 
 describe(`UpdateBuilding Route > ${updateBuildingPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.config({ routePath: updateBuildingPath })
-    await mongoUtils.webServer.listen()
-    await mongoUtils.db.connect()
+    await mongoUtils.run({ routePath: updateBuildingPath })
   })
 
   beforeEach(async () => {
-    await mongoUtils.db.clearCollection('buildings')
-    await mongoUtils.db.clearCollection('companies')
-    await mongoUtils.db.clearCollection('plans')
-    await mongoUtils.db.clearCollection('users')
+    await mongoUtils.clearCollections()
   })
 
   afterAll(async () => {
-    await mongoUtils.db.disconnect()
-    await mongoUtils.webServer.close()
-    await mongoUtils.mongoInMemory.stop()
+    await mongoUtils.stop()
   })
 
   const makeURN = (): string => updateBuildingPath

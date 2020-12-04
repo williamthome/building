@@ -6,20 +6,15 @@ import { updateUserPath } from '@/main/routes'
 
 describe(`UpdateUser Route > ${updateUserPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.config({ routePath: updateUserPath })
-    await mongoUtils.webServer.listen()
-    await mongoUtils.db.connect()
+    await mongoUtils.run({ routePath: updateUserPath })
   })
 
   beforeEach(async () => {
-    await mongoUtils.db.clearCollection('companies')
-    await mongoUtils.db.clearCollection('users')
+    await mongoUtils.clearCollections()
   })
 
   afterAll(async () => {
-    await mongoUtils.db.disconnect()
-    await mongoUtils.webServer.close()
-    await mongoUtils.mongoInMemory.stop()
+    await mongoUtils.stop()
   })
 
   it('shold return ok', async () => {

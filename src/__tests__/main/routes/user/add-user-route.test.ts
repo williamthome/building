@@ -6,19 +6,15 @@ import { addUserPath } from '@/main/routes'
 
 describe(`AddUser Route > ${addUserPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.config({ routePath: addUserPath })
-    await mongoUtils.webServer.listen()
-    await mongoUtils.db.connect()
+    await mongoUtils.run({ routePath: addUserPath })
   })
 
   beforeEach(async () => {
-    await mongoUtils.db.clearCollection('users')
+    await mongoUtils.clearCollections()
   })
 
   afterAll(async () => {
-    await mongoUtils.db.disconnect()
-    await mongoUtils.webServer.close()
-    await mongoUtils.mongoInMemory.stop()
+    await mongoUtils.stop()
   })
 
   it('shold return ok', async () => {

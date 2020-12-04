@@ -6,19 +6,15 @@ import { authenticationPath } from '@/main/routes'
 
 describe(`Authentication Route > ${authenticationPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.config({ routePath: authenticationPath })
-    await mongoUtils.webServer.listen()
-    await mongoUtils.db.connect()
+    await mongoUtils.run({ routePath: authenticationPath })
   })
 
   beforeEach(async () => {
-    await mongoUtils.db.clearCollection('users')
+    await mongoUtils.clearCollections()
   })
 
   afterAll(async () => {
-    await mongoUtils.db.disconnect()
-    await mongoUtils.webServer.close()
-    await mongoUtils.mongoInMemory.stop()
+    await mongoUtils.stop()
   })
 
   it('shold return ok', async () => {
