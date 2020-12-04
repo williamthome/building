@@ -23,7 +23,7 @@ export class UpdatePhaseController implements Controller<PhaseEntityDto, PhaseEn
     body: {
       schema: phaseSchema,
       keys: phaseKeys,
-      nullable: true
+      partialValidation: true
     },
     params: {
       schema: idParamSchema,

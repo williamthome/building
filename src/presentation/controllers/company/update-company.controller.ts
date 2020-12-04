@@ -24,8 +24,8 @@ export class UpdateCompanyController implements Controller<CompanyDto, CompanyEn
     body: {
       schema: companySchema,
       keys: companyKeys,
-      nullable: true,
-      banned: ['members', 'planId']
+      partialValidation: true,
+      bannedFields: ['members', 'planId']
     }
   })
   async handle (request: HttpRequest<CompanyDto>): HandleResponse<CompanyEntity> {

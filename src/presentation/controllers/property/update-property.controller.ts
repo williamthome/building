@@ -23,7 +23,7 @@ export class UpdatePropertyController implements Controller<PropertyEntityDto, P
     body: {
       schema: propertySchema,
       keys: propertyKeys,
-      nullable: true
+      partialValidation: true
     },
     params: {
       schema: idParamSchema,

@@ -21,8 +21,11 @@ export interface Validation {
 export interface ValidateSchemaOptions<T extends Record<PropertyKey, any>> {
   schema: Schema<T>
   keys: DeepFlattenPaths<T>
-  nullable?: boolean
-  banned?: Array<keyof T>
+}
+
+export interface ValidateBodySchemaOptions<T extends Record<PropertyKey, any>> extends ValidateSchemaOptions<T> {
+  partialValidation?: boolean
+  bannedFields?: Array<keyof T>
 }
 
 export interface ValidateOptions
@@ -31,7 +34,7 @@ export interface ValidateOptions
   TParams extends HttpParameters = HttpParameters,
   TQuery extends HttpQuery = HttpQuery
   > {
-  body?: ValidateSchemaOptions<TBody>
+  body?: ValidateBodySchemaOptions<TBody>
   params?: ValidateSchemaOptions<TParams>
   query?: ValidateSchemaOptions<TQuery>,
   planLimitFor?: keyof PlanLimits

@@ -23,7 +23,7 @@ export class UpdateCustomerController implements Controller<CustomerEntityDto, C
     body: {
       schema: customerSchema,
       keys: customerKeys,
-      nullable: true
+      partialValidation: true
     },
     params: {
       schema: idParamSchema,

@@ -31,7 +31,7 @@ export class UpdateCompanyMemberController implements Controller<MemberEntityDto
     body: {
       schema: memberSchema,
       keys: memberKeys,
-      nullable: true
+      partialValidation: true
     },
     params: {
       schema: idParamSchema,

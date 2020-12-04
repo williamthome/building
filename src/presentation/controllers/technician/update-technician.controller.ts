@@ -23,7 +23,7 @@ export class UpdateTechnicianController implements Controller<TechnicianEntityDt
     body: {
       schema: technicianSchema,
       keys: technicianKeys,
-      nullable: true
+      partialValidation: true
     },
     params: {
       schema: idParamSchema,

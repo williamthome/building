@@ -23,8 +23,8 @@ export class UpdateProjectController implements Controller<ProjectEntityDto, Pro
     body: {
       schema: projectSchema,
       keys: projectKeys,
-      nullable: true,
-      banned: ['buildingId']
+      partialValidation: true,
+      bannedFields: ['buildingId']
     },
     params: {
       schema: idParamSchema,

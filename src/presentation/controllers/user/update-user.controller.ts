@@ -24,7 +24,7 @@ export class UpdateUserController implements Controller<UserEntityDto, UserEntit
     body: {
       schema: userSchema,
       keys: userKeys,
-      nullable: true
+      partialValidation: true
     }
   })
   async handle (request: HttpRequest<UserEntityDto>): HandleResponse<UserEntityResponse> {

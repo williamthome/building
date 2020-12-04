@@ -11,6 +11,7 @@ import {
   RequestFile,
   Schema,
   SchemaOptions,
+  ValidateBodySchemaOptions,
   ValidateOptions,
   ValidateSchemaOptions,
   Validation,
@@ -71,17 +72,21 @@ class ValidationHelper {
   schemaError = <TObj extends Record<PropertyKey, any>, TSchema extends Record<PropertyKey, any> = TObj> (
     obj: TObj,
     schema: Schema<TSchema>,
-    nullable: boolean,
-    keys?: DeepFlattenPaths<TSchema>,
-    banned?: Array<keyof TSchema>
+    keys: DeepFlattenPaths<TSchema>,
+    partialValidation?: boolean,
+    bannedFields?: Array<keyof TSchema>
   ): HttpResponse<Error> | undefined => {
     if (keys) this.deleteInexistentFields(obj, keys)
 
-    for (const [field, value] of Object.entries(schema)) {
-      if (banned?.some(bannedField => field === bannedField))
-        return badRequest(new BannedFieldError(field))
+    if (bannedFields) {
+      for (const field of bannedFields) {
+        if (field in obj)
+          return badRequest(new BannedFieldError(field))
+      }
+    }
 
-      if (nullable && !(field in obj)) continue
+    for (const [field, value] of Object.entries(schema)) {
+      if (partialValidation && !(field in obj)) continue
 
       const fieldSchema = isNestedSchema(value) ? value : value as SchemaOptions
 
@@ -94,7 +99,7 @@ class ValidationHelper {
         if (!nestedObj && !this.requiredInValidations(fieldSchema.validations))
           continue
 
-        const nestedError = this.schemaError(nestedObj, fieldSchema.nested, nullable, keys as any)
+        const nestedError = this.schemaError(nestedObj, fieldSchema.nested as any, keys, partialValidation, bannedFields)
         if (nestedError)
           return nestedError
       }
@@ -159,30 +164,30 @@ class ValidationHelper {
 
   validateParams = <TRequest> (
     params: HttpParameters | undefined,
-    { schema, keys, nullable = false, banned }: ValidateSchemaOptions<TRequest>
+    { schema, keys }: ValidateSchemaOptions<TRequest>
   ): void | HttpResponse<null | Error> => {
-    const error = this.schemaError(params || {}, schema, nullable, keys, banned)
+    const error = this.schemaError(params || {}, schema, keys)
     if (error) return error
   }
 
   validateQuery = <TRequest> (
     query: HttpQuery | undefined,
-    { schema, keys, nullable = false, banned }: ValidateSchemaOptions<TRequest>
+    { schema, keys }: ValidateSchemaOptions<TRequest>
   ): void | HttpResponse<null | Error> => {
-    const error = this.schemaError(query || {}, schema, nullable, keys, banned)
+    const error = this.schemaError(query || {}, schema, keys)
     if (error) return error
   }
 
   validateBody = <TRequest> (
     body: TRequest | undefined,
-    { schema, keys, nullable = false }: ValidateSchemaOptions<TRequest>
+    { schema, keys, partialValidation, bannedFields }: ValidateBodySchemaOptions<TRequest>
   ): void | HttpResponse<null | Error> => {
-    if (!body && !nullable)
+    if (!body && !partialValidation)
       return badRequest(new MissingBodyError())
 
     if (!body) return noContent()
 
-    const error = this.schemaError<TRequest>(body, schema, nullable, keys)
+    const error = this.schemaError<TRequest>(body, schema, keys, partialValidation, bannedFields)
     if (error) return error
   }
 

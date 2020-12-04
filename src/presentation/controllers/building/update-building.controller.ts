@@ -23,7 +23,7 @@ export class UpdateBuildingController implements Controller<BuildingDto, Buildin
     body: {
       schema: buildingSchema,
       keys: buildingKeys,
-      nullable: true
+      partialValidation: true
     },
     params: {
       schema: idParamSchema,
