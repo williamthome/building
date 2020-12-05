@@ -1,4 +1,4 @@
-import { Inject, InjectableArray } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 import {
   AuthMiddleware,
   UserVerifiedMiddleware,
@@ -6,7 +6,7 @@ import {
   RequirementsMiddleware
 } from '@/main/middlewares'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
-import { InjectRouteController } from '@/main/decorators'
+import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { AddPhaseController } from '@/presentation/controllers'
 import { PhaseEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
@@ -17,7 +17,7 @@ export const addPhasePath = new RoutePath(
   '/phase'
 )
 
-@InjectableArray('routes')
+@InjectableRoute(addPhasePath)
 export class AddPhaseRoute implements Route<PhaseEntityDto, PhaseEntity> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManagePhases)
 
@@ -35,7 +35,6 @@ export class AddPhaseRoute implements Route<PhaseEntityDto, PhaseEntity> {
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get path (): RoutePath { return addPhasePath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,

@@ -1,4 +1,4 @@
-import { Inject, InjectableArray } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 import {
   AuthMiddleware,
   UserVerifiedMiddleware,
@@ -6,7 +6,7 @@ import {
   CompanyRoleMiddleware
 } from '@/main/middlewares'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
-import { InjectRouteController } from '@/main/decorators'
+import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { DeleteCompanyController } from '@/presentation/controllers'
 import { CompanyEntity } from '@/domain/entities'
 import { CompanyRole } from '@/shared/constants'
@@ -16,7 +16,7 @@ export const deleteCompanyPath = new RoutePath(
   '/company'
 )
 
-@InjectableArray('routes')
+@InjectableRoute(deleteCompanyPath)
 export class DeleteCompanyRoute implements Route<undefined, CompanyEntity> {
   companyRoleMiddleware = new CompanyRoleMiddleware(CompanyRole.owner)
 
@@ -34,7 +34,6 @@ export class DeleteCompanyRoute implements Route<undefined, CompanyEntity> {
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get path (): RoutePath { return deleteCompanyPath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,

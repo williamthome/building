@@ -1,4 +1,4 @@
-import { Inject, InjectableArray } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 import {
   AuthMiddleware,
   UserVerifiedMiddleware,
@@ -6,7 +6,7 @@ import {
   RequirementsMiddleware
 } from '@/main/middlewares'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
-import { InjectRouteController } from '@/main/decorators'
+import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { DeleteTechnicianController } from '@/presentation/controllers'
 import { TechnicianEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
@@ -16,7 +16,7 @@ export const deleteTechnicianPath = new RoutePath(
   '/technician/:id'
 )
 
-@InjectableArray('routes')
+@InjectableRoute(deleteTechnicianPath)
 export class DeleteTechnicianRoute implements Route<undefined, TechnicianEntity> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageTechnicians)
 
@@ -34,7 +34,6 @@ export class DeleteTechnicianRoute implements Route<undefined, TechnicianEntity>
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get path (): RoutePath { return deleteTechnicianPath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,

@@ -1,8 +1,10 @@
 import { Middleware } from './middleware.protocol'
 import { Controller, HttpMethod, HttpParameters, HttpQuery } from '@/presentation/protocols'
 
+export type RouteOptions = Pick<RoutePath, 'method' | 'urn'>
+
 export interface Route<TRequest, TResponse = TRequest> {
-  path: RoutePath
+  path?: RoutePath
   controller: Controller<TRequest, TResponse>
   middlewares: Middleware[]
 }

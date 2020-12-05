@@ -1,11 +1,11 @@
-import { Inject, InjectableArray } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 import {
   AuthMiddleware,
   UserVerifiedMiddleware,
   ActiveCompanyMiddleware,
 } from '@/main/middlewares'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
-import { InjectRouteController } from '@/main/decorators'
+import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { DownloadProjectAttachmentController } from '@/presentation/controllers'
 
 export const downloadProjectAttachmentPath = new RoutePath(
@@ -13,7 +13,7 @@ export const downloadProjectAttachmentPath = new RoutePath(
   '/project/:id/attachment/:attachmentId'
 )
 
-@InjectableArray('routes')
+@InjectableRoute(downloadProjectAttachmentPath)
 export class DownloadProjectAttachmentRoute implements Route<undefined, Buffer> {
   constructor (
     @InjectRouteController(DownloadProjectAttachmentController)
@@ -29,7 +29,6 @@ export class DownloadProjectAttachmentRoute implements Route<undefined, Buffer> 
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get path (): RoutePath { return downloadProjectAttachmentPath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,

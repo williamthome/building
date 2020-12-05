@@ -1,4 +1,4 @@
-import { Inject, InjectableArray } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 import { UserFeatures } from '@/shared/constants'
 import {
   AuthMiddleware,
@@ -8,7 +8,7 @@ import {
   RequestFileMiddleware
 } from '@/main/middlewares'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
-import { InjectRouteController } from '@/main/decorators'
+import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { UploadProjectAttachmentController } from '@/presentation/controllers'
 import { UploadFileResponse } from '@/presentation/protocols'
 import { mbToBytes } from '@/presentation/helpers/file.helper'
@@ -18,7 +18,7 @@ export const uploadProjectAttachmentPath = new RoutePath(
   '/project/:id/attachment'
 )
 
-@InjectableArray('routes')
+@InjectableRoute(uploadProjectAttachmentPath)
 export class UploadProjectAttachmentRoute implements Route<undefined, UploadFileResponse> {
   private readonly requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageProjects)
   private readonly requestFileMiddleware = new RequestFileMiddleware({
@@ -40,7 +40,6 @@ export class UploadProjectAttachmentRoute implements Route<undefined, UploadFile
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get path (): RoutePath { return uploadProjectAttachmentPath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,

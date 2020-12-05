@@ -1,4 +1,4 @@
-import { Inject, InjectableArray } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 import {
   AuthMiddleware,
   UserVerifiedMiddleware,
@@ -6,7 +6,7 @@ import {
   RequirementsMiddleware
 } from '@/main/middlewares'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
-import { InjectRouteController } from '@/main/decorators'
+import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { AddCustomerController } from '@/presentation/controllers'
 import { CustomerEntity } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
@@ -17,7 +17,7 @@ export const addCustomerPath = new RoutePath(
   '/customer'
 )
 
-@InjectableArray('routes')
+@InjectableRoute(addCustomerPath)
 export class AddCustomerRoute implements Route<CustomerEntityDto, CustomerEntity> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageCustomers)
 
@@ -35,7 +35,6 @@ export class AddCustomerRoute implements Route<CustomerEntityDto, CustomerEntity
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get path (): RoutePath { return addCustomerPath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,

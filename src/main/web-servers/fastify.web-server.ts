@@ -55,10 +55,10 @@ MulterFile
   injectRoutes = (): void => {
     if (this.routes.length === 0) throw new Error('No routes')
 
-    this.routes.map((route, index) => {
+    for (const [index, route] of this.routes.entries()) {
       this.adaptRoute(route, this.fastifyInstance)
-      console.log(`Route ${index + 1}/${this.routes.length} injected - ${route.path.describe}`)
-    })
+      console.log(`Route ${index + 1}/${this.routes.length} injected - ${route.path?.describe}`)
+    }
   }
 
   get isListening (): boolean {
@@ -69,6 +69,9 @@ MulterFile
     route: Route<TReq, TRes>,
     fastifyInstance: FastifyInstance
   ): FastifyInstance => {
+    if (!route.path)
+      throw new Error('No route path')
+
     return fastifyInstance.route({
       method: route.path.method,
       url: route.path.urn,

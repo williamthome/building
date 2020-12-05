@@ -1,11 +1,11 @@
-import { Inject, InjectableArray } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 import {
   AuthMiddleware,
   UserVerifiedMiddleware,
   ActiveCompanyMiddleware,
 } from '@/main/middlewares'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
-import { InjectRouteController } from '@/main/decorators'
+import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { GetAllProjectAttachmentsController } from '@/presentation/controllers'
 import { FileEntityResponse } from '@/domain/protocols'
 
@@ -14,7 +14,7 @@ export const getProjectAttachmentsPath = new RoutePath(
   '/project/:id/attachment'
 )
 
-@InjectableArray('routes')
+@InjectableRoute(getProjectAttachmentsPath)
 export class GetProjectAttachmentsRoute implements Route<undefined, FileEntityResponse[]> {
   constructor (
     @InjectRouteController(GetAllProjectAttachmentsController)
@@ -30,7 +30,6 @@ export class GetProjectAttachmentsRoute implements Route<undefined, FileEntityRe
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get path (): RoutePath { return getProjectAttachmentsPath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,

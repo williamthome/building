@@ -1,11 +1,11 @@
-import { Inject, InjectableArray } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 import {
   AuthMiddleware,
   UserVerifiedMiddleware,
   ActiveCompanyMiddleware,
   RequirementsMiddleware
 } from '@/main/middlewares'
-import { InjectRouteController } from '@/main/decorators'
+import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { AddBuildingController } from '@/presentation/controllers'
 import { BuildingEntity } from '@/domain/entities'
@@ -17,7 +17,7 @@ export const addBuildingPath = new RoutePath(
   '/building'
 )
 
-@InjectableArray('routes')
+@InjectableRoute(addBuildingPath)
 export class AddBuildingRoute implements Route<BuildingDto, BuildingEntity> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageBuildings)
 
@@ -35,7 +35,6 @@ export class AddBuildingRoute implements Route<BuildingDto, BuildingEntity> {
     private readonly activeCompanyMiddleware: Middleware
   ) { }
 
-  get path (): RoutePath { return addBuildingPath }
   get middlewares (): Middleware[] {
     return [
       this.authMiddleware,

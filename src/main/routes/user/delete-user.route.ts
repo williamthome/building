@@ -1,7 +1,7 @@
-import { Inject, InjectableArray } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 import { AuthMiddleware } from '@/main/middlewares'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
-import { InjectRouteController } from '@/main/decorators'
+import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { DeleteUserController } from '@/presentation/controllers'
 import { UserEntityResponse } from '@/domain/protocols'
 
@@ -10,7 +10,7 @@ export const deleteUserPath = new RoutePath(
   '/user'
 )
 
-@InjectableArray('routes')
+@InjectableRoute(deleteUserPath)
 export class DeleteUserRoute implements Route<undefined, UserEntityResponse> {
   constructor (
     @InjectRouteController(DeleteUserController)
@@ -20,6 +20,5 @@ export class DeleteUserRoute implements Route<undefined, UserEntityResponse> {
     private readonly authMiddleware: Middleware
   ) { }
 
-  get path (): RoutePath { return deleteUserPath }
   get middlewares (): Middleware[] { return [this.authMiddleware] }
 }
