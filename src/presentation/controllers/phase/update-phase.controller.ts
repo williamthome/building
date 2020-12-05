@@ -1,17 +1,17 @@
 // : Shared
-import { Inject, Injectable } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { phaseSchema, idParamKeys, idParamSchema } from '@/presentation/schemas'
-import { HandleError, Validate } from '@/presentation/decorators'
+import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { PhaseEntity, phaseKeys } from '@/domain/entities'
 import { UpdatePhaseUseCase } from '@/domain/usecases'
 import { PhaseEntityDto } from '@/domain/protocols'
 
-@Injectable()
+@InjectableController()
 export class UpdatePhaseController implements Controller<PhaseEntityDto, PhaseEntity> {
 
   constructor (

@@ -1,19 +1,20 @@
 // : Shared
-import { Inject, Injectable } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 import { UserFeatures, CompanyRole } from '@/shared/constants'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { companySchema } from '@/presentation/schemas'
-import { HandleError, UsesTransaction, Validate } from '@/presentation/decorators'
+import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 // < Out: only domain layer
 import { CompanyEntity, companyKeys, PlanEntity, UserEntity } from '@/domain/entities'
 import { AddCompanyUseCase, GetPlanByIdUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
 import { CompanyDto } from '@/domain/protocols'
 import { EntityNotFoundError } from '@/presentation/errors'
 
-@Injectable()
-@UsesTransaction
+@InjectableController({
+  usesTransaction: true
+})
 export class AddCompanyController implements Controller<CompanyDto, CompanyEntity> {
 
   constructor (

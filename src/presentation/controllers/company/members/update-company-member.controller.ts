@@ -1,11 +1,11 @@
 // : Shared
-import { Inject, Injectable } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 import { CompanyRole } from '@/shared/constants'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, forbidden, notFound, ok } from '@/presentation/factories/http.factory'
 import { idParamKeys, idParamSchema, memberSchema } from '@/presentation/schemas'
-import { HandleError, Validate } from '@/presentation/decorators'
+import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import {
   AccessDeniedError,
   CanNotAddMoreOwnesrError,
@@ -19,7 +19,7 @@ import { UpdateCompanyMemberUseCase } from '@/domain/usecases'
 import { MemberEntity, memberKeys } from '@/domain/entities/nested'
 import { MemberEntityDto } from '@/domain/protocols'
 
-@Injectable()
+@InjectableController()
 export class UpdateCompanyMemberController implements Controller<MemberEntityDto, CompanyEntity> {
 
   constructor (

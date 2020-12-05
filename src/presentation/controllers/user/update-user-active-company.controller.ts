@@ -1,21 +1,24 @@
 // : Shared
-import { Inject, Injectable } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { forbidden, noContent, notFound } from '@/presentation/factories/http.factory'
 import { idParamSchemaOptions } from '@/presentation/schemas'
-import { HandleError, Validate } from '@/presentation/decorators'
+import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 // < Out: only domain layer
 import { CompanyEntity, UserEntity } from '@/domain/entities'
 import { GetCompanyByIdUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
 import { AccessDeniedError, EntityNotFoundError } from '@/presentation/errors'
 
-@Injectable()
+@InjectableController()
 export class UpdateUserActiveCompanyController implements Controller<undefined, null> {
 
   constructor (
-    @Inject() private readonly getCompanyByIdUseCase: GetCompanyByIdUseCase,
-    @Inject() private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase
+    @Inject()
+    private readonly getCompanyByIdUseCase: GetCompanyByIdUseCase,
+
+    @Inject()
+    private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase
   ) { }
 
   @HandleError

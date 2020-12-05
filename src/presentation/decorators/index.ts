@@ -1,3 +1,3 @@
 export * from './validate.decorator'
 export * from './handle-error.decorator'
-export * from './uses-transaction.decorator'
+export * from './injectable-controller.decorator'

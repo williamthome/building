@@ -1,9 +1,9 @@
 // : Shared
-import { Inject, Injectable } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
-import { HandleError, UsesTransaction, Validate } from '@/presentation/decorators'
+import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError, UserAlreadyVerifiedError } from '@/presentation/errors'
 import { isString, required } from '@/presentation/validations'
 // < Out: only domain layer
@@ -13,14 +13,20 @@ import { UserEntityResponse } from '@/domain/protocols'
 import { Decrypter } from '@/domain/protocols/cryptography'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
-@Injectable()
-@UsesTransaction
+@InjectableController({
+  usesTransaction: true
+})
 export class VerifyUserController implements Controller<undefined, UserEntityResponse> {
 
   constructor (
-    @Inject() private readonly decrypter: Decrypter,
-    @Inject() private readonly getUserByIdUseCase: GetUserByIdUseCase,
-    @Inject() private readonly verifyUserUseCase: VerifyUserUseCase
+    @Inject()
+    private readonly decrypter: Decrypter,
+
+    @Inject()
+    private readonly getUserByIdUseCase: GetUserByIdUseCase,
+
+    @Inject()
+    private readonly verifyUserUseCase: VerifyUserUseCase
   ) { }
 
   @HandleError

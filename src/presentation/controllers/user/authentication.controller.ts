@@ -1,7 +1,7 @@
-import { Inject, Injectable } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 import { AuthEntityDto, UserEntityResponse } from '@/domain/protocols'
 import { GetUserByEmailUseCase, UpdateUserAccessTokenUseCase } from '@/domain/usecases/user'
-import { HandleError, Validate } from '@/presentation/decorators'
+import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { authSchema } from '@/presentation/schemas'
@@ -9,7 +9,7 @@ import { EntityNotFoundError, PasswordDoNotMatchError } from '@/presentation/err
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
 import { Encrypter, HashComparer } from '@/domain/protocols/cryptography'
 
-@Injectable()
+@InjectableController()
 export class AuthenticationController implements Controller<AuthEntityDto, UserEntityResponse> {
 
   constructor (

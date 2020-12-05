@@ -1,9 +1,9 @@
 // : Shared
-import { Inject, Injectable } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { ok, notFound, badRequest } from '@/presentation/factories/http.factory'
-import { HandleError, Validate } from '@/presentation/decorators'
+import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError, UserAlreadyVerifiedError } from '@/presentation/errors'
 import { isEmail, isString, required } from '@/presentation/validations'
 // < Out: only domain layer
@@ -12,13 +12,18 @@ import { UserVerificationToken } from '@/domain/protocols'
 import { Encrypter } from '@/domain/protocols/cryptography'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
-@Injectable()
+@InjectableController()
 export class ResendUserVerificationTokenController implements Controller<undefined, UserVerificationToken> {
 
   constructor (
-    @Inject() private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
-    @Inject() private readonly resendUserVerificationTokenUseCase: ResendUserVerificationTokenUseCase,
-    @Inject() private readonly encrypter: Encrypter
+    @Inject()
+    private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
+
+    @Inject()
+    private readonly resendUserVerificationTokenUseCase: ResendUserVerificationTokenUseCase,
+
+    @Inject()
+    private readonly encrypter: Encrypter
   ) { }
 
   @HandleError

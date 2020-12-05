@@ -1,17 +1,17 @@
 // : Shared
-import { Inject, Injectable } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { customerSchema, idParamKeys, idParamSchema } from '@/presentation/schemas'
-import { HandleError, Validate } from '@/presentation/decorators'
+import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CustomerEntity, customerKeys } from '@/domain/entities'
 import { UpdateCustomerUseCase } from '@/domain/usecases'
 import { CustomerEntityDto } from '@/domain/protocols'
 
-@Injectable()
+@InjectableController()
 export class UpdateCustomerController implements Controller<CustomerEntityDto, CustomerEntity> {
 
   constructor (

@@ -1,16 +1,16 @@
 // : Shared
-import { Inject, Injectable } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { HandleError, Validate } from '@/presentation/decorators'
+import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { idParamKeys, idParamSchema, idParamSchemaOptions } from '@/presentation/schemas'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { DownloadProjectAttachmentUseCase } from '@/domain/usecases'
 import { FileEntity, ProjectEntity } from '@/domain/entities'
 
-@Injectable()
+@InjectableController()
 export class DownloadProjectAttachmentController implements Controller<undefined, Buffer> {
 
   constructor (

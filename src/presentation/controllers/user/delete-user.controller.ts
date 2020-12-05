@@ -1,9 +1,9 @@
 // : Shared
-import { Inject, Injectable } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { HandleError, UsesTransaction } from '@/presentation/decorators'
+import { HandleError, InjectableController } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { UserEntity } from '@/domain/entities'
@@ -11,8 +11,9 @@ import { DeleteUserUseCase } from '@/domain/usecases'
 import { UserEntityResponse } from '@/domain/protocols'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
-@Injectable()
-@UsesTransaction
+@InjectableController({
+  usesTransaction: true
+})
 export class DeleteUserController implements Controller<undefined, UserEntityResponse> {
 
   constructor (

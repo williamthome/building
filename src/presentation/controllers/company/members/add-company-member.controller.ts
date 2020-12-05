@@ -1,10 +1,10 @@
 // : Shared
-import { Inject, Injectable } from '@/shared/dependency-injection'
+import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
 import { memberSchema } from '@/presentation/schemas'
-import { HandleError, Validate } from '@/presentation/decorators'
+import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError, UserAlreadyAMemberError } from '@/presentation/errors'
 // < Out: only domain layer
 import { CompanyEntity } from '@/domain/entities'
@@ -12,7 +12,7 @@ import { AddCompanyMemberUseCase } from '@/domain/usecases'
 import { MemberEntity, memberKeys } from '@/domain/entities/nested'
 import { userIsMember } from '@/domain/helpers/user.helper'
 
-@Injectable()
+@InjectableController()
 export class AddCompanyMemberController implements Controller<MemberEntity, CompanyEntity> {
 
   constructor (
