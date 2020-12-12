@@ -1,29 +1,29 @@
 import request from 'supertest'
+import { dbUtils } from '@/__tests__/shared/database'
+import { authenticationPath } from '@/main/routes'
 import { HttpStatusCode } from '@/presentation/constants'
 import { mockAuthentication, mockCreateUserDto } from '@/__tests__/domain/__mocks__/entities'
-import { mongoUtils } from '@/__tests__/shared/mongo.utils'
-import { authenticationPath } from '@/main/routes'
 
 describe(`Authentication Route > ${authenticationPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.run({ routePath: authenticationPath })
+    await dbUtils.run({ routePath: authenticationPath })
   })
 
   beforeEach(async () => {
-    await mongoUtils.clearCollections()
+    await dbUtils.clearCollections()
   })
 
   afterAll(async () => {
-    await mongoUtils.stop()
+    await dbUtils.stop()
   })
 
   it('shold return ok', async () => {
     const authDto = mockAuthentication()
-    await mongoUtils.addUser({
+    await dbUtils.addUser({
       email: authDto.email,
       password: authDto.password
     })
-    await request(mongoUtils.webServer.server())
+    await request(dbUtils.webServer.server())
       .post(authenticationPath.urn)
       .send(authDto)
       .expect(HttpStatusCode.OK)

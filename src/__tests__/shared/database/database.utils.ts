@@ -1,21 +1,20 @@
-import {
-  MongoMemoryReplSet,
-  MongoMemoryServer
-} from 'mongodb-memory-server'
 import container from '@/shared/dependency-injection'
-import fakeData from './fake-data'
+import fakeData from '../fake-data'
 import { CompanyRole, UserFeatures } from '@/shared/constants'
 import { CollectionName } from '@/shared/types'
 import { Server } from '@/main/server'
 import { Route, RoutePath, WebServer } from '@/main/protocols'
-import { TransactionController } from '@/main/decorators'
 import { Database } from '@/infra/protocols'
 import { BuildingData, CompanyData, CreateBuildingData, CreateCompanyData, CreatePlanData, CreateUserData, PlanData, UserData } from '@/data/models'
 import { Hasher } from '@/data/protocols/cryptography'
-import { mockCreateBuildingData, mockCreateCompanyData, mockCreateUserData, mockCreatePlanData } from '../data/__mocks__/models'
+import { mockCreateBuildingData, mockCreateCompanyData, mockCreateUserData, mockCreatePlanData } from '../../data/__mocks__/models'
 
-interface MongoUtilsOptions {
+export interface DataBaseUtilsOptions {
   routePath: RoutePath
+}
+
+export interface ConfigResponse {
+  dbURI: string
 }
 
 interface Entities {
@@ -26,8 +25,12 @@ interface Entities {
   [k: string]: any
 }
 
-class MongoUtils {
-  private _replSet?: boolean
+export abstract class DataBaseUtils {
+
+  protected abstract callThisOnConfig: (route: Route<any, any>) => Promise<ConfigResponse>
+  protected abstract callThisOnRun?: () => Promise<void>
+  protected abstract callThisOnStop?: () => Promise<void>
+
   private _accessToken?: UserData['accessToken']
   private _entities: Entities = {}
   private _entityCollectionName: { [K in keyof Required<Entities>]: CollectionName } = {
@@ -40,11 +43,6 @@ class MongoUtils {
   get jwtSecret (): string { return container.resolve<string>('JWT_SECRET') }
   get db (): Database { return container.resolve<Database>('db') }
   get webServer (): WebServer { return container.resolve<WebServer>('webServer') }
-  get mongoInMemory (): MongoMemoryReplSet | MongoMemoryServer {
-    return this._replSet
-      ? container.resolve(MongoMemoryReplSet)
-      : container.resolve(MongoMemoryServer)
-  }
 
   get user (): UserData {
     if (!this._entities.user) throw new Error('Undefined user')
@@ -70,16 +68,17 @@ class MongoUtils {
     return this._entities.building
   }
 
-  run = async (opts: MongoUtilsOptions): Promise<void> => {
-    await mongoUtils.config(opts)
-    await mongoUtils.webServer.listen()
-    await mongoUtils.db.connect()
+  run = async (opts: DataBaseUtilsOptions): Promise<void> => {
+    await this.config(opts)
+    await this.webServer.listen()
+    await this.db.connect()
+    if (this.callThisOnRun) await this.callThisOnRun()
   }
 
   stop = async (): Promise<void> => {
-    await mongoUtils.db.disconnect()
-    await mongoUtils.webServer.close()
-    await mongoUtils.mongoInMemory.stop()
+    await this.db.disconnect()
+    await this.webServer.close()
+    if (this.callThisOnStop) await this.callThisOnStop()
   }
 
   clearCollections = async (): Promise<void> => {
@@ -89,7 +88,7 @@ class MongoUtils {
     }
   }
 
-  private config = async ({ routePath }: MongoUtilsOptions): Promise<void> => {
+  private config = async ({ routePath }: DataBaseUtilsOptions): Promise<void> => {
     const server = await new Server().config()
 
     container.define(Server).as(server).pinned().done()
@@ -102,28 +101,9 @@ class MongoUtils {
     if (!route)
       throw new Error(`Route ${routePath.describe} not injected`)
 
-    let mongoInMemory: MongoMemoryReplSet | MongoMemoryServer
+    const { dbURI } = await this.callThisOnConfig(route)
 
-    this._replSet = route.controller instanceof TransactionController
-      ? route.controller.controller.usesTransaction
-      : route.controller.usesTransaction
-
-    if (this._replSet) {
-      mongoInMemory = new MongoMemoryReplSet({
-        replSet: {
-          storageEngine: 'wiredTiger',
-          count: 2
-        }
-      })
-      await mongoInMemory.waitUntilRunning()
-      container.define(MongoMemoryReplSet).as(mongoInMemory).pinned().done()
-    } else {
-      mongoInMemory = new MongoMemoryServer()
-      container.define(MongoMemoryServer).as(mongoInMemory).pinned().done()
-    }
-
-    const uri = await mongoInMemory.getUri()
-    container.define('DB_URL').as(uri).pinned().done()
+    container.define('DB_URL').as(dbURI).pinned().done()
   }
 
   addUser = async (override?: {
@@ -204,4 +184,3 @@ class MongoUtils {
   }
 }
 
-export const mongoUtils = new MongoUtils()

@@ -1,36 +1,36 @@
 import request from 'supertest'
-import { mongoUtils } from '@/__tests__/shared/mongo.utils'
-import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
+import { dbUtils } from '@/__tests__/shared/database'
 import { deleteBuildingPath } from '@/main/routes'
+import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 
 describe(`DeleteBuilding Route > ${deleteBuildingPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.run({ routePath: deleteBuildingPath })
+    await dbUtils.run({ routePath: deleteBuildingPath })
   })
 
   beforeEach(async () => {
-    await mongoUtils.clearCollections()
+    await dbUtils.clearCollections()
   })
 
   afterAll(async () => {
-    await mongoUtils.stop()
+    await dbUtils.stop()
   })
 
   const makeURN = (): string => deleteBuildingPath
     .fillURN()
-    .params({ id: mongoUtils.building.id })
+    .params({ id: dbUtils.building.id })
     .urn
 
   it('shold return ok', async () => {
-    await mongoUtils.addUser()
-    await mongoUtils.authenticate()
-    await mongoUtils.verify()
-    await mongoUtils.addPlan()
-    await mongoUtils.addCompany()
-    await mongoUtils.addBuilding()
-    await request(mongoUtils.webServer.server())
+    await dbUtils.addUser()
+    await dbUtils.authenticate()
+    await dbUtils.verify()
+    await dbUtils.addPlan()
+    await dbUtils.addCompany()
+    await dbUtils.addBuilding()
+    await request(dbUtils.webServer.server())
       .delete(makeURN())
-      .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
+      .set(HttpHeaderName.AUTHORIZATION, dbUtils.authorizationToken)
       .expect(HttpStatusCode.OK)
   })
 })

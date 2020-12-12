@@ -1,24 +1,24 @@
 import request from 'supertest'
+import { dbUtils } from '@/__tests__/shared/database'
+import { addUserPath } from '@/main/routes'
 import { HttpStatusCode } from '@/presentation/constants'
 import { mockCreateUserDto } from '@/__tests__/domain/__mocks__/entities'
-import { mongoUtils } from '@/__tests__/shared/mongo.utils'
-import { addUserPath } from '@/main/routes'
 
 describe(`AddUser Route > ${addUserPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.run({ routePath: addUserPath })
+    await dbUtils.run({ routePath: addUserPath })
   })
 
   beforeEach(async () => {
-    await mongoUtils.clearCollections()
+    await dbUtils.clearCollections()
   })
 
   afterAll(async () => {
-    await mongoUtils.stop()
+    await dbUtils.stop()
   })
 
   it('shold return ok', async () => {
-    await request(mongoUtils.webServer.server())
+    await request(dbUtils.webServer.server())
       .post(addUserPath.urn)
       .send(mockCreateUserDto())
       .expect(HttpStatusCode.OK)

@@ -1,34 +1,34 @@
 import request from 'supertest'
-import { mongoUtils } from '@/__tests__/shared/mongo.utils'
-import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
+import { dbUtils } from '@/__tests__/shared/database'
 import { updateUserActiveCompanyPath } from '@/main/routes'
+import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 
 xdescribe(`UpdateUserActiveCompany Route > ${updateUserActiveCompanyPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.run({ routePath: updateUserActiveCompanyPath })
+    await dbUtils.run({ routePath: updateUserActiveCompanyPath })
   })
 
   beforeEach(async () => {
-    await mongoUtils.clearCollections()
+    await dbUtils.clearCollections()
   })
 
   afterAll(async () => {
-    await mongoUtils.stop()
+    await dbUtils.stop()
   })
 
   const makeURN = (): string => updateUserActiveCompanyPath.fillURN()
-    .params({ companyId: mongoUtils.company.id })
+    .params({ companyId: dbUtils.company.id })
     .urn
 
   it('shold return no content', async () => {
-    await mongoUtils.addUser()
-    await mongoUtils.authenticate()
-    await mongoUtils.verify()
-    await mongoUtils.addPlan()
-    await mongoUtils.addCompany()
-    await request(mongoUtils.webServer.server())
+    await dbUtils.addUser()
+    await dbUtils.authenticate()
+    await dbUtils.verify()
+    await dbUtils.addPlan()
+    await dbUtils.addCompany()
+    await request(dbUtils.webServer.server())
       .patch(makeURN())
-      .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
+      .set(HttpHeaderName.AUTHORIZATION, dbUtils.authorizationToken)
       .expect(HttpStatusCode.NO_CONTENT)
   })
 })

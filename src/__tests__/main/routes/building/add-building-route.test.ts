@@ -1,31 +1,31 @@
 import request from 'supertest'
+import { dbUtils } from '@/__tests__/shared/database'
+import { addBuildingPath } from '@/main/routes'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
 import { mockCreateBuildingDto } from '@/__tests__/domain/__mocks__/entities'
-import { mongoUtils } from '@/__tests__/shared/mongo.utils'
-import { addBuildingPath } from '@/main/routes'
 
 describe(`AddBuilding Route > ${addBuildingPath.describe}`, () => {
   beforeAll(async () => {
-    await mongoUtils.run({ routePath: addBuildingPath })
+    await dbUtils.run({ routePath: addBuildingPath })
   })
 
   beforeEach(async () => {
-    await mongoUtils.clearCollections()
+    await dbUtils.clearCollections()
   })
 
   afterAll(async () => {
-    await mongoUtils.stop()
+    await dbUtils.stop()
   })
 
   it('shold return ok', async () => {
-    await mongoUtils.addUser()
-    await mongoUtils.authenticate()
-    await mongoUtils.verify()
-    await mongoUtils.addPlan()
-    await mongoUtils.addCompany()
-    await request(mongoUtils.webServer.server())
+    await dbUtils.addUser()
+    await dbUtils.authenticate()
+    await dbUtils.verify()
+    await dbUtils.addPlan()
+    await dbUtils.addCompany()
+    await request(dbUtils.webServer.server())
       .post(addBuildingPath.urn)
-      .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
+      .set(HttpHeaderName.AUTHORIZATION, dbUtils.authorizationToken)
       .send(mockCreateBuildingDto())
       .expect(HttpStatusCode.OK)
   })
