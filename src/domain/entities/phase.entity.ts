@@ -3,7 +3,7 @@ import { string, array } from '../protocols/schema'
 
 export const phaseSchema = limitedEntitySchema({
   buildingId: string().required(),
-  participantIds: array<string>().required(),
+  participantIds: array<string>().required().minSize(1),
   title: string().required()
 })
 
