@@ -5,7 +5,7 @@ import { uniqueItems } from '@/shared/helpers/array.helper'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
-import { EntityNotFoundError, UserIsNotAMemberError } from '@/presentation/errors'
+import { EntityNotFoundError, SomeUserIsNotAMemberError } from '@/presentation/errors'
 // < Out: only domain layer
 import { AddPhaseUseCase, GetBuildingByIdUseCase } from '@/domain/usecases'
 import { Phase, Company, phaseSchema, CreatePhaseDto } from '@/domain/entities'
@@ -45,7 +45,7 @@ export class AddPhaseController implements Controller<CreatePhaseDto, Phase> {
 
     for (const participantId of participantIds) {
       if (!userIsMember(activeCompanyMembers, participantId))
-        return badRequest(new UserIsNotAMemberError())
+        return badRequest(new SomeUserIsNotAMemberError())
     }
 
     const createdPhase = await this.addPhaseUseCase.call(createPhaseDto, activeCompanyId)
