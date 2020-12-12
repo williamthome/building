@@ -1,23 +1,23 @@
-import { BuildingEntity } from '@/domain/entities'
+import { Building } from '@/domain/entities'
 import { DeleteBuildingUseCase } from '@/domain/usecases'
-import { mockBuildingEntity } from '@/__tests__/domain/__mocks__/entities'
+import { mockBuilding } from '@/__tests__/domain/__mocks__/entities'
 
 export class DeleteBuildingUseCaseSpy implements DeleteBuildingUseCase {
-  buildingId?: BuildingEntity['id']
-  buildingEntity?: BuildingEntity | null
-  override?: BuildingEntity
+  id?: Building['id']
+  building?: Building | null
+  override?: Partial<Building>
   shouldReturnNull = false
   shouldThrow = false
 
-  call = async (buildingId: BuildingEntity['id'],): Promise<BuildingEntity | null> => {
-    this.buildingId = buildingId
+  call = async (id: Building['id'],): Promise<Building | null> => {
+    this.id = id
 
     if (this.shouldThrow) throw new Error()
 
-    this.buildingEntity = this.shouldReturnNull
+    this.building = this.shouldReturnNull
       ? null
-      : { ...mockBuildingEntity(), ...this.override }
+      : { ...mockBuilding(), ...this.override }
 
-    return this.buildingEntity
+    return this.building
   }
 }

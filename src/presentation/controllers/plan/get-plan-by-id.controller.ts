@@ -3,31 +3,30 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
-// < Out: only domain layer
-import { PlanEntity } from '@/domain/entities'
-import { GetPlanByIdUseCase } from '@/domain/usecases'
 import { EntityNotFoundError } from '@/presentation/errors'
+// < Out: only domain layer
+import { Plan } from '@/domain/entities'
+import { GetPlanByIdUseCase } from '@/domain/usecases'
+import { idSchema } from '@/domain/protocols'
 
 @InjectableController()
-export class GetPlanByIdController implements Controller<undefined, PlanEntity> {
+export class GetPlanByIdController implements Controller<undefined, Plan> {
 
   constructor (
     @Inject() private readonly getPlanByIdUseCase: GetPlanByIdUseCase,
   ) { }
 
   @HandleError
-  @Validate<undefined, PlanEntity>({
+  @Validate({
     params: {
-      schema: idParamSchema,
-      keys: idParamKeys
+      schema: idSchema
     }
   })
-  async handle (request: HttpRequest<undefined>): HandleResponse<PlanEntity> {
-    const requestPlanId = request.params?.id as PlanEntity['id']
+  async handle (request: HttpRequest): HandleResponse<Plan> {
+    const planId = request.params?.id as Plan['id']
 
-    const findedPlan = await this.getPlanByIdUseCase.call(requestPlanId)
+    const findedPlan = await this.getPlanByIdUseCase.call(planId)
     if (!findedPlan)
       return notFound(new EntityNotFoundError('Plan'))
 

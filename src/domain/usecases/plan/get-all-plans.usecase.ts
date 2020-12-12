@@ -1,5 +1,5 @@
-import { PlanEntity } from '@/domain/entities'
+import { Plan } from '@/domain/entities'
 
 export interface GetAllPlansUseCase {
-  call: () => Promise<PlanEntity[]>
+  call: () => Promise<Plan[]>
 }

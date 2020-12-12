@@ -1,13 +1,7 @@
-import { LimitedModel, Model } from '../protocols'
-import { CustomerEntity } from '@/domain/entities'
-import { CompanyModel } from './company.model'
+import { Customer, CreateCustomerDto, UpdateCustomerDto } from '@/domain/entities'
 
-export class CustomerModel extends LimitedModel implements CustomerEntity {
-  constructor (
-    public readonly id: Model['id'],
-    public readonly companyId: CompanyModel['id'],
-    public readonly name: string
-  ) {
-    super(id, companyId)
-  }
-}
+export type CustomerData = Customer
+
+export type CreateCustomerData = CreateCustomerDto & Pick<CustomerData, 'companyId'>
+
+export type UpdateCustomerData = UpdateCustomerDto

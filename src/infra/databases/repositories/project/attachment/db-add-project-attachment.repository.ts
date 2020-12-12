@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Database } from '@/infra/protocols'
-import { FileModel, ProjectModel } from '@/data/models'
+import { CreateFileData, FileData, UploadProjectAttachmentData } from '@/data/models'
 import { AddProjectAttachmentRepository } from '@/data/repositories'
-import { FileModelDto } from '@/data/protocols'
 
 @Injectable('addProjectAttachmentRepository')
 export class DbAddProjectAttachmentRepository implements AddProjectAttachmentRepository {
@@ -11,17 +10,13 @@ export class DbAddProjectAttachmentRepository implements AddProjectAttachmentRep
     @Inject('db') private readonly db: Database
   ) { }
 
-  addProjectAttachment = async (
-    projectId: ProjectModel['id'],
-    fileDto: FileModelDto
-  ): Promise<FileModel> => {
-    return await this.db.addOne<FileModel>(
-      {
+  addProjectAttachment = async (dto: UploadProjectAttachmentData): Promise<FileData> => {
+    return await this.db.addOne<CreateFileData, FileData>({
+      collectionName: 'files',
+      dto: {
         reference: 'projects',
-        referenceId: projectId,
-        ...fileDto
-      },
-      'files'
-    )
+        ...dto
+      }
+    })
   }
 }

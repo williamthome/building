@@ -1,15 +1,12 @@
-import { UserEntity } from '@/domain/entities'
+import { User } from '@/domain/entities'
 import { UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
 
 export class UpdateUserActiveCompanyUseCaseSpy implements UpdateUserActiveCompanyUseCase {
-  id?: UserEntity['id']
-  activeCompanyId?:  UserEntity['activeCompanyId']
+  id?: User['id']
+  activeCompanyId?:  User['activeCompanyId']
   shouldThrow = false
 
-  call = async (
-    id: UserEntity['id'],
-    activeCompanyId: UserEntity['activeCompanyId']
-  ): Promise<void> => {
+  call = async (id: User['id'], activeCompanyId: User['activeCompanyId']): Promise<void> => {
     this.id = id
     this.activeCompanyId = activeCompanyId
 

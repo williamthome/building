@@ -1,6 +1,6 @@
-import { LimitedEntity } from '@/domain/protocols'
 import { CollectionName } from '@/shared/types'
+import { Company } from '@/domain/entities'
 
 export interface GetEntityCountForPlanLimitUseCase {
-  call: <T extends LimitedEntity> (reference: CollectionName, companyId: T['companyId']) => Promise<number>
+  call: (reference: CollectionName, companyId: Company['id']) => Promise<number>
 }

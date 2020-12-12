@@ -1,5 +1,5 @@
-import { UserModel } from '@/data/models'
+import { UserData } from '@/data/models'
 
 export interface GetUserByAccessTokenRepository {
-  getUserByAccessToken: (accessToken: UserModel['accessToken']) => Promise<UserModel | null>
+  getUserByAccessToken: (accessToken: UserData['accessToken']) => Promise<UserData | null>
 }

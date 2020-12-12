@@ -1,6 +1,5 @@
-import { PhaseEntity } from '@/domain/entities'
-import { PhaseEntityDto } from '@/domain/protocols'
+import { Phase, UpdatePhaseDto } from '@/domain/entities'
 
 export interface UpdatePhaseUseCase {
-  call: (id: PhaseEntity['id'], dto: PhaseEntityDto) => Promise<PhaseEntity | null>
+  call: (id: Phase['id'], dto: UpdatePhaseDto) => Promise<Phase | null>
 }

@@ -1,6 +1,6 @@
-import { CompanyEntity } from '@/domain/entities'
-import { MemberEntity } from '@/domain/entities/nested'
+import { Company } from '@/domain/entities'
+import { CreateMemberDto } from '@/domain/entities/nested'
 
 export interface AddCompanyMemberUseCase {
-  call: (companyId: CompanyEntity['id'], member: MemberEntity) => Promise<CompanyEntity | null>
+  call: (companyId: Company['id'], dto: CreateMemberDto) => Promise<Company | null>
 }

@@ -63,34 +63,65 @@ describe('MongoDB Database', () => {
       const collection = await mongodb.getCollection('users')
       let nDocs = await collection.countDocuments()
       expect(nDocs).toBe(0)
-      await mongodb.addOne({}, 'users')
+      await mongodb.addOne({
+        collectionName: 'users',
+        dto: {}
+      })
       nDocs = await collection.countDocuments()
       expect(nDocs).toBe(1)
       await mongodb.clearCollection('users')
     })
   })
 
-  describe('getOneBy()', () => {
+  describe('getOne()', () => {
     it('should return truthy', async () => {
-      const { id } = await mongodb.addOne({}, 'users')
-      await expect(mongodb.getOneBy('id', id, 'users')).resolves.toBeTruthy()
+      const { id } = await mongodb.addOne({
+        collectionName: 'users',
+        dto: {}
+      })
+      await expect(mongodb.getOne<any, 'id'>({
+        collectionName: 'users',
+        matchKey: 'id',
+        matchValue: id
+      })).resolves.toBeTruthy()
       await mongodb.clearCollection('users')
     })
 
     it('should return falsy', async () => {
-      await expect(mongodb.getOneBy('id', undefined, 'users')).resolves.toBeFalsy()
+      await expect(mongodb.getOne<any, 'id'>({
+        collectionName: 'users',
+        matchKey: 'id',
+        matchValue: undefined
+      })).resolves.toBeFalsy()
     })
   })
 
   describe('updateOne()', () => {
     it('should return falsy', async () => {
-      await expect(mongodb.updateOne(new ObjectId().toHexString(), {}, 'users')).resolves.toBeFalsy()
+      await expect(mongodb.updateOne<any, 'id'>({
+        collectionName: 'users',
+        matchKey: 'id',
+        matchValue: new ObjectId().toHexString(),
+        dto: {}
+      })).resolves.toBeFalsy()
     })
 
     it('should update', async () => {
-      const { id } = await mongodb.addOne<any>({}, 'users')
-      await mongodb.updateOne<any>(id, { field: 'updated' }, 'users')
-      const updated = await mongodb.getOneBy<any, any>('id', id, 'users')
+      const { id } = await mongodb.addOne({
+        collectionName: 'users',
+        dto: {}
+      })
+      await mongodb.updateOne<any, 'id'>({
+        collectionName: 'users',
+        matchKey: 'id',
+        matchValue: id,
+        dto: { field: 'updated' }
+      })
+      const updated = await mongodb.getOne<any, 'id'>({
+        collectionName: 'users',
+        matchKey: 'id',
+        matchValue: id
+      })
       expect(updated.field).toBe('updated')
       await mongodb.clearCollection('users')
     })

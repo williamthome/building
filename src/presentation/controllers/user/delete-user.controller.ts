@@ -6,23 +6,23 @@ import { notFound, ok } from '@/presentation/factories/http.factory'
 import { HandleError, InjectableController } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
-import { UserEntity } from '@/domain/entities'
+import { User } from '@/domain/entities'
 import { DeleteUserUseCase } from '@/domain/usecases'
-import { UserEntityResponse } from '@/domain/protocols'
+import { UserResponse } from '@/domain/protocols'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
 @InjectableController({
   usesTransaction: true
 })
-export class DeleteUserController implements Controller<undefined, UserEntityResponse> {
+export class DeleteUserController implements Controller<undefined, UserResponse> {
 
   constructor (
     @Inject() private readonly deleteUserUseCase: DeleteUserUseCase
   ) { }
 
   @HandleError
-  async handle (request: HttpRequest): HandleResponse<UserEntityResponse> {
-    const loggedUserId = request.loggedUserInfo?.id as UserEntity['id']
+  async handle (request: HttpRequest): HandleResponse<UserResponse> {
+    const loggedUserId = request.loggedUserInfo?.id as User['id']
 
     const deletedUser = await this.deleteUserUseCase.call(loggedUserId)
     if (!deletedUser)

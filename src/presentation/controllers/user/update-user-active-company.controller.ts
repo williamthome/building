@@ -3,12 +3,13 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { forbidden, noContent, notFound } from '@/presentation/factories/http.factory'
-import { idParamSchemaOptions } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
-// < Out: only domain layer
-import { CompanyEntity, UserEntity } from '@/domain/entities'
-import { GetCompanyByIdUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
 import { AccessDeniedError, EntityNotFoundError } from '@/presentation/errors'
+// < Out: only domain layer
+import { GetCompanyByIdUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
+import { Company, User } from '@/domain/entities'
+import { Schema } from '@/domain/protocols/schema'
+import { idStringSchema } from '@/domain/protocols'
 
 @InjectableController()
 export class UpdateUserActiveCompanyController implements Controller<undefined, null> {
@@ -24,19 +25,16 @@ export class UpdateUserActiveCompanyController implements Controller<undefined, 
   @HandleError
   @Validate({
     params: {
-      schema: {
-        companyId: idParamSchemaOptions
-      },
-      keys: {
-        companyId: 'companyId'
-      }
+      schema: new Schema({
+        companyId: idStringSchema
+      })
     }
   })
   async handle (request: HttpRequest): HandleResponse {
-    const loggedUserId = request.loggedUserInfo?.id as UserEntity['id']
-    const requestCompanyId = request.params?.companyId as CompanyEntity['id']
+    const loggedUserId = request.loggedUserInfo?.id as User['id']
+    const companyId = request.params?.companyId as Company['id']
 
-    const findedCompany = await this.getCompanyByIdUseCase.call(requestCompanyId)
+    const findedCompany = await this.getCompanyByIdUseCase.call(companyId)
     if (!findedCompany)
       return notFound(new EntityNotFoundError('Company'))
 
@@ -44,7 +42,7 @@ export class UpdateUserActiveCompanyController implements Controller<undefined, 
     if (!loggedUserAsMemberOfFindedCompany)
       return forbidden(new AccessDeniedError())
 
-    await this.updateUserActiveCompanyUseCase.call(loggedUserId, requestCompanyId)
+    await this.updateUserActiveCompanyUseCase.call(loggedUserId, companyId)
 
     return noContent()
   }

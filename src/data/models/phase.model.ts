@@ -1,15 +1,7 @@
-import { LimitedModel, Model } from '../protocols'
-import { PhaseEntity } from '@/domain/entities'
-import { CompanyModel } from './company.model'
-import { BuildingModel } from './building.model'
+import { Phase, CreatePhaseDto, UpdatePhaseDto } from '@/domain/entities'
 
-export class PhaseModel extends LimitedModel implements PhaseEntity {
-  constructor (
-    public readonly id: Model['id'],
-    public readonly companyId: CompanyModel['id'],
-    public readonly buildingId: BuildingModel['id'],
-    public readonly title: string
-  ) {
-    super(id, companyId)
-  }
-}
+export type PhaseData = Phase
+
+export type CreatePhaseData = CreatePhaseDto & Pick<PhaseData, 'companyId'>
+
+export type UpdatePhaseData = UpdatePhaseDto

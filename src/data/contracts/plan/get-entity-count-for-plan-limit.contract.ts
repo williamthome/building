@@ -2,10 +2,10 @@
 import { Injectable, Inject } from '@/shared/dependency-injection'
 import { CollectionName } from '@/shared/types'
 // > Data
-import { LimitedModel } from '@/data/protocols'
 import { GetEntityCountForPlanLimitRepository } from '@/data/repositories'
 // < Only Domain
 import { GetEntityCountForPlanLimitUseCase } from '@/domain/usecases'
+import { Company } from '@/domain/entities'
 
 @Injectable('getEntityCountForPlanLimitUseCase')
 export class GetEntityCountForPlanLimitContract implements GetEntityCountForPlanLimitUseCase {
@@ -14,7 +14,7 @@ export class GetEntityCountForPlanLimitContract implements GetEntityCountForPlan
     @Inject() private readonly getEntityCountForPlanLimitRepository: GetEntityCountForPlanLimitRepository
   ) { }
 
-  call = async <T extends LimitedModel> (reference: CollectionName, companyId: T['companyId']): Promise<number> => {
+  call = async (reference: CollectionName, companyId: Company['id']): Promise<number> => {
     return await this.getEntityCountForPlanLimitRepository.getEntityCount(reference, companyId)
   }
 }

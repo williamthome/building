@@ -2,34 +2,33 @@ import {
   MongoMemoryReplSet,
   MongoMemoryServer
 } from 'mongodb-memory-server'
-import fakeData from './fake-data'
 import container from '@/shared/dependency-injection'
+import fakeData from './fake-data'
+import { CompanyRole, UserFeatures } from '@/shared/constants'
 import { CollectionName } from '@/shared/types'
 import { Server } from '@/main/server'
 import { Route, RoutePath, WebServer } from '@/main/protocols'
 import { TransactionController } from '@/main/decorators'
 import { Database } from '@/infra/protocols'
-import { mockAuthorizationToken } from '../presentation/__mocks__'
-import { BuildingModel, CompanyModel, PlanModel, UserModel } from '@/data/models'
+import { BuildingData, CompanyData, CreateBuildingData, CreateCompanyData, CreatePlanData, CreateUserData, PlanData, UserData } from '@/data/models'
 import { Hasher } from '@/data/protocols/cryptography'
-import { mockBuildingEntityDto, mockCompanyEntityDto, mockUserEntityDto, mockPlanEntityDto } from '../domain/__mocks__/entities'
-import { AuthEntityDto } from '@/domain/protocols'
+import { mockCreateBuildingData, mockCreateCompanyData, mockCreateUserData, mockCreatePlanData } from '../data/__mocks__/models'
 
 interface MongoUtilsOptions {
   routePath: RoutePath
 }
 
 interface Entities {
-  user?: UserModel | null
-  plan?: PlanModel | null
-  company?: CompanyModel | null
-  building?: BuildingModel | null
+  user?: UserData | null
+  plan?: PlanData | null
+  company?: CompanyData | null
+  building?: BuildingData | null
   [k: string]: any
 }
 
 class MongoUtils {
   private _replSet?: boolean
-  private _accessToken?: UserModel['accessToken']
+  private _accessToken?: UserData['accessToken']
   private _entities: Entities = {}
   private _entityCollectionName: { [K in keyof Required<Entities>]: CollectionName } = {
     user: 'users',
@@ -47,7 +46,7 @@ class MongoUtils {
       : container.resolve(MongoMemoryServer)
   }
 
-  get user (): UserModel {
+  get user (): UserData {
     if (!this._entities.user) throw new Error('Undefined user')
     return this._entities.user
   }
@@ -56,17 +55,17 @@ class MongoUtils {
     return this._accessToken
   }
   get authorizationToken (): string {
-    return mockAuthorizationToken(this.accessToken)
+    return `Bearer ${this.accessToken}`
   }
-  get plan (): PlanModel {
+  get plan (): PlanData {
     if (!this._entities.plan) throw new Error('Undefined unlimited plan')
     return this._entities.plan
   }
-  get company (): CompanyModel {
+  get company (): CompanyData {
     if (!this._entities.company) throw new Error('Undefined company')
     return this._entities.company
   }
-  get building (): BuildingModel {
+  get building (): BuildingData {
     if (!this._entities.building) throw new Error('Undefined building')
     return this._entities.building
   }
@@ -127,42 +126,80 @@ class MongoUtils {
     container.define('DB_URL').as(uri).pinned().done()
   }
 
-  addUser = async (authDto?: AuthEntityDto): Promise<UserModel> => {
-    const userDto = mockUserEntityDto(authDto)
+  addUser = async (override?: {
+    email: CreateUserData['email'],
+    password: CreateUserData['password']
+  }): Promise<UserData> => {
+    const userData = override
+      ? { ...mockCreateUserData(), email: override?.email, password: override?.password }
+      : mockCreateUserData()
     const hasher = container.resolve<Hasher>('hasher')
-    const hashedPassword = await hasher.hash(userDto.password as string)
-    this._entities.user = await this.db.addOne<UserModel>({ ...userDto, password: hashedPassword }, 'users')
+    const hashedPassword = await hasher.hash(userData.password as string)
+    this._entities.user = await this.db.addOne<CreateUserData, UserData>({
+      collectionName: 'users',
+      dto: { ...userData, password: hashedPassword }
+    })
     return this._entities.user
   }
 
   authenticate = async (): Promise<string> => {
     this._accessToken = fakeData.entity.token(this.user.id, this.jwtSecret)
-    this._entities.user = await this.db.updateOne<UserModel>(this.user.id, { accessToken: this._accessToken }, 'users')
+    this._entities.user = await this.db.updateOne<UserData, 'id'>({
+      collectionName: 'users',
+      matchKey: 'id',
+      matchValue: this.user.id,
+      dto: { accessToken: this._accessToken }
+    })
     return this._accessToken
   }
 
   verify = async (): Promise<void> => {
-    this._entities.user = await this.db.updateOne<UserModel>(this.user.id, { verified: true }, 'users')
+    this._entities.user = await this.db.updateOne<UserData, 'id'>({
+      collectionName: 'users',
+      matchKey: 'id',
+      matchValue: this.user.id,
+      dto: { verified: true }
+    })
   }
 
-  addPlan = async (): Promise<PlanModel> => {
-    this._entities.plan = await this.db.addOne<PlanModel>(mockPlanEntityDto(), 'plans')
+  addPlan = async (): Promise<PlanData> => {
+    this._entities.plan = await this.db.addOne<CreatePlanData, PlanData>({
+      collectionName: 'plans',
+      dto: mockCreatePlanData()
+    })
     return this._entities.plan
   }
 
-  addCompany = async (): Promise<CompanyModel> => {
-    this._entities.company = await this.db.addOne<CompanyModel>(mockCompanyEntityDto(
-      {
+  addCompany = async (): Promise<CompanyData> => {
+    this._entities.company = await this.db.addOne<CreateCompanyData, CompanyData>({
+      collectionName: 'companies',
+      dto: {
+        ...mockCreateCompanyData(),
         planId: this.plan.id,
-        ownerId: this.user.id
+        members: [{
+          userId: this.user.id,
+          companyRole: CompanyRole.owner,
+          features: UserFeatures.None
+        }]
       }
-    ), 'companies')
-    await this.db.updateOne<UserModel>(this.user.id, { activeCompanyId: this._entities.company.id }, 'users')
+    })
+    await this.db.updateOne<UserData, 'id'>({
+      collectionName: 'users',
+      matchKey: 'id',
+      matchValue: this.user.id,
+      dto: { activeCompanyId: this._entities.company.id }
+    })
     return this._entities.company
   }
 
-  addBuilding = async (): Promise<BuildingModel> => {
-    this._entities.building = await this.db.addOne<BuildingModel>(mockBuildingEntityDto(this.company.id), 'buildings')
+  addBuilding = async (): Promise<BuildingData> => {
+    this._entities.building = await this.db.addOne<CreateBuildingData, BuildingData>({
+      collectionName: 'buildings',
+      dto: {
+        ...mockCreateBuildingData(),
+        companyId: this.company.id
+      }
+    })
     return this._entities.building
   }
 }

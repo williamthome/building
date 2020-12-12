@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { GetBuildingByIdRepository } from '@/data/repositories'
 // < Only Domain
 import { GetBuildingByIdUseCase } from '@/domain/usecases'
-import { BuildingEntity } from '@/domain/entities'
+import { Building } from '@/domain/entities'
 
 @Injectable('getBuildingByIdUseCase')
 export class GetBuildingByIdContract implements GetBuildingByIdUseCase {
@@ -13,7 +13,7 @@ export class GetBuildingByIdContract implements GetBuildingByIdUseCase {
     @Inject() private readonly getBuildingByIdRepository: GetBuildingByIdRepository
   ) {}
 
-  call = async (id: BuildingEntity['id']): Promise<BuildingEntity | null> => {
+  call = async (id: Building['id']): Promise<Building | null> => {
     return await this.getBuildingByIdRepository.getBuildingById(id)
   }
 }

@@ -1,14 +1,7 @@
-import { LimitedModel, Model } from '../protocols'
-import { PropertyEntity } from '@/domain/entities'
-import { CompanyModel } from './company.model'
-import { AddressModel } from './nested'
+import { Property, CreatePropertyDto, UpdatePropertyDto } from '@/domain/entities'
 
-export class PropertyModel extends LimitedModel implements PropertyEntity {
-  constructor (
-    public readonly id: Model['id'],
-    public readonly companyId: CompanyModel['id'],
-    public readonly address?: AddressModel
-  ) {
-    super(id, companyId)
-  }
-}
+export type PropertyData = Property
+
+export type CreatePropertyData = CreatePropertyDto & Pick<PropertyData, 'companyId'>
+
+export type UpdatePropertyData = UpdatePropertyDto

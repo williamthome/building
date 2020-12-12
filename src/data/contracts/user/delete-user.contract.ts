@@ -3,7 +3,7 @@ import { Injectable, Inject } from '@/shared/dependency-injection'
 // > Data
 import { DeleteUserRepository, GetUserRightsRepository } from '@/data/repositories'
 // < Only Domain
-import { UserEntity } from '@/domain/entities'
+import { User } from '@/domain/entities'
 import { DeleteCompanyUseCase, DeleteUserUseCase } from '@/domain/usecases'
 import { CompanyRole } from '@/shared/constants'
 
@@ -21,14 +21,14 @@ export class DeleteUserContract implements DeleteUserUseCase {
     private readonly deleteCompanyUseCase: DeleteCompanyUseCase
   ) {}
 
-  call = async (userId: UserEntity['id']): Promise<UserEntity | null> => {
-    const user = await this.deleteUserRepository.deleteUser(userId)
+  call = async (id: User['id']): Promise<User | null> => {
+    const user = await this.deleteUserRepository.deleteUser(id)
     if (!user) return null
 
-    const userRights = await this.getUserRightsRepository.getUserRights(userId)
-    for (const { company, rights } of userRights) {
-      const ownerCount = company.members.filter(member => userId === member.userId).length
-      if (ownerCount === 1 && rights.companyRole === CompanyRole.owner) {
+    const userRights = await this.getUserRightsRepository.getUserRights(id)
+    for (const { company, role } of userRights) {
+      const ownerCount = company.members.filter(member => id === member.userId).length
+      if (ownerCount === 1 && role === CompanyRole.owner) {
         await this.deleteCompanyUseCase.call(company.id)
       }
     }

@@ -1,19 +1,9 @@
-import { ProjectStatus } from '@/shared/constants'
-import { LimitedModel, Model } from '../protocols'
-import { CompanyModel } from './company.model'
-import { BuildingModel } from './building.model'
-import { PhaseModel } from './phase.model'
-import { ProjectEntity } from '@/domain/entities'
+import { Project, CreateProjectDto, UpdateProjectDto, UploadProjectAttachmentDto } from '@/domain/entities'
 
-export class ProjectModel extends LimitedModel implements ProjectEntity {
-  constructor (
-    public readonly id: Model['id'],
-    public readonly companyId: CompanyModel['id'],
-    public readonly buildingId: BuildingModel['id'],
-    public readonly phaseId: PhaseModel['id'],
-    public readonly title: string,
-    public readonly status: ProjectStatus
-  ) {
-    super(id, companyId)
-  }
-}
+export type ProjectData = Project
+
+export type CreateProjectData = CreateProjectDto & Pick<ProjectData, 'companyId'>
+
+export type UpdateProjectData = UpdateProjectDto
+
+export type UploadProjectAttachmentData = UploadProjectAttachmentDto

@@ -5,17 +5,16 @@ import { badRequest, notFound, ok, serverError } from '@/presentation/factories/
 import { HttpRequest } from '@/presentation/protocols'
 import { EntityNotFoundError, PasswordDoNotMatchError } from '@/presentation/errors'
 // < Out: only domain layer
-import { mockAuthDto } from '@/__tests__/domain/__mocks__/entities'
+import { mockAuthentication } from '@/__tests__/domain/__mocks__/entities'
 import { GetUserByEmailUseCaseSpy, UpdateUserAccessTokenUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
 import { EncrypterSpy, HashComparerSpy } from '@/__tests__/domain/__spys__/cryptography'
-import { AuthEntityDto } from '@/domain/protocols'
-import { UserEntity } from '@/domain/entities'
+import { User, Authentication } from '@/domain/entities'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
 //#region Factories
 
-const authDto = mockAuthDto()
-const mockHttpRequest = (): HttpRequest<AuthEntityDto> => ({
+const authDto = mockAuthentication()
+const mockHttpRequest = (): HttpRequest<Authentication> => ({
   body: authDto
 })
 
@@ -80,7 +79,7 @@ describe('AddUser Controller', () => {
       const { sut, hashComparer, getUserByEmailUseCase } = makeSut()
       await sut.handle(mockHttpRequest())
       expect(hashComparer.plaintext).toEqual(authDto.password)
-      expect(hashComparer.digest).toEqual(getUserByEmailUseCase.userEntity?.password)
+      expect(hashComparer.digest).toEqual(getUserByEmailUseCase.user?.password)
     })
 
     it('should return server error if throws', async () => {
@@ -104,7 +103,7 @@ describe('AddUser Controller', () => {
       const httpRequest = mockHttpRequest()
       getUserByEmailUseCase.override = { password: httpRequest.body?.password }
       await sut.handle(httpRequest)
-      expect(encrypter.plaintext).toEqual(getUserByEmailUseCase.userEntity?.id)
+      expect(encrypter.plaintext).toEqual(getUserByEmailUseCase.user?.id)
     })
 
     it('should return server error if throws', async () => {
@@ -123,7 +122,7 @@ describe('AddUser Controller', () => {
       const httpRequest = mockHttpRequest()
       getUserByEmailUseCase.override = { password: httpRequest.body?.password }
       await sut.handle(httpRequest)
-      expect(updateUserAccessTokenUseCase.id).toEqual(getUserByEmailUseCase.userEntity?.id)
+      expect(updateUserAccessTokenUseCase.id).toEqual(getUserByEmailUseCase.user?.id)
       expect(updateUserAccessTokenUseCase.accessToken).toEqual(encrypter.encrypted)
     })
 
@@ -142,7 +141,7 @@ describe('AddUser Controller', () => {
     const httpRequest = mockHttpRequest()
     getUserByEmailUseCase.override = { password: httpRequest.body?.password }
     const response = await sut.handle(httpRequest)
-    expect(response).toEqual(ok(userWithoutPassword(getUserByEmailUseCase.userEntity as UserEntity)))
-    expect((response.body as UserEntity).accessToken).toBe(encrypter.encrypted)
+    expect(response).toEqual(ok(userWithoutPassword(getUserByEmailUseCase.user as User)))
+    expect((response.body as User).accessToken).toBe(encrypter.encrypted)
   })
 })

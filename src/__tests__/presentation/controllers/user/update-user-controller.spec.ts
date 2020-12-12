@@ -7,17 +7,16 @@ import { notFound, ok, serverError } from '@/presentation/factories/http.factory
 import { EntityNotFoundError } from '@/presentation/errors'
 import { HttpRequest } from '@/presentation/protocols'
 // < Out: only domain layer
-import { UserEntityDto } from '@/domain/protocols'
 import { UpdateUserUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
-import { mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities'
+import { mockCreateUserDto } from '@/__tests__/domain/__mocks__/entities'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
-import { UserEntity } from '@/domain/entities'
+import { User, CreateUserDto } from '@/domain/entities'
 
 //#region Factories
 
 const userId = fakeData.entity.id()
-const userDto = mockUserEntityDto()
-const mockHttpRequest = (): HttpRequest<UserEntityDto> => ({
+const userDto = mockCreateUserDto()
+const mockHttpRequest = (): HttpRequest<CreateUserDto> => ({
   body: userDto,
   params: {
     id: userId
@@ -53,8 +52,8 @@ describe('UpdateUser Controller', () => {
     it('should been called with right values', async () => {
       const { sut, updateUserUseCaseSpy } = makeSut()
       await sut.handle(mockHttpRequest())
-      expect(updateUserUseCaseSpy.userId).toEqual(userId)
-      expect(updateUserUseCaseSpy.userDto).toEqual(userDto)
+      expect(updateUserUseCaseSpy.id).toEqual(userId)
+      expect(updateUserUseCaseSpy.dto).toEqual(userDto)
     })
 
     it('should return server error if throws', async () => {
@@ -75,6 +74,6 @@ describe('UpdateUser Controller', () => {
   it('shold return ok with updated user on body', async () => {
     const { sut, updateUserUseCaseSpy } = makeSut()
     const response = await sut.handle(mockHttpRequest())
-    expect(response).toEqual(ok(userWithoutPassword(updateUserUseCaseSpy.userEntity as UserEntity)))
+    expect(response).toEqual(ok(userWithoutPassword(updateUserUseCaseSpy.user as User)))
   })
 })

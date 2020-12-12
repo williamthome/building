@@ -3,39 +3,38 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { projectSchema, idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
-import { ProjectEntity, projectKeys } from '@/domain/entities'
 import { UpdateProjectUseCase } from '@/domain/usecases'
-import { ProjectEntityDto } from '@/domain/protocols'
+import { Project, projectSchema, UpdateProjectDto } from '@/domain/entities'
+import { idSchema } from '@/domain/protocols'
 
 @InjectableController()
-export class UpdateProjectController implements Controller<ProjectEntityDto, ProjectEntity> {
+export class UpdateProjectController implements Controller<UpdateProjectDto, Project> {
 
   constructor (
     @Inject() private readonly updateProjectUseCase: UpdateProjectUseCase
   ) { }
 
   @HandleError
-  @Validate<ProjectEntityDto, ProjectEntity>({
+  @Validate({
     body: {
       schema: projectSchema,
-      keys: projectKeys,
-      partialValidation: true,
-      bannedFields: ['buildingId']
+      options: {
+        allKeys: false,
+        bannedFields: ['buildingId']
+      }
     },
     params: {
-      schema: idParamSchema,
-      keys: idParamKeys
+      schema: idSchema
     }
   })
-  async handle (request: HttpRequest<ProjectEntityDto>): HandleResponse<ProjectEntity> {
-    const requestProjectId = request.params?.id as ProjectEntity['id']
-    const requestProjectDto = request.body as ProjectEntityDto
+  async handle (request: HttpRequest<UpdateProjectDto>): HandleResponse<Project> {
+    const projectId = request.params?.id as Project['id']
+    const updateProjectDto = request.body as UpdateProjectDto
 
-    const updatedProject = await this.updateProjectUseCase.call(requestProjectId, requestProjectDto)
+    const updatedProject = await this.updateProjectUseCase.call(projectId, updateProjectDto)
     if (!updatedProject)
       return notFound(new EntityNotFoundError('Project'))
 

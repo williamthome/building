@@ -1,5 +1,5 @@
-import { CustomerEntity } from '@/domain/entities'
+import { Customer } from '@/domain/entities'
 
 export interface GetCustomerByIdUseCase {
-  call: (id: CustomerEntity['id']) => Promise<CustomerEntity | null>
+  call: (id: Customer['id']) => Promise<Customer | null>
 }

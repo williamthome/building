@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { GetUserByEmailRepository } from '@/data/repositories'
 // < Only Domain
 import { GetUserByEmailUseCase } from '@/domain/usecases'
-import { UserEntity } from '@/domain/entities'
+import { User } from '@/domain/entities'
 
 @Injectable('getUserByEmailUseCase')
 export class GetUserByEmailContract implements GetUserByEmailUseCase {
@@ -13,7 +13,7 @@ export class GetUserByEmailContract implements GetUserByEmailUseCase {
     @Inject() private readonly getUserByEmailRepository: GetUserByEmailRepository
   ) {}
 
-  call = async (email: UserEntity['email']): Promise<UserEntity | null> => {
+  call = async (email: User['email']): Promise<User | null> => {
     return await this.getUserByEmailRepository.getUserByEmail(email)
   }
 }

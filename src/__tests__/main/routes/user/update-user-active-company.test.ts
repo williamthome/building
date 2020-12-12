@@ -24,6 +24,7 @@ xdescribe(`UpdateUserActiveCompany Route > ${updateUserActiveCompanyPath.describ
     await mongoUtils.addUser()
     await mongoUtils.authenticate()
     await mongoUtils.verify()
+    await mongoUtils.addPlan()
     await mongoUtils.addCompany()
     await request(mongoUtils.webServer.server())
       .patch(makeURN())

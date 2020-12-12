@@ -92,7 +92,7 @@ describe('ActiveCompany Middleware', () => {
     it('should been called with right values', async () => {
       const { sut, getCompanyByIdUseCaseSpy, getPlanByIdUseCaseSpy } = makeSut()
       await sut.handle(mockHttpRequest())
-      expect(getPlanByIdUseCaseSpy.id).toBe(getCompanyByIdUseCaseSpy.companyEntity?.planId)
+      expect(getPlanByIdUseCaseSpy.id).toBe(getCompanyByIdUseCaseSpy.company?.planId)
     })
 
     it('should return server error if throws', async () => {

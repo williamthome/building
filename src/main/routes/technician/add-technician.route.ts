@@ -8,9 +8,8 @@ import {
 import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { AddTechnicianController } from '@/presentation/controllers'
-import { TechnicianEntity } from '@/domain/entities'
+import { CreateTechnicianDto, Technician } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
-import { TechnicianEntityDto } from '@/domain/protocols'
 
 export const addTechnicianPath = new RoutePath(
   'POST',
@@ -18,7 +17,7 @@ export const addTechnicianPath = new RoutePath(
 )
 
 @InjectableRoute(addTechnicianPath)
-export class AddTechnicianRoute implements Route<TechnicianEntityDto, TechnicianEntity> {
+export class AddTechnicianRoute implements Route<CreateTechnicianDto, Technician> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageTechnicians)
 
   constructor (

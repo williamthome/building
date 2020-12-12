@@ -1,5 +1,5 @@
-import { UserModel } from '@/data/models'
+import { UserData } from '@/data/models'
 
 export interface VerifyUserRepository {
-  verifyUser: (id: UserModel['id']) => Promise<UserModel | null>
+  verifyUser: (id: UserData['id']) => Promise<UserData | null>
 }

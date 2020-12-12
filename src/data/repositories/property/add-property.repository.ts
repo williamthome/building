@@ -1,6 +1,5 @@
-import { PropertyModelDto } from '@/data/protocols'
-import { PropertyModel } from '@/data/models'
+import { CreatePropertyData, PropertyData } from '@/data/models'
 
 export interface AddPropertyRepository {
-  addProperty: (dto: PropertyModelDto) => Promise<PropertyModel>
+  addProperty: (dto: CreatePropertyData) => Promise<PropertyData>
 }

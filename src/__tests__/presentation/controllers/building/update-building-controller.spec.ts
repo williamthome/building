@@ -7,15 +7,15 @@ import { notFound, ok, serverError } from '@/presentation/factories/http.factory
 import { EntityNotFoundError } from '@/presentation/errors'
 import { HttpRequest } from '@/presentation/protocols'
 // < Out: only domain layer
-import { BuildingDto } from '@/domain/protocols'
 import { UpdateBuildingUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
-import { mockBuildingEntityDto } from '@/__tests__/domain/__mocks__/entities'
+import { mockCreateBuildingDto } from '@/__tests__/domain/__mocks__/entities'
+import { UpdateBuildingDto } from '@/domain/entities'
 
 //#region Factories
 
 const buildingId = fakeData.entity.id()
-const buildingDto = mockBuildingEntityDto()
-const mockHttpRequest = (): HttpRequest<BuildingDto> => ({
+const buildingDto = mockCreateBuildingDto()
+const mockHttpRequest = (): HttpRequest<UpdateBuildingDto> => ({
   body: buildingDto,
   params: {
     id: buildingId
@@ -48,8 +48,8 @@ describe('UpdateBuilding Controller', () => {
     it('should been called with right values', async () => {
       const { sut, updateBuildingUseCaseSpy } = makeSut()
       await sut.handle(mockHttpRequest())
-      expect(updateBuildingUseCaseSpy.buildingId).toEqual(buildingId)
-      expect(updateBuildingUseCaseSpy.buildingDto).toEqual(buildingDto)
+      expect(updateBuildingUseCaseSpy.id).toEqual(buildingId)
+      expect(updateBuildingUseCaseSpy.dto).toEqual(buildingDto)
     })
 
     it('should return server error if throws', async () => {
@@ -70,6 +70,6 @@ describe('UpdateBuilding Controller', () => {
   it('shold return ok with updated building on body', async () => {
     const { sut, updateBuildingUseCaseSpy } = makeSut()
     const response = await sut.handle(mockHttpRequest())
-    expect(response).toEqual(ok(updateBuildingUseCaseSpy.buildingEntity))
+    expect(response).toEqual(ok(updateBuildingUseCaseSpy.building))
   })
 })

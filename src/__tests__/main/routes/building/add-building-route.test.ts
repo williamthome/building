@@ -1,6 +1,6 @@
 import request from 'supertest'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
-import { mockBuildingEntityDto } from '@/__tests__/domain/__mocks__/entities'
+import { mockCreateBuildingDto } from '@/__tests__/domain/__mocks__/entities'
 import { mongoUtils } from '@/__tests__/shared/mongo.utils'
 import { addBuildingPath } from '@/main/routes'
 
@@ -26,7 +26,7 @@ describe(`AddBuilding Route > ${addBuildingPath.describe}`, () => {
     await request(mongoUtils.webServer.server())
       .post(addBuildingPath.urn)
       .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
-      .send(mockBuildingEntityDto())
+      .send(mockCreateBuildingDto())
       .expect(HttpStatusCode.OK)
   })
 })

@@ -3,38 +3,37 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { technicianSchema, idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
-import { TechnicianEntity, technicianKeys } from '@/domain/entities'
+import { Technician, technicianSchema, UpdateTechnicianDto } from '@/domain/entities'
 import { UpdateTechnicianUseCase } from '@/domain/usecases'
-import { TechnicianEntityDto } from '@/domain/protocols'
+import { idSchema } from '@/domain/protocols'
 
 @InjectableController()
-export class UpdateTechnicianController implements Controller<TechnicianEntityDto, TechnicianEntity> {
+export class UpdateTechnicianController implements Controller<UpdateTechnicianDto, Technician> {
 
   constructor (
     @Inject() private readonly updateTechnicianUseCase: UpdateTechnicianUseCase
   ) { }
 
   @HandleError
-  @Validate<TechnicianEntityDto, TechnicianEntity>({
+  @Validate({
     body: {
       schema: technicianSchema,
-      keys: technicianKeys,
-      partialValidation: true
+      options: {
+        allKeys: false
+      }
     },
     params: {
-      schema: idParamSchema,
-      keys: idParamKeys
+      schema: idSchema
     }
   })
-  async handle (request: HttpRequest<TechnicianEntityDto>): HandleResponse<TechnicianEntity> {
-    const requestTechnicianId = request.params?.id as TechnicianEntity['id']
-    const requestTechnicianDto = request.body as TechnicianEntityDto
+  async handle (request: HttpRequest<UpdateTechnicianDto>): HandleResponse<Technician> {
+    const technicianId = request.params?.id as Technician['id']
+    const updateTechnicianDto = request.body as UpdateTechnicianDto
 
-    const udpatedTechnician = await this.updateTechnicianUseCase.call(requestTechnicianId, requestTechnicianDto)
+    const udpatedTechnician = await this.updateTechnicianUseCase.call(technicianId, updateTechnicianDto)
     if (!udpatedTechnician)
       return notFound(new EntityNotFoundError('Technician'))
 

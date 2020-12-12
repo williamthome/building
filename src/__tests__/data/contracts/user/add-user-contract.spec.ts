@@ -1,11 +1,10 @@
 import container from '@/shared/dependency-injection'
 import { AddUserContract } from '@/data/contracts'
-import { UserModel } from '@/data/models'
+import { UserData, CreateUserData } from '@/data/models'
 import { AddUnverifiedRepositorySpy, AddUserRepositorySpy, HasherSpy } from '@/__tests__/data/__spys__'
-import { mockUserModelDto } from '@/__tests__/data/__mocks__/models'
+import { mockCreateUserData } from '@/__tests__/data/__mocks__/models'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
 import { EncrypterSpy } from '@/__tests__/domain/__spys__/cryptography'
-import { UserModelDto } from '@/data/protocols'
 
 //#region Factories
 
@@ -46,7 +45,7 @@ describe('AddUser Contract', () => {
   describe('Hasher', () => {
     it('should be called with right value', async () => {
       const { sut, hasherSpy } = makeSut()
-      const dto = mockUserModelDto()
+      const dto = mockCreateUserData()
       await sut.call(dto)
       expect(hasherSpy.plaintext).toEqual(dto.password)
     })
@@ -54,63 +53,63 @@ describe('AddUser Contract', () => {
     it('should throw if method throws', async () => {
       const { sut, hasherSpy } = makeSut()
       hasherSpy.shouldThrow = true
-      await expect(sut.call(mockUserModelDto())).rejects.toThrow()
+      await expect(sut.call(mockCreateUserData())).rejects.toThrow()
     })
   })
 
   describe('AddUser Repository', () => {
     it('should be called with right value', async () => {
       const { sut, addUserRepositorySpy, hasherSpy } = makeSut()
-      const dto = mockUserModelDto()
+      const dto = mockCreateUserData()
       await sut.call(dto)
-      const hashedDto: UserModelDto = {
+      const hashedDto: CreateUserData = {
         ...dto,
-        password: hasherSpy.hashed,
+        password: hasherSpy.hashed as string,
         verified: false
       }
-      expect(addUserRepositorySpy.userDto).toEqual(hashedDto)
+      expect(addUserRepositorySpy.dto).toEqual(hashedDto)
     })
 
     it('should throw if method throws', async () => {
       const { sut, addUserRepositorySpy } = makeSut()
       addUserRepositorySpy.shouldThrow = true
-      await expect(sut.call(mockUserModelDto())).rejects.toThrow()
+      await expect(sut.call(mockCreateUserData())).rejects.toThrow()
     })
   })
 
   describe('Encrypter', () => {
     it('should be called with right value', async () => {
       const { sut, encrypterSpy, addUserRepositorySpy } = makeSut()
-      const dto = mockUserModelDto()
+      const dto = mockCreateUserData()
       await sut.call(dto)
-      expect(encrypterSpy.plaintext).toEqual(addUserRepositorySpy.userModel?.id)
+      expect(encrypterSpy.plaintext).toEqual(addUserRepositorySpy.user?.id)
     })
 
     it('should throw if method throws', async () => {
       const { sut, encrypterSpy } = makeSut()
       encrypterSpy.shouldThrow = true
-      await expect(sut.call(mockUserModelDto())).rejects.toThrow()
+      await expect(sut.call(mockCreateUserData())).rejects.toThrow()
     })
   })
 
   describe('AddUnverified Repository', () => {
     it('should be called with right value', async () => {
       const { sut, addUnverifiedRepositorySpy, addUserRepositorySpy } = makeSut()
-      await sut.call(mockUserModelDto())
-      expect(addUnverifiedRepositorySpy.unverifiedDto?.userId).toEqual(addUserRepositorySpy.userModel?.id)
+      await sut.call(mockCreateUserData())
+      expect(addUnverifiedRepositorySpy.dto?.userId).toEqual(addUserRepositorySpy.user?.id)
     })
 
     it('should throw if method throws', async () => {
       const { sut, hasherSpy } = makeSut()
       hasherSpy.shouldThrow = true
-      await expect(sut.call(mockUserModelDto())).rejects.toThrow()
+      await expect(sut.call(mockCreateUserData())).rejects.toThrow()
     })
   })
 
   it('shold return a new user', async () => {
     const { sut, addUserRepositorySpy, encrypterSpy } = makeSut()
-    const response = await sut.call(mockUserModelDto())
-    expect(response.user).toEqual(userWithoutPassword(addUserRepositorySpy.userModel as UserModel))
+    const response = await sut.call(mockCreateUserData())
+    expect(response.user).toEqual(userWithoutPassword(addUserRepositorySpy.user as UserData))
     expect(response.verificationToken).toBe(encrypterSpy.encrypted)
   })
 })

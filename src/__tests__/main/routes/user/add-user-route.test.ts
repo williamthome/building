@@ -1,6 +1,6 @@
 import request from 'supertest'
 import { HttpStatusCode } from '@/presentation/constants'
-import { mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities'
+import { mockCreateUserDto } from '@/__tests__/domain/__mocks__/entities'
 import { mongoUtils } from '@/__tests__/shared/mongo.utils'
 import { addUserPath } from '@/main/routes'
 
@@ -20,7 +20,7 @@ describe(`AddUser Route > ${addUserPath.describe}`, () => {
   it('shold return ok', async () => {
     await request(mongoUtils.webServer.server())
       .post(addUserPath.urn)
-      .send(mockUserEntityDto())
+      .send(mockCreateUserDto())
       .expect(HttpStatusCode.OK)
   })
 })

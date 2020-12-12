@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 import { DownloadProjectAttachmentBucket } from '@/data/buckets'
 import { Storage } from '@/infra/protocols'
-import { FileModel, ProjectModel } from '@/data/models'
+import { FileData, ProjectData } from '@/data/models'
 
 @Injectable('downloadProjectAttachmentBucket')
 export class StDownloadProjectAttachmentBucket implements DownloadProjectAttachmentBucket {
@@ -11,8 +11,8 @@ export class StDownloadProjectAttachmentBucket implements DownloadProjectAttachm
   ) { }
 
   downloadProjectAttachment = async (
-    projectId: ProjectModel['id'],
-    fileName: FileModel['name']
+    projectId: ProjectData['id'],
+    fileName: FileData['name']
   ): Promise<Buffer> => {
     return await this.storage.download({
       reference: 'projects',

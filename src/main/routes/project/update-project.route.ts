@@ -8,9 +8,8 @@ import {
 import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { UpdateProjectController } from '@/presentation/controllers'
-import { ProjectEntity } from '@/domain/entities'
+import { Project, UpdateProjectDto } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
-import { ProjectEntityDto } from '@/domain/protocols'
 
 export const updateProjectPath = new RoutePath(
   'PATCH',
@@ -18,7 +17,7 @@ export const updateProjectPath = new RoutePath(
 )
 
 @InjectableRoute(updateProjectPath)
-export class UpdateProjectRoute implements Route<ProjectEntityDto, ProjectEntity> {
+export class UpdateProjectRoute implements Route<UpdateProjectDto, Project> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageProjects)
 
   constructor (

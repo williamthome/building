@@ -1,2 +1,2 @@
-export * from './building-entity-dto.mock'
-export * from './building-entity.mock'
+export * from './building.mock'
+export * from './create-building-dto.mock'

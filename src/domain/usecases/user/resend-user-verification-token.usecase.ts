@@ -1,5 +1,5 @@
-import { UserEntity } from '@/domain/entities'
+import { User } from '@/domain/entities'
 
 export interface ResendUserVerificationTokenUseCase {
-  call: (email: UserEntity['email'], token: string) => Promise<void>
+  call: (email: User['email'], token: string) => Promise<void>
 }

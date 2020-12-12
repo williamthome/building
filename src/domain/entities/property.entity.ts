@@ -1,13 +1,15 @@
-import { LimitedEntity, LimitedEntityKeys } from '../protocols'
-import { AddressEntity, addressKeys } from './nested'
+import { ExtractDto, ExtractEntity, ExtractUpdateDto, limitedEntitySchema } from '../protocols/entity.protocol'
+import { object } from '../protocols/schema'
+import { addressSchema } from './nested'
 
-export interface PropertyEntity extends LimitedEntity {
-  address?: AddressEntity
-}
+export const propertySchema = limitedEntitySchema({
+  address: object().schemas({
+    ...addressSchema['schemas']
+  })
+})
 
-export const propertyKeys: LimitedEntityKeys<PropertyEntity> = {
-  id: 'id',
-  companyId: 'companyId',
-  address: 'address',
-  ...addressKeys
-}
+export type Property = ExtractEntity<typeof propertySchema>
+
+export type CreatePropertyDto = ExtractDto<typeof propertySchema>
+
+export type UpdatePropertyDto = ExtractUpdateDto<typeof propertySchema>

@@ -3,31 +3,56 @@ import {
   Controller,
   HandleResponse,
   HttpRequest,
-  ValidateOptions
+  ValidateDecoratorOptions
 } from '../protocols'
 import { validationHelper } from '../helpers/validation.helper'
+import { badRequest } from '../factories/http.factory'
 // < Out: only domain layer
 
-export const Validate =
-  <TRequest = undefined, TResponse = null> (
-    validateOptions: ValidateOptions<TRequest>
-  ) =>
-    <TController extends Controller<TRequest, TResponse>> (
+export const Validate = <TBody, TParams, TQuery> (
+  validateOptions: ValidateDecoratorOptions<TBody, TParams, TQuery>
+) =>
+  <TController extends Controller<any, any>>
+    (
       _controller: TController,
       _methodKey: string | symbol,
       descriptor: PropertyDescriptor
     ): any => {
-      const originalMethod = descriptor.value
+    const originalMethod = descriptor.value
 
-      descriptor.value = async function (
-        httpRequest: HttpRequest<TRequest>
-      ): HandleResponse<TResponse> {
-        const validationError = await validationHelper.validateHttpRequest(validateOptions, httpRequest)
-        if (validationError)
-          return validationError
+    descriptor.value = async function (
+      httpRequest: HttpRequest<any>
+    ): HandleResponse<any> {
+      const {
+        body: bodyOptions,
+        params: paramsOptions,
+        query: queryOptions,
+        planLimitFor: limited
+      } = validateOptions
+      const { body, params, query } = httpRequest
 
-        return await originalMethod.apply(this, [httpRequest])
+      if (limited) {
+        const limitError = limited === 'storageMb'
+          ? await validationHelper.validateStoragePlanLimit(httpRequest)
+          : await validationHelper.validateEntityPlanLimit(httpRequest, limited)
+        if (limitError)
+          return limitError
       }
 
-      return descriptor
+      const paramsError = paramsOptions?.schema.validate(params, paramsOptions.options)
+      if (paramsError)
+        return badRequest(new Error(paramsError))
+
+      const queryError = queryOptions?.schema.validate(query, queryOptions.options)
+      if (queryError)
+        return badRequest(new Error(queryError))
+
+      const bodyError = bodyOptions?.schema.validate(body, bodyOptions.options)
+      if (bodyError)
+        return badRequest(new Error(bodyError))
+
+      return await originalMethod.apply(this, [httpRequest])
     }
+
+    return descriptor
+  }

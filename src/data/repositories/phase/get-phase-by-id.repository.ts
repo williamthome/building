@@ -1,5 +1,5 @@
-import { PhaseModel } from '@/data/models'
+import { PhaseData } from '@/data/models'
 
 export interface GetPhaseByIdRepository {
-  getPhaseById: (id: PhaseModel['id']) => Promise<PhaseModel | null>
+  getPhaseById: (id: PhaseData['id']) => Promise<PhaseData | null>
 }

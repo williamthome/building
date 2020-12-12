@@ -1,8 +1,5 @@
-import { FileModel, ProjectModel } from '@/data/models'
+import { FileData, ProjectData } from '@/data/models'
 
 export interface DownloadProjectAttachmentBucket {
-  downloadProjectAttachment: (
-    projectId: ProjectModel['id'],
-    fileName: FileModel['name']
-  ) => Promise<Buffer>
+  downloadProjectAttachment: (projectId: ProjectData['id'], fileName: FileData['name']) => Promise<Buffer>
 }

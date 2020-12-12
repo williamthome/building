@@ -1,22 +1,22 @@
-import { UserModel } from '@/data/models'
+import { UserData } from '@/data/models'
 import { GetUserByEmailRepository } from '@/data/repositories'
-import { mockUserModel } from '@/__tests__/data/__mocks__/models'
+import { mockUserData } from '@/__tests__/data/__mocks__/models'
 
 export class GetUserByEmailRepositorySpy implements GetUserByEmailRepository {
-  email?: UserModel['email']
-  userModel?: UserModel | null
+  email?: UserData['email']
+  user?: UserData | null
   shouldReturnNull = false
   shouldThrow = false
 
-  getUserByEmail = async (email: UserModel['email']): Promise<UserModel | null> => {
+  getUserByEmail = async (email: UserData['email']): Promise<UserData | null> => {
     this.email = email
 
     if (this.shouldThrow) throw new Error()
 
-    this.userModel = this.shouldReturnNull
+    this.user = this.shouldReturnNull
       ? null
-      : { ...mockUserModel(), email }
+      : { ...mockUserData(), email }
 
-    return this.userModel
+    return this.user
   }
 }

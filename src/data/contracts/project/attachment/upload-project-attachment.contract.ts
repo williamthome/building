@@ -5,7 +5,7 @@ import { UploadProjectAttachmentBucket } from '@/data/buckets'
 import { AddProjectAttachmentRepository } from '@/data/repositories'
 // < Only Domain
 import { UploadProjectAttachmentUseCase } from '@/domain/usecases'
-import { FileEntity, ProjectEntity } from '@/domain/entities'
+import { File, UploadProjectAttachmentDto } from '@/domain/entities'
 
 @Injectable('uploadProjectAttachmentUseCase')
 export class UploadProjectAttachmentContract implements UploadProjectAttachmentUseCase {
@@ -18,26 +18,11 @@ export class UploadProjectAttachmentContract implements UploadProjectAttachmentU
     private readonly addProjectAttachmentRepository: AddProjectAttachmentRepository
   ) { }
 
-  call = async (
-    projectId: ProjectEntity['id'],
-    mimeType: FileEntity['mimeType'],
-    buffer: Buffer,
-    fileName: FileEntity['name']
-  ): Promise<FileEntity | Error> => {
-    const uploadError = await this.uploadProjectAttachmentBucket
-      .uploadProjectAttachment(projectId, buffer, mimeType, fileName)
-
+  call = async (dto: UploadProjectAttachmentDto, buffer: Buffer): Promise<File | Error> => {
+    const uploadError = await this.uploadProjectAttachmentBucket.uploadProjectAttachment(dto, buffer)
     if (uploadError)
       return uploadError
 
-    return await this.addProjectAttachmentRepository
-      .addProjectAttachment(
-        projectId,
-        {
-          name: fileName,
-          mimeType,
-          sizeInBytes: buffer.byteLength
-        }
-      )
+    return await this.addProjectAttachmentRepository.addProjectAttachment(dto)
   }
 }

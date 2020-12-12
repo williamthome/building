@@ -1,9 +1,5 @@
-import { PhaseEntity, CompanyEntity } from '@/domain/entities'
-import { PhaseEntityDto } from '@/domain/protocols'
+import { Phase, Company, CreatePhaseDto } from '@/domain/entities'
 
 export interface AddPhaseUseCase {
-  call: (
-    dto: PhaseEntityDto,
-    companyId: CompanyEntity['id']
-  ) => Promise<PhaseEntity>
+  call: (dto: CreatePhaseDto, companyId: Company['id']) => Promise<Phase>
 }

@@ -3,9 +3,9 @@ import { Injectable, Inject } from '@/shared/dependency-injection'
 // > Data
 import { AddCompanyMemberRepository } from '@/data/repositories'
 // < Only Domain
-import { CompanyEntity } from '@/domain/entities'
+import { Company } from '@/domain/entities'
 import { AddCompanyMemberUseCase } from '@/domain/usecases'
-import { MemberEntity } from '@/domain/entities/nested'
+import { CreateMemberDto } from '@/domain/entities/nested'
 
 @Injectable('addCompanyMemberUseCase')
 export class AddCompanyMemberContract implements AddCompanyMemberUseCase {
@@ -14,7 +14,7 @@ export class AddCompanyMemberContract implements AddCompanyMemberUseCase {
     @Inject() private readonly addCompanyMemberRepository: AddCompanyMemberRepository
   ) {}
 
-  call = async (companyId: CompanyEntity['id'], member: MemberEntity): Promise<CompanyEntity | null> => {
-    return await this.addCompanyMemberRepository.addCompanyMember(companyId, member)
+  call = async (companyId: Company['id'], dto: CreateMemberDto): Promise<Company | null> => {
+    return await this.addCompanyMemberRepository.addCompanyMember(companyId, dto)
   }
 }

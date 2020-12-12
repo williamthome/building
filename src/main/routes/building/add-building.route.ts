@@ -8,9 +8,8 @@ import {
 import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { AddBuildingController } from '@/presentation/controllers'
-import { BuildingEntity } from '@/domain/entities'
+import { Building, CreateBuildingDto } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
-import { BuildingDto } from '@/domain/protocols'
 
 export const addBuildingPath = new RoutePath(
   'POST',
@@ -18,7 +17,7 @@ export const addBuildingPath = new RoutePath(
 )
 
 @InjectableRoute(addBuildingPath)
-export class AddBuildingRoute implements Route<BuildingDto, BuildingEntity> {
+export class AddBuildingRoute implements Route<CreateBuildingDto, Building> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageBuildings)
 
   constructor (

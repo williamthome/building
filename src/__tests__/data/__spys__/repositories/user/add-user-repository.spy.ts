@@ -1,19 +1,18 @@
-import { UserModel } from '@/data/models'
-import { UserModelDto } from '@/data/protocols'
+import { CreateUserData, UserData } from '@/data/models'
 import { AddUserRepository } from '@/data/repositories'
-import { mockUserModel } from '@/__tests__/data/__mocks__/models'
+import { mockUserData } from '@/__tests__/data/__mocks__/models'
 
 export class AddUserRepositorySpy implements AddUserRepository {
-  userDto?:  UserModelDto
-  userModel?: UserModel
+  dto?: CreateUserData
+  user?: UserData
   shouldThrow = false
 
-  addUser = async (userDto: UserModelDto): Promise<UserModel> => {
-    this.userDto = userDto
+  addUser = async (dto: CreateUserData): Promise<UserData> => {
+    this.dto = dto
 
     if (this.shouldThrow) throw new Error()
 
-    this.userModel = mockUserModel(userDto)
-    return this.userModel
+    this.user = mockUserData(dto)
+    return this.user
   }
 }

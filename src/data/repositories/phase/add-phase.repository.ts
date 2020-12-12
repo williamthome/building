@@ -1,6 +1,5 @@
-import { PhaseModelDto } from '@/data/protocols'
-import { PhaseModel } from '@/data/models'
+import { CreatePhaseData, PhaseData } from '@/data/models'
 
 export interface AddPhaseRepository {
-  addPhase: (dto: PhaseModelDto) => Promise<PhaseModel>
+  addPhase: (dto: CreatePhaseData) => Promise<PhaseData>
 }

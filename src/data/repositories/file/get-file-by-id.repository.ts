@@ -1,5 +1,5 @@
-import { FileModel } from '@/data/models'
+import { FileData } from '@/data/models'
 
 export interface GetFileByIdRepository {
-  getFileById: (id: FileModel['id']) => Promise<FileModel | null>
+  getFileById: (id: FileData['id']) => Promise<FileData | null>
 }

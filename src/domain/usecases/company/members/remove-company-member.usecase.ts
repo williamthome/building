@@ -1,5 +1,6 @@
-import { CompanyEntity, UserEntity } from '@/domain/entities'
+import { Company } from '@/domain/entities'
+import { Member } from '@/domain/entities/nested'
 
 export interface RemoveCompanyMemberUseCase {
-  call: (companyId: CompanyEntity['id'], userId: UserEntity['id']) => Promise<CompanyEntity | null>
+  call: (companyId: Company['id'], userId: Member['userId']) => Promise<Company | null>
 }

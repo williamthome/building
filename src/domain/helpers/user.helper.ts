@@ -1,14 +1,14 @@
-import { CompanyEntity, UserEntity } from '../entities'
-import { MemberEntity } from '../entities/nested'
-import { UserEntityResponse } from '../protocols'
+import { Company, User } from '../entities'
+import { Member } from '../entities/nested'
+import { UserResponse } from '../protocols'
 
-export const userWithoutPassword = (user: UserEntity): UserEntityResponse => {
+export const userWithoutPassword = (user: User): UserResponse => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { password, ...userWithoutPassword } = user
   return userWithoutPassword
 }
 
 export const userIsMember = (
-  members: CompanyEntity['members'],
-  userId: MemberEntity['userId']
+  members: Company['members'],
+  userId: Member['userId']
 ): boolean => members.some(member => userId === member.userId)

@@ -1,5 +1,5 @@
-import { ProjectModel } from '@/data/models'
+import { ProjectData } from '@/data/models'
 
 export interface DeleteProjectRepository {
-  deleteProject: (projectId: ProjectModel['id']) => Promise<ProjectModel | null>
+  deleteProject: (id: ProjectData['id']) => Promise<ProjectData | null>
 }

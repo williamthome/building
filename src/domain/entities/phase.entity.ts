@@ -1,14 +1,14 @@
-import { LimitedEntity, LimitedEntityKeys } from '../protocols'
-import { BuildingEntity } from './building.entity'
+import { ExtractDto, ExtractEntity, ExtractUpdateDto, limitedEntitySchema } from '../protocols/entity.protocol'
+import { string, array } from '../protocols/schema'
 
-export interface PhaseEntity extends LimitedEntity {
-  buildingId: BuildingEntity['id']
-  title: string
-}
+export const phaseSchema = limitedEntitySchema({
+  buildingId: string().required(),
+  participantIds: array<string>().required(),
+  title: string().required()
+})
 
-export const phaseKeys: LimitedEntityKeys<PhaseEntity> = {
-  id: 'id',
-  companyId: 'companyId',
-  buildingId: 'buildingId',
-  title: 'title'
-}
+export type Phase = ExtractEntity<typeof phaseSchema>
+
+export type CreatePhaseDto = ExtractDto<typeof phaseSchema>
+
+export type UpdatePhaseDto = ExtractUpdateDto<typeof phaseSchema, 'buildingId'>

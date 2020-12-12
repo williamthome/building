@@ -1,23 +1,23 @@
-import { UserModel } from '@/data/models'
+import { UserData } from '@/data/models'
 import { GetUserByIdRepository } from '@/data/repositories'
-import { mockUserModel } from '@/__tests__/data/__mocks__/models'
+import { mockUserData } from '@/__tests__/data/__mocks__/models'
 
 export class GetUserByIdRepositorySpy implements GetUserByIdRepository {
-  id?: UserModel['id']
-  userModel?: UserModel | null
-  override?: Partial<UserModel>
+  id?: UserData['id']
+  user?: UserData | null
+  override?: Partial<UserData>
   shouldReturnNull = false
   shouldThrow = false
 
-  getUserById = async (id: UserModel['id']): Promise<UserModel | null> => {
+  getUserById = async (id: UserData['id']): Promise<UserData | null> => {
     this.id = id
 
     if (this.shouldThrow) throw new Error()
 
-    this.userModel = this.shouldReturnNull
+    this.user = this.shouldReturnNull
       ? null
-      : { ...mockUserModel(), id, ...this.override }
+      : { ...mockUserData(), id, ...this.override }
 
-    return this.userModel
+    return this.user
   }
 }

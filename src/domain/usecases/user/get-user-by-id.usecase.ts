@@ -1,5 +1,5 @@
-import { UserEntity } from '@/domain/entities'
+import { User } from '@/domain/entities'
 
 export interface GetUserByIdUseCase {
-  call: (id: UserEntity['id']) => Promise<UserEntity | null>
+  call: (id: User['id']) => Promise<User | null>
 }

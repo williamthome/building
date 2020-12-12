@@ -1,8 +1,5 @@
-import { FileEntity, ProjectEntity } from '@/domain/entities'
+import { File, Project } from '@/domain/entities'
 
 export interface DownloadProjectAttachmentUseCase {
-  call: (
-    projectId: ProjectEntity['id'],
-    attachmentId: FileEntity['id']
-  ) => Promise<Buffer | null>
+  call: (projectId: Project['id'], attachmentId: File['id']) => Promise<Buffer | null>
 }

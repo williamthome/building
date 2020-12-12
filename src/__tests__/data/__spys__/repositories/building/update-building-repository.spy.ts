@@ -1,28 +1,24 @@
-import { BuildingModel } from '@/data/models'
-import { BuildingModelDto } from '@/data/protocols'
+import { BuildingData, UpdateBuildingData } from '@/data/models'
 import { UpdateBuildingRepository } from '@/data/repositories'
-import { mockBuildingModel } from '@/__tests__/data/__mocks__/models'
+import { mockBuildingData } from '@/__tests__/data/__mocks__/models'
 
 export class UpdateBuildingRepositorySpy implements UpdateBuildingRepository {
-  buildingId?: BuildingModel['id']
-  buildingDto?:  BuildingModelDto
-  buildingModel?: BuildingModel | null
+  id?: BuildingData['id']
+  dto?: UpdateBuildingData
+  building?: BuildingData | null
   shouldReturnNull = false
   shouldThrow = false
 
-  updateBuilding = async (
-    buildingId: BuildingModel['id'],
-    buildingDto: BuildingModelDto
-  ): Promise<BuildingModel | null> => {
-    this.buildingId = buildingId
-    this.buildingDto = buildingDto
+  updateBuilding = async (id: BuildingData['id'], dto: UpdateBuildingData): Promise<BuildingData | null> => {
+    this.id = id
+    this.dto = dto
 
     if (this.shouldThrow) throw new Error()
 
-    this.buildingModel = this.shouldReturnNull
+    this.building = this.shouldReturnNull
       ? null
-      : mockBuildingModel(buildingDto)
+      : mockBuildingData(dto)
 
-    return this.buildingModel
+    return this.building
   }
 }

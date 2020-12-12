@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
-import { CompanyModel } from '@/data/models'
-import { UpdateCompanyMemberRepository } from '@/data/repositories'
 import { Database } from '@/infra/protocols'
-import { MemberModel } from '@/data/models/nested'
+import { CompanyData } from '@/data/models'
+import { UpdateCompanyMemberRepository } from '@/data/repositories'
+import { MemberData, UpdateMemberData } from '@/data/models/nested'
 
 @Injectable('updateCompanyMemberRepository')
 export class DbUpdateCompanyMemberRepository implements UpdateCompanyMemberRepository {
@@ -10,18 +10,16 @@ export class DbUpdateCompanyMemberRepository implements UpdateCompanyMemberRepos
     @Inject('db') private readonly db: Database
   ) { }
 
-  updateCompanyMember = async (
-    companyId: CompanyModel['id'],
-    memberId: MemberModel['userId'],
-    memberDto: Partial<MemberModel>
-  ): Promise<CompanyModel | null> => {
-    return await this.db.setOne<CompanyModel, 'members', 'userId'>(
-      companyId,
-      'members',
-      'userId',
-      memberId,
-      memberDto,
-      'companies'
-    )
+  updateCompanyMember = async (companyId: CompanyData['id'], userId: MemberData['userId'], dto: UpdateMemberData
+  ): Promise<CompanyData | null> => {
+    return await this.db.setOne<CompanyData, 'id', 'members', 'userId'>({
+      collectionName: 'companies',
+      matchKey: 'id',
+      matchValue: companyId,
+      arrayKey: 'members',
+      arrayMatchKey: 'userId',
+      arrayMatchValue: userId,
+      dto
+    })
   }
 }

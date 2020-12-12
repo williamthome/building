@@ -44,7 +44,7 @@ describe('DeleteBuilding Controller', () => {
     it('should been called with right values', async () => {
       const { sut, deleteBuildingUseCaseSpy } = makeSut()
       await sut.handle(mockHttpRequest())
-      expect(deleteBuildingUseCaseSpy.buildingId).toEqual(buildingId)
+      expect(deleteBuildingUseCaseSpy.id).toEqual(buildingId)
     })
 
     it('should return server error if throws', async () => {
@@ -65,6 +65,6 @@ describe('DeleteBuilding Controller', () => {
   it('shold return ok with deleted building on body', async () => {
     const { sut, deleteBuildingUseCaseSpy } = makeSut()
     const response = await sut.handle(mockHttpRequest())
-    expect(response).toEqual(ok(deleteBuildingUseCaseSpy.buildingEntity))
+    expect(response).toEqual(ok(deleteBuildingUseCaseSpy.building))
   })
 })

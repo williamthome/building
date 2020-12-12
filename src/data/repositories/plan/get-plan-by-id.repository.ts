@@ -1,5 +1,5 @@
-import { PlanModel } from '@/data/models'
+import { PlanData } from '@/data/models'
 
 export interface GetPlanByIdRepository {
-  getPlanById: (id: PlanModel['id']) => Promise<PlanModel | null>
+  getPlanById: (id: PlanData['id']) => Promise<PlanData | null>
 }

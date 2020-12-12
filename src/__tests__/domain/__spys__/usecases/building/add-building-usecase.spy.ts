@@ -1,19 +1,18 @@
-import { BuildingEntity } from '@/domain/entities'
-import { BuildingDto } from '@/domain/protocols'
+import { Building, CreateBuildingDto } from '@/domain/entities'
 import { AddBuildingUseCase } from '@/domain/usecases'
-import { mockBuildingEntity } from '@/__tests__/domain/__mocks__/entities'
+import { mockBuilding } from '@/__tests__/domain/__mocks__/entities'
 
 export class AddBuildingUseCaseSpy implements AddBuildingUseCase {
-  buildingDto?:  BuildingDto
-  buildingEntity?: BuildingEntity
+  dto?: CreateBuildingDto
+  building?: Building
   shouldThrow = false
 
-  call = async (buildingDto: BuildingDto): Promise<BuildingEntity> => {
-    this.buildingDto = buildingDto
+  call = async (dto: CreateBuildingDto): Promise<Building> => {
+    this.dto = dto
 
     if (this.shouldThrow) throw new Error()
 
-    this.buildingEntity = mockBuildingEntity(buildingDto)
-    return this.buildingEntity
+    this.building = mockBuilding(dto)
+    return this.building
   }
 }

@@ -1,5 +1,5 @@
-import { TechnicianEntity } from '@/domain/entities'
+import { Technician } from '@/domain/entities'
 
 export interface GetTechnicianByIdUseCase {
-  call: (id: TechnicianEntity['id']) => Promise<TechnicianEntity | null>
+  call: (id: Technician['id']) => Promise<Technician | null>
 }

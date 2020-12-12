@@ -44,7 +44,7 @@ describe('DeleteBuilding Contract', () => {
       const { sut, deleteBuildingProjectsRepositorySpy } = makeSut()
       const buildingId = fakeData.entity.id()
       await sut.call(buildingId)
-      expect(deleteBuildingProjectsRepositorySpy.buildingId).toEqual(buildingId)
+      expect(deleteBuildingProjectsRepositorySpy.id).toEqual(buildingId)
     })
 
     it('should throw if method throws', async () => {
@@ -59,7 +59,7 @@ describe('DeleteBuilding Contract', () => {
       const { sut, deleteBuildingPhasesRepositorySpy } = makeSut()
       const buildingId = fakeData.entity.id()
       await sut.call(buildingId)
-      expect(deleteBuildingPhasesRepositorySpy.buildingId).toEqual(buildingId)
+      expect(deleteBuildingPhasesRepositorySpy.id).toEqual(buildingId)
     })
 
     it('should throw if method throws', async () => {
@@ -74,7 +74,7 @@ describe('DeleteBuilding Contract', () => {
       const { sut, deleteBuildingRepositorySpy } = makeSut()
       const buildingId = fakeData.entity.id()
       await sut.call(buildingId)
-      expect(deleteBuildingRepositorySpy.buildingId).toEqual(buildingId)
+      expect(deleteBuildingRepositorySpy.id).toEqual(buildingId)
     })
 
     it('should throw if method throws', async () => {
@@ -88,6 +88,6 @@ describe('DeleteBuilding Contract', () => {
     const { sut, deleteBuildingRepositorySpy } = makeSut()
     const building = await sut.call(fakeData.entity.id())
     expect(building).toBeTruthy()
-    expect(building).toEqual(deleteBuildingRepositorySpy.buildingModel)
+    expect(building).toEqual(deleteBuildingRepositorySpy.building)
   })
 })

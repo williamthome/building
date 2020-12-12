@@ -7,7 +7,7 @@ import {
   DeleteBuildingRepository
 } from '@/data/repositories'
 // < Only Domain
-import { BuildingEntity } from '@/domain/entities'
+import { Building } from '@/domain/entities'
 import { DeleteBuildingUseCase } from '@/domain/usecases'
 
 @Injectable('deleteBuildingUseCase')
@@ -24,12 +24,12 @@ export class DeleteBuildingContract implements DeleteBuildingUseCase {
     private readonly deleteBuildingRepository: DeleteBuildingRepository
   ) { }
 
-  call = async (buildingId: BuildingEntity['id']): Promise<BuildingEntity | null> => {
-    const building = await this.deleteBuildingRepository.deleteBuilding(buildingId)
+  call = async (id: Building['id']): Promise<Building | null> => {
+    const building = await this.deleteBuildingRepository.deleteBuilding(id)
     if (!building) return null
 
-    await this.deleteBuildingProjectsRepository.deleteBuildingProjects(buildingId)
-    await this.deleteBuildingPhasesRepository.deleteBuildingPhases(buildingId)
+    await this.deleteBuildingProjectsRepository.deleteBuildingProjects(id)
+    await this.deleteBuildingPhasesRepository.deleteBuildingPhases(id)
 
     return building
   }

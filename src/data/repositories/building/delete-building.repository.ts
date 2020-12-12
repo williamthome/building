@@ -1,5 +1,5 @@
-import { BuildingModel } from '@/data/models'
+import { BuildingData } from '@/data/models'
 
 export interface DeleteBuildingRepository {
-  deleteBuilding: (buildingId: BuildingModel['id']) => Promise<BuildingModel | null>
+  deleteBuilding: (id: BuildingData['id']) => Promise<BuildingData | null>
 }

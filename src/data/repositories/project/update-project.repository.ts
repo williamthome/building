@@ -1,9 +1,5 @@
-import { ProjectModelDto } from '@/data/protocols'
-import { ProjectModel } from '@/data/models'
+import { ProjectData, UpdateProjectData } from '@/data/models'
 
 export interface UpdateProjectRepository {
-  updateProject: (
-    projectId: ProjectModel['id'],
-    projectDto: ProjectModelDto
-  ) => Promise<ProjectModel | null>
+  updateProject: (id: ProjectData['id'], dto: UpdateProjectData) => Promise<ProjectData | null>
 }

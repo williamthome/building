@@ -1,5 +1,5 @@
-import { CompanyModel } from '@/data/models'
+import { CompanyData } from '@/data/models'
 
 export interface DeleteCompanyProjectsRepository {
-  deleteCompanyProjects: (companyId: CompanyModel['id']) => Promise<number>
+  deleteCompanyProjects: (id: CompanyData['id']) => Promise<number>
 }

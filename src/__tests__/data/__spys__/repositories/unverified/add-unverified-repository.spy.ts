@@ -1,19 +1,18 @@
-import { UnverifiedModel } from '@/data/models'
-import { UnverifiedModelDto } from '@/data/protocols'
+import { CreateUnverifiedData, UnverifiedData } from '@/data/models'
 import { AddUnverifiedRepository } from '@/data/repositories'
-import { mockUnverifiedModel } from '@/__tests__/data/__mocks__/models'
+import { mockUnverifiedData } from '@/__tests__/data/__mocks__/models'
 
 export class AddUnverifiedRepositorySpy implements AddUnverifiedRepository {
-  unverifiedDto?:  UnverifiedModelDto
-  unverifiedModel?: UnverifiedModel
+  dto?: CreateUnverifiedData
+  unverified?: UnverifiedData
   shouldThrow = false
 
-  addUnverified = async (unverifiedDto: UnverifiedModelDto): Promise<UnverifiedModel> => {
-    this.unverifiedDto = unverifiedDto
+  addUnverified = async (dto: CreateUnverifiedData): Promise<UnverifiedData> => {
+    this.dto = dto
 
     if (this.shouldThrow) throw new Error()
 
-    this.unverifiedModel = mockUnverifiedModel(unverifiedDto)
-    return this.unverifiedModel
+    this.unverified = mockUnverifiedData(dto)
+    return this.unverified
   }
 }

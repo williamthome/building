@@ -1,6 +1,5 @@
-import { CompanyEntity } from '@/domain/entities'
-import { CompanyDto } from '@/domain/protocols'
+import { Company, CreateCompanyDto, User } from '@/domain/entities'
 
 export interface AddCompanyUseCase {
-  call: (companyDto: CompanyDto) => Promise<CompanyEntity>
+  call: (dto: CreateCompanyDto, loggedUserId: User['id']) => Promise<Company>
 }

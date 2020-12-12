@@ -1,56 +1,66 @@
 // : Shared
 import { Inject } from '@/shared/dependency-injection'
+import { CompanyRole } from '@/shared/constants'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, forbidden, notFound, ok } from '@/presentation/factories/http.factory'
-import { idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { CanNotDeleteOwnerError, EntityNotFoundError, UserIsNotAMemberError } from '@/presentation/errors'
 // < Out: only domain layer
-import { CompanyEntity } from '@/domain/entities'
-import { GetUserByIdUseCase, RemoveCompanyMemberUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
-import { MemberEntity } from '@/domain/entities/nested'
-import { CompanyRole } from '@/shared/constants'
+import {
+  GetUserByIdUseCase,
+  RemoveCompanyMemberUseCase,
+  UpdateUserActiveCompanyUseCase
+} from '@/domain/usecases'
+import { Company } from '@/domain/entities'
+import { Member } from '@/domain/entities/nested'
+import { Schema, string } from '@/domain/protocols/schema'
 
 @InjectableController()
-export class RemoveCompanyMemberController implements Controller<undefined, CompanyEntity> {
+export class RemoveCompanyMemberController implements Controller<undefined, Company> {
 
   constructor (
-    @Inject() private readonly getUserByIdUseCase: GetUserByIdUseCase,
-    @Inject() private readonly removeCompanyMemberUseCase: RemoveCompanyMemberUseCase,
-    @Inject() private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase
+    @Inject()
+    private readonly getUserByIdUseCase: GetUserByIdUseCase,
+
+    @Inject()
+    private readonly removeCompanyMemberUseCase: RemoveCompanyMemberUseCase,
+
+    @Inject()
+    private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase
   ) { }
 
   @HandleError
-  @Validate<undefined, CompanyEntity>({
+  @Validate({
     params: {
-      schema: idParamSchema,
-      keys: idParamKeys
+      schema: new Schema({
+        id: string().required()
+      })
     }
   })
-  async handle (request: HttpRequest<undefined>): HandleResponse<CompanyEntity> {
-    const activeCompanyId = request.activeCompanyInfo?.id as CompanyEntity['id']
-    const activeCompanyMembers = request.activeCompanyInfo?.members as MemberEntity[]
-    const requestUserId = request.params?.id as MemberEntity['userId']
+  async handle (request: HttpRequest<undefined>): HandleResponse<Company> {
+    const activeCompanyId = request.activeCompanyInfo?.id as Company['id']
+    const activeCompanyMembers = request.activeCompanyInfo?.members as Member[]
+    const userIdToRemove = request.params?.id as Member['userId']
 
-    const requestUserAsMember = activeCompanyMembers.find(
-      companyMember => requestUserId === companyMember.userId
+    const memberToRemove = activeCompanyMembers.find(
+      companyMember => userIdToRemove === companyMember.userId
     )
-    if (!requestUserAsMember)
+    if (!memberToRemove)
       return badRequest(new UserIsNotAMemberError())
 
-    if (requestUserAsMember.companyRole === CompanyRole.owner)
+    if (memberToRemove.companyRole === CompanyRole.owner)
       return forbidden(new CanNotDeleteOwnerError())
 
-    const userRemovedFromMembers = await this.getUserByIdUseCase.call(requestUserId)
-    if (!userRemovedFromMembers)
+    const removedUserFromMembers = await this.getUserByIdUseCase.call(userIdToRemove)
+    if (!removedUserFromMembers)
       return notFound(new EntityNotFoundError('User'))
 
-    const activeCompanyWithoutUserAsMember = await this.removeCompanyMemberUseCase.call(activeCompanyId, requestUserId)
+    const activeCompanyWithoutMember = await this.removeCompanyMemberUseCase.call(activeCompanyId, userIdToRemove)
 
-    if (userRemovedFromMembers.activeCompanyId === activeCompanyId)
-      await this.updateUserActiveCompanyUseCase.call(requestUserId, undefined)
+    if (removedUserFromMembers.activeCompanyId === activeCompanyId)
+      await this.updateUserActiveCompanyUseCase.call(userIdToRemove, undefined)
 
-    return ok(activeCompanyWithoutUserAsMember)
+    return ok(activeCompanyWithoutMember)
   }
 }

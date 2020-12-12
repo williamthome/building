@@ -1,7 +1,7 @@
 import request from 'supertest'
 import { mongoUtils } from '@/__tests__/shared/mongo.utils'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
-import { mockBuildingEntityDto } from '@/__tests__/domain/__mocks__/entities'
+import { mockCreateBuildingDto } from '@/__tests__/domain/__mocks__/entities'
 import { updateBuildingPath } from '@/main/routes'
 
 describe(`UpdateBuilding Route > ${updateBuildingPath.describe}`, () => {
@@ -32,7 +32,7 @@ describe(`UpdateBuilding Route > ${updateBuildingPath.describe}`, () => {
     await request(mongoUtils.webServer.server())
       .patch(makeURN())
       .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
-      .send(mockBuildingEntityDto())
+      .send(mockCreateBuildingDto())
       .expect(HttpStatusCode.OK)
   })
 })

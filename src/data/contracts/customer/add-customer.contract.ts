@@ -3,9 +3,8 @@ import { Injectable, Inject } from '@/shared/dependency-injection'
 // > Data
 import { AddCustomerRepository } from '@/data/repositories'
 // < Only Domain
-import { CustomerEntity, CompanyEntity } from '@/domain/entities'
+import { Customer, Company, CreateCustomerDto } from '@/domain/entities'
 import { AddCustomerUseCase } from '@/domain/usecases'
-import { CustomerEntityDto } from '@/domain/protocols'
 
 @Injectable('addCustomerUseCase')
 export class AddCustomerContract implements AddCustomerUseCase {
@@ -14,10 +13,7 @@ export class AddCustomerContract implements AddCustomerUseCase {
     @Inject() private readonly addCustomerRepository: AddCustomerRepository
   ) { }
 
-  call = async (
-    dto: CustomerEntityDto,
-    companyId: CompanyEntity['id']
-  ): Promise<CustomerEntity> => {
+  call = async (dto: CreateCustomerDto, companyId: Company['id']): Promise<Customer> => {
     return await this.addCustomerRepository.addCustomer({
       ...dto,
       companyId

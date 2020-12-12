@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { UpdateUserAccessTokenRepository } from '@/data/repositories'
 // < Only Domain
 import { UpdateUserAccessTokenUseCase } from '@/domain/usecases'
-import { UserEntity } from '@/domain/entities'
+import { User } from '@/domain/entities'
 
 @Injectable('updateUserAccessTokenUseCase')
 export class UpdateUserAccessTokenContract implements UpdateUserAccessTokenUseCase {
@@ -13,7 +13,7 @@ export class UpdateUserAccessTokenContract implements UpdateUserAccessTokenUseCa
     @Inject() private readonly updateUserAccessTokenRepository: UpdateUserAccessTokenRepository
   ) { }
 
-  call = async (id: UserEntity['id'], accessToken: UserEntity['accessToken']): Promise<void> => {
+  call = async (id: User['id'], accessToken: User['accessToken']): Promise<void> => {
     await this.updateUserAccessTokenRepository.updateUserAccessToken(id, accessToken)
   }
 }

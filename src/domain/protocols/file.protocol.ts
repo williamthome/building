@@ -1,7 +1,7 @@
-import { FileEntity } from '../entities'
+import { File } from '../entities'
 
 export type FileEntityResponse =
-  | Pick<FileEntity,
+  | Pick<File,
     | 'id'
     | 'name'
     | 'mimeType'

@@ -1,14 +1,14 @@
-import { BuildingModel } from '@/data/models'
+import { BuildingData } from '@/data/models'
 import { DeleteBuildingPhasesRepository } from '@/data/repositories'
 
 export class DeleteBuildingPhasesRepositorySpy implements DeleteBuildingPhasesRepository {
-  buildingId?: BuildingModel['id']
+  id?: BuildingData['id']
   deletedCount?: number
   shouldReturnZero = false
   shouldThrow = false
 
-  deleteBuildingPhases = async (buildingId: BuildingModel['id']): Promise<number> => {
-    this.buildingId = buildingId
+  deleteBuildingPhases = async (id: BuildingData['id']): Promise<number> => {
+    this.id = id
 
     if (this.shouldThrow) throw new Error()
 

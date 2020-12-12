@@ -1,6 +1,5 @@
-import { TechnicianEntity } from '@/domain/entities'
-import { TechnicianEntityDto } from '@/domain/protocols'
+import { Technician, UpdateTechnicianDto } from '@/domain/entities'
 
 export interface UpdateTechnicianUseCase {
-  call: (id: TechnicianEntity['id'], dto: TechnicianEntityDto) => Promise<TechnicianEntity | null>
+  call: (id: Technician['id'], dto: UpdateTechnicianDto) => Promise<Technician | null>
 }

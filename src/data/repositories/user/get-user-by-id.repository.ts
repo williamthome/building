@@ -1,5 +1,5 @@
-import { UserModel } from '@/data/models'
+import { UserData } from '@/data/models'
 
 export interface GetUserByIdRepository {
-  getUserById: (id: UserModel['id']) => Promise<UserModel | null>
+  getUserById: (id: UserData['id']) => Promise<UserData | null>
 }

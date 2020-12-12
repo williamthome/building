@@ -1,6 +1,5 @@
-import { PropertyEntity } from '@/domain/entities'
-import { PropertyEntityDto } from '@/domain/protocols'
+import { Property, UpdatePropertyDto } from '@/domain/entities'
 
 export interface UpdatePropertyUseCase {
-  call: (id: PropertyEntity['id'], dto: PropertyEntityDto) => Promise<PropertyEntity | null>
+  call: (id: Property['id'], dto: UpdatePropertyDto) => Promise<Property | null>
 }

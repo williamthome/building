@@ -1,23 +1,23 @@
-import { BuildingModel } from '@/data/models'
+import { BuildingData } from '@/data/models'
 import { DeleteBuildingRepository } from '@/data/repositories'
-import { mockBuildingModel } from '@/__tests__/data/__mocks__/models'
+import { mockBuildingData } from '@/__tests__/data/__mocks__/models'
 
 export class DeleteBuildingRepositorySpy implements DeleteBuildingRepository {
-  buildingId?: BuildingModel['id']
-  buildingModel?: BuildingModel | null
-  override?: BuildingModel
+  id?: BuildingData['id']
+  building?: BuildingData | null
+  override?: BuildingData
   shouldReturnNull = false
   shouldThrow = false
 
-  deleteBuilding = async (buildingId: BuildingModel['id']): Promise<BuildingModel | null> => {
-    this.buildingId = buildingId
+  deleteBuilding = async (id: BuildingData['id']): Promise<BuildingData | null> => {
+    this.id = id
 
     if (this.shouldThrow) throw new Error()
 
-    this.buildingModel = this.shouldReturnNull
+    this.building = this.shouldReturnNull
       ? null
-      : { ...mockBuildingModel(), ...this.override }
+      : { ...mockBuildingData(), ...this.override }
 
-    return this.buildingModel
+    return this.building
   }
 }

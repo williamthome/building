@@ -3,38 +3,37 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { propertySchema, idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
-import { PropertyEntity, propertyKeys } from '@/domain/entities'
 import { UpdatePropertyUseCase } from '@/domain/usecases'
-import { PropertyEntityDto } from '@/domain/protocols'
+import { Property, propertySchema, UpdatePropertyDto } from '@/domain/entities'
+import { idSchema } from '@/domain/protocols'
 
 @InjectableController()
-export class UpdatePropertyController implements Controller<PropertyEntityDto, PropertyEntity> {
+export class UpdatePropertyController implements Controller<UpdatePropertyDto, Property> {
 
   constructor (
     @Inject() private readonly updatePropertyUseCase: UpdatePropertyUseCase
   ) { }
 
   @HandleError
-  @Validate<PropertyEntityDto, PropertyEntity>({
+  @Validate({
     body: {
       schema: propertySchema,
-      keys: propertyKeys,
-      partialValidation: true
+      options: {
+        allKeys: false
+      }
     },
     params: {
-      schema: idParamSchema,
-      keys: idParamKeys
+      schema: idSchema
     }
   })
-  async handle (request: HttpRequest<PropertyEntityDto>): HandleResponse<PropertyEntity> {
-    const requestPropertyId = request.params?.id as PropertyEntity['id']
-    const requestPropertyDto = request.body as PropertyEntityDto
+  async handle (request: HttpRequest<UpdatePropertyDto>): HandleResponse<Property> {
+    const propertyId = request.params?.id as Property['id']
+    const updatePropertyDto = request.body as UpdatePropertyDto
 
-    const udpatedProperty = await this.updatePropertyUseCase.call(requestPropertyId, requestPropertyDto)
+    const udpatedProperty = await this.updatePropertyUseCase.call(propertyId, updatePropertyDto)
     if (!udpatedProperty)
       return notFound(new EntityNotFoundError('Property'))
 

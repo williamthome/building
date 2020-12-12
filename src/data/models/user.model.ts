@@ -1,19 +1,14 @@
-import { Model } from '../protocols'
-import { UserEntity } from '@/domain/entities'
-import { CompanyModel } from './company.model'
-import { AddressModel } from './nested'
+import { User, CreateUserDto, UpdateUserDto } from '@/domain/entities'
+import { CompanyRole, UserFeatures } from '@/shared/constants'
+import { CompanyData } from './company.model'
 
-export class UserModel extends Model implements UserEntity {
-  constructor (
-    public readonly id: Model['id'],
-    public readonly email: string,
-    public readonly password: string,
-    public readonly verified: boolean,
-    public readonly name: string,
-    public readonly accessToken?: string,
-    public readonly address?: AddressModel,
-    public readonly activeCompanyId?: CompanyModel['id']
-  ) {
-    super(id)
-  }
+export type UserData = User
+
+export type CreateUserData = CreateUserDto & Pick<UserData, 'verified'>
+
+export type UpdateUserData = UpdateUserDto
+export interface UserDataRights {
+  company: Pick<CompanyData, 'id' | 'members'>
+  role: CompanyRole
+  features: UserFeatures
 }

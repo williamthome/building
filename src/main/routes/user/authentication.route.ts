@@ -1,7 +1,8 @@
 import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { AuthenticationController } from '@/presentation/controllers'
-import { AuthEntityDto, UserEntityResponse } from '@/domain/protocols'
+import { UserResponse } from '@/domain/protocols'
+import { Authentication } from '@/domain/entities'
 
 export const authenticationPath = new RoutePath(
   'POST',
@@ -9,7 +10,7 @@ export const authenticationPath = new RoutePath(
 )
 
 @InjectableRoute(authenticationPath)
-export class AuthenticationRoute implements Route<AuthEntityDto, UserEntityResponse> {
+export class AuthenticationRoute implements Route<Authentication, UserResponse> {
   constructor (
     @InjectRouteController(AuthenticationController)
     public readonly controller: AuthenticationController

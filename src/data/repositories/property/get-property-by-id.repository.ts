@@ -1,5 +1,5 @@
-import { PropertyModel } from '@/data/models'
+import { PropertyData } from '@/data/models'
 
 export interface GetPropertyByIdRepository {
-  getPropertyById: (id: PropertyModel['id']) => Promise<PropertyModel | null>
+  getPropertyById: (id: PropertyData['id']) => Promise<PropertyData | null>
 }

@@ -1,8 +1,5 @@
-import { UserModel } from '@/data/models'
+import { UserData } from '@/data/models'
 
 export interface UpdateUserAccessTokenRepository {
-  updateUserAccessToken: (
-    id: UserModel['id'],
-    accessToken: UserModel['accessToken']
-  ) => Promise<void>
+  updateUserAccessToken: (id: UserData['id'], accessToken: UserData['accessToken']) => Promise<void>
 }

@@ -1,6 +1,6 @@
-import { LimitedModel } from '@/data/protocols'
+import { CompanyData } from '@/data/models'
 import { CollectionName } from '@/shared/types'
 
 export interface GetEntityCountForPlanLimitRepository {
-  getEntityCount: <T extends LimitedModel> (reference: CollectionName, companyId: T['companyId']) => Promise<number>
+  getEntityCount: (reference: CollectionName, companyId: CompanyData['id']) => Promise<number>
 }

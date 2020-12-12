@@ -1,5 +1,5 @@
-import { BuildingEntity } from '@/domain/entities'
+import { Building } from '@/domain/entities'
 
 export interface DeleteBuildingUseCase {
-  call: (buildingId: BuildingEntity['id']) => Promise<BuildingEntity | null>
+  call: (id: Building['id']) => Promise<Building | null>
 }

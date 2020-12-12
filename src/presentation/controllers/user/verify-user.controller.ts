@@ -5,18 +5,18 @@ import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocol
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError, UserAlreadyVerifiedError } from '@/presentation/errors'
-import { isString, required } from '@/presentation/validations'
 // < Out: only domain layer
-import { UserEntity } from '@/domain/entities'
+import { User } from '@/domain/entities'
 import { GetUserByIdUseCase, VerifyUserUseCase } from '@/domain/usecases'
-import { UserEntityResponse } from '@/domain/protocols'
+import { UserResponse } from '@/domain/protocols'
 import { Decrypter } from '@/domain/protocols/cryptography'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
+import { Schema, string } from '@/domain/protocols/schema'
 
 @InjectableController({
   usesTransaction: true
 })
-export class VerifyUserController implements Controller<undefined, UserEntityResponse> {
+export class VerifyUserController implements Controller<undefined, UserResponse> {
 
   constructor (
     @Inject()
@@ -30,25 +30,17 @@ export class VerifyUserController implements Controller<undefined, UserEntityRes
   ) { }
 
   @HandleError
-  @Validate<undefined, UserEntityResponse>({
+  @Validate({
     query: {
-      schema: {
-        token: {
-          validations: [
-            required,
-            isString
-          ]
-        }
-      },
-      keys: {
-        token: 'token'
-      }
+      schema: new Schema({
+        token: string().required()
+      })
     }
   })
-  async handle (request: HttpRequest): HandleResponse<UserEntityResponse> {
-    const requestToken = request.query?.token as string
+  async handle (request: HttpRequest): HandleResponse<UserResponse> {
+    const token = request.query?.token as string
 
-    const requestUserId = await this.decrypter.decrypt(requestToken)
+    const requestUserId = await this.decrypter.decrypt(token)
 
     const findedUser = await this.getUserByIdUseCase.call(requestUserId)
     if (!findedUser)
@@ -57,7 +49,7 @@ export class VerifyUserController implements Controller<undefined, UserEntityRes
     if (findedUser.verified)
       return badRequest(new UserAlreadyVerifiedError())
 
-    const findedUserVerified = await this.verifyUserUseCase.call(requestUserId) as UserEntity
+    const findedUserVerified = await this.verifyUserUseCase.call(requestUserId) as User
 
     const findedUserWithoutPassword = userWithoutPassword(findedUserVerified)
 

@@ -1,9 +1,5 @@
-import { UserModelDto } from '@/data/protocols'
-import { UserModel } from '@/data/models'
+import { UpdateUserData, UserData } from '@/data/models'
 
 export interface UpdateUserRepository {
-  updateUser: (
-    userId: UserModel['id'],
-    userDto: UserModelDto
-  ) => Promise<UserModel | null>
+  updateUser: (id: UserData['id'], dto: UpdateUserData) => Promise<UserData | null>
 }

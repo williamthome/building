@@ -3,38 +3,39 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { phaseSchema, idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
-import { PhaseEntity, phaseKeys } from '@/domain/entities'
 import { UpdatePhaseUseCase } from '@/domain/usecases'
-import { PhaseEntityDto } from '@/domain/protocols'
+import { Phase, phaseSchema, UpdatePhaseDto } from '@/domain/entities'
+import { Schema, string } from '@/domain/protocols/schema'
 
 @InjectableController()
-export class UpdatePhaseController implements Controller<PhaseEntityDto, PhaseEntity> {
+export class UpdatePhaseController implements Controller<UpdatePhaseDto, Phase> {
 
   constructor (
     @Inject() private readonly updatePhaseUseCase: UpdatePhaseUseCase
   ) { }
 
   @HandleError
-  @Validate<PhaseEntityDto, PhaseEntity>({
+  @Validate({
     body: {
       schema: phaseSchema,
-      keys: phaseKeys,
-      partialValidation: true
+      options: {
+        allKeys: false
+      }
     },
     params: {
-      schema: idParamSchema,
-      keys: idParamKeys
+      schema: new Schema({
+        id: string().required()
+      })
     }
   })
-  async handle (request: HttpRequest<PhaseEntityDto>): HandleResponse<PhaseEntity> {
-    const requestPhaseId = request.params?.id as PhaseEntity['id']
-    const requestPhaseDto = request.body as PhaseEntityDto
+  async handle (request: HttpRequest<UpdatePhaseDto>): HandleResponse<Phase> {
+    const phaseId = request.params?.id as Phase['id']
+    const updatePhaseDto = request.body as UpdatePhaseDto
 
-    const udpatedPhase = await this.updatePhaseUseCase.call(requestPhaseId, requestPhaseDto)
+    const udpatedPhase = await this.updatePhaseUseCase.call(phaseId, updatePhaseDto)
     if (!udpatedPhase)
       return notFound(new EntityNotFoundError('Phase'))
 

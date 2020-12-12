@@ -1,5 +1,5 @@
-import { FileEntity } from '@/domain/entities'
+import { File } from '@/domain/entities'
 
 export interface GetFileByIdUseCase {
-  call: (id: FileEntity['id']) => Promise<FileEntity | null>
+  call: (id: File['id']) => Promise<File | null>
 }

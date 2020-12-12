@@ -1,7 +1,8 @@
-import { FileModel } from '@/data/models'
+import { FileData } from '@/data/models'
+import { OmitKey } from '@/shared/types'
 
 export type StorageUploadFile = Required<
-  Pick<FileModel,
+  Pick<FileData,
     | 'reference'
     | 'referenceId'
     | 'mimeType'
@@ -9,7 +10,7 @@ export type StorageUploadFile = Required<
   >
 >
 
-export type StorageDownloadFile = Omit<StorageUploadFile, 'mimeType'>
+export type StorageDownloadFile = OmitKey<StorageUploadFile, 'mimeType'>
 
 export interface Storage {
   upload: (

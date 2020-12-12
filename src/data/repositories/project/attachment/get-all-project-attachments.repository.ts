@@ -1,7 +1,5 @@
-import { FileModel, ProjectModel } from '@/data/models'
+import { FileData, ProjectData } from '@/data/models'
 
 export interface GetAllProjectAttachmentsRepository {
-  getAllProjectAttachments: (
-    projectId: ProjectModel['id']
-  ) => Promise<FileModel[] | null>
+  getAllProjectAttachments: (id: ProjectData['id']) => Promise<FileData[] | null>
 }

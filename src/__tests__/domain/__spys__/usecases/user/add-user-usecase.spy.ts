@@ -1,21 +1,21 @@
-import { UserEntity } from '@/domain/entities'
-import { userWithoutPassword } from '@/domain/helpers/user.helper'
-import { UserVerificationToken } from '@/domain/protocols'
-import { AddUserUseCase } from '@/domain/usecases'
-import { mockUserEntity } from '@/__tests__/domain/__mocks__/entities'
 import fakeData from '@/__tests__/shared/fake-data'
+import { CreateUserDto } from '@/domain/entities'
+import { userWithoutPassword } from '@/domain/helpers/user.helper'
+import { UserVerificationTokenResponse } from '@/domain/protocols'
+import { AddUserUseCase } from '@/domain/usecases'
+import { mockUser } from '@/__tests__/domain/__mocks__/entities'
 
 export class AddUserUseCaseSpy implements AddUserUseCase {
-  userDto?: Partial<Omit<UserEntity, 'id'>>
-  userVerificationToken?: UserVerificationToken
+  dto?: CreateUserDto
+  userVerificationToken?: UserVerificationTokenResponse
   shouldThrow = false
 
-  call = async (userDto: Partial<Omit<UserEntity, 'id'>>): Promise<UserVerificationToken> => {
-    this.userDto = userDto
+  call = async (dto: CreateUserDto): Promise<UserVerificationTokenResponse> => {
+    this.dto = dto
 
     if (this.shouldThrow) throw new Error()
 
-    const user = mockUserEntity(userDto)
+    const user = mockUser(dto)
 
     this.userVerificationToken = {
       user: userWithoutPassword(user),

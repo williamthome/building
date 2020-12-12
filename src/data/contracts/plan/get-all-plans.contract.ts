@@ -3,7 +3,7 @@ import { Injectable, Inject } from '@/shared/dependency-injection'
 // > Data
 import { GetAllPlansRepository } from '@/data/repositories'
 // < Only Domain
-import { PlanEntity } from '@/domain/entities'
+import { Plan } from '@/domain/entities'
 import { GetAllPlansUseCase } from '@/domain/usecases'
 
 @Injectable('getAllPlansUseCase')
@@ -13,7 +13,7 @@ export class GetAllPlansContract implements GetAllPlansUseCase {
     @Inject() private readonly getAllPlansRepository: GetAllPlansRepository
   ) { }
 
-  call = async (): Promise<PlanEntity[]> => {
+  call = async (): Promise<Plan[]> => {
     return await this.getAllPlansRepository.getAllPlans()
   }
 }

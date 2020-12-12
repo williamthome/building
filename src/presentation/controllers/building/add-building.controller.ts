@@ -3,15 +3,13 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { ok } from '@/presentation/factories/http.factory'
-import { buildingSchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 // < Out: only domain layer
-import { BuildingEntity, buildingKeys, CompanyEntity } from '@/domain/entities'
 import { AddBuildingUseCase } from '@/domain/usecases'
-import { BuildingDto } from '@/domain/protocols'
+import { Building, buildingSchema, Company, CreateBuildingDto } from '@/domain/entities'
 
 @InjectableController()
-export class AddBuildingController implements Controller<BuildingDto, BuildingEntity> {
+export class AddBuildingController implements Controller<CreateBuildingDto, Building> {
 
   constructor (
     @Inject()
@@ -19,18 +17,17 @@ export class AddBuildingController implements Controller<BuildingDto, BuildingEn
   ) { }
 
   @HandleError
-  @Validate<BuildingDto, BuildingEntity>({
+  @Validate({
     planLimitFor: 'building',
     body: {
-      schema: buildingSchema,
-      keys: buildingKeys
+      schema: buildingSchema
     }
   })
-  async handle (request: HttpRequest<BuildingDto>): HandleResponse<BuildingEntity> {
-    const activeCompanyId = request.activeCompanyInfo?.id as CompanyEntity['id']
-    const requestBuildingDto = request.body as BuildingDto
+  async handle (request: HttpRequest<CreateBuildingDto>): HandleResponse<Building> {
+    const activeCompanyId = request.activeCompanyInfo?.id as Company['id']
+    const createBuildingDto = request.body as CreateBuildingDto
 
-    const createdBuilding = await this.addBuildingUseCase.call(requestBuildingDto, activeCompanyId)
+    const createdBuilding = await this.addBuildingUseCase.call(createBuildingDto, activeCompanyId)
 
     return ok(createdBuilding)
   }

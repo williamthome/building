@@ -1,8 +1,5 @@
-import { UserEntity } from '@/domain/entities'
+import { User } from '@/domain/entities'
 
 export interface UpdateUserActiveCompanyUseCase {
-  call: (
-    id: UserEntity['id'],
-    activeCompanyId: UserEntity['activeCompanyId']
-  ) => Promise<void>
+  call: (id: User['id'], activeCompanyId: User['activeCompanyId']) => Promise<void>
 }

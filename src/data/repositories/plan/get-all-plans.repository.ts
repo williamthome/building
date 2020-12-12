@@ -1,5 +1,5 @@
-import { PlanModel } from '@/data/models'
+import { PlanData } from '@/data/models'
 
 export interface GetAllPlansRepository {
-  getAllPlans: () => Promise<PlanModel[]>
+  getAllPlans: () => Promise<PlanData[]>
 }

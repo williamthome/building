@@ -1,15 +1,7 @@
-import { Model } from '../protocols'
-import { CompanyEntity } from '@/domain/entities'
-import { MemberEntity } from '@/domain/entities/nested'
-import { PlanModel } from './plan.model'
+import { Company, CreateCompanyDto, UpdateCompanyDto } from '@/domain/entities'
 
-export class CompanyModel extends Model implements CompanyEntity {
-  constructor (
-    public readonly id: Model['id'],
-    public readonly planId: PlanModel['id'],
-    public readonly name: string,
-    public readonly members: MemberEntity[]
-  ) {
-    super(id)
-  }
-}
+export type CompanyData = Company
+
+export type CreateCompanyData = CreateCompanyDto & Pick<CompanyData, 'members'>
+
+export type UpdateCompanyData = UpdateCompanyDto

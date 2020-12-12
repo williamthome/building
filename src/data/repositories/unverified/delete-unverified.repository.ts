@@ -1,5 +1,5 @@
-import { UnverifiedModel, UserModel } from '@/data/models'
+import { UnverifiedData } from '@/data/models'
 
 export interface DeleteUnverifiedRepository {
-  deleteUnverified: (userId: UserModel['id']) => Promise<UnverifiedModel | null>
+  deleteUnverified: (userId: UnverifiedData['userId']) => Promise<UnverifiedData | null>
 }

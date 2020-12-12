@@ -1,6 +1,5 @@
-import { UserModel } from '@/data/models'
-import { UserModelDto } from '@/data/protocols'
+import { CreateUserData, UserData } from '@/data/models'
 
 export interface AddUserRepository {
-  addUser: (userDto: UserModelDto) => Promise<UserModel>
+  addUser: (dto: CreateUserData) => Promise<UserData>
 }

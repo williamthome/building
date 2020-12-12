@@ -1,5 +1,5 @@
-import { UserEntity } from '@/domain/entities'
+import { User } from '@/domain/entities'
 
 export interface GetUserByEmailUseCase {
-  call: (email: UserEntity['email']) => Promise<UserEntity | null>
+  call: (email: User['email']) => Promise<User | null>
 }

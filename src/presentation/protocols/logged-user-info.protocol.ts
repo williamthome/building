@@ -1,16 +1,16 @@
-import { UserEntity } from '@/domain/entities'
-import { MemberEntity } from '@/domain/entities/nested'
+import { User } from '@/domain/entities'
+import { Member } from '@/domain/entities/nested'
 
 export type LoggedUserInfo =
   Partial<
-    Pick<UserEntity,
+    Pick<User,
       | 'id'
       | 'verified'
       | 'activeCompanyId'
     >
   >
   & Partial<
-    Pick<MemberEntity,
+    Pick<Member,
       | 'companyRole'
       | 'features'
     >

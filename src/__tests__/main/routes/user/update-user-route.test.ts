@@ -1,7 +1,7 @@
 import request from 'supertest'
 import { mongoUtils } from '@/__tests__/shared/mongo.utils'
 import { HttpHeaderName, HttpStatusCode } from '@/presentation/constants'
-import { mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities'
+import { mockCreateUserDto } from '@/__tests__/domain/__mocks__/entities'
 import { updateUserPath } from '@/main/routes'
 
 describe(`UpdateUser Route > ${updateUserPath.describe}`, () => {
@@ -23,7 +23,7 @@ describe(`UpdateUser Route > ${updateUserPath.describe}`, () => {
     await request(mongoUtils.webServer.server())
       .patch(updateUserPath.urn)
       .set(HttpHeaderName.AUTHORIZATION, mongoUtils.authorizationToken)
-      .send(mockUserEntityDto())
+      .send(mockCreateUserDto())
       .expect(HttpStatusCode.OK)
   })
 })

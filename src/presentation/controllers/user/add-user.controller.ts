@@ -3,16 +3,15 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, ok } from '@/presentation/factories/http.factory'
-import { userSchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { UserAlreadyRegisteredError } from '@/presentation/errors'
 // < Out: only domain layer
-import { userKeys } from '@/domain/entities'
 import { AddUserUseCase, GetUserByEmailUseCase } from '@/domain/usecases'
-import { UserVerificationToken, UserEntityDto } from '@/domain/protocols'
+import { UserVerificationTokenResponse } from '@/domain/protocols'
+import { CreateUserDto, createUserSchema } from '@/domain/entities'
 
 @InjectableController()
-export class AddUserController implements Controller<UserEntityDto, UserVerificationToken> {
+export class AddUserController implements Controller<CreateUserDto, UserVerificationTokenResponse> {
 
   constructor (
     @Inject()
@@ -23,20 +22,19 @@ export class AddUserController implements Controller<UserEntityDto, UserVerifica
   ) { }
 
   @HandleError
-  @Validate<UserEntityDto, UserVerificationToken>({
+  @Validate({
     body: {
-      schema: userSchema,
-      keys: userKeys
+      schema: createUserSchema
     }
   })
-  async handle (request: HttpRequest<UserEntityDto>): HandleResponse<UserVerificationToken> {
-    const requestUserDto = request.body as UserEntityDto
+  async handle (request: HttpRequest<CreateUserDto>): HandleResponse<UserVerificationTokenResponse> {
+    const createUserDto = request.body as CreateUserDto
 
-    const findedUser = await this.getUserByEmailUseCase.call(requestUserDto.email as string)
+    const findedUser = await this.getUserByEmailUseCase.call(createUserDto.email)
     if (findedUser)
       return badRequest(new UserAlreadyRegisteredError())
 
-    const { user: createdUserWithoutPassword, verificationToken } = await this.addUserUseCase.call(requestUserDto)
+    const { user: createdUserWithoutPassword, verificationToken } = await this.addUserUseCase.call(createUserDto)
 
     return ok({
       user: createdUserWithoutPassword,

@@ -1,11 +1,12 @@
-import { LimitedEntity, LimitedEntityKeys } from '../protocols'
+import { ExtractDto, ExtractEntity, ExtractUpdateDto, limitedEntitySchema } from '../protocols/entity.protocol'
+import { string } from '../protocols/schema'
 
-export interface BuildingEntity extends LimitedEntity {
-  title: string
-}
+export const buildingSchema = limitedEntitySchema({
+  title: string().required()
+})
 
-export const buildingKeys: LimitedEntityKeys<BuildingEntity> = {
-  id: 'id',
-  companyId: 'companyId',
-  title: 'title'
-}
+export type Building = ExtractEntity<typeof buildingSchema>
+
+export type CreateBuildingDto = ExtractDto<typeof buildingSchema>
+
+export type UpdateBuildingDto = ExtractUpdateDto<typeof buildingSchema>

@@ -1,6 +1,6 @@
 import request from 'supertest'
 import { HttpStatusCode } from '@/presentation/constants'
-import { mockAuthDto } from '@/__tests__/domain/__mocks__/entities'
+import { mockAuthentication, mockCreateUserDto } from '@/__tests__/domain/__mocks__/entities'
 import { mongoUtils } from '@/__tests__/shared/mongo.utils'
 import { authenticationPath } from '@/main/routes'
 
@@ -18,8 +18,11 @@ describe(`Authentication Route > ${authenticationPath.describe}`, () => {
   })
 
   it('shold return ok', async () => {
-    const authDto = mockAuthDto()
-    await mongoUtils.addUser(authDto)
+    const authDto = mockAuthentication()
+    await mongoUtils.addUser({
+      email: authDto.email,
+      password: authDto.password
+    })
     await request(mongoUtils.webServer.server())
       .post(authenticationPath.urn)
       .send(authDto)

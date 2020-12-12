@@ -1,5 +1,5 @@
-import { UserEntity } from '@/domain/entities'
+import { User } from '@/domain/entities'
 
 export interface GetUserByAccessTokenUseCase {
-  call: (accessToken: UserEntity['accessToken']) => Promise<UserEntity | null>
+  call: (accessToken: User['accessToken']) => Promise<User | null>
 }

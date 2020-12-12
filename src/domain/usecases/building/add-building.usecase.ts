@@ -1,6 +1,5 @@
-import { BuildingEntity, CompanyEntity } from '@/domain/entities'
-import { BuildingDto } from '@/domain/protocols'
+import { Building, CreateBuildingDto, Company } from '@/domain/entities'
 
 export interface AddBuildingUseCase {
-  call: (buildingDto: BuildingDto, companyId: CompanyEntity['id']) => Promise<BuildingEntity>
+  call: (dto: CreateBuildingDto, companyId: Company['id']) => Promise<Building>
 }

@@ -1,10 +1,5 @@
-import { FileEntity, ProjectEntity } from '@/domain/entities'
+import { UploadProjectAttachmentDto, File } from '@/domain/entities'
 
 export interface UploadProjectAttachmentUseCase {
-  call: (
-    projectId: ProjectEntity['id'],
-    mimeType: FileEntity['mimeType'],
-    buffer: Buffer,
-    fileName: FileEntity['name']
-  ) => Promise<FileEntity | Error>
+  call: (dto: UploadProjectAttachmentDto, buffer: Buffer) => Promise<File | Error>
 }

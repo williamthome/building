@@ -3,9 +3,8 @@ import { Injectable, Inject } from '@/shared/dependency-injection'
 // > Data
 import { UpdateProjectRepository } from '@/data/repositories'
 // < Only Domain
-import { ProjectEntity } from '@/domain/entities'
+import { Project, UpdateProjectDto } from '@/domain/entities'
 import { UpdateProjectUseCase } from '@/domain/usecases'
-import { ProjectEntityDto } from '@/domain/protocols'
 
 @Injectable('updateProjectUseCase')
 export class UpdateProjectContract implements UpdateProjectUseCase {
@@ -14,7 +13,7 @@ export class UpdateProjectContract implements UpdateProjectUseCase {
     @Inject() private readonly updateProjectRepository: UpdateProjectRepository
   ) {}
 
-  call = async (projectId: ProjectEntity['id'], projectDto: ProjectEntityDto): Promise<ProjectEntity | null> => {
-    return await this.updateProjectRepository.updateProject(projectId, projectDto)
+  call = async (id: Project['id'], dto: UpdateProjectDto): Promise<Project | null> => {
+    return await this.updateProjectRepository.updateProject(id, dto)
   }
 }

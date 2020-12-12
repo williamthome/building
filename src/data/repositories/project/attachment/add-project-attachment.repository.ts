@@ -1,9 +1,5 @@
-import { FileModel, ProjectModel } from '@/data/models'
-import { FileModelDto } from '@/data/protocols'
+import { FileData, UploadProjectAttachmentData } from '@/data/models'
 
 export interface AddProjectAttachmentRepository {
-  addProjectAttachment: (
-    projectId: ProjectModel['id'],
-    fileDto: FileModelDto
-  ) => Promise<FileModel>
+  addProjectAttachment: (dto: UploadProjectAttachmentData) => Promise<FileData>
 }

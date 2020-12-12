@@ -1,19 +1,18 @@
-import { BuildingModel } from '@/data/models'
-import { BuildingModelDto } from '@/data/protocols'
+import { BuildingData, CreateBuildingData } from '@/data/models'
 import { AddBuildingRepository } from '@/data/repositories'
-import { mockBuildingModel } from '@/__tests__/data/__mocks__/models'
+import { mockBuildingData } from '@/__tests__/data/__mocks__/models'
 
 export class AddBuildingRepositorySpy implements AddBuildingRepository {
-  buildingDto?:  BuildingModelDto
-  buildingModel?: BuildingModel
+  dto?: CreateBuildingData
+  building?: BuildingData
   shouldThrow = false
 
-  addBuilding = async (buildingDto: BuildingModelDto): Promise<BuildingModel> => {
-    this.buildingDto = buildingDto
+  addBuilding = async (dto: CreateBuildingData): Promise<BuildingData> => {
+    this.dto = dto
 
     if (this.shouldThrow) throw new Error()
 
-    this.buildingModel = mockBuildingModel(buildingDto)
-    return this.buildingModel
+    this.building = mockBuildingData(dto)
+    return this.building
   }
 }

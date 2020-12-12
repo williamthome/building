@@ -3,9 +3,8 @@ import { Injectable, Inject } from '@/shared/dependency-injection'
 // > Data
 import { AddPhaseRepository } from '@/data/repositories'
 // < Only Domain
-import { PhaseEntity, CompanyEntity } from '@/domain/entities'
+import { Phase, Company, CreatePhaseDto } from '@/domain/entities'
 import { AddPhaseUseCase } from '@/domain/usecases'
-import { PhaseEntityDto } from '@/domain/protocols'
 
 @Injectable('addPhaseUseCase')
 export class AddPhaseContract implements AddPhaseUseCase {
@@ -14,10 +13,7 @@ export class AddPhaseContract implements AddPhaseUseCase {
     @Inject() private readonly addPhaseRepository: AddPhaseRepository
   ) { }
 
-  call = async (
-    dto: PhaseEntityDto,
-    companyId: CompanyEntity['id']
-  ): Promise<PhaseEntity> => {
+  call = async (dto: CreatePhaseDto, companyId: Company['id']): Promise<Phase> => {
     return await this.addPhaseRepository.addPhase({
       ...dto,
       companyId

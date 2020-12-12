@@ -1,19 +1,18 @@
-import { CompanyEntity } from '@/domain/entities'
-import { CompanyDto } from '@/domain/protocols'
+import { Company, CreateCompanyDto } from '@/domain/entities'
 import { AddCompanyUseCase } from '@/domain/usecases'
-import { mockCompanyEntity } from '@/__tests__/domain/__mocks__/entities'
+import { mockCompany } from '@/__tests__/domain/__mocks__/entities'
 
 export class AddCompanyUseCaseSpy implements AddCompanyUseCase {
-  companyDto?:  CompanyDto
-  companyEntity?: CompanyEntity
+  dto?: CreateCompanyDto
+  company?: Company
   shouldThrow = false
 
-  call = async (companyDto: CompanyDto): Promise<CompanyEntity> => {
-    this.companyDto = companyDto
+  call = async (dto: CreateCompanyDto): Promise<Company> => {
+    this.dto = dto
 
     if (this.shouldThrow) throw new Error()
 
-    this.companyEntity = mockCompanyEntity(companyDto)
-    return this.companyEntity
+    this.company = mockCompany(dto)
+    return this.company
   }
 }

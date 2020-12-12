@@ -3,31 +3,30 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
-import { ProjectEntity } from '@/domain/entities'
+import { Project } from '@/domain/entities'
 import { DeleteProjectUseCase } from '@/domain/usecases'
+import { idSchema } from '@/domain/protocols'
 
 @InjectableController()
-export class DeleteProjectController implements Controller<undefined, ProjectEntity> {
+export class DeleteProjectController implements Controller<undefined, Project> {
 
   constructor (
     @Inject() private readonly deleteProjectUseCase: DeleteProjectUseCase
   ) { }
 
   @HandleError
-  @Validate<undefined, ProjectEntity>({
+  @Validate({
     params: {
-      schema: idParamSchema,
-      keys: idParamKeys
+      schema: idSchema
     }
   })
-  async handle (request: HttpRequest): HandleResponse<ProjectEntity> {
-    const requestPhaseId = request.params?.id as ProjectEntity['id']
+  async handle (request: HttpRequest): HandleResponse<Project> {
+    const projectId = request.params?.id as Project['id']
 
-    const deletedProject = await this.deleteProjectUseCase.call(requestPhaseId)
+    const deletedProject = await this.deleteProjectUseCase.call(projectId)
     if (!deletedProject)
       return notFound(new EntityNotFoundError('Project'))
 

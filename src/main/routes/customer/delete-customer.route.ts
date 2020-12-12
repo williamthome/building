@@ -8,7 +8,7 @@ import {
 import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { DeleteCustomerController } from '@/presentation/controllers'
-import { CustomerEntity } from '@/domain/entities'
+import { Customer } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 
 export const deleteCustomerPath = new RoutePath(
@@ -17,7 +17,7 @@ export const deleteCustomerPath = new RoutePath(
 )
 
 @InjectableRoute(deleteCustomerPath)
-export class DeleteCustomerRoute implements Route<undefined, CustomerEntity> {
+export class DeleteCustomerRoute implements Route<undefined, Customer> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageCustomers)
 
   constructor (

@@ -3,15 +3,13 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { ok } from '@/presentation/factories/http.factory'
-import { propertySchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 // < Out: only domain layer
-import { PropertyEntity, propertyKeys, CompanyEntity } from '@/domain/entities'
 import { AddPropertyUseCase } from '@/domain/usecases'
-import { PropertyEntityDto } from '@/domain/protocols'
+import { Property, Company, propertySchema, CreatePropertyDto } from '@/domain/entities'
 
 @InjectableController()
-export class AddPropertyController implements Controller<PropertyEntityDto, PropertyEntity> {
+export class AddPropertyController implements Controller<CreatePropertyDto, Property> {
 
   constructor (
     @Inject()
@@ -19,18 +17,17 @@ export class AddPropertyController implements Controller<PropertyEntityDto, Prop
   ) { }
 
   @HandleError
-  @Validate<PropertyEntityDto, PropertyEntity>({
+  @Validate({
     planLimitFor: 'property',
     body: {
-      schema: propertySchema,
-      keys: propertyKeys
+      schema: propertySchema
     }
   })
-  async handle (request: HttpRequest<PropertyEntityDto>): HandleResponse<PropertyEntity> {
-    const activeCompanyId = request.activeCompanyInfo?.id as CompanyEntity['id']
-    const requestPropertyDto = request.body as PropertyEntityDto
+  async handle (request: HttpRequest<CreatePropertyDto>): HandleResponse<Property> {
+    const activeCompanyId = request.activeCompanyInfo?.id as Company['id']
+    const createPropertyDto = request.body as CreatePropertyDto
 
-    const createdProperty = await this.addPropertyUseCase.call(requestPropertyDto, activeCompanyId)
+    const createdProperty = await this.addPropertyUseCase.call(createPropertyDto, activeCompanyId)
 
     return ok(createdProperty)
   }

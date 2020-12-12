@@ -3,9 +3,8 @@ import { Injectable, Inject } from '@/shared/dependency-injection'
 // > Data
 import { AddBuildingRepository } from '@/data/repositories'
 // < Only Domain
-import { BuildingEntity, CompanyEntity } from '@/domain/entities'
+import { Building, Company, CreateBuildingDto } from '@/domain/entities'
 import { AddBuildingUseCase } from '@/domain/usecases'
-import { BuildingDto } from '@/domain/protocols'
 
 @Injectable('addBuildingUseCase')
 export class AddBuildingContract implements AddBuildingUseCase {
@@ -14,9 +13,9 @@ export class AddBuildingContract implements AddBuildingUseCase {
     @Inject() private readonly addBuildingRepository: AddBuildingRepository
   ) {}
 
-  call = async (buildingDto: BuildingDto, companyId: CompanyEntity['id']): Promise<BuildingEntity> => {
+  call = async (dto: CreateBuildingDto, companyId: Company['id']): Promise<Building> => {
     return await this.addBuildingRepository.addBuilding({
-      ...buildingDto,
+      ...dto,
       companyId
     })
   }

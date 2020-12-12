@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Database } from '@/infra/protocols'
-import { FileModel, ProjectModel } from '@/data/models'
+import { FileData, ProjectData } from '@/data/models'
 import { GetAllProjectAttachmentsRepository } from '@/data/repositories'
 
 @Injectable('getAllProjectAttachmentsRepository')
@@ -10,9 +10,11 @@ export class DbGetAllProjectAttachmentsRepository implements GetAllProjectAttach
     @Inject('db') private readonly db: Database
   ) { }
 
-  getAllProjectAttachments = async (
-    projectId: ProjectModel['id']
-  ): Promise<FileModel[] | null> => {
-    return await this.db.getManyBy<FileModel, ProjectModel['id']>('referenceId', projectId, 'files')
+  getAllProjectAttachments = async (id: ProjectData['id']): Promise<FileData[] | null> => {
+    return await this.db.getMany<FileData, 'referenceId'>({
+      collectionName: 'files',
+      matchKey: 'referenceId',
+      matchValue: id
+    })
   }
 }

@@ -1,6 +1,5 @@
-import { CompanyModelDto } from '@/data/protocols'
-import { CompanyModel } from '@/data/models'
+import { CompanyData, CreateCompanyData } from '@/data/models'
 
 export interface AddCompanyRepository {
-  addCompany: (companyDto: CompanyModelDto) => Promise<CompanyModel>
+  addCompany: (dto: CreateCompanyData) => Promise<CompanyData>
 }

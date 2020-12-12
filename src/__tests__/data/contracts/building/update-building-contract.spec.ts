@@ -1,7 +1,7 @@
 import container from '@/shared/dependency-injection'
 import { UpdateBuildingContract } from '@/data/contracts'
 import { UpdateBuildingRepositorySpy } from '@/__tests__/data/__spys__'
-import { mockBuildingModelDto } from '@/__tests__/data/__mocks__/models'
+import { mockCreateBuildingData } from '@/__tests__/data/__mocks__/models'
 import fakeData from '@/__tests__/shared/fake-data'
 
 //#region Factories
@@ -32,23 +32,23 @@ describe('UpdateBuilding Contract', () => {
     it('should be called with right value', async () => {
       const { sut, updateBuildingRepositorySpy } = makeSut()
       const buildingId = fakeData.entity.id()
-      const buildingDto = mockBuildingModelDto()
+      const buildingDto = mockCreateBuildingData()
       await sut.call(buildingId, buildingDto)
-      expect(updateBuildingRepositorySpy.buildingId).toEqual(buildingId)
-      expect(updateBuildingRepositorySpy.buildingDto).toEqual(buildingDto)
+      expect(updateBuildingRepositorySpy.id).toEqual(buildingId)
+      expect(updateBuildingRepositorySpy.dto).toEqual(buildingDto)
     })
 
     it('should throw if method throws', async () => {
       const { sut, updateBuildingRepositorySpy } = makeSut()
       updateBuildingRepositorySpy.shouldThrow = true
-      await expect(sut.call(fakeData.entity.id(), mockBuildingModelDto())).rejects.toThrow()
+      await expect(sut.call(fakeData.entity.id(), mockCreateBuildingData())).rejects.toThrow()
     })
   })
 
   it('shold update building', async () => {
     const { sut, updateBuildingRepositorySpy } = makeSut()
-    const building = await sut.call(fakeData.entity.id(), mockBuildingModelDto())
+    const building = await sut.call(fakeData.entity.id(), mockCreateBuildingData())
     expect(building).toBeTruthy()
-    expect(building).toEqual(updateBuildingRepositorySpy.buildingModel)
+    expect(building).toEqual(updateBuildingRepositorySpy.building)
   })
 })

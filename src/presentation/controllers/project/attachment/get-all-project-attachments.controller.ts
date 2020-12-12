@@ -4,12 +4,11 @@ import { Inject } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
-import { idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { GetAllProjectAttachmentsUseCase } from '@/domain/usecases'
-import { ProjectEntity } from '@/domain/entities'
-import { FileEntityResponse } from '@/domain/protocols'
+import { Project } from '@/domain/entities'
+import { FileEntityResponse, idSchema } from '@/domain/protocols'
 
 @InjectableController()
 export class GetAllProjectAttachmentsController implements Controller<undefined, FileEntityResponse[]> {
@@ -20,16 +19,15 @@ export class GetAllProjectAttachmentsController implements Controller<undefined,
   ) { }
 
   @HandleError
-  @Validate<undefined, FileEntityResponse[]>({
+  @Validate({
     params: {
-      schema: idParamSchema,
-      keys: idParamKeys
+      schema: idSchema
     }
   })
   async handle (request: HttpRequest): HandleResponse<FileEntityResponse[]> {
-    const requestProjectId = request.params?.id as ProjectEntity['id']
+    const projectId = request.params?.id as Project['id']
 
-    const allProjectAttachments = await this.getAllProjectAttachmentsUseCase.call(requestProjectId)
+    const allProjectAttachments = await this.getAllProjectAttachmentsUseCase.call(projectId)
     if (!allProjectAttachments)
       return notFound(new EntityNotFoundError('Project'))
 

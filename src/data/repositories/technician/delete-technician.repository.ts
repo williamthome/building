@@ -1,5 +1,5 @@
-import { TechnicianModel } from '@/data/models'
+import { TechnicianData } from '@/data/models'
 
 export interface DeleteTechnicianRepository {
-  deleteTechnician: (id: TechnicianModel['id']) => Promise<TechnicianModel | null>
+  deleteTechnician: (id: TechnicianData['id']) => Promise<TechnicianData | null>
 }

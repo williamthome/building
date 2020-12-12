@@ -1,5 +1,5 @@
-import { ProjectEntity } from '@/domain/entities'
+import { Project } from '@/domain/entities'
 
 export interface GetProjectByIdUseCase {
-  call: (id: ProjectEntity['id']) => Promise<ProjectEntity | null>
+  call: (id: Project['id']) => Promise<Project | null>
 }

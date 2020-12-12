@@ -1,7 +1,7 @@
 import container from '@/shared/dependency-injection'
 import { UpdateUserContract } from '@/data/contracts'
 import { UpdateUserRepositorySpy } from '@/__tests__/data/__spys__'
-import { mockUserModelDto } from '@/__tests__/data/__mocks__/models'
+import { mockCreateUserData } from '@/__tests__/data/__mocks__/models'
 import fakeData from '@/__tests__/shared/fake-data'
 
 //#region Factories
@@ -32,23 +32,23 @@ describe('UpdateUser Contract', () => {
     it('should be called with right value', async () => {
       const { sut, updateUserRepositorySpy } = makeSut()
       const userId = fakeData.entity.id()
-      const userDto = mockUserModelDto()
+      const userDto = mockCreateUserData()
       await sut.call(userId, userDto)
-      expect(updateUserRepositorySpy.userId).toEqual(userId)
-      expect(updateUserRepositorySpy.userDto).toEqual(userDto)
+      expect(updateUserRepositorySpy.id).toEqual(userId)
+      expect(updateUserRepositorySpy.dto).toEqual(userDto)
     })
 
     it('should throw if method throws', async () => {
       const { sut, updateUserRepositorySpy } = makeSut()
       updateUserRepositorySpy.shouldThrow = true
-      await expect(sut.call(fakeData.entity.id(), mockUserModelDto())).rejects.toThrow()
+      await expect(sut.call(fakeData.entity.id(), mockCreateUserData())).rejects.toThrow()
     })
   })
 
   it('shold update user', async () => {
     const { sut, updateUserRepositorySpy } = makeSut()
-    const user = await sut.call(fakeData.entity.id(), mockUserModelDto())
+    const user = await sut.call(fakeData.entity.id(), mockCreateUserData())
     expect(user).toBeTruthy()
-    expect(user).toEqual(updateUserRepositorySpy.userModel)
+    expect(user).toEqual(updateUserRepositorySpy.user)
   })
 })

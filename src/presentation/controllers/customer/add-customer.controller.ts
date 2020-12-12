@@ -3,15 +3,13 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { ok } from '@/presentation/factories/http.factory'
-import { customerSchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 // < Out: only domain layer
-import { CustomerEntity, customerKeys, CompanyEntity } from '@/domain/entities'
 import { AddCustomerUseCase } from '@/domain/usecases'
-import { CustomerEntityDto } from '@/domain/protocols'
+import { Customer, Company, customerSchema, CreateCustomerDto } from '@/domain/entities'
 
 @InjectableController()
-export class AddCustomerController implements Controller<CustomerEntityDto, CustomerEntity> {
+export class AddCustomerController implements Controller<CreateCustomerDto, Customer> {
 
   constructor (
     @Inject()
@@ -19,18 +17,17 @@ export class AddCustomerController implements Controller<CustomerEntityDto, Cust
   ) { }
 
   @HandleError
-  @Validate<CustomerEntityDto, CustomerEntity>({
+  @Validate({
     planLimitFor: 'customer',
     body: {
-      schema: customerSchema,
-      keys: customerKeys
+      schema: customerSchema
     }
   })
-  async handle (request: HttpRequest<CustomerEntityDto>): HandleResponse<CustomerEntity> {
-    const activeCompanyId = request.activeCompanyInfo?.id as CompanyEntity['id']
-    const requestCustomerDto = request.body as CustomerEntityDto
+  async handle (request: HttpRequest<CreateCustomerDto>): HandleResponse<Customer> {
+    const activeCompanyId = request.activeCompanyInfo?.id as Company['id']
+    const createCustomerDto = request.body as CreateCustomerDto
 
-    const createdCustomer = await this.addCustomerUseCase.call(requestCustomerDto, activeCompanyId)
+    const createdCustomer = await this.addCustomerUseCase.call(createCustomerDto, activeCompanyId)
 
     return ok(createdCustomer)
   }

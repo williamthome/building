@@ -1,20 +1,22 @@
 import { CollectionName } from '@/shared/types'
 
-export interface PlanLimits {
-  member: number
-  customer: number
-  property: number
-  technician: number
-  building: number
-  phase: number
-  project: number
-  storageMb: number
-}
+type PlanLimitFields =
+  | 'member'
+  | 'customer'
+  | 'property'
+  | 'technician'
+  | 'building'
+  | 'phase'
+  | 'project'
+  | 'storageMb'
 
-export interface PlanValues {
-  BRL: number
-  USD: number
-}
+type PlanValueFields =
+  | 'BRL'
+  | 'USD'
+
+export type PlanLimits = { [K in PlanLimitFields]: number }
+
+export type PlanValues = { [K in PlanValueFields]: number }
 
 export type PlanLimit =
   | 'unlimited'
@@ -24,7 +26,7 @@ export type PlanValue =
   | 'free'
   | PlanValues
 
-type PlanLimitCollectionName = { [K in keyof Required<PlanLimits>]: CollectionName | 'members' }
+type PlanLimitCollectionName = { [K in PlanLimitFields]: CollectionName | 'members' }
 
 export const planLimitCollectionName: PlanLimitCollectionName = {
   member: 'members',

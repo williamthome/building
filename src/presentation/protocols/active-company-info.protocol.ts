@@ -1,14 +1,14 @@
-import { CompanyEntity, PlanEntity } from '@/domain/entities'
+import { Company, Plan } from '@/domain/entities'
 
 export type ActiveCompanyInfo =
   Partial<
-    Pick<CompanyEntity,
+    Pick<Company,
       | 'id'
       | 'members'
     >
   >
   & Partial<
-    Pick<PlanEntity,
+    Pick<Plan,
       | 'limit'
     >
   >

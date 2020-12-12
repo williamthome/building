@@ -3,19 +3,12 @@ import {
   MongoClient,
   ClientSession,
   ObjectId,
-  Collection,
-  CollectionInsertOneOptions,
-  FindOneAndDeleteOption,
-  CommonOptions,
-  FindOneOptions,
-  FindOneAndUpdateOption,
-  MongoCountPreferences,
+  Collection
 } from 'mongodb'
 import { Injectable, Inject } from '@/shared/dependency-injection'
-import { CollectionName, Unpacked } from '@/shared/types'
+import { AllOptional, CollectionName, Unpacked } from '@/shared/types'
 import { collectionNames } from '@/shared/constants'
 import { Database } from '@/infra/protocols'
-import { Model } from '@/data/protocols'
 import { AccessDeniedError } from '@/presentation/errors'
 
 @Injectable('db')
@@ -44,7 +37,7 @@ export class MongoDB implements Database {
     return this._session
   }
 
-  private map = <T extends Model> (data: any): T => {
+  private map = <T> (data: any): T => {
     const { _id, ...rest } = data
     const id = (_id as ObjectId).toHexString()
     const mapped: T = { id, ...rest }
@@ -116,281 +109,256 @@ export class MongoDB implements Database {
     await collection.deleteMany({})
   }
 
-  addOne = async <T extends Model> (
-    payload: Partial<T>,
-    collectionName: CollectionName,
-    options?: Omit<CollectionInsertOneOptions, 'session'>
-  ): Promise<T> => {
+  addOne = async <TDto, TData> (opts: {
+    collectionName: CollectionName
+    dto: TDto
+  }): Promise<TData> => {
+    const { collectionName, dto } = opts
     const collection = await this.getCollection(collectionName)
-    const data = await collection.insertOne(
-      payload,
-      {
-        ...options,
-        session: this.session
-      }
+    const result = await collection.insertOne(
+      dto,
+      { session: this.session }
     )
-    const model = data.ops[0]
-    return this.map<T>(model)
+    const data = result.ops[0]
+    return this.map<TData>(data)
   }
 
-  getOneBy = async <T extends Model, V> (
-    field: keyof T,
-    toSearch: V,
-    collectionName: CollectionName,
-    options?: Omit<FindOneOptions<unknown>, 'session'>
-  ): Promise<T | null> => {
+  getOne = async <TData, KMatch extends keyof TData> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+  }): Promise<TData | null> => {
+    const { collectionName, matchKey, matchValue } = opts
     const collection = await this.getCollection(collectionName)
-    const model = await collection.findOne(
-      field === 'id'
-        ? { _id: new ObjectId(toSearch as unknown as Model['id']) }
-        : { [field]: toSearch },
-      {
-        ...options,
-        session: this.session
-      }
+    const data = await collection.findOne(
+      matchKey === 'id'
+        ? { _id: new ObjectId(matchValue as any) }
+        : { [matchKey]: matchValue },
+      { session: this.session }
     )
-    return model ? this.map<T>(model) : null
+    return data ? this.map<TData>(data) : null
   }
 
-  getManyBy = async <T extends Model, V> (
-    field: keyof T,
-    toSearch: V,
-    collectionName: CollectionName,
-    options?: Omit<FindOneOptions<unknown>, 'session'>
-  ): Promise<T[]> => {
+  getMany = async <TData, KMatch extends keyof TData> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+  }): Promise<TData[]> => {
+    const { collectionName, matchKey, matchValue } = opts
     const collection = await this.getCollection(collectionName)
     const models = await collection.find(
-      field === 'id'
-        ? { _id: new ObjectId(toSearch as unknown as Model['id']) }
-        : { [field]: toSearch },
-      {
-        ...options,
-        session: this.session
-      }
+      matchKey === 'id'
+        ? { _id: new ObjectId(matchValue as any) }
+        : { [matchKey]: matchValue },
+      { session: this.session }
     ).toArray()
-    return models.map(model => this.map<T>(model))
+    return models.map(model => this.map<TData>(model))
   }
 
-  getManyByNested = async <T extends Model, KNested extends keyof T, KMatch extends keyof Unpacked<T[KNested]>> (
-    nestedKey: KNested,
-    matchKey: KMatch,
-    match: Unpacked<T[KNested]>[KMatch],
-    collectionName: CollectionName,
-    options?: Omit<FindOneOptions<unknown>, 'session'>
-  ): Promise<T[]> => {
+  getManyByNested = async <TData, KNested extends keyof TData, KMatch extends keyof Unpacked<TData[KNested]>> (opts: {
+    collectionName: CollectionName
+    nestedKey: KNested
+    nestedMatchKey: KMatch
+    nestedMatchValue: Unpacked<TData[KNested]>[KMatch]
+  }): Promise<TData[]> => {
+    const { collectionName, nestedKey, nestedMatchKey, nestedMatchValue } = opts
     const collection = await this.getCollection(collectionName)
     const models = await collection.find(
       {
         [nestedKey]: {
           $elemMatch: {
-            [matchKey]: match
+            [nestedMatchKey]: nestedMatchValue
           }
         }
       },
-      {
-        ...options,
-        session: this.session
-      }
+      { session: this.session }
     ).toArray()
-    return models?.map(model => this.map<T>(model))
+    return models?.map(model => this.map<TData>(model))
   }
 
-  getAll = async <T extends Model> (
-    collectionName: CollectionName,
-    options?: Omit<FindOneOptions<unknown>, 'session'>
-  ): Promise<T[]> => {
+  getAll = async <TData> (opts: {
+    collectionName: CollectionName
+  }): Promise<TData[]> => {
+    const { collectionName } = opts
     const collection = await this.getCollection(collectionName)
-    const models = await collection.find({},
-      {
-        ...options,
-        session: this.session
-      }
+    const models = await collection.find(
+      {},
+      { session: this.session }
     ).toArray()
-    return models.map(model => this.map<T>(model))
+    return models.map(model => this.map<TData>(model))
   }
 
-  getDocumentCountBy = async <T extends Omit<Model, 'id'>, K extends keyof T> (
-    field: K,
-    match: T[K],
-    collectionName: CollectionName,
-    options?: Omit<MongoCountPreferences, 'session'>
-  ): Promise<number> => {
+  getDocumentCount = async <TData, KMatch extends keyof TData> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+  }): Promise<number> => {
+    const { collectionName, matchKey, matchValue } = opts
     const collection = await this.getCollection(collectionName)
     const count = await collection.countDocuments(
-      {
-        [field]: match
-      },
-      {
-        ...options,
-        session: this.session
-      }
+      { [matchKey]: matchValue },
+      { session: this.session }
     )
     return count
   }
 
-  updateOne = async <T extends Model> (
-    id: Model['id'],
-    payload: Partial<T>,
-    collectionName: CollectionName,
-    options?: Omit<FindOneAndUpdateOption<T>, 'session'>
-  ): Promise<T | null> => {
+  updateOne = async <TData, KMatch extends keyof TData> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+    dto: AllOptional<TData>
+  }): Promise<TData | null> => {
+    const { collectionName, matchKey, matchValue, dto } = opts
     const collection = await this.getCollection(collectionName)
 
-    if (typeof payload === 'object' && Object.entries(payload).length === 0)
-      return this.getOneBy<T, unknown>('id', id, collectionName)
+    if (typeof dto === 'object' && Object.entries(dto).length === 0)
+      return this.getOne<any /* TData */, 'id'>({
+        collectionName,
+        matchKey: 'id',
+        matchValue
+      })
 
     const result = await collection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
-      { $set: payload },
+      matchKey === 'id'
+        ? { _id: new ObjectId(matchValue as any) }
+        : { [matchKey]: matchValue },
+      { $set: dto },
       {
-        ...options,
         session: this.session,
         returnOriginal: false
       }
     )
     const { value } = result
-    return value ? this.map<T>(value) : null
+    return value ? this.map<TData>(value) : null
   }
 
-  deleteOne = async <T extends Model> (
-    id: Model['id'],
-    collectionName: CollectionName,
-    options?: Omit<FindOneAndDeleteOption<T>, 'session'>
-  ): Promise<T | null> => {
+  deleteOne = async <TData, KMatch extends keyof TData> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+  }): Promise<TData | null> => {
+    const { collectionName, matchKey, matchValue } = opts
     const collection = await this.getCollection(collectionName)
     const result = await collection.findOneAndDelete(
-      { _id: new ObjectId(id) },
-      {
-        ...options,
-        session: this.session
-      }
+      matchKey === 'id'
+        ? { _id: new ObjectId(matchValue as any) }
+        : { [matchKey]: matchValue },
+      { session: this.session }
     )
     const { value } = result
-    return value ? this.map<T>(value) : null
+    return value ? this.map<TData>(value) : null
   }
 
-  deleteOneBy = async <T extends Model, K extends keyof T> (
-    field: K,
-    toSearch: T[K],
-    collectionName: CollectionName,
-    options?: Omit<FindOneAndDeleteOption<T>, 'session'>
-  ): Promise<T | null> => {
-    const collection = await this.getCollection(collectionName)
-    const result = await collection.findOneAndDelete(
-      field === 'id'
-        ? { _id: new ObjectId(toSearch as unknown as Model['id']) }
-        : { [field]: toSearch },
-      {
-        ...options,
-        session: this.session
-      }
-    )
-    const { value } = result
-    return value ? this.map<T>(value) : null
-  }
-
-  deleteMany = async <T extends Model, K extends keyof T> (
-    field: K,
-    match: T[K],
-    collectionName: CollectionName,
-    options?: Omit<CommonOptions, 'session'>
-  ): Promise<number> => {
+  deleteMany = async <TData, KMatch extends keyof TData> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+  }): Promise<number> => {
+    const { collectionName, matchKey, matchValue } = opts
     const collection = await this.getCollection(collectionName)
     const result = await collection.deleteMany(
-      { [field]: match },
-      {
-        ...options,
-        session: this.session
-      }
+      { [matchKey]: matchValue },
+      { session: this.session }
     )
     return result.deletedCount || 0
   }
 
-  pushOne = async <T extends Model, K extends keyof T, TPayload extends Unpacked<T[K]>> (
-    id: Model['id'],
-    arrayKey: K,
-    payload: TPayload,
-    collectionName: CollectionName,
-    options?: Omit<FindOneAndUpdateOption<T>, 'session'>
-  ): Promise<T | null> => {
+  pushOne = async <TData, KMatch extends keyof TData, KArray extends keyof TData> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+    arrayKey: KArray
+    payload: TData[KArray] extends Array<any> ? Unpacked<TData[KArray]> : 'Must be array'
+  }): Promise<TData | null> => {
+    const { collectionName, matchKey, matchValue, arrayKey, payload } = opts
     const collection = await this.getCollection(collectionName)
     const result = await collection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
+      matchKey === 'id'
+        ? { _id: new ObjectId(matchValue as any) }
+        : { [matchKey]: matchValue },
       {
         $push: {
           [arrayKey]: payload
         }
       },
       {
-        ...options,
         session: this.session,
         returnOriginal: false
       }
     )
     const { value } = result
-    return value ? this.map<T>(value) : null
+    return value ? this.map<TData>(value) : null
   }
 
-  pullOne = async <T extends Model, K extends keyof T> (
-    id: Model['id'],
-    arrayKey: K,
-    payload: Partial<Unpacked<T[K]>>,
-    collectionName: CollectionName,
-    options?: Omit<FindOneAndUpdateOption<T>, 'session'>
-  ): Promise<T | null> => {
+  pullOne = async <TData, KMatch extends keyof TData, KArray extends keyof TData> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+    arrayKey: KArray
+    arrayMatchValue: TData[KArray] extends Array<any> ? AllOptional<Unpacked<TData[KArray]>> : 'Must be array'
+  }): Promise<TData | null> => {
+    const { collectionName, matchKey, matchValue, arrayKey, arrayMatchValue } = opts
     const collection = await this.getCollection(collectionName)
     const result = await collection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
+      matchKey === 'id'
+        ? { _id: new ObjectId(matchValue as any) }
+        : { [matchKey]: matchValue },
       {
         $pull: {
-          [arrayKey]: payload
+          [arrayKey]: arrayMatchValue
         }
       },
       {
-        ...options,
         session: this.session,
         returnOriginal: false
       }
     )
     const { value } = result
-    return value ? this.map<T>(value) : null
+    return value ? this.map<TData>(value) : null
   }
 
-  setOne = async <T extends Model, KArray extends keyof T, KMatch extends keyof Unpacked<T[KArray]>> (
-    id: Model['id'],
-    arrayKey: KArray,
-    matchKey: KMatch,
-    match: Unpacked<T[KArray]>[KMatch],
-    payload: Partial<Unpacked<T[KArray]>>,
-    collectionName: CollectionName,
-    options?: Omit<FindOneAndUpdateOption<T>, 'session'>
-  ): Promise<T | null> => {
+  setOne = async <TData, KMatch extends keyof TData, KArray extends keyof TData, KNestedMatch extends keyof Unpacked<TData[KArray]>> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+    arrayKey: KArray
+    arrayMatchKey: KNestedMatch
+    arrayMatchValue: Unpacked<TData[KArray]>[KNestedMatch]
+    dto: TData[KArray] extends Array<any> ? AllOptional<Unpacked<TData[KArray]>> : 'Must be array'
+  }): Promise<TData | null> => {
+    const { collectionName, matchKey, matchValue, arrayKey, arrayMatchKey, arrayMatchValue, dto } = opts
     const collection = await this.getCollection(collectionName)
 
     const toUpdate: Record<string, unknown> = {}
-    for (const [key, value] of Object.entries(payload)) {
+    for (const [key, value] of Object.entries(dto)) {
       toUpdate[`${arrayKey}.$.${key}`] = value
     }
 
     const result = await collection.findOneAndUpdate(
-      {
-        _id: new ObjectId(id),
-        [arrayKey]: {
-          $elemMatch: {
-            [matchKey]: match
+      matchKey === 'id'
+        ? {
+          _id: new ObjectId(matchValue as any),
+          [arrayKey]: {
+            $elemMatch: {
+              [arrayMatchKey]: arrayMatchValue
+            }
           }
         }
-      },
+        : {
+          [matchKey]: matchValue,
+          [arrayKey]: {
+            $elemMatch: {
+              [arrayMatchKey]: arrayMatchValue
+            }
+          }
+        },
+      { $set: toUpdate },
       {
-        $set: toUpdate
-      },
-      {
-        ...options,
         session: this.session,
         returnOriginal: false
       }
     )
     const { value } = result
-    return value ? this.map<T>(value) : null
+    return value ? this.map<TData>(value) : null
   }
 }

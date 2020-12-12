@@ -1,22 +1,22 @@
-import { UserModel } from '@/data/models'
+import { UserData } from '@/data/models'
 import { GetUserByAccessTokenRepository } from '@/data/repositories'
-import { mockUserModel } from '@/__tests__/data/__mocks__/models'
+import { mockUserData } from '@/__tests__/data/__mocks__/models'
 
 export class GetUserByAccessTokenRepositorySpy implements GetUserByAccessTokenRepository {
-  accessToken?: UserModel['accessToken']
-  userModel?: UserModel | null
+  accessToken?: UserData['accessToken']
+  user?: UserData | null
   shouldReturnNull = false
   shouldThrow = false
 
-  getUserByAccessToken = async (accessToken: UserModel['accessToken']): Promise<UserModel | null> => {
+  getUserByAccessToken = async (accessToken: UserData['accessToken']): Promise<UserData | null> => {
     this.accessToken = accessToken
 
     if (this.shouldThrow) throw new Error()
 
-    this.userModel = this.shouldReturnNull
+    this.user = this.shouldReturnNull
       ? null
-      : { ...mockUserModel(), accessToken }
+      : { ...mockUserData(), accessToken }
 
-    return this.userModel
+    return this.user
   }
 }

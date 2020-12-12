@@ -1,5 +1,5 @@
-import { CustomerModel } from '@/data/models'
+import { CustomerData } from '@/data/models'
 
 export interface DeleteCustomerRepository {
-  deleteCustomer: (id: CustomerModel['id']) => Promise<CustomerModel | null>
+  deleteCustomer: (id: CustomerData['id']) => Promise<CustomerData | null>
 }

@@ -6,8 +6,8 @@ import { HttpRequest } from '@/presentation/protocols'
 import { EntityNotFoundError } from '@/presentation/errors'
 import { notFound, ok, serverError } from '@/presentation/factories/http.factory'
 // < Out: only domain layer
-import { CompanyEntity } from '@/domain/entities'
-import { mockCompanyEntityDto } from '@/__tests__/domain/__mocks__/entities'
+import { Company, CreateCompanyDto } from '@/domain/entities'
+import { mockCreateCompanyDto } from '@/__tests__/domain/__mocks__/entities'
 import {
   AddCompanyUseCaseSpy,
   GetPlanByIdUseCaseSpy,
@@ -17,8 +17,8 @@ import {
 //#region Factories
 
 const ownerId = fakeData.entity.id()
-const companyDto = mockCompanyEntityDto({ ownerId })
-const mockHttpRequest = (): HttpRequest<Partial<Omit<CompanyEntity, 'id'>>> => ({
+const companyDto = mockCreateCompanyDto({ ownerId })
+const mockHttpRequest = (): HttpRequest<CreateCompanyDto> => ({
   body: companyDto,
   loggedUserInfo: {
     id: ownerId
@@ -81,7 +81,7 @@ describe('AddCompany Controller', () => {
     it('should been called with right values', async () => {
       const { sut, addCompanyUseCaseSpy } = makeSut()
       await sut.handle(mockHttpRequest())
-      expect(addCompanyUseCaseSpy.companyDto).toEqual(companyDto)
+      expect(addCompanyUseCaseSpy.dto).toEqual(companyDto)
     })
 
     it('should return server error if throws', async () => {
@@ -97,7 +97,7 @@ describe('AddCompany Controller', () => {
       const { sut, updateUserActiveCompanyUseCaseSpy, addCompanyUseCaseSpy } = makeSut()
       await sut.handle(mockHttpRequest())
       expect(updateUserActiveCompanyUseCaseSpy.id).toEqual(ownerId)
-      expect(updateUserActiveCompanyUseCaseSpy.activeCompanyId).toEqual(addCompanyUseCaseSpy.companyEntity?.id)
+      expect(updateUserActiveCompanyUseCaseSpy.activeCompanyId).toEqual(addCompanyUseCaseSpy.company?.id)
     })
 
     it('should return server error if throws', async () => {
@@ -111,6 +111,6 @@ describe('AddCompany Controller', () => {
   it('shold return ok with a new company on body', async () => {
     const { sut, addCompanyUseCaseSpy } = makeSut()
     const response = await sut.handle(mockHttpRequest())
-    expect(response).toEqual(ok(addCompanyUseCaseSpy.companyEntity))
+    expect(response).toEqual(ok(addCompanyUseCaseSpy.company))
   })
 })

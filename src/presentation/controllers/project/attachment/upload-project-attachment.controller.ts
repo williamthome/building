@@ -4,12 +4,12 @@ import { Inject } from '@/shared/dependency-injection'
 import { Controller, HandleResponse, HttpRequest, RequestFile, UploadFileResponse } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
-import { idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { EntityNotFoundError } from '@/presentation/errors'
 import { uploadResult } from '@/presentation/helpers/file.helper'
 // < Out: only domain layer
 import {  GetProjectByIdUseCase, UploadProjectAttachmentUseCase } from '@/domain/usecases'
-import { ProjectEntity } from '@/domain/entities'
+import { Project } from '@/domain/entities'
+import { idSchema } from '@/domain/protocols'
 
 @InjectableController()
 export class UploadProjectAttachmentController implements Controller<undefined, UploadFileResponse> {
@@ -23,24 +23,23 @@ export class UploadProjectAttachmentController implements Controller<undefined, 
   ) { }
 
   @HandleError
-  @Validate<undefined, UploadFileResponse>({
+  @Validate({
     planLimitFor: 'storageMb',
     params: {
-      schema: idParamSchema,
-      keys: idParamKeys
+      schema: idSchema
     }
   })
   async handle (request: HttpRequest): HandleResponse<UploadFileResponse> {
-    const requestProjectId = request.params?.id as ProjectEntity['id']
-    const requestAttachments = request.files as RequestFile[]
+    const projectId = request.params?.id as Project['id']
+    const files = request.files as RequestFile[]
 
-    const findedProject = await this.getProjectByIdUseCase.call(requestProjectId)
+    const findedProject = await this.getProjectByIdUseCase.call(projectId)
     if (!findedProject)
       return notFound(new EntityNotFoundError('Project'))
 
     const uploadedResult = await uploadResult(
-      requestAttachments,
-      requestProjectId,
+      files,
+      projectId,
       this.uploadProjectAttachmentUseCase.call
     )
 

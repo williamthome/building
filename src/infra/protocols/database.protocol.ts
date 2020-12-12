@@ -1,5 +1,4 @@
-import { Model } from '@/data/protocols/model.protocol'
-import { CollectionName, Unpacked } from '@/shared/types'
+import { AllOptional, CollectionName, Unpacked } from '@/shared/types'
 
 export interface Database {
   dbUrl: string
@@ -17,96 +16,82 @@ export interface Database {
 
   clearCollection: (collectionName: CollectionName) => Promise<void>
 
-  addOne: <TModel extends Model, TOptions = unknown> (
-    payload: Partial<TModel>,
-    collectionName: CollectionName,
-    options?: TOptions
-  ) => Promise<TModel>
+  addOne: <TDto, TData> (opts: {
+    collectionName: CollectionName
+    dto: TDto
+  }) => Promise<TData>
 
-  getOneBy: <TModel extends Model, TValue, TOptions = unknown> (
-    field: keyof TModel,
-    toSearch: TValue,
-    collectionName: CollectionName,
-    options?: TOptions
-  ) => Promise<TModel | null>
+  getOne: <TData, KMatch extends keyof TData> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+  }) => Promise<TData | null>
 
-  getManyBy: <TModel extends Model, TValue, TOptions = unknown> (
-    field: keyof TModel,
-    toSearch: TValue,
-    collectionName: CollectionName,
-    options?: TOptions
-  ) => Promise<TModel[]>
+  getMany: <TData, KMatch extends keyof TData> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+  }) => Promise<TData[]>
 
-  getManyByNested: <T extends Model, KNested extends keyof T, KMatch extends keyof Unpacked<T[KNested]>, TOptions = unknown> (
-    nestedKey: KNested,
-    matchKey: KMatch,
-    match: Unpacked<T[KNested]>[KMatch],
-    collectionName: CollectionName,
-    options?: TOptions
-  ) => Promise<T[]>
+  getManyByNested: <TData, KNested extends keyof TData, KMatch extends keyof Unpacked<TData[KNested]>> (opts: {
+    collectionName: CollectionName
+    nestedKey: KNested
+    nestedMatchKey: KMatch
+    nestedMatchValue: Unpacked<TData[KNested]>[KMatch]
+  }) => Promise<TData[]>
 
-  getAll: <TModel extends Model, TOptions = unknown> (
-    collectionName: CollectionName,
-    options?: TOptions
-  ) => Promise<TModel[]>
+  getAll: <TData> (opts: {
+    collectionName: CollectionName
+  }) => Promise<TData[]>
 
-  getDocumentCountBy: <T extends Omit<Model, 'id'>, K extends keyof T, TOptions = unknown> (
-    field: K,
-    match: T[K],
-    collectionName: CollectionName,
-    options?: TOptions
-  ) => Promise<number>
+  getDocumentCount: <TData, KMatch extends keyof TData> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+  }) => Promise<number>
 
-  updateOne: <TModel extends Model, TOptions = unknown> (
-    id: Model['id'],
-    payload: Partial<TModel>,
-    collectionName: CollectionName,
-    options?: TOptions
-  ) => Promise<TModel | null>
+  updateOne: <TData, KMatch extends keyof TData> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+    dto: AllOptional<TData>
+  }) => Promise<TData | null>
 
-  deleteOne: <T extends Model, TOptions = unknown> (
-    id: Model['id'],
-    collectionName: CollectionName,
-    options?: TOptions
-  ) => Promise<T | null>
+  deleteOne: <TData, KMatch extends keyof TData> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+  }) => Promise<TData | null>
 
-  deleteOneBy: <T extends Model, K extends keyof T, TOptions = unknown> (
-    field: K,
-    toSearch: T[K],
-    collectionName: CollectionName,
-    options?: TOptions
-  ) => Promise<T | null>
+  deleteMany: <TData, KMatch extends keyof TData> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+  }) => Promise<number>
 
-  deleteMany: <T extends Model, K extends keyof T, TOptions = unknown> (
-    field: K,
-    match: T[K],
-    collectionName: CollectionName,
-    options?: TOptions
-  ) => Promise<number>
+  pushOne: <TData, KMatch extends keyof TData, KArray extends keyof TData> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+    arrayKey: KArray
+    payload: TData[KArray] extends Array<any> ? Unpacked<TData[KArray]> : 'Must be array'
+  }) => Promise<TData | null>
 
-  pushOne: <T extends Model, K extends keyof T, TOptions = unknown> (
-    id: Model['id'],
-    arrayKey: K,
-    payload: Unpacked<T[K]>,
-    collectionName: CollectionName,
-    options?: TOptions
-  ) => Promise<T | null>
+  pullOne: <TData, KMatch extends keyof TData, KArray extends keyof TData> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+    arrayKey: KArray
+    arrayMatchValue: TData[KArray] extends Array<any> ? AllOptional<Unpacked<TData[KArray]>> : 'Must be array'
+  }) => Promise<TData | null>
 
-  pullOne: <T extends Model, K extends keyof T, TOptions = unknown> (
-    id: Model['id'],
-    arrayKey: K,
-    payload: Partial<Unpacked<T[K]>>,
-    collectionName: CollectionName,
-    options?: TOptions
-  ) => Promise<T | null>
-
-  setOne: <T extends Model, KArray extends keyof T, KMatch extends keyof Unpacked<T[KArray]>, TOptions = unknown> (
-    id: Model['id'],
-    arrayKey: KArray,
-    matchKey: KMatch,
-    match: Unpacked<T[KArray]>[KMatch],
-    payload: Partial<Unpacked<T[KArray]>>,
-    collectionName: CollectionName,
-    options?: TOptions
-  ) => Promise<T | null>
+  setOne: <TData, KMatch extends keyof TData, KArray extends keyof TData, KNestedMatch extends keyof Unpacked<TData[KArray]>> (opts: {
+    collectionName: CollectionName
+    matchKey: KMatch
+    matchValue: TData[KMatch]
+    arrayKey: KArray
+    arrayMatchKey: KNestedMatch
+    arrayMatchValue: Unpacked<TData[KArray]>[KNestedMatch]
+    dto: TData[KArray] extends Array<any> ? AllOptional<Unpacked<TData[KArray]>> : 'Must be array'
+  }) => Promise<TData | null>
 }

@@ -3,31 +3,30 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
-import { PropertyEntity } from '@/domain/entities'
 import { DeletePropertyUseCase } from '@/domain/usecases'
+import { Property } from '@/domain/entities'
+import { idSchema } from '@/domain/protocols'
 
 @InjectableController()
-export class DeletePropertyController implements Controller<undefined, PropertyEntity> {
+export class DeletePropertyController implements Controller<undefined, Property> {
 
   constructor (
     @Inject() private readonly deletePropertyUseCase: DeletePropertyUseCase
   ) { }
 
   @HandleError
-  @Validate<undefined, PropertyEntity>({
+  @Validate({
     params: {
-      schema: idParamSchema,
-      keys: idParamKeys
+      schema: idSchema
     }
   })
-  async handle (request: HttpRequest): HandleResponse<PropertyEntity> {
-    const requestPropertyId = request.params?.id as PropertyEntity['id']
+  async handle (request: HttpRequest): HandleResponse<Property> {
+    const propertyId = request.params?.id as Property['id']
 
-    const deteledProperty = await this.deletePropertyUseCase.call(requestPropertyId)
+    const deteledProperty = await this.deletePropertyUseCase.call(propertyId)
     if (!deteledProperty)
       return notFound(new EntityNotFoundError('Property'))
 

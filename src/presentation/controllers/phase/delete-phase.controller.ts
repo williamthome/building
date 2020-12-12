@@ -3,31 +3,32 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
-import { PhaseEntity } from '@/domain/entities'
 import { DeletePhaseUseCase } from '@/domain/usecases'
+import { Phase } from '@/domain/entities'
+import { Schema, string } from '@/domain/protocols/schema'
 
 @InjectableController()
-export class DeletePhaseController implements Controller<undefined, PhaseEntity> {
+export class DeletePhaseController implements Controller<undefined, Phase> {
 
   constructor (
     @Inject() private readonly deletePhaseUseCase: DeletePhaseUseCase
   ) { }
 
   @HandleError
-  @Validate<undefined, PhaseEntity>({
+  @Validate({
     params: {
-      schema: idParamSchema,
-      keys: idParamKeys
+      schema: new Schema({
+        id: string().required()
+      })
     }
   })
-  async handle (request: HttpRequest): HandleResponse<PhaseEntity> {
-    const requestPhaseId = request.params?.id as PhaseEntity['id']
+  async handle (request: HttpRequest): HandleResponse<Phase> {
+    const phaseId = request.params?.id as Phase['id']
 
-    const deteledPhase = await this.deletePhaseUseCase.call(requestPhaseId)
+    const deteledPhase = await this.deletePhaseUseCase.call(phaseId)
     if (!deteledPhase)
       return notFound(new EntityNotFoundError('Phase'))
 

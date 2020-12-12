@@ -1,5 +1,5 @@
-import { UserModel } from '@/data/models'
+import { UserData } from '@/data/models'
 
 export interface ResendUserVerificationTokenRepository {
-  resendUserVerificationToken: (email: UserModel['email'], token: string) => Promise<void>
+  resendUserVerificationToken: (email: UserData['email'], token: string) => Promise<void>
 }

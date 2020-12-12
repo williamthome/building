@@ -3,16 +3,14 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { companySchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
-import { CompanyEntity, companyKeys } from '@/domain/entities'
 import { UpdateCompanyUseCase } from '@/domain/usecases'
-import { CompanyDto } from '@/domain/protocols'
+import { Company, companySchema, UpdateCompanyDto } from '@/domain/entities'
 
 @InjectableController()
-export class UpdateCompanyController implements Controller<CompanyDto, CompanyEntity> {
+export class UpdateCompanyController implements Controller<UpdateCompanyDto, Company> {
 
   constructor (
     @Inject()
@@ -20,19 +18,20 @@ export class UpdateCompanyController implements Controller<CompanyDto, CompanyEn
   ) { }
 
   @HandleError
-  @Validate<CompanyDto, CompanyEntity>({
+  @Validate({
     body: {
       schema: companySchema,
-      keys: companyKeys,
-      partialValidation: true,
-      bannedFields: ['members', 'planId']
+      options: {
+        allKeys: false,
+        bannedFields: ['planId']
+      }
     }
   })
-  async handle (request: HttpRequest<CompanyDto>): HandleResponse<CompanyEntity> {
-    const activeCompanyId = request.activeCompanyInfo?.id as CompanyEntity['id']
-    const requestCompanyDto = request.body as CompanyDto
+  async handle (request: HttpRequest<UpdateCompanyDto>): HandleResponse<Company> {
+    const activeCompanyId = request.activeCompanyInfo?.id as Company['id']
+    const updateCompanyDto = request.body as UpdateCompanyDto
 
-    const updatedCompany = await this.updateCompanyUseCase.call(activeCompanyId, requestCompanyDto)
+    const updatedCompany = await this.updateCompanyUseCase.call(activeCompanyId, updateCompanyDto)
     if (!updatedCompany)
       return notFound(new EntityNotFoundError('Company'))
 

@@ -1,5 +1,5 @@
-import { CompanyEntity } from '@/domain/entities'
+import { Company } from '@/domain/entities'
 
 export interface DeleteCompanyUseCase {
-  call: (companyId: CompanyEntity['id']) => Promise<CompanyEntity | null>
+  call: (id: Company['id']) => Promise<Company | null>
 }

@@ -1,6 +1,5 @@
-import { TechnicianModelDto } from '@/data/protocols'
-import { TechnicianModel } from '@/data/models'
+import { TechnicianData, UpdateTechnicianData } from '@/data/models'
 
 export interface UpdateTechnicianRepository {
-  updateTechnician: (id: TechnicianModel['id'], dto: TechnicianModelDto) => Promise<TechnicianModel | null>
+  updateTechnician: (id: TechnicianData['id'], dto: UpdateTechnicianData) => Promise<TechnicianData | null>
 }

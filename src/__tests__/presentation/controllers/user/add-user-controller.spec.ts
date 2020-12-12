@@ -3,16 +3,16 @@ import container from '@/shared/dependency-injection'
 import { AddUserController } from '@/presentation/controllers'
 import { badRequest, ok, serverError } from '@/presentation/factories/http.factory'
 import { HttpRequest } from '@/presentation/protocols'
-import { mockUserEntityDto } from '@/__tests__/domain/__mocks__/entities'
-import { AddUserUseCaseSpy, GetUserByEmailUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
-// < Out: only domain layer
-import { UserEntity } from '@/domain/entities'
 import { UserAlreadyRegisteredError } from '@/presentation/errors'
+// < Out: only domain layer
+import { AddUserUseCaseSpy, GetUserByEmailUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
+import { mockCreateUserDto } from '@/__tests__/domain/__mocks__/entities'
+import { CreateUserDto, User } from '@/domain/entities'
 
 //#region Factories
 
-const userDto = mockUserEntityDto()
-const mockHttpRequest = (): HttpRequest<Partial<Omit<UserEntity, 'id'>>> => ({
+const userDto = mockCreateUserDto()
+const mockHttpRequest = (): HttpRequest<CreateUserDto> => ({
   body: userDto
 })
 
@@ -68,7 +68,7 @@ describe('AddUser Controller', () => {
       const { sut, getUserByEmailUseCaseSpy, addUserUseCaseSpy } = makeSut()
       getUserByEmailUseCaseSpy.shouldReturnNull = true
       await sut.handle(mockHttpRequest())
-      expect(addUserUseCaseSpy.userDto).toEqual(userDto)
+      expect(addUserUseCaseSpy.dto).toEqual(userDto)
     })
 
     it('should return server error if throws', async () => {

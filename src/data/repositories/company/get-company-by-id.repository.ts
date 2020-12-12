@@ -1,5 +1,5 @@
-import { CompanyModel } from '@/data/models'
+import { CompanyData } from '@/data/models'
 
 export interface GetCompanyByIdRepository {
-  getCompanyById: (id: CompanyModel['id']) => Promise<CompanyModel | null>
+  getCompanyById: (id: CompanyData['id']) => Promise<CompanyData | null>
 }

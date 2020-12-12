@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
 import { Database } from '@/infra/protocols'
-import { CompanyModel } from '@/data/models'
+import { CompanyData } from '@/data/models'
 import { AddCompanyMemberRepository } from '@/data/repositories'
-import { MemberModel } from '@/data/models/nested'
+import { CreateMemberData } from '@/data/models/nested'
 
 @Injectable('addCompanyMemberRepository')
 export class DbAddCompanyMemberRepository implements AddCompanyMemberRepository {
@@ -10,7 +10,13 @@ export class DbAddCompanyMemberRepository implements AddCompanyMemberRepository 
     @Inject('db') private readonly db: Database
   ) { }
 
-  addCompanyMember = async (companyId: CompanyModel['id'], member: MemberModel): Promise<CompanyModel | null> => {
-    return await this.db.pushOne<CompanyModel, 'members'>(companyId, 'members', member, 'companies')
+  addCompanyMember = async (companyId: CompanyData['id'], dto: CreateMemberData): Promise<CompanyData | null> => {
+    return await this.db.pushOne<CompanyData, 'id', 'members'>({
+      collectionName: 'companies',
+      matchKey: 'id',
+      matchValue: companyId,
+      arrayKey: 'members',
+      payload: dto
+    })
   }
 }

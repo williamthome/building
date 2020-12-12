@@ -1,5 +1,5 @@
-import { PlanEntity } from '@/domain/entities'
+import { Plan } from '@/domain/entities'
 
 export interface GetPlanByIdUseCase {
-  call: (id: PlanEntity['id']) => Promise<PlanEntity | null>
+  call: (id: Plan['id']) => Promise<Plan | null>
 }

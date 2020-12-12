@@ -1,6 +1,5 @@
-import { Model } from '@/data/protocols'
-import { FileModel } from '@/data/models'
+import { FileData } from '@/data/models'
 
 export interface GetFilesByReferenceIdRepository {
-  getFilesByReferenceId: (id: Model['id']) => Promise<FileModel[]>
+  getFilesByReferenceId: (id: string) => Promise<FileData[]>
 }

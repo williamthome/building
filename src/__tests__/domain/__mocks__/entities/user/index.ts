@@ -1,3 +1,3 @@
-export * from './user-entity-dto.mock'
-export * from './user-entity.mock'
-export * from './auth-dto.mock'
+export * from './authentication.mock'
+export * from './create-user-dto.mock'
+export * from './user.mock'

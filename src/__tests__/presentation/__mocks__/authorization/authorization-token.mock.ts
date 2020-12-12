@@ -1,5 +1,3 @@
-import { UserEntity } from '@/domain/entities'
+import { User } from '@/domain/entities'
 
-export const mockAuthorizationToken = (
-  accessToken: UserEntity['accessToken']
-): string => `Bearer ${accessToken}`
+export const mockAuthorizationToken = (accessToken: User['accessToken']): string => `Bearer ${accessToken}`

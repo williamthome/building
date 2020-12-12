@@ -3,9 +3,8 @@ import { Injectable, Inject } from '@/shared/dependency-injection'
 // > Data
 import { UpdatePropertyRepository } from '@/data/repositories'
 // < Only Domain
-import { PropertyEntity } from '@/domain/entities'
+import { Property, UpdatePropertyDto } from '@/domain/entities'
 import { UpdatePropertyUseCase } from '@/domain/usecases'
-import { PropertyEntityDto } from '@/domain/protocols'
 
 @Injectable('updatePropertyUseCase')
 export class UpdatePropertyContract implements UpdatePropertyUseCase {
@@ -14,7 +13,7 @@ export class UpdatePropertyContract implements UpdatePropertyUseCase {
     @Inject() private readonly updatePropertyRepository: UpdatePropertyRepository
   ) {}
 
-  call = async (id: PropertyEntity['id'], dto: PropertyEntityDto): Promise<PropertyEntity | null> => {
+  call = async (id: Property['id'], dto: UpdatePropertyDto): Promise<Property | null> => {
     return await this.updatePropertyRepository.updateProperty(id, dto)
   }
 }

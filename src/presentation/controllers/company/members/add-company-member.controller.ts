@@ -3,17 +3,16 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, notFound, ok } from '@/presentation/factories/http.factory'
-import { memberSchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError, UserAlreadyAMemberError } from '@/presentation/errors'
 // < Out: only domain layer
-import { CompanyEntity } from '@/domain/entities'
 import { AddCompanyMemberUseCase } from '@/domain/usecases'
-import { MemberEntity, memberKeys } from '@/domain/entities/nested'
+import { Company } from '@/domain/entities'
+import { CreateMemberDto, Member, memberSchema } from '@/domain/entities/nested'
 import { userIsMember } from '@/domain/helpers/user.helper'
 
 @InjectableController()
-export class AddCompanyMemberController implements Controller<MemberEntity, CompanyEntity> {
+export class AddCompanyMemberController implements Controller<CreateMemberDto, Company> {
 
   constructor (
     @Inject()
@@ -21,23 +20,22 @@ export class AddCompanyMemberController implements Controller<MemberEntity, Comp
   ) { }
 
   @HandleError
-  @Validate<MemberEntity, CompanyEntity>({
+  @Validate({
     planLimitFor: 'member',
     body: {
-      schema: memberSchema,
-      keys: memberKeys
+      schema: memberSchema
     }
   })
-  async handle (request: HttpRequest<MemberEntity>): HandleResponse<CompanyEntity> {
-    const activeCompanyId = request.activeCompanyInfo?.id as CompanyEntity['id']
-    const activeCompanyMembers = request.activeCompanyInfo?.members as MemberEntity[]
-    const requestMemberDto = request.body as MemberEntity
+  async handle (request: HttpRequest<CreateMemberDto>): HandleResponse<Company> {
+    const activeCompanyId = request.activeCompanyInfo?.id as Company['id']
+    const activeCompanyMembers = request.activeCompanyInfo?.members as Member[]
+    const createMemberDto = request.body as CreateMemberDto
 
-    const alreadyAMember = userIsMember(activeCompanyMembers, requestMemberDto.userId)
+    const alreadyAMember = userIsMember(activeCompanyMembers, createMemberDto.userId)
     if (alreadyAMember)
       return badRequest(new UserAlreadyAMemberError())
 
-    const updatedCompany = await this.addCompanyMemberUseCase.call(activeCompanyId, requestMemberDto)
+    const updatedCompany = await this.addCompanyMemberUseCase.call(activeCompanyId, createMemberDto)
     if (!updatedCompany)
       return notFound(new EntityNotFoundError('Company'))
 

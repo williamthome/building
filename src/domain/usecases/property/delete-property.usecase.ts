@@ -1,5 +1,5 @@
-import { PropertyEntity } from '@/domain/entities'
+import { Property } from '@/domain/entities'
 
 export interface DeletePropertyUseCase {
-  call: (id: PropertyEntity['id']) => Promise<PropertyEntity | null>
+  call: (id: Property['id']) => Promise<Property | null>
 }

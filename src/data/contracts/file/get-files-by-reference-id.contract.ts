@@ -4,8 +4,7 @@ import { Injectable, Inject } from '@/shared/dependency-injection'
 import { GetFilesByReferenceIdRepository } from '@/data/repositories'
 // < Only Domain
 import { GetFilesByReferenceIdUseCase } from '@/domain/usecases'
-import { Entity } from '@/domain/protocols'
-import { FileEntity } from '@/domain/entities'
+import { File } from '@/domain/entities'
 
 @Injectable('getFilesByReferenceIdUseCase')
 export class GetFilesByReferenceIdContract implements GetFilesByReferenceIdUseCase {
@@ -14,7 +13,7 @@ export class GetFilesByReferenceIdContract implements GetFilesByReferenceIdUseCa
     @Inject() private readonly getFilesByReferenceIdRepository: GetFilesByReferenceIdRepository
   ) { }
 
-  call = async (id: Entity['id']): Promise<FileEntity[]> => {
+  call = async (id: string): Promise<File[]> => {
     return await this.getFilesByReferenceIdRepository.getFilesByReferenceId(id)
   }
 }

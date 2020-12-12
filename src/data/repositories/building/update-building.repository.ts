@@ -1,9 +1,5 @@
-import { BuildingModelDto } from '@/data/protocols'
-import { BuildingModel } from '@/data/models'
+import { BuildingData, UpdateBuildingData } from '@/data/models'
 
 export interface UpdateBuildingRepository {
-  updateBuilding: (
-    buildingId: BuildingModel['id'],
-    buildingDto: BuildingModelDto
-  ) => Promise<BuildingModel | null>
+  updateBuilding: (id: BuildingData['id'], dto: UpdateBuildingData) => Promise<BuildingData | null>
 }

@@ -1,19 +1,21 @@
 import { Inject, Injectable } from '@/shared/dependency-injection'
-import { ProjectModel } from '@/data/models'
-import { UpdateProjectRepository } from '@/data/repositories'
 import { Database } from '@/infra/protocols'
-import { ProjectModelDto } from '@/data/protocols'
+import { ProjectData, UpdateProjectData } from '@/data/models'
+import { UpdateProjectRepository } from '@/data/repositories'
 
 @Injectable('updateProjectRepository')
 export class DbUpdateProjectRepository implements UpdateProjectRepository {
+
   constructor (
     @Inject('db') private readonly db: Database
-  ) {}
+  ) { }
 
-  updateProject = async (
-    projectId: ProjectModel['id'],
-    projectDto: ProjectModelDto
-  ): Promise<ProjectModel | null> => {
-    return await this.db.updateOne<ProjectModel>(projectId, projectDto, 'projects')
+  updateProject = async (id: ProjectData['id'], dto: UpdateProjectData): Promise<ProjectData | null> => {
+    return await this.db.updateOne<ProjectData, 'id'>({
+      collectionName: 'projects',
+      matchKey: 'id',
+      matchValue: id,
+      dto
+    })
   }
 }

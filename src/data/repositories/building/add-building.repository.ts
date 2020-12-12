@@ -1,6 +1,5 @@
-import { BuildingModel } from '@/data/models'
-import { BuildingModelDto } from '@/data/protocols'
+import { CreateBuildingData, BuildingData } from '@/data/models'
 
 export interface AddBuildingRepository {
-  addBuilding: (buildingDto: BuildingModelDto) => Promise<BuildingModel>
+  addBuilding: (dto: CreateBuildingData) => Promise<BuildingData>
 }

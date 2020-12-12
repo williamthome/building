@@ -1,8 +1,5 @@
-import { UserEntity } from '@/domain/entities'
+import { User } from '@/domain/entities'
 
 export interface UpdateUserAccessTokenUseCase {
-  call: (
-    id: UserEntity['id'],
-    accessToken: UserEntity['accessToken']
-  ) => Promise<void>
+  call: (id: User['id'], accessToken: User['accessToken']) => Promise<void>
 }

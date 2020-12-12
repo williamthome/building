@@ -1,5 +1,5 @@
-import { TechnicianModel } from '@/data/models'
+import { TechnicianData } from '@/data/models'
 
 export interface GetTechnicianByIdRepository {
-  getTechnicianById: (id: TechnicianModel['id']) => Promise<TechnicianModel | null>
+  getTechnicianById: (id: TechnicianData['id']) => Promise<TechnicianData | null>
 }

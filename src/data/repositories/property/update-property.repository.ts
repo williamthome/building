@@ -1,6 +1,5 @@
-import { PropertyModelDto } from '@/data/protocols'
-import { PropertyModel } from '@/data/models'
+import { PropertyData, UpdatePropertyData } from '@/data/models'
 
 export interface UpdatePropertyRepository {
-  updateProperty: (id: PropertyModel['id'], dto: PropertyModelDto) => Promise<PropertyModel | null>
+  updateProperty: (id: PropertyData['id'], dto: UpdatePropertyData) => Promise<PropertyData | null>
 }

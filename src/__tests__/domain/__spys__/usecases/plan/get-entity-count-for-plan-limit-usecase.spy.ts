@@ -1,16 +1,15 @@
 import { CollectionName } from '@/shared/types'
-import { CompanyEntity } from '@/domain/entities'
-import { LimitedEntity } from '@/domain/protocols'
 import { GetEntityCountForPlanLimitUseCase } from '@/domain/usecases'
+import { Company } from '@/domain/entities'
 
 export class GetEntityCountForPlanLimitUseCaseSpy implements GetEntityCountForPlanLimitUseCase {
   reference?: CollectionName
-  companyId?: CompanyEntity['id']
+  companyId?: Company['id']
   count?: number
   override?: number
   shouldThrow = false
 
-  call = async <T extends LimitedEntity> (reference: CollectionName, companyId: T['companyId']): Promise<number> => {
+  call = async (reference: CollectionName, companyId: Company['id']): Promise<number> => {
     this.reference = reference
     this.companyId = companyId
 

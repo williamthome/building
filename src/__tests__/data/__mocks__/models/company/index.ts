@@ -1,2 +1,2 @@
-export * from './company-model-dto.mock'
-export * from './company-model.mock'
+export * from './create-company-data.mock'
+export * from './company-data.mock'

@@ -1,21 +1,18 @@
 // : Shared
 import { Inject } from '@/shared/dependency-injection'
-import { UserFeatures, CompanyRole } from '@/shared/constants'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { companySchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
-// < Out: only domain layer
-import { CompanyEntity, companyKeys, PlanEntity, UserEntity } from '@/domain/entities'
-import { AddCompanyUseCase, GetPlanByIdUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
-import { CompanyDto } from '@/domain/protocols'
 import { EntityNotFoundError } from '@/presentation/errors'
+// < Out: only domain layer
+import { Company, companySchema, CreateCompanyDto, User } from '@/domain/entities'
+import { AddCompanyUseCase, GetPlanByIdUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
 
 @InjectableController({
   usesTransaction: true
 })
-export class AddCompanyController implements Controller<CompanyDto, CompanyEntity> {
+export class AddCompanyController implements Controller<CreateCompanyDto, Company> {
 
   constructor (
     @Inject()
@@ -29,28 +26,21 @@ export class AddCompanyController implements Controller<CompanyDto, CompanyEntit
   ) { }
 
   @HandleError
-  @Validate<CompanyDto, CompanyEntity>({
+  @Validate({
     body: {
-      schema: companySchema,
-      keys: companyKeys
+      schema: companySchema
     }
   })
-  async handle (request: HttpRequest<CompanyDto>): HandleResponse<CompanyEntity> {
-    const loggedUserId = request.loggedUserInfo?.id as UserEntity['id']
-    const requestCompanyDto = request.body as CompanyDto
-    const requestCompanyDtoPlanId = requestCompanyDto.planId as PlanEntity['id']
+  async handle (request: HttpRequest<CreateCompanyDto>): HandleResponse<Company> {
+    const loggedUserId = request.loggedUserInfo?.id as User['id']
+    const createCompanyDto = request.body as CreateCompanyDto
+    const { planId } = createCompanyDto
 
-    const findedPlan = await this.getPlanByIdUseCase.call(requestCompanyDtoPlanId)
+    const findedPlan = await this.getPlanByIdUseCase.call(planId)
     if (!findedPlan)
       return notFound(new EntityNotFoundError('Plan'))
 
-    requestCompanyDto.members = [{
-      userId: loggedUserId,
-      companyRole: CompanyRole.owner,
-      features: UserFeatures.None
-    }]
-
-    const createdCompany = await this.addCompanyUseCase.call(requestCompanyDto)
+    const createdCompany = await this.addCompanyUseCase.call(createCompanyDto, loggedUserId)
 
     await this.updateUserActiveCompanyUseCase.call(loggedUserId, createdCompany.id)
 

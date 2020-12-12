@@ -1,23 +1,23 @@
-import { UserEntity } from '@/domain/entities'
+import { User } from '@/domain/entities'
 import { GetUserByAccessTokenUseCase } from '@/domain/usecases'
-import { mockUserEntity } from '@/__tests__/domain/__mocks__/entities'
+import { mockUser } from '@/__tests__/domain/__mocks__/entities'
 
 export class GetUserByAccessTokenUseCaseSpy implements GetUserByAccessTokenUseCase {
-  accessToken?: UserEntity['accessToken']
-  userModel?: UserEntity | null
-  override?: Partial<UserEntity>
+  accessToken?: User['accessToken']
+  user?: User | null
+  override?: Partial<User>
   shouldReturnNull = false
   shouldThrow = false
 
-  call = async (accessToken: UserEntity['accessToken']): Promise<UserEntity | null> => {
+  call = async (accessToken: User['accessToken']): Promise<User | null> => {
     this.accessToken = accessToken
 
     if (this.shouldThrow) throw new Error()
 
-    this.userModel = this.shouldReturnNull
+    this.user = this.shouldReturnNull
       ? null
-      : { ...mockUserEntity(), accessToken, ...this.override }
+      : { ...mockUser(), accessToken, ...this.override }
 
-    return this.userModel
+    return this.user
   }
 }

@@ -3,38 +3,39 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { notFound, ok } from '@/presentation/factories/http.factory'
-import { buildingSchema, idParamKeys, idParamSchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
-import { BuildingEntity, buildingKeys } from '@/domain/entities'
 import { UpdateBuildingUseCase } from '@/domain/usecases'
-import { BuildingDto } from '@/domain/protocols'
+import { Building, buildingSchema, UpdateBuildingDto } from '@/domain/entities'
+import { Schema, string } from '@/domain/protocols/schema'
 
 @InjectableController()
-export class UpdateBuildingController implements Controller<BuildingDto, BuildingEntity> {
+export class UpdateBuildingController implements Controller<UpdateBuildingDto, Building> {
 
   constructor (
     @Inject() private readonly updateBuildingUseCase: UpdateBuildingUseCase
   ) { }
 
   @HandleError
-  @Validate<BuildingDto, BuildingEntity>({
+  @Validate({
     body: {
       schema: buildingSchema,
-      keys: buildingKeys,
-      partialValidation: true
+      options: {
+        allKeys: false
+      }
     },
     params: {
-      schema: idParamSchema,
-      keys: idParamKeys
+      schema: new Schema({
+        id: string().required()
+      })
     }
   })
-  async handle (request: HttpRequest<BuildingDto>): HandleResponse<BuildingEntity> {
-    const requestBuildingId = request.params?.id as BuildingEntity['id']
-    const requestBuildingDto = request.body as BuildingDto
+  async handle (request: HttpRequest<UpdateBuildingDto>): HandleResponse<Building> {
+    const buildingId = request.params?.id as Building['id']
+    const updateBuildingDto = request.body as UpdateBuildingDto
 
-    const udpatedBuilding = await this.updateBuildingUseCase.call(requestBuildingId, requestBuildingDto)
+    const udpatedBuilding = await this.updateBuildingUseCase.call(buildingId, updateBuildingDto)
     if (!udpatedBuilding)
       return notFound(new EntityNotFoundError('Building'))
 

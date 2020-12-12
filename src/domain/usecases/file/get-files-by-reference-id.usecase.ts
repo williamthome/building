@@ -1,6 +1,5 @@
-import { Entity } from '@/domain/protocols'
-import { FileEntity } from '@/domain/entities'
+import { File } from '@/domain/entities'
 
 export interface GetFilesByReferenceIdUseCase {
-  call: (id: Entity['id']) => Promise<FileEntity[]>
+  call: (id: string) => Promise<File[]>
 }

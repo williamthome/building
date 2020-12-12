@@ -33,7 +33,7 @@ describe('GetUserByEmail Contract', () => {
       const email = fakeData.person.email()
       const user = await sut.call(email)
       expect(getUserByEmailRepositorySpy.email).toEqual(email)
-      expect(getUserByEmailRepositorySpy.userModel).toEqual(user)
+      expect(getUserByEmailRepositorySpy.user).toEqual(user)
     })
 
     it('should throw if method throws', async () => {

@@ -1,23 +1,23 @@
-import { CompanyEntity } from '@/domain/entities'
+import { Company } from '@/domain/entities'
 import { GetCompanyByIdUseCase } from '@/domain/usecases'
-import { mockCompanyEntity } from '@/__tests__/domain/__mocks__/entities'
+import { mockCompany } from '@/__tests__/domain/__mocks__/entities'
 
 export class GetCompanyByIdUseCaseSpy implements GetCompanyByIdUseCase {
-  id?: CompanyEntity['id']
-  companyEntity?: CompanyEntity | null
-  override?: Partial<CompanyEntity>
+  id?: Company['id']
+  company?: Company | null
+  override?: Partial<Company>
   shouldReturnNull = false
   shouldThrow = false
 
-  call = async (id: CompanyEntity['id']): Promise<CompanyEntity | null> => {
+  call = async (id: Company['id']): Promise<Company | null> => {
     this.id = id
 
     if (this.shouldThrow) throw new Error()
 
-    this.companyEntity = this.shouldReturnNull
+    this.company = this.shouldReturnNull
       ? null
-      : { ...mockCompanyEntity(), id, ...this.override }
+      : { ...mockCompany(), id, ...this.override }
 
-    return this.companyEntity
+    return this.company
   }
 }

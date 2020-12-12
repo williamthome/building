@@ -1,13 +1,13 @@
-import { LimitedEntity, LimitedEntityKeys } from '../protocols'
+import { ExtractDto, ExtractEntity, ExtractUpdateDto, limitedEntitySchema } from '../protocols/entity.protocol'
+import { string, array } from '../protocols/schema'
 
-export interface TechnicianEntity extends LimitedEntity {
-  name: string
-  technicalRegisters: string[]
-}
+export const technicianSchema = limitedEntitySchema({
+  name: string().required(),
+  technicalRegisters: array<string>().required()
+})
 
-export const technicianKeys: LimitedEntityKeys<TechnicianEntity> = {
-  id: 'id',
-  companyId: 'companyId',
-  name: 'name',
-  technicalRegisters: 'technicalRegisters'
-}
+export type Technician = ExtractEntity<typeof technicianSchema>
+
+export type CreateTechnicianDto = ExtractDto<typeof technicianSchema>
+
+export type UpdateTechnicianDto = ExtractUpdateDto<typeof technicianSchema>

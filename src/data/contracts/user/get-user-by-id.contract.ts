@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@/shared/dependency-injection'
 import { GetUserByIdRepository } from '@/data/repositories'
 // < Only Domain
 import { GetUserByIdUseCase } from '@/domain/usecases'
-import { UserEntity } from '@/domain/entities'
+import { User } from '@/domain/entities'
 
 @Injectable('getUserByIdUseCase')
 export class GetUserByIdContract implements GetUserByIdUseCase {
@@ -13,7 +13,7 @@ export class GetUserByIdContract implements GetUserByIdUseCase {
     @Inject() private readonly getUserByIdRepository: GetUserByIdRepository
   ) {}
 
-  call = async (id: UserEntity['id']): Promise<UserEntity | null> => {
+  call = async (id: User['id']): Promise<User | null> => {
     return await this.getUserByIdRepository.getUserById(id)
   }
 }

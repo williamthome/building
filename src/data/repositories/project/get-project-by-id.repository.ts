@@ -1,5 +1,5 @@
-import { ProjectModel } from '@/data/models'
+import { ProjectData } from '@/data/models'
 
 export interface GetProjectByIdRepository {
-  getProjectById: (id: ProjectModel['id']) => Promise<ProjectModel | null>
+  getProjectById: (id: ProjectData['id']) => Promise<ProjectData | null>
 }

@@ -5,15 +5,15 @@ import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocol
 import { ok, notFound, badRequest } from '@/presentation/factories/http.factory'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { EntityNotFoundError, UserAlreadyVerifiedError } from '@/presentation/errors'
-import { isEmail, isString, required } from '@/presentation/validations'
 // < Out: only domain layer
 import { GetUserByEmailUseCase, ResendUserVerificationTokenUseCase } from '@/domain/usecases'
-import { UserVerificationToken } from '@/domain/protocols'
+import { UserVerificationTokenResponse } from '@/domain/protocols'
 import { Encrypter } from '@/domain/protocols/cryptography'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
+import { Schema, email } from '@/domain/protocols/schema'
 
 @InjectableController()
-export class ResendUserVerificationTokenController implements Controller<undefined, UserVerificationToken> {
+export class ResendUserVerificationTokenController implements Controller<undefined, UserVerificationTokenResponse> {
 
   constructor (
     @Inject()
@@ -27,26 +27,17 @@ export class ResendUserVerificationTokenController implements Controller<undefin
   ) { }
 
   @HandleError
-  @Validate<undefined, UserVerificationToken>({
+  @Validate({
     query: {
-      schema: {
-        email: {
-          validations: [
-            required,
-            isString,
-            isEmail
-          ]
-        }
-      },
-      keys: {
-        email: 'email'
-      }
+      schema: new Schema({
+        email: email().required()
+      })
     }
   })
-  async handle (request: HttpRequest): HandleResponse<UserVerificationToken> {
-    const requestEmail = request.query?.email as string
+  async handle (request: HttpRequest): HandleResponse<UserVerificationTokenResponse> {
+    const email = request.query?.email as string
 
-    const findedUser = await this.getUserByEmailUseCase.call(requestEmail)
+    const findedUser = await this.getUserByEmailUseCase.call(email)
     if (!findedUser)
       return notFound(new EntityNotFoundError('User'))
 
@@ -55,7 +46,7 @@ export class ResendUserVerificationTokenController implements Controller<undefin
 
     const verificationToken = await this.encrypter.encrypt(findedUser.id)
 
-    await this.resendUserVerificationTokenUseCase.call(requestEmail, verificationToken)
+    await this.resendUserVerificationTokenUseCase.call(email, verificationToken)
 
     const findedUserWithoutPassword = userWithoutPassword(findedUser)
 

@@ -3,15 +3,13 @@ import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { ok } from '@/presentation/factories/http.factory'
-import { technicianSchema } from '@/presentation/schemas'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 // < Out: only domain layer
-import { TechnicianEntity, technicianKeys, CompanyEntity } from '@/domain/entities'
+import { Technician, Company, technicianSchema, CreateTechnicianDto } from '@/domain/entities'
 import { AddTechnicianUseCase } from '@/domain/usecases'
-import { TechnicianEntityDto } from '@/domain/protocols'
 
 @InjectableController()
-export class AddTechnicianController implements Controller<TechnicianEntityDto, TechnicianEntity> {
+export class AddTechnicianController implements Controller<CreateTechnicianDto, Technician> {
 
   constructor (
     @Inject()
@@ -19,18 +17,17 @@ export class AddTechnicianController implements Controller<TechnicianEntityDto, 
   ) { }
 
   @HandleError
-  @Validate<TechnicianEntityDto, TechnicianEntity>({
+  @Validate({
     planLimitFor: 'technician',
     body: {
-      schema: technicianSchema,
-      keys: technicianKeys
+      schema: technicianSchema
     }
   })
-  async handle (request: HttpRequest<TechnicianEntityDto>): HandleResponse<TechnicianEntity> {
-    const activeCompanyId = request.activeCompanyInfo?.id as CompanyEntity['id']
-    const requestTechnicianDto = request.body as TechnicianEntityDto
+  async handle (request: HttpRequest<CreateTechnicianDto>): HandleResponse<Technician> {
+    const activeCompanyId = request.activeCompanyInfo?.id as Company['id']
+    const createTechnicianDto = request.body as CreateTechnicianDto
 
-    const createdTechnician = await this.addTechnicianUseCase.call(requestTechnicianDto, activeCompanyId)
+    const createdTechnician = await this.addTechnicianUseCase.call(createTechnicianDto, activeCompanyId)
 
     return ok(createdTechnician)
   }

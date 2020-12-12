@@ -1,12 +1,5 @@
-import { Model } from '../protocols'
-import { LogErrorEntity } from '@/domain/entities'
+import { LogError, CreateLogErrorDto } from '@/domain/entities'
 
-export class LogErrorModel extends Model implements LogErrorEntity {
-  constructor (
-    public readonly id: Model['id'],
-    public readonly stack: Error['stack'],
-    public readonly date: number
-  ) {
-    super(id)
-  }
-}
+export type LogErrorData = LogError
+
+export type CreateLogErrorData = CreateLogErrorDto

@@ -1,6 +1,5 @@
-import { UnverifiedModel } from '@/data/models'
-import { UnverifiedModelDto } from '@/data/protocols'
+import { CreateUnverifiedData, UnverifiedData } from '@/data/models'
 
 export interface AddUnverifiedRepository {
-  addUnverified: (unverifiedDto: UnverifiedModelDto) => Promise<UnverifiedModel>
+  addUnverified: (dto: CreateUnverifiedData) => Promise<UnverifiedData>
 }

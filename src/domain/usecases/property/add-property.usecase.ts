@@ -1,9 +1,5 @@
-import { PropertyEntity, CompanyEntity } from '@/domain/entities'
-import { PropertyEntityDto } from '@/domain/protocols'
+import { Property, Company, CreatePropertyDto } from '@/domain/entities'
 
 export interface AddPropertyUseCase {
-  call: (
-    dto: PropertyEntityDto,
-    companyId: CompanyEntity['id']
-  ) => Promise<PropertyEntity>
+  call: (dto: CreatePropertyDto, companyId: Company['id']) => Promise<Property>
 }

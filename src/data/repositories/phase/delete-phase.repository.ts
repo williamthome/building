@@ -1,5 +1,5 @@
-import { PhaseModel } from '@/data/models'
+import { PhaseData } from '@/data/models'
 
 export interface DeletePhaseRepository {
-  deletePhase: (id: PhaseModel['id']) => Promise<PhaseModel | null>
+  deletePhase: (id: PhaseData['id']) => Promise<PhaseData | null>
 }

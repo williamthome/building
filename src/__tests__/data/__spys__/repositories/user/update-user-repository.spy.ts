@@ -1,28 +1,24 @@
-import { UserModel } from '@/data/models'
-import { UserModelDto } from '@/data/protocols'
+import { UpdateUserData, UserData } from '@/data/models'
 import { UpdateUserRepository } from '@/data/repositories'
-import { mockUserModel } from '@/__tests__/data/__mocks__/models'
+import { mockUserData } from '@/__tests__/data/__mocks__/models'
 
 export class UpdateUserRepositorySpy implements UpdateUserRepository {
-  userId?: UserModel['id']
-  userDto?:  UserModelDto
-  userModel?: UserModel | null
+  id?: UserData['id']
+  dto?: UpdateUserData
+  user?: UserData | null
   shouldReturnNull = false
   shouldThrow = false
 
-  updateUser = async (
-    userId: UserModel['id'],
-    userDto: UserModelDto
-  ): Promise<UserModel | null> => {
-    this.userId = userId
-    this.userDto = userDto
+  updateUser = async (id: UserData['id'], dto: UpdateUserData): Promise<UserData | null> => {
+    this.id = id
+    this.dto = dto
 
     if (this.shouldThrow) throw new Error()
 
-    this.userModel = this.shouldReturnNull
+    this.user = this.shouldReturnNull
       ? null
-      : mockUserModel(userDto)
+      : mockUserData(dto)
 
-    return this.userModel
+    return this.user
   }
 }

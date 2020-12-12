@@ -1,5 +1,5 @@
-import { UserModel } from '@/data/models'
+import { UserData } from '@/data/models'
 
 export interface GetUserByEmailRepository {
-  getUserByEmail: (email: UserModel['email']) => Promise<UserModel | null>
+  getUserByEmail: (email: UserData['email']) => Promise<UserData | null>
 }
