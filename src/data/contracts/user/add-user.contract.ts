@@ -28,12 +28,12 @@ export class AddUserContract implements AddUserUseCase {
       verified: false
     })
 
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
+    const today = new Date()
+    const tomorrow = new Date().setDate(today.getDate() + 1)
 
     await this.addUnverifiedRepository.addUnverified({
       userId: user.id,
-      expiresIn: tomorrow.getTime()
+      expiresIn: tomorrow
     })
 
     const verificationToken = await this.encrypter.encrypt(user.id)
