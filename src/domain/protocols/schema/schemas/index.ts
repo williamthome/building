@@ -18,6 +18,21 @@ type OptionsResponse<O, T> = O extends (optional | required | reserved) ? T : re
 type SchemaType<U, T, O> = T extends (optional | required | reserved) ? O extends U ? O : never : T
 type SchemaOptions<T, O> = O extends (optional | required | reserved) ? O : T extends (optional | required | reserved) ? T : never
 
+const schema = <TSchema, TPickSchema extends Schema<any>, KPickSchema extends (TPickSchema extends Schema<infer TSchema> ? keyof TSchema : never)> (
+  schemas: TSchema,
+  pick?: {
+    merge: TPickSchema,
+    keys: KPickSchema[]
+  }
+): Schema<TSchema & Pick<TPickSchema extends Schema<infer TSchema> ? TSchema : never, KPickSchema>> => {
+  if (pick) {
+    for (const key of pick.keys || Object.keys(pick.merge)) {
+      (schemas as  any)[key] = pick.merge['schemas'][key]
+    }
+  }
+  return new Schema<any>(schemas)
+}
+
 const pickSchema = <T extends Schema<any>, K extends (T extends Schema<infer TSchema> ? keyof TSchema : never)> (
   schema: T,
   keys?: K[]
@@ -78,6 +93,7 @@ const custom = <T, O extends optional | required | reserved = required> (): Cust
 /// EXPORT ------------------------------------------------
 
 export {
+  schema,
   pickSchema,
   string,
   email,
