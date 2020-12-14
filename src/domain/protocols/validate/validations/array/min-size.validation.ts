@@ -1,7 +1,7 @@
 import { Validate, ValidateOptions } from '../../validate.protocol'
 
-class MinSizeValidation extends Validate<MinSizeValidation> {
-  validation = (): MinSizeValidation => this
+class MinSizeValidation<T> extends Validate<T, MinSizeValidation<T>> {
+  validation = (): MinSizeValidation<T> => this
 
   constructor (
     private readonly minSize: number,
@@ -10,14 +10,15 @@ class MinSizeValidation extends Validate<MinSizeValidation> {
     super(opts)
   }
 
-  validate = (key: string, value: any): string | void => {
+  validate = (obj: T, key: keyof T): string | void => {
+    const value = obj[key]
     const valid = Array.isArray(value) && value.length >= this.minSize
     if (valid) return
     return this.opts?.customMessage || `${key} must have at least ${this.minSize} item(s)`
   }
 }
 
-export const minSize = (
+export const minSize = <T> (
   value: number,
   opts?: ValidateOptions
-): MinSizeValidation => new MinSizeValidation(value, opts)
+): MinSizeValidation<T> => new MinSizeValidation<T>(value, opts)

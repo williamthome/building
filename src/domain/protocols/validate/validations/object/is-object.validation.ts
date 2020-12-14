@@ -1,17 +1,18 @@
 import { Validate, ValidateOptions } from '../../validate.protocol'
 
-class IsObjectValidation extends Validate<IsObjectValidation> {
-  validation = (): IsObjectValidation => this
+class IsObjectValidation<T> extends Validate<T, IsObjectValidation<T>> {
+  validation = (): IsObjectValidation<T> => this
 
   constructor (opts: ValidateOptions | undefined) { super(opts) }
 
-  validate = (key: string, value: any): string | void => {
+  validate = (obj: T, key: keyof T): string | void => {
+    const value = obj[key]
     const valid = value === Object(value)
     if (valid) return
     return this.opts?.customMessage || `${key} must be object type`
   }
 }
 
-export const isObject = (
+export const isObject = <T> (
   opts?: ValidateOptions
-): IsObjectValidation => new IsObjectValidation(opts)
+): IsObjectValidation<T> => new IsObjectValidation<T>(opts)

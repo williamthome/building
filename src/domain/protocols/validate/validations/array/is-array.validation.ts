@@ -1,17 +1,17 @@
 import { Validate, ValidateOptions } from '../../validate.protocol'
 
-class IsArrayValidation extends Validate<IsArrayValidation> {
-  validation = (): IsArrayValidation => this
+class IsArrayValidation<T> extends Validate<T, IsArrayValidation<T>> {
+  validation = (): IsArrayValidation<T> => this
 
   constructor (opts: ValidateOptions | undefined) { super(opts) }
 
-  validate = (key: string, value: any): string | void => {
-    const valid = Array.isArray(value)
+  validate = (obj: T, key: keyof T): string | void => {
+    const valid = Array.isArray(obj[key])
     if (valid) return
     return this.opts?.customMessage || `${key} must be array type`
   }
 }
 
-export const isArray = (
+export const isArray = <T> (
   opts?: ValidateOptions
-): IsArrayValidation => new IsArrayValidation(opts)
+): IsArrayValidation<T> => new IsArrayValidation<T>(opts)

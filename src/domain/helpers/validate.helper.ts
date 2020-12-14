@@ -1,5 +1,6 @@
 import { BaseSchema } from '../protocols'
 import { ObjectSchema } from '../protocols/schema/schemas/object.schema'
+import { Validation } from '../protocols/validate'
 
 export const validateSchemas = (schemas: any, obj: any, allKeys: boolean, bannedFields: string[]): void | string => {
   for (const [key, schema] of Object.entries(schemas)) {
@@ -27,7 +28,7 @@ export const validateSchemas = (schemas: any, obj: any, allKeys: boolean, banned
       if (!required && !defined)
         continue
 
-      const error = validation.validate(key, value)
+      const error = (validation as Validation<any>).validate(obj, key)
 
       if (error)
         return error

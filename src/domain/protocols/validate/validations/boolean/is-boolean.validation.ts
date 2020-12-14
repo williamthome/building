@@ -1,17 +1,17 @@
 import { Validate, ValidateOptions } from '../../validate.protocol'
 
-class IsBooleanValidation extends Validate<IsBooleanValidation> {
-  validation = (): IsBooleanValidation => this
+class IsBooleanValidation<T> extends Validate<T, IsBooleanValidation<T>> {
+  validation = (): IsBooleanValidation<T> => this
 
   constructor (opts: ValidateOptions | undefined) { super(opts) }
 
-  validate = (key: string, value: any): string | void => {
-    const valid = typeof value === 'boolean'
+  validate = (obj: T, key: keyof T): string | void => {
+    const valid = typeof obj[key] === 'boolean'
     if (valid) return
     return this.opts?.customMessage || `${key} must be boolean type`
   }
 }
 
-export const isBoolean = (
+export const isBoolean = <T> (
   opts?: ValidateOptions
-): IsBooleanValidation => new IsBooleanValidation(opts)
+): IsBooleanValidation<T> => new IsBooleanValidation<T>(opts)

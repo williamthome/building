@@ -1,12 +1,13 @@
 import { Validate, ValidateOptions } from '../../validate.protocol'
 
-class IsEmailValidation extends Validate<IsEmailValidation> {
-  validation = (): IsEmailValidation => this
+class IsEmailValidation<T> extends Validate<T, IsEmailValidation<T>> {
+  validation = (): IsEmailValidation<T> => this
 
   constructor (opts: ValidateOptions | undefined) { super(opts) }
 
-  validate = (key: string, value: any): string | void => {
-    const valid = this.validateEmail(value)
+  validate = (obj: T, key: keyof T): string | void => {
+    const value = obj[key]
+    const valid = typeof value === 'string' && this.validateEmail(value)
     if (valid) return
     return this.opts?.customMessage || `${key} is an invalid e-Mail address`
   }
@@ -34,6 +35,6 @@ class IsEmailValidation extends Validate<IsEmailValidation> {
   }
 }
 
-export const isEmail = (
+export const isEmail = <T> (
   opts?: ValidateOptions
-): IsEmailValidation => new IsEmailValidation(opts)
+): IsEmailValidation<T> => new IsEmailValidation<T>(opts)

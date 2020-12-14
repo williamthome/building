@@ -1,7 +1,7 @@
 import { Validate, ValidateOptions } from '../../validate.protocol'
 
-class RangeValidation extends Validate<RangeValidation> {
-  validation = (): RangeValidation => this
+class RangeValidation<T> extends Validate<T, RangeValidation<T>> {
+  validation = (): RangeValidation<T> => this
 
   constructor (
     private readonly min: number,
@@ -11,15 +11,16 @@ class RangeValidation extends Validate<RangeValidation> {
     super(opts)
   }
 
-  validate = (key: string, value: any): string | void => {
+  validate = (obj: T, key: keyof T): string | void => {
+    const value = obj[key]
     const valid = typeof value === 'number' && value >= this.min && value <= this.max
     if (valid) return
     return this.opts?.customMessage || `${key} must be between ${this.min} and ${this.max}`
   }
 }
 
-export const range = (
+export const range = <T> (
   min: number,
   max: number,
   opts?: ValidateOptions
-): RangeValidation => new RangeValidation(min, max, opts)
+): RangeValidation<T> => new RangeValidation<T>(min, max, opts)
