@@ -60,6 +60,7 @@
     "aws-sdk": "^2.799.0",
     "bcrypt": "^5.0.0",
     "fastify": "^3.8.0",
+    "fastify-cors": "^5.1.0",
     "fastify-multer": "^2.0.2",
     "jsonwebtoken": "^8.5.1",
     "lilinjector": "0.0.8",

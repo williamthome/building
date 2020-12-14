@@ -1,4 +1,5 @@
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler, RawServerBase } from 'fastify'
+import cors from 'fastify-cors'
 import multer from 'fastify-multer'
 import { File as MulterFile } from 'fastify-multer/lib/interfaces'
 import { Injectable, Inject } from '@/shared/dependency-injection'
@@ -28,6 +29,9 @@ MulterFile
     public readonly routes: Route<unknown, unknown>[]
   ) {
     this.fastifyInstance = fastify()
+    this.fastifyInstance.register(cors, {
+      origin: '*'
+    })
     this.fastifyInstance.register(multer.contentParser)
     this.injectRoutes()
   }
