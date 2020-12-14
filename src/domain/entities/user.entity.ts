@@ -1,5 +1,5 @@
 import { addressSchema } from './nested'
-import { ExtractSchema, object, string, boolean, pickSchema, email } from '../protocols/schema'
+import { ExtractSchema, object, string, boolean, pickSchema, email, schema } from '../protocols/schema'
 import { optional, reserved } from '../protocols'
 import { entitySchema, ExtractEntity, ExtractUpdateDto } from '../protocols/entity.protocol'
 import { Company } from './company.entity'
@@ -19,7 +19,15 @@ export const userSchema = entitySchema({
 
 export type User = ExtractEntity<typeof userSchema>
 
-export const createUserSchema = pickSchema(userSchema, ['email', 'password'])
+export const createUserSchema = schema(
+  {
+    passwordConfirmation: string().required().matchField<User>('password')
+  },
+  {
+    merge: userSchema,
+    keys: ['email', 'password']
+  }
+)
 
 export type CreateUserDto = ExtractSchema<typeof createUserSchema>
 
