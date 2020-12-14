@@ -1,23 +1,24 @@
 import { Schema } from './schema'
 import { ObjectSchema } from './schemas/object.schema'
 import { ValidateOptions, Validation } from '../validate'
+import { matchField } from '../validate/validations'
 
 export abstract class BaseSchema<Type, Optional extends optional | required | reserved, Builder extends BaseSchema<Type, Optional, Builder>> {
   protected readonly type!: Type
   protected readonly optional!: Optional
   protected abstract readonly builder: () => Builder
-  protected readonly validations: Validation[] = []
+  protected readonly validations: Validation<unknown>[] = []
   protected isRequired = false
   protected isNonWritable = false
   protected customRequiredMessage?: string
   protected customNonWritableMessage?: string
 
-  constructor (typeValidation?: Validation) {
+  constructor (typeValidation?: Validation<unknown>) {
     if (typeValidation)
       this.validations.push(typeValidation)
   }
 
-  protected pushValidation = (validation: Validation): Builder => {
+  protected pushValidation = (validation: Validation<unknown>): Builder => {
     this.validations.push(validation)
     return this.builder()
   }
@@ -32,6 +33,10 @@ export abstract class BaseSchema<Type, Optional extends optional | required | re
     this.isNonWritable = true
     this.customNonWritableMessage = opts?.customMessage
     return this.builder()
+  }
+
+  matchField = <T> (field: keyof T, opts?: ValidateOptions): Builder => {
+    return this.pushValidation(matchField<any>(field, opts))
   }
 }
 
