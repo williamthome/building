@@ -23,7 +23,7 @@ export class AddUserContract implements AddUserUseCase {
   call = async (dto: CreateUserDto): Promise<UserVerificationTokenResponse> => {
     const hashedPassword = await this.hasher.hash(dto.password)
     const user = await this.addUserRepository.addUser({
-      ...dto,
+      email: dto.email,
       password: hashedPassword,
       verified: false
     })
