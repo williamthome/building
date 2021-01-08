@@ -44,10 +44,10 @@ describe('GetUserByAccessToken Contract', () => {
       expect(decrypterSpy.ciphertext).toEqual(accessToken)
     })
 
-    it('should throw if method throws', async () => {
+    it('should return null if method throws', async () => {
       const { sut, decrypterSpy } = makeSut()
       decrypterSpy.shouldThrow = true
-      await expect(sut.call(fakeData.entity.token(fakeId, fakeSecret))).rejects.toThrow()
+      await expect(sut.call(fakeData.entity.token(fakeId, fakeSecret))).resolves.toBeNull()
     })
   })
 
@@ -60,10 +60,10 @@ describe('GetUserByAccessToken Contract', () => {
       expect(getUserByIdRepositorySpy.id).toEqual(decrypterSpy.decrypted)
     })
 
-    it('should throw if method throws', async () => {
+    it('should return null if method throws', async () => {
       const { sut, getUserByIdRepositorySpy } = makeSut()
       getUserByIdRepositorySpy.shouldThrow = true
-      await expect(sut.call(fakeData.entity.token(fakeId, fakeSecret))).rejects.toThrow()
+      await expect(sut.call(fakeData.entity.token(fakeId, fakeSecret))).resolves.toBeNull()
     })
 
     it('should return null if user not found', async () => {
