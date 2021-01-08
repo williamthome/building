@@ -53,7 +53,7 @@ class FillRoutePathQuery {
     const queryEntries = Object.entries(query)
     const queryKeys = Object.keys(query)
     for (const [key, value] of queryEntries) {
-      urn = `${key}=${value}${queryKeys.indexOf(key) !== queryEntries.length - 1 ? '&' : ''}`
+      urn = `${urn}${key}=${value}${queryKeys.indexOf(key) !== queryEntries.length - 1 ? '&' : ''}`
     }
     return urn
   }
