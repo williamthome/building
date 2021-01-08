@@ -19,16 +19,17 @@ export class DbGetUserRightsRepository implements GetUserRightsRepository {
     })
 
     const userRights: UserDataRights[] = []
-    for (const { id: companyId, members } of companies) {
-      for (const { userId, companyRole, features } of members) {
+    for (const { id: companyId, name: companyName, members: companyMembers } of companies) {
+      for (const { userId, companyRole: userRole, features: userFeatures } of companyMembers) {
         if (userId === id) {
           userRights.push({
             company: {
               id: companyId,
-              members
+              name: companyName,
+              members: companyMembers
             },
-            role: companyRole,
-            features
+            role: userRole,
+            features: userFeatures
           })
         }
       }

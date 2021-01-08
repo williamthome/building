@@ -34,7 +34,7 @@ export type CreateUserDto = ExtractSchema<typeof createUserSchema>
 export type UpdateUserDto = ExtractUpdateDto<typeof userSchema>
 
 export interface UserRights {
-  company: Pick<Company, 'id' | 'members'>
+  company: Pick<Company, 'id' | 'name' | 'members'>
   role: CompanyRole
   features: UserFeatures
 }

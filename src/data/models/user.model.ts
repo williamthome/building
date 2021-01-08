@@ -9,7 +9,7 @@ export type CreateUserData = OmitKey<CreateUserDto, 'passwordConfirmation'> & Pi
 
 export type UpdateUserData = UpdateUserDto
 export interface UserDataRights {
-  company: Pick<CompanyData, 'id' | 'members'>
+  company: Pick<CompanyData, 'id' | 'name' | 'members'>
   role: CompanyRole
   features: UserFeatures
 }
