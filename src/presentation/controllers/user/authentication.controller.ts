@@ -46,11 +46,11 @@ export class AuthenticationController implements Controller<Authentication, User
     if (!passwordMatch)
       return badRequest(new PasswordDoNotMatchError())
 
-    const accessToken = await this.encrypter.encrypt(findedUser.id)
-
-    await this.updateUserAccessTokenUseCase.call(findedUser.id, accessToken)
-
-    findedUser.accessToken = accessToken
+    if (!findedUser.accessToken) {
+      const accessToken = await this.encrypter.encrypt(findedUser.id)
+      await this.updateUserAccessTokenUseCase.call(findedUser.id, accessToken)
+      findedUser.accessToken = accessToken
+    }
 
     const authenticatedUserWithoutPassword = userWithoutPassword(findedUser)
 

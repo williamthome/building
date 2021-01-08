@@ -101,7 +101,7 @@ describe('AddUser Controller', () => {
     it('should been called with right values', async () => {
       const { sut, encrypter, getUserByEmailUseCase } = makeSut()
       const httpRequest = mockHttpRequest()
-      getUserByEmailUseCase.override = { password: httpRequest.body?.password }
+      getUserByEmailUseCase.override = { password: httpRequest.body?.password, accessToken: undefined }
       await sut.handle(httpRequest)
       expect(encrypter.plaintext).toEqual(getUserByEmailUseCase.user?.id)
     })
@@ -109,7 +109,7 @@ describe('AddUser Controller', () => {
     it('should return server error if throws', async () => {
       const { sut, encrypter, getUserByEmailUseCase } = makeSut()
       const httpRequest = mockHttpRequest()
-      getUserByEmailUseCase.override = { password: httpRequest.body?.password }
+      getUserByEmailUseCase.override = { password: httpRequest.body?.password, accessToken: undefined }
       encrypter.shouldThrow = true
       const response = await sut.handle(httpRequest)
       expect(response).toEqual(serverError(new Error()))
@@ -120,7 +120,7 @@ describe('AddUser Controller', () => {
     it('should been called with right values', async () => {
       const { sut, updateUserAccessTokenUseCase, getUserByEmailUseCase, encrypter } = makeSut()
       const httpRequest = mockHttpRequest()
-      getUserByEmailUseCase.override = { password: httpRequest.body?.password }
+      getUserByEmailUseCase.override = { password: httpRequest.body?.password, accessToken: undefined }
       await sut.handle(httpRequest)
       expect(updateUserAccessTokenUseCase.id).toEqual(getUserByEmailUseCase.user?.id)
       expect(updateUserAccessTokenUseCase.accessToken).toEqual(encrypter.encrypted)
@@ -129,7 +129,7 @@ describe('AddUser Controller', () => {
     it('should return server error if throws', async () => {
       const { sut, updateUserAccessTokenUseCase, getUserByEmailUseCase } = makeSut()
       const httpRequest = mockHttpRequest()
-      getUserByEmailUseCase.override = { password: httpRequest.body?.password }
+      getUserByEmailUseCase.override = { password: httpRequest.body?.password, accessToken: undefined }
       updateUserAccessTokenUseCase.shouldThrow = true
       const response = await sut.handle(httpRequest)
       expect(response).toEqual(serverError(new Error()))
@@ -139,7 +139,7 @@ describe('AddUser Controller', () => {
   it('shold return authenticated user', async () => {
     const { sut, getUserByEmailUseCase, encrypter } = makeSut()
     const httpRequest = mockHttpRequest()
-    getUserByEmailUseCase.override = { password: httpRequest.body?.password }
+    getUserByEmailUseCase.override = { password: httpRequest.body?.password, accessToken: undefined }
     const response = await sut.handle(httpRequest)
     expect(response).toEqual(ok(userWithoutPassword(getUserByEmailUseCase.user as User)))
     expect((response.body as User).accessToken).toBe(encrypter.encrypted)
