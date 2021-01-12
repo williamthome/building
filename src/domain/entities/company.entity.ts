@@ -1,5 +1,10 @@
 import { reserved } from '../protocols'
-import { entitySchema, ExtractDto, ExtractEntity, ExtractUpdateDto } from '../protocols/entity.protocol'
+import {
+  entitySchema,
+  ExtractDto,
+  ExtractEntity,
+  ExtractUpdateDto
+} from '../protocols/entity.protocol'
 import { string, array } from '../protocols/schema'
 import { Member } from './nested'
 

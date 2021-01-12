@@ -1,5 +1,5 @@
 export class UserAlreadyRegisteredError extends Error {
-  constructor () {
+  constructor() {
     super('User already registered')
     this.name = 'UserAlreadyRegisteredError'
   }

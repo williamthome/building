@@ -5,12 +5,12 @@ import { UpdateUserActiveCompanyRepository } from '@/data/repositories'
 
 @Injectable('updateUserActiveCompanyRepository')
 export class DbUpdateUserActiveCompanyRepository implements UpdateUserActiveCompanyRepository {
+  constructor(@Inject('db') private readonly db: Database) {}
 
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
-
-  updateUserActiveCompany = async (id: UserData['id'], activeCompanyId: UserData['activeCompanyId']): Promise<void> => {
+  updateUserActiveCompany = async (
+    id: UserData['id'],
+    activeCompanyId: UserData['activeCompanyId']
+  ): Promise<void> => {
     await this.db.updateOne<UserData, 'id'>({
       collectionName: 'users',
       matchKey: 'id',

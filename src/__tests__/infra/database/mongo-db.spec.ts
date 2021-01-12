@@ -23,8 +23,7 @@ describe('MongoDB Database', () => {
   })
 
   afterAll(async () => {
-    if (mongodb.isConnected)
-      await mongodb.disconnect()
+    if (mongodb.isConnected) await mongodb.disconnect()
     await mongoMemoryServer.stop()
   })
 
@@ -79,31 +78,37 @@ describe('MongoDB Database', () => {
         collectionName: 'users',
         dto: {}
       })
-      await expect(mongodb.getOne<any, 'id'>({
-        collectionName: 'users',
-        matchKey: 'id',
-        matchValue: id
-      })).resolves.toBeTruthy()
+      await expect(
+        mongodb.getOne<any, 'id'>({
+          collectionName: 'users',
+          matchKey: 'id',
+          matchValue: id
+        })
+      ).resolves.toBeTruthy()
       await mongodb.clearCollection('users')
     })
 
     it('should return falsy', async () => {
-      await expect(mongodb.getOne<any, 'id'>({
-        collectionName: 'users',
-        matchKey: 'id',
-        matchValue: undefined
-      })).resolves.toBeFalsy()
+      await expect(
+        mongodb.getOne<any, 'id'>({
+          collectionName: 'users',
+          matchKey: 'id',
+          matchValue: undefined
+        })
+      ).resolves.toBeFalsy()
     })
   })
 
   describe('updateOne()', () => {
     it('should return falsy', async () => {
-      await expect(mongodb.updateOne<any, 'id'>({
-        collectionName: 'users',
-        matchKey: 'id',
-        matchValue: new ObjectId().toHexString(),
-        dto: {}
-      })).resolves.toBeFalsy()
+      await expect(
+        mongodb.updateOne<any, 'id'>({
+          collectionName: 'users',
+          matchKey: 'id',
+          matchValue: new ObjectId().toHexString(),
+          dto: {}
+        })
+      ).resolves.toBeFalsy()
     })
 
     it('should update', async () => {

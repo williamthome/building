@@ -10,14 +10,13 @@ import { User, UserRights } from '@/domain/entities'
 
 @InjectableController()
 export class GetUserRightsController implements Controller<undefined, UserRights[]> {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly getUserRightsUseCase: GetUserRightsUseCase
-  ) { }
+  ) {}
 
   @HandleError
-  async handle (request: HttpRequest): HandleResponse<UserRights[]> {
+  async handle(request: HttpRequest): HandleResponse<UserRights[]> {
     const id = request.loggedUserInfo?.id as User['id']
 
     const rights = await this.getUserRightsUseCase.call(id)

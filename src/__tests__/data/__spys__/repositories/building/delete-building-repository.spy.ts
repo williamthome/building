@@ -14,9 +14,7 @@ export class DeleteBuildingRepositorySpy implements DeleteBuildingRepository {
 
     if (this.shouldThrow) throw new Error()
 
-    this.building = this.shouldReturnNull
-      ? null
-      : { ...mockBuildingData(), ...this.override }
+    this.building = this.shouldReturnNull ? null : { ...mockBuildingData(), ...this.override }
 
     return this.building
   }

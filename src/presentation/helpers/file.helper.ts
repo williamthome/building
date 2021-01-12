@@ -13,15 +13,12 @@ export const mbToBytes = (mb: number): number => mb * ByteConverter.MB
 export const bytesToMB = (bytes: number): number => bytes * 0.00000095367432
 
 export const isRequestFile = (obj: any): obj is RequestFile =>
-  obj !== undefined && requestFileKeys.every(key => key in obj)
+  obj !== undefined && requestFileKeys.every((key) => key in obj)
 
 export const uploadResult = async (
   files: RequestFile[],
   referenceId: File['referenceId'],
-  useCaseCall: (
-    dto: UploadProjectAttachmentDto,
-    buffer: Buffer
-  ) => Promise<File | Error>
+  useCaseCall: (dto: UploadProjectAttachmentDto, buffer: Buffer) => Promise<File | Error>
 ): Promise<UploadFileResponse> => {
   const result: UploadFileResponse = {
     uploads: [],

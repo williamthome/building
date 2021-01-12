@@ -14,9 +14,7 @@ export class GetCompanyByIdUseCaseSpy implements GetCompanyByIdUseCase {
 
     if (this.shouldThrow) throw new Error()
 
-    this.company = this.shouldReturnNull
-      ? null
-      : { ...mockCompany(), id, ...this.override }
+    this.company = this.shouldReturnNull ? null : { ...mockCompany(), id, ...this.override }
 
     return this.company
   }

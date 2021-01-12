@@ -1,5 +1,5 @@
 export class PasswordDoNotMatchError extends Error {
-  constructor () {
+  constructor() {
     super('Password do not match')
     this.name = 'PasswordDoNotMatchError'
   }

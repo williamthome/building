@@ -8,10 +8,7 @@ import { Phase } from '@/domain/entities'
 
 @Injectable('getPhaseByIdUseCase')
 export class GetPhaseByIdContract implements GetPhaseByIdUseCase {
-
-  constructor (
-    @Inject() private readonly getPhaseByIdRepository: GetPhaseByIdRepository
-  ) {}
+  constructor(@Inject() private readonly getPhaseByIdRepository: GetPhaseByIdRepository) {}
 
   call = async (id: Phase['id']): Promise<Phase | null> => {
     return await this.getPhaseByIdRepository.getPhaseById(id)

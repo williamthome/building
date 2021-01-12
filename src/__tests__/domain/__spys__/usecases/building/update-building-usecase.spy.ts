@@ -4,7 +4,7 @@ import { mockBuilding } from '@/__tests__/domain/__mocks__/entities'
 
 export class UpdateBuildingUseCaseSpy implements UpdateBuildingUseCase {
   id?: Building['id']
-  dto?:  UpdateBuildingDto
+  dto?: UpdateBuildingDto
   building?: Building | null
   shouldReturnNull = false
   shouldThrow = false
@@ -15,9 +15,7 @@ export class UpdateBuildingUseCaseSpy implements UpdateBuildingUseCase {
 
     if (this.shouldThrow) throw new Error()
 
-    this.building = this.shouldReturnNull
-      ? null
-      : mockBuilding(dto)
+    this.building = this.shouldReturnNull ? null : mockBuilding(dto)
 
     return this.building
   }

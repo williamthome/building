@@ -1,1 +1,1 @@
-export const uniqueItems = <T> (array: T[]): T[] => [...new Set(array)]
+export const uniqueItems = <T>(array: T[]): T[] => [...new Set(array)]

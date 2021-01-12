@@ -3,7 +3,11 @@ import { ObjectSchema } from './schemas/object.schema'
 import { ValidateOptions, Validation } from '../validate'
 import { matchField } from '../validate/validations'
 
-export abstract class BaseSchema<Type, Optional extends optional | required | reserved, Builder extends BaseSchema<Type, Optional, Builder>> {
+export abstract class BaseSchema<
+  Type,
+  Optional extends optional | required | reserved,
+  Builder extends BaseSchema<Type, Optional, Builder>
+> {
   protected readonly type!: Type
   protected readonly optional!: Optional
   protected abstract readonly builder: () => Builder
@@ -13,9 +17,8 @@ export abstract class BaseSchema<Type, Optional extends optional | required | re
   protected customRequiredMessage?: string
   protected customNonWritableMessage?: string
 
-  constructor (typeValidation?: Validation<unknown>) {
-    if (typeValidation)
-      this.validations.push(typeValidation)
+  constructor(typeValidation?: Validation<unknown>) {
+    if (typeValidation) this.validations.push(typeValidation)
   }
 
   protected pushValidation = (validation: Validation<unknown>): Builder => {
@@ -35,15 +38,15 @@ export abstract class BaseSchema<Type, Optional extends optional | required | re
     return this.builder()
   }
 
-  matchField = <T> (field: keyof T, opts?: ValidateOptions): Builder => {
+  matchField = <T>(field: keyof T, opts?: ValidateOptions): Builder => {
     return this.pushValidation(matchField<any>(field, opts))
   }
 }
 
-export interface ValidateSchemaOptions<T> {
+export interface ValidateSchemaOptions<T extends Record<string, unknown> | undefined> {
   allKeys?: boolean
   mustBeTruthy?: boolean
-  customMessageIfNotTruthy?: string,
+  customMessageIfNotTruthy?: string
   bannedFields?: Array<keyof T & string> | string[]
 }
 
@@ -53,30 +56,45 @@ export type reserved = 'reserved'
 
 type ExtractTypesOf<T> = T extends BaseSchema<any, any, any>
   ? T extends ObjectSchema<infer TObject, infer TOptional>
-  ? { [K in keyof TObject]: ExtractTypesOf<TObject[K]> } | (TOptional extends optional ? undefined : never)
-  : T extends BaseSchema<infer Type, infer TOptional, any> ? TOptional extends optional ? Type | undefined : Type : never
+    ?
+        | { [K in keyof TObject]: ExtractTypesOf<TObject[K]> }
+        | (TOptional extends optional ? undefined : never)
+    : T extends BaseSchema<infer Type, infer TOptional, any>
+    ? TOptional extends optional
+      ? Type | undefined
+      : Type
+    : never
   : T extends { [k: string]: any }
   ? { [K in keyof T]: ExtractTypesOf<T[K]> }
   : never
 
 export type ExtractSchema<
   T,
-  K extends (T extends Schema<infer TSchema> ? keyof TSchema : T extends BaseSchema<infer TSchema, any, any> ? keyof TSchema : never) = never
-  > = T extends Schema<infer U>
+  K extends T extends Schema<infer TSchema>
+    ? keyof TSchema
+    : T extends BaseSchema<infer TSchema, any, any>
+    ? keyof TSchema
+    : never = never
+> = T extends Schema<infer U>
   ? Pick<ExtractTypesOf<U>, Exclude<keyof ExtractTypesOf<U>, K>>
   : T extends BaseSchema<infer U, any, any>
-    ? Pick<ExtractTypesOf<U>, Exclude<keyof ExtractTypesOf<U>, K>>
-    : never
+  ? Pick<ExtractTypesOf<U>, Exclude<keyof ExtractTypesOf<U>, K>>
+  : never
 
 type ExtractNonReservedTypesOf<T> = T extends BaseSchema<any, any, any>
   ? T extends ObjectSchema<infer TObject, infer TOptional>
-  ? TOptional extends reserved | (reserved | optional)
-    ? never
-    : { [K in keyof TObject]: ExtractNonReservedTypesOf<TObject[K]> } | (TOptional extends optional ? undefined : never)
-  : T extends BaseSchema<infer Type, infer TOptional, any>
-  ? TOptional extends reserved | (reserved | optional)
-    ? never
-    : TOptional extends optional ? Type | undefined : Type : never
+    ? TOptional extends reserved | (reserved | optional)
+      ? never
+      :
+          | { [K in keyof TObject]: ExtractNonReservedTypesOf<TObject[K]> }
+          | (TOptional extends optional ? undefined : never)
+    : T extends BaseSchema<infer Type, infer TOptional, any>
+    ? TOptional extends reserved | (reserved | optional)
+      ? never
+      : TOptional extends optional
+      ? Type | undefined
+      : Type
+    : never
   : T extends { [k: string]: any }
   ? { [K in keyof T]: ExtractNonReservedTypesOf<T[K]> }
   : never
@@ -85,22 +103,26 @@ type ExcludeKeysWithTypeOf<T, V> = {
   [K in keyof T]: Exclude<T[K], undefined> extends V ? never : K
 }[keyof T]
 
-type Without<T, V> = Pick<T, ExcludeKeysWithTypeOf<T, V>>;
+type Without<T, V> = Pick<T, ExcludeKeysWithTypeOf<T, V>>
 
 export type ExtractNonReservedSchema<
   T,
-  K extends (T extends Schema<infer TSchema> ? keyof TSchema : never) = never
-  > = T extends Schema<infer U>
-  ? Without<Pick<ExtractNonReservedTypesOf<U>, Exclude<keyof ExtractNonReservedTypesOf<U>, K>>, never>
+  K extends T extends Schema<infer TSchema> ? keyof TSchema : never = never
+> = T extends Schema<infer U>
+  ? Without<
+      Pick<ExtractNonReservedTypesOf<U>, Exclude<keyof ExtractNonReservedTypesOf<U>, K>>,
+      never
+    >
   : never
 
 type ExtractPartial<T> = T extends Schema<infer TSchema>
-  ? { [K in keyof TSchema]?: TSchema[K] extends ObjectSchema<any, any>
-    ? ExtractPartial<TSchema[K]>
-    : TSchema[K] extends BaseSchema<infer U, any, any>
-    ? U
-    : never
-  }
+  ? {
+      [K in keyof TSchema]?: TSchema[K] extends ObjectSchema<any, any>
+        ? ExtractPartial<TSchema[K]>
+        : TSchema[K] extends BaseSchema<infer U, any, any>
+        ? U
+        : never
+    }
   : T extends ObjectSchema<infer U, any>
   ? { [K in keyof U]?: ExtractPartial<U[K]> }
   : T extends BaseSchema<infer U, any, any>
@@ -109,20 +131,21 @@ type ExtractPartial<T> = T extends Schema<infer TSchema>
 
 export type ExtractPartialSchema<
   T,
-  K extends (T extends Schema<infer TSchema> ? keyof TSchema : never) = never
-  > = Pick<ExtractPartial<T>, Exclude<keyof ExtractPartial<T>, K>>
+  K extends T extends Schema<infer TSchema> ? keyof TSchema : never = never
+> = Pick<ExtractPartial<T>, Exclude<keyof ExtractPartial<T>, K>>
 
 type ExtractPartialNonReserved<T> = T extends Schema<infer TSchema>
-  ? { [K in keyof TSchema]?: TSchema[K] extends ObjectSchema<any, infer TOptions>
-    ? TOptions extends reserved | (reserved | optional)
-      ? never
-      : ExtractPartialNonReserved<TSchema[K]>
-    : TSchema[K] extends BaseSchema<infer U, infer TOptions, any>
-      ? TOptions extends reserved | (reserved | optional)
-        ? never
-        : U
-      : never
-  }
+  ? {
+      [K in keyof TSchema]?: TSchema[K] extends ObjectSchema<any, infer TOptions>
+        ? TOptions extends reserved | (reserved | optional)
+          ? never
+          : ExtractPartialNonReserved<TSchema[K]>
+        : TSchema[K] extends BaseSchema<infer U, infer TOptions, any>
+        ? TOptions extends reserved | (reserved | optional)
+          ? never
+          : U
+        : never
+    }
   : T extends ObjectSchema<infer U, any>
   ? { [K in keyof U]?: ExtractPartialNonReserved<U[K]> }
   : T extends BaseSchema<infer U, any, any>
@@ -131,7 +154,12 @@ type ExtractPartialNonReserved<T> = T extends Schema<infer TSchema>
 
 export type ExtractNonReservedPartialSchema<
   T,
-  K extends (T extends Schema<infer TSchema> ? keyof TSchema : never) = never
-  > = Without<Pick<ExtractPartialNonReserved<T>, Exclude<keyof ExtractPartialNonReserved<T>, K>>, undefined>
+  K extends T extends Schema<infer TSchema> ? keyof TSchema : never = never
+> = Without<
+  Pick<ExtractPartialNonReserved<T>, Exclude<keyof ExtractPartialNonReserved<T>, K>>,
+  undefined
+>
 
-export type ExtractClass<T> = new (args: { [K in keyof ExtractSchema<T>]-?: ExtractSchema<T>[K] }) => typeof args
+export type ExtractClass<T> = new (
+  args: { [K in keyof ExtractSchema<T>]-?: ExtractSchema<T>[K] }
+) => typeof args

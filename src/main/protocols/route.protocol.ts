@@ -12,30 +12,28 @@ export interface Route<TRequest, TResponse = TRequest> {
 export class RoutePath {
   // parameters: string[]
 
-  constructor (
-    public readonly method: HttpMethod,
-    public readonly urn: string
-  ) {
+  constructor(public readonly method: HttpMethod, public readonly urn: string) {
     // this.parameters = this.urn.match(/(?<=:)([^/]+)(?=\/*)/g) || []
   }
 
-  get describe (): string { return `${this.urn} ${this.method}` }
+  get describe(): string {
+    return `${this.urn} ${this.method}`
+  }
 
   fillURN = (): FillRoutePath => new FillRoutePath(this.urn)
 }
 
 class FillRoutePath {
-  constructor (private readonly urn: RoutePath['urn']) { }
+  constructor(private readonly urn: RoutePath['urn']) {}
 
   params = (params: HttpParameters): FillRoutePathQuery =>
     new FillRoutePathParameters(this.urn).params(params)
 
-  query = (query: HttpQuery): string =>
-    new FillRoutePathQuery(this.urn).query(query)
+  query = (query: HttpQuery): string => new FillRoutePathQuery(this.urn).query(query)
 }
 
 class FillRoutePathParameters {
-  constructor (private readonly urn: RoutePath['urn']) { }
+  constructor(private readonly urn: RoutePath['urn']) {}
   params = (params: HttpParameters): FillRoutePathQuery => {
     let urn = this.urn
     if (params) {
@@ -47,7 +45,7 @@ class FillRoutePathParameters {
   }
 }
 class FillRoutePathQuery {
-  constructor (public readonly urn: RoutePath['urn']) { }
+  constructor(public readonly urn: RoutePath['urn']) {}
   query = (query: HttpQuery): string => {
     let urn = `${this.urn}?`
     const queryEntries = Object.entries(query)

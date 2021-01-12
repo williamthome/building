@@ -12,7 +12,9 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const updateBuildingRepositorySpy = container.resolve<UpdateBuildingRepositorySpy>('updateBuildingRepository')
+  const updateBuildingRepositorySpy = container.resolve<UpdateBuildingRepositorySpy>(
+    'updateBuildingRepository'
+  )
   const sut = container.resolve(UpdateBuildingContract)
   return {
     sut,

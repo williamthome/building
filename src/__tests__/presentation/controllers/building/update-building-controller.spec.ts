@@ -28,7 +28,9 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const updateBuildingUseCaseSpy = container.resolve<UpdateBuildingUseCaseSpy>('updateBuildingUseCase')
+  const updateBuildingUseCaseSpy = container.resolve<UpdateBuildingUseCaseSpy>(
+    'updateBuildingUseCase'
+  )
   const sut = container.resolve(UpdateBuildingController)
   return {
     sut,

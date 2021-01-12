@@ -5,10 +5,7 @@ import { GetUserByEmailRepository } from '@/data/repositories'
 
 @Injectable('getUserByEmailRepository')
 export class DbGetUserByEmailRepository implements GetUserByEmailRepository {
-
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
   getUserByEmail = async (email: UserData['email']): Promise<UserData | null> => {
     return await this.db.getOne<UserData, 'email'>({

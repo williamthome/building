@@ -3,10 +3,7 @@ import { Validate, ValidateOptions } from '../../validate.protocol'
 class MinLengthValidation<T> extends Validate<T, MinLengthValidation<T>> {
   validation = (): MinLengthValidation<T> => this
 
-  constructor (
-    private readonly minLength: number,
-    opts: ValidateOptions | undefined
-  ) {
+  constructor(private readonly minLength: number, opts: ValidateOptions | undefined) {
     super(opts)
   }
 
@@ -18,7 +15,5 @@ class MinLengthValidation<T> extends Validate<T, MinLengthValidation<T>> {
   }
 }
 
-export const minLength = <T> (
-  minLength: number,
-  opts?: ValidateOptions
-): MinLengthValidation<T> => new MinLengthValidation<T>(minLength, opts)
+export const minLength = <T>(minLength: number, opts?: ValidateOptions): MinLengthValidation<T> =>
+  new MinLengthValidation<T>(minLength, opts)

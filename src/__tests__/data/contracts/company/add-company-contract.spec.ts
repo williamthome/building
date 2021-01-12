@@ -35,11 +35,13 @@ describe('AddCompany Contract', () => {
       const dto = mockCreateCompanyData()
       const loggedUserId = fakeData.entity.id()
       await sut.call(dto, loggedUserId)
-      dto.members = [{
-        userId: loggedUserId,
-        companyRole: CompanyRole.owner,
-        features: UserFeatures.None
-      }]
+      dto.members = [
+        {
+          userId: loggedUserId,
+          companyRole: CompanyRole.owner,
+          features: UserFeatures.None
+        }
+      ]
       expect(addCompanyRepositorySpy.dto).toEqual(dto)
     })
 

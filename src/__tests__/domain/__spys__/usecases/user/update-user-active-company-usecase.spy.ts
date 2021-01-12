@@ -3,7 +3,7 @@ import { UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
 
 export class UpdateUserActiveCompanyUseCaseSpy implements UpdateUserActiveCompanyUseCase {
   id?: User['id']
-  activeCompanyId?:  User['activeCompanyId']
+  activeCompanyId?: User['activeCompanyId']
   shouldThrow = false
 
   call = async (id: User['id'], activeCompanyId: User['activeCompanyId']): Promise<void> => {

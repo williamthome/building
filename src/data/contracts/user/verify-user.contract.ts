@@ -8,8 +8,7 @@ import { VerifyUserUseCase } from '@/domain/usecases'
 
 @Injectable('verifyUserUseCase')
 export class VerifyUserContract implements VerifyUserUseCase {
-
-  constructor (
+  constructor(
     @Inject() private readonly verifyUserRepository: VerifyUserRepository,
     @Inject() private readonly deleteUnverifiedRepository: DeleteUnverifiedRepository
   ) {}

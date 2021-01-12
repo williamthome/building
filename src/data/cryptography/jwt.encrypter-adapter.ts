@@ -7,9 +7,7 @@ import { Decrypter, Encrypter } from '@/domain/protocols/cryptography'
 export class JwtEncrypterAdapter implements Encrypter, Decrypter {
   static key = 'data'
 
-  constructor (
-    @Inject('JWT_SECRET') private readonly secret: string
-  ) {}
+  constructor(@Inject('JWT_SECRET') private readonly secret: string) {}
 
   encrypt = async (value: string): Promise<string> => {
     return jwt.sign({ [JwtEncrypterAdapter.key]: value }, this.secret)

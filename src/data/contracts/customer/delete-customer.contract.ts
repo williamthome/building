@@ -8,10 +8,7 @@ import { DeleteCustomerUseCase } from '@/domain/usecases'
 
 @Injectable('deleteCustomerUseCase')
 export class DeleteCustomerContract implements DeleteCustomerUseCase {
-
-  constructor (
-    @Inject() private readonly deleteCustomerRepository: DeleteCustomerRepository
-  ) {}
+  constructor(@Inject() private readonly deleteCustomerRepository: DeleteCustomerRepository) {}
 
   call = async (id: Customer['id']): Promise<Customer | null> => {
     const deletedCustomer = await this.deleteCustomerRepository.deleteCustomer(id)

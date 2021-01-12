@@ -10,11 +10,10 @@ import { AddTechnicianUseCase } from '@/domain/usecases'
 
 @InjectableController()
 export class AddTechnicianController implements Controller<CreateTechnicianDto, Technician> {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly addTechnicianUseCase: AddTechnicianUseCase
-  ) { }
+  ) {}
 
   @HandleError
   @Validate({
@@ -23,11 +22,14 @@ export class AddTechnicianController implements Controller<CreateTechnicianDto, 
       schema: technicianSchema
     }
   })
-  async handle (request: HttpRequest<CreateTechnicianDto>): HandleResponse<Technician> {
+  async handle(request: HttpRequest<CreateTechnicianDto>): HandleResponse<Technician> {
     const activeCompanyId = request.activeCompanyInfo?.id as Company['id']
     const createTechnicianDto = request.body as CreateTechnicianDto
 
-    const createdTechnician = await this.addTechnicianUseCase.call(createTechnicianDto, activeCompanyId)
+    const createdTechnician = await this.addTechnicianUseCase.call(
+      createTechnicianDto,
+      activeCompanyId
+    )
 
     return ok(createdTechnician)
   }

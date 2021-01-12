@@ -20,10 +20,7 @@ import { Schema, string } from '@/domain/protocols/schema'
 
 @InjectableController()
 export class UpdateCompanyMemberController implements Controller<UpdateMemberDto, Company> {
-
-  constructor (
-    @Inject() private readonly updateCompanyMemberUseCase: UpdateCompanyMemberUseCase
-  ) { }
+  constructor(@Inject() private readonly updateCompanyMemberUseCase: UpdateCompanyMemberUseCase) {}
 
   @HandleError
   @Validate({
@@ -40,16 +37,17 @@ export class UpdateCompanyMemberController implements Controller<UpdateMemberDto
       })
     }
   })
-  async handle (request: HttpRequest<UpdateMemberDto>): HandleResponse<Company> {
+  async handle(request: HttpRequest<UpdateMemberDto>): HandleResponse<Company> {
     const loggedUserCompanyRole = request.loggedUserInfo?.companyRole
     const activeCompanyId = request.activeCompanyInfo?.id as Company['id']
     const activeCompanyMembers = request.activeCompanyInfo?.members as Member[]
     const userIdToUpdate = request.params?.id as Member['userId']
     const updateMemberDto = request.body as UpdateMemberDto
 
-    const memberToUpdate = activeCompanyMembers.find(companyMember => userIdToUpdate === companyMember.userId)
-    if (!memberToUpdate)
-      return badRequest(new UserIsNotAMemberError())
+    const memberToUpdate = activeCompanyMembers.find(
+      (companyMember) => userIdToUpdate === companyMember.userId
+    )
+    if (!memberToUpdate) return badRequest(new UserIsNotAMemberError())
 
     if (memberToUpdate.companyRole === CompanyRole.owner)
       return forbidden(new CanNotModifyOwnerError())
@@ -57,15 +55,18 @@ export class UpdateCompanyMemberController implements Controller<UpdateMemberDto
     if (updateMemberDto.companyRole === CompanyRole.owner)
       return forbidden(new CanNotAddMoreOwnesrError())
 
-    if (updateMemberDto.companyRole === CompanyRole.master &&
-      loggedUserCompanyRole !== CompanyRole.master)
+    if (
+      updateMemberDto.companyRole === CompanyRole.master &&
+      loggedUserCompanyRole !== CompanyRole.master
+    )
       return forbidden(new AccessDeniedError())
 
     const activeCompanyWithUpdatedMember = await this.updateCompanyMemberUseCase.call(
-      activeCompanyId, userIdToUpdate, updateMemberDto
+      activeCompanyId,
+      userIdToUpdate,
+      updateMemberDto
     )
-    if (!activeCompanyWithUpdatedMember)
-      return notFound(new EntityNotFoundError('Company'))
+    if (!activeCompanyWithUpdatedMember) return notFound(new EntityNotFoundError('Company'))
 
     return ok(activeCompanyWithUpdatedMember)
   }

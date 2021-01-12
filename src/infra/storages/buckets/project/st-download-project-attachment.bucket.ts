@@ -5,10 +5,7 @@ import { FileData, ProjectData } from '@/data/models'
 
 @Injectable('downloadProjectAttachmentBucket')
 export class StDownloadProjectAttachmentBucket implements DownloadProjectAttachmentBucket {
-
-  constructor (
-    @Inject('storage') private readonly storage: Storage
-  ) { }
+  constructor(@Inject('storage') private readonly storage: Storage) {}
 
   downloadProjectAttachment = async (
     projectId: ProjectData['id'],

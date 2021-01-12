@@ -8,10 +8,9 @@ import { File } from '@/domain/entities'
 
 @Injectable('getFilesByReferenceIdUseCase')
 export class GetFilesByReferenceIdContract implements GetFilesByReferenceIdUseCase {
-
-  constructor (
+  constructor(
     @Inject() private readonly getFilesByReferenceIdRepository: GetFilesByReferenceIdRepository
-  ) { }
+  ) {}
 
   call = async (id: string): Promise<File[]> => {
     return await this.getFilesByReferenceIdRepository.getFilesByReferenceId(id)

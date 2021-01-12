@@ -12,16 +12,13 @@ import { Company } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 import { CreateMemberDto } from '@/domain/entities/nested'
 
-export const addCompanyMemberPath = new RoutePath(
-  'POST',
-  '/member'
-)
+export const addCompanyMemberPath = new RoutePath('POST', '/member')
 
 @InjectableRoute(addCompanyMemberPath)
 export class AddCompanyMemberRoute implements Route<CreateMemberDto, Company> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageCompanyData)
 
-  constructor (
+  constructor(
     @InjectRouteController(AddCompanyMemberController)
     public readonly controller: AddCompanyMemberController,
 
@@ -33,9 +30,9 @@ export class AddCompanyMemberRoute implements Route<CreateMemberDto, Company> {
 
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
+  get middlewares(): Middleware[] {
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,

@@ -11,16 +11,13 @@ import { UpdatePhaseController } from '@/presentation/controllers'
 import { Phase, UpdatePhaseDto } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 
-export const updatePhasePath = new RoutePath(
-  'PATCH',
-  '/phase/:id'
-)
+export const updatePhasePath = new RoutePath('PATCH', '/phase/:id')
 
 @InjectableRoute(updatePhasePath)
 export class UpdatePhaseRoute implements Route<UpdatePhaseDto, Phase> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManagePhases)
 
-  constructor (
+  constructor(
     @InjectRouteController(UpdatePhaseController)
     public readonly controller: UpdatePhaseController,
 
@@ -32,9 +29,9 @@ export class UpdatePhaseRoute implements Route<UpdatePhaseDto, Phase> {
 
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
+  get middlewares(): Middleware[] {
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,

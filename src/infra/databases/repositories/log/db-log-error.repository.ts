@@ -5,10 +5,7 @@ import { LogErrorRepository } from '@/data/repositories'
 
 @Injectable('logErrorRepository')
 export class DbLogErrorRepository implements LogErrorRepository {
-
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) {}
+  constructor(@Inject('db') private readonly db: Database) {}
 
   logError = async (dto: CreateLogErrorData): Promise<void> => {
     await this.db.addOne({

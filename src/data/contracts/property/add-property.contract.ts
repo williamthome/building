@@ -8,10 +8,7 @@ import { AddPropertyUseCase } from '@/domain/usecases'
 
 @Injectable('addPropertyUseCase')
 export class AddPropertyContract implements AddPropertyUseCase {
-
-  constructor (
-    @Inject() private readonly addPropertyRepository: AddPropertyRepository
-  ) { }
+  constructor(@Inject() private readonly addPropertyRepository: AddPropertyRepository) {}
 
   call = async (dto: CreatePropertyDto, companyId: Company['id']): Promise<Property> => {
     return await this.addPropertyRepository.addProperty({

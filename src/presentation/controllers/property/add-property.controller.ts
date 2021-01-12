@@ -10,11 +10,10 @@ import { Property, Company, propertySchema, CreatePropertyDto } from '@/domain/e
 
 @InjectableController()
 export class AddPropertyController implements Controller<CreatePropertyDto, Property> {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly addPropertyUseCase: AddPropertyUseCase
-  ) { }
+  ) {}
 
   @HandleError
   @Validate({
@@ -23,7 +22,7 @@ export class AddPropertyController implements Controller<CreatePropertyDto, Prop
       schema: propertySchema
     }
   })
-  async handle (request: HttpRequest<CreatePropertyDto>): HandleResponse<Property> {
+  async handle(request: HttpRequest<CreatePropertyDto>): HandleResponse<Property> {
     const activeCompanyId = request.activeCompanyInfo?.id as Company['id']
     const createPropertyDto = request.body as CreatePropertyDto
 

@@ -11,16 +11,13 @@ import { DeletePropertyController } from '@/presentation/controllers'
 import { Property } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 
-export const deletePropertyPath = new RoutePath(
-  'DELETE',
-  '/property/:id'
-)
+export const deletePropertyPath = new RoutePath('DELETE', '/property/:id')
 
 @InjectableRoute(deletePropertyPath)
 export class DeletePropertyRoute implements Route<undefined, Property> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageProperties)
 
-  constructor (
+  constructor(
     @InjectRouteController(DeletePropertyController)
     public readonly controller: DeletePropertyController,
 
@@ -32,9 +29,9 @@ export class DeletePropertyRoute implements Route<undefined, Property> {
 
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
+  get middlewares(): Middleware[] {
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,

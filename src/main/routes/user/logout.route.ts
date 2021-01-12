@@ -6,20 +6,19 @@ import { LogoutController } from '@/presentation/controllers'
 import { UserResponse } from '@/domain/protocols'
 import { User } from '@/domain/entities'
 
-export const LogoutPath = new RoutePath(
-  'POST',
-  '/logout'
-)
+export const LogoutPath = new RoutePath('POST', '/logout')
 
 @InjectableRoute(LogoutPath)
 export class LogoutRoute implements Route<Pick<User, 'accessToken'>, UserResponse> {
-  constructor (
+  constructor(
     @InjectRouteController(LogoutController)
     public readonly controller: LogoutController,
 
     @Inject(AuthMiddleware)
     private readonly authMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares(): Middleware[] { return [this.authMiddleware] }
+  get middlewares(): Middleware[] {
+    return [this.authMiddleware]
+  }
 }

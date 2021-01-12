@@ -13,9 +13,9 @@ import { userWithoutPassword } from '@/domain/helpers/user.helper'
 import { Schema, email } from '@/domain/protocols/schema'
 
 @InjectableController()
-export class ResendUserVerificationTokenController implements Controller<undefined, UserVerificationTokenResponse> {
-
-  constructor (
+export class ResendUserVerificationTokenController
+  implements Controller<undefined, UserVerificationTokenResponse> {
+  constructor(
     @Inject()
     private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
 
@@ -24,7 +24,7 @@ export class ResendUserVerificationTokenController implements Controller<undefin
 
     @Inject()
     private readonly encrypter: Encrypter
-  ) { }
+  ) {}
 
   @HandleError
   @Validate({
@@ -34,15 +34,13 @@ export class ResendUserVerificationTokenController implements Controller<undefin
       })
     }
   })
-  async handle (request: HttpRequest): HandleResponse<UserVerificationTokenResponse> {
+  async handle(request: HttpRequest): HandleResponse<UserVerificationTokenResponse> {
     const email = request.query?.email as string
 
     const findedUser = await this.getUserByEmailUseCase.call(email)
-    if (!findedUser)
-      return notFound(new EntityNotFoundError('User'))
+    if (!findedUser) return notFound(new EntityNotFoundError('User'))
 
-    if (findedUser.verified)
-      return badRequest(new UserAlreadyVerifiedError())
+    if (findedUser.verified) return badRequest(new UserAlreadyVerifiedError())
 
     const verificationToken = await this.encrypter.encrypt(findedUser.id)
 

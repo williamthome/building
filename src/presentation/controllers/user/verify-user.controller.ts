@@ -17,8 +17,7 @@ import { Schema, string } from '@/domain/protocols/schema'
   usesTransaction: true
 })
 export class VerifyUserController implements Controller<undefined, UserResponse> {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly decrypter: Decrypter,
 
@@ -27,7 +26,7 @@ export class VerifyUserController implements Controller<undefined, UserResponse>
 
     @Inject()
     private readonly verifyUserUseCase: VerifyUserUseCase
-  ) { }
+  ) {}
 
   @HandleError
   @Validate({
@@ -37,19 +36,17 @@ export class VerifyUserController implements Controller<undefined, UserResponse>
       })
     }
   })
-  async handle (request: HttpRequest): HandleResponse<UserResponse> {
+  async handle(request: HttpRequest): HandleResponse<UserResponse> {
     const token = request.query?.token as string
 
     const requestUserId = await this.decrypter.decrypt(token)
 
     const findedUser = await this.getUserByIdUseCase.call(requestUserId)
-    if (!findedUser)
-      return notFound(new EntityNotFoundError('User'))
+    if (!findedUser) return notFound(new EntityNotFoundError('User'))
 
-    if (findedUser.verified)
-      return badRequest(new UserAlreadyVerifiedError())
+    if (findedUser.verified) return badRequest(new UserAlreadyVerifiedError())
 
-    const findedUserVerified = await this.verifyUserUseCase.call(requestUserId) as User
+    const findedUserVerified = (await this.verifyUserUseCase.call(requestUserId)) as User
 
     const findedUserWithoutPassword = userWithoutPassword(findedUserVerified)
 

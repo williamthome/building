@@ -3,11 +3,7 @@ import { Inject } from '@/shared/dependency-injection'
 import { CollectionName } from '@/shared/types'
 // > In: presentation layer
 import { forbidden } from '../factories/http.factory'
-import {
-  HttpRequest,
-  HttpResponse,
-  RequestFile
-} from '../protocols'
+import { HttpRequest, HttpResponse, RequestFile } from '../protocols'
 import { PlanLimitExceededError } from '../errors'
 import { bytesToMB } from './file.helper'
 // < Out: only domain layer
@@ -17,7 +13,6 @@ import { Member } from '@/domain/entities/nested'
 import { planLimitCollectionName, PlanLimits } from '@/domain/protocols'
 
 class ValidationHelper {
-
   @Inject()
   private readonly getEntityCountForPlanLimitUseCase!: GetEntityCountForPlanLimitUseCase
 
@@ -32,9 +27,10 @@ class ValidationHelper {
     const activeCompanyPlanLimits = httpRequest.activeCompanyInfo?.limit as Plan['limit']
     const limitedCollectionName = planLimitCollectionName[limited]
     if (typeof activeCompanyPlanLimits !== 'undefined' && activeCompanyPlanLimits !== 'unlimited') {
-      const activeCompanyLimitValue = payload !== undefined
-        ? payload
-        : await this.companyEntityCount(httpRequest, limitedCollectionName)
+      const activeCompanyLimitValue =
+        payload !== undefined
+          ? payload
+          : await this.companyEntityCount(httpRequest, limitedCollectionName)
       if (activeCompanyLimitValue >= activeCompanyPlanLimits[limited])
         return forbidden(new PlanLimitExceededError(limitedCollectionName))
     }
@@ -49,9 +45,7 @@ class ValidationHelper {
       return activeCompanyMembers.length
     } else {
       const activeCompanyId = httpRequest.activeCompanyInfo?.id as Company['id']
-      return await this.getEntityCountForPlanLimitUseCase.call(
-        collectionName, activeCompanyId
-      )
+      return await this.getEntityCountForPlanLimitUseCase.call(collectionName, activeCompanyId)
     }
   }
 
@@ -65,22 +59,24 @@ class ValidationHelper {
     if (files.length === 0) return
 
     const totalRequestFilesSizeInBytes = requestFiles.reduce(
-      (total, { buffer }) => total + buffer.byteLength, 0
+      (total, { buffer }) => total + buffer.byteLength,
+      0
     )
     const totalRequestFilesSizeInMegabytes = bytesToMB(totalRequestFilesSizeInBytes)
     const totalProjectFilesSizeInBytes = files.reduce(
-      (total, { sizeInBytes }) => total + sizeInBytes, 0
+      (total, { sizeInBytes }) => total + sizeInBytes,
+      0
     )
     const totalProjectFilesSizeInMegabytes = bytesToMB(totalProjectFilesSizeInBytes)
-    const totalFilesSizeInMegabytes = totalRequestFilesSizeInMegabytes + totalProjectFilesSizeInMegabytes
+    const totalFilesSizeInMegabytes =
+      totalRequestFilesSizeInMegabytes + totalProjectFilesSizeInMegabytes
 
     const storageValidationError = await this.validateEntityPlanLimit(
       httpRequest,
       'storageMb',
       totalFilesSizeInMegabytes
     )
-    if (storageValidationError)
-      return storageValidationError
+    if (storageValidationError) return storageValidationError
   }
 }
 

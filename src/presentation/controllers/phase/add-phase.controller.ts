@@ -14,14 +14,13 @@ import { userIsMember } from '@/domain/helpers/user.helper'
 
 @InjectableController()
 export class AddPhaseController implements Controller<CreatePhaseDto, Phase> {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly addPhaseUseCase: AddPhaseUseCase,
 
     @Inject()
     private readonly getBuildingByIdUseCase: GetBuildingByIdUseCase
-  ) { }
+  ) {}
 
   @HandleError
   @Validate({
@@ -30,7 +29,7 @@ export class AddPhaseController implements Controller<CreatePhaseDto, Phase> {
       schema: phaseSchema
     }
   })
-  async handle (request: HttpRequest<CreatePhaseDto>): HandleResponse<Phase> {
+  async handle(request: HttpRequest<CreatePhaseDto>): HandleResponse<Phase> {
     const activeCompanyId = request.activeCompanyInfo?.id as Company['id']
     const activeCompanyMembers = request.activeCompanyInfo?.members as Member[]
     const createPhaseDto = request.body as CreatePhaseDto
@@ -40,8 +39,7 @@ export class AddPhaseController implements Controller<CreatePhaseDto, Phase> {
     const { buildingId, participantIds } = createPhaseDto
 
     const findedBuilding = await this.getBuildingByIdUseCase.call(buildingId)
-    if (!findedBuilding)
-      return notFound(new EntityNotFoundError('Building'))
+    if (!findedBuilding) return notFound(new EntityNotFoundError('Building'))
 
     for (const participantId of participantIds) {
       if (!userIsMember(activeCompanyMembers, participantId))

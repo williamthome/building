@@ -11,11 +11,10 @@ import { Company, companySchema, UpdateCompanyDto } from '@/domain/entities'
 
 @InjectableController()
 export class UpdateCompanyController implements Controller<UpdateCompanyDto, Company> {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly updateCompanyUseCase: UpdateCompanyUseCase
-  ) { }
+  ) {}
 
   @HandleError
   @Validate({
@@ -27,13 +26,12 @@ export class UpdateCompanyController implements Controller<UpdateCompanyDto, Com
       }
     }
   })
-  async handle (request: HttpRequest<UpdateCompanyDto>): HandleResponse<Company> {
+  async handle(request: HttpRequest<UpdateCompanyDto>): HandleResponse<Company> {
     const activeCompanyId = request.activeCompanyInfo?.id as Company['id']
     const updateCompanyDto = request.body as UpdateCompanyDto
 
     const updatedCompany = await this.updateCompanyUseCase.call(activeCompanyId, updateCompanyDto)
-    if (!updatedCompany)
-      return notFound(new EntityNotFoundError('Company'))
+    if (!updatedCompany) return notFound(new EntityNotFoundError('Company'))
 
     return ok(updatedCompany)
   }

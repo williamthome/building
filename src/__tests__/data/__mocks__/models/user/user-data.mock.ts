@@ -16,6 +16,6 @@ export const mockUserData = (dto?: CreateUserData | UpdateUserData): UserData =>
       state: fakeData.address.state()
     },
     activeCompanyId: fakeData.entity.id(),
-    ...dto,
+    ...dto
   }
 }

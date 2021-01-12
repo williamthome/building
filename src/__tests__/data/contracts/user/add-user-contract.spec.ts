@@ -1,7 +1,11 @@
 import container from '@/shared/dependency-injection'
 import { AddUserContract } from '@/data/contracts'
 import { UserData, CreateUserData } from '@/data/models'
-import { AddUnverifiedRepositorySpy, AddUserRepositorySpy, HasherSpy } from '@/__tests__/data/__spys__'
+import {
+  AddUnverifiedRepositorySpy,
+  AddUserRepositorySpy,
+  HasherSpy
+} from '@/__tests__/data/__spys__'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
 import { EncrypterSpy } from '@/__tests__/domain/__spys__/cryptography'
 import { mockCreateUserDto } from '@/__tests__/domain/__mocks__/entities'
@@ -20,7 +24,9 @@ const makeSut = (): SutTypes => {
   const hasherSpy = container.resolve<HasherSpy>('hasher')
   const addUserRepositorySpy = container.resolve<AddUserRepositorySpy>('addUserRepository')
   const encrypterSpy = container.resolve<EncrypterSpy>('encrypter')
-  const addUnverifiedRepositorySpy = container.resolve<AddUnverifiedRepositorySpy>('addUnverifiedRepository')
+  const addUnverifiedRepositorySpy = container.resolve<AddUnverifiedRepositorySpy>(
+    'addUnverifiedRepository'
+  )
   const sut = container.resolve(AddUserContract)
   return {
     sut,

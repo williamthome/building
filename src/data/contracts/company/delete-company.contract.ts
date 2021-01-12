@@ -15,8 +15,7 @@ import { DeleteCompanyUseCase } from '@/domain/usecases'
 
 @Injectable('deleteCompanyUseCase')
 export class DeleteCompanyContract implements DeleteCompanyUseCase {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly deleteCompanyRepository: DeleteCompanyRepository,
 
@@ -34,7 +33,7 @@ export class DeleteCompanyContract implements DeleteCompanyUseCase {
 
     @Inject()
     private readonly updateUserActiveCompanyRepository: UpdateUserActiveCompanyRepository
-  ) { }
+  ) {}
 
   call = async (id: Company['id']): Promise<Company | null> => {
     const company = await this.deleteCompanyRepository.deleteCompany(id)

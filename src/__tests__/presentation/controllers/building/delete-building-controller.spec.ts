@@ -24,7 +24,9 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const deleteBuildingUseCaseSpy = container.resolve<DeleteBuildingUseCaseSpy>('deleteBuildingUseCase')
+  const deleteBuildingUseCaseSpy = container.resolve<DeleteBuildingUseCaseSpy>(
+    'deleteBuildingUseCase'
+  )
   const sut = container.resolve(DeleteBuildingController)
   return {
     sut,

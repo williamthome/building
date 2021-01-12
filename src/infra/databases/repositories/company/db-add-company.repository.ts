@@ -5,14 +5,12 @@ import { AddCompanyRepository } from '@/data/repositories'
 
 @Injectable('addCompanyRepository')
 export class DbAddCompanyRepository implements AddCompanyRepository {
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
   addCompany = async (dto: CreateCompanyData): Promise<CompanyData> => {
     return await this.db.addOne({
       collectionName: 'companies',
-      dto,
+      dto
     })
   }
 }

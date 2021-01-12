@@ -9,19 +9,18 @@ import { CompanyRole, UserFeatures } from '@/shared/constants'
 
 @Injectable('addCompanyUseCase')
 export class AddCompanyContract implements AddCompanyUseCase {
-
-  constructor (
-    @Inject() private readonly addCompanyRepository: AddCompanyRepository
-  ) {}
+  constructor(@Inject() private readonly addCompanyRepository: AddCompanyRepository) {}
 
   call = async (dto: CreateCompanyDto, loggedUserId: User['id']): Promise<Company> => {
     return await this.addCompanyRepository.addCompany({
       ...dto,
-      members: [{
-        userId: loggedUserId,
-        companyRole: CompanyRole.owner,
-        features: UserFeatures.None
-      }]
+      members: [
+        {
+          userId: loggedUserId,
+          companyRole: CompanyRole.owner,
+          features: UserFeatures.None
+        }
+      ]
     })
   }
 }

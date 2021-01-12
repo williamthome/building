@@ -10,11 +10,10 @@ import { Building, buildingSchema, Company, CreateBuildingDto } from '@/domain/e
 
 @InjectableController()
 export class AddBuildingController implements Controller<CreateBuildingDto, Building> {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly addBuildingUseCase: AddBuildingUseCase
-  ) { }
+  ) {}
 
   @HandleError
   @Validate({
@@ -23,7 +22,7 @@ export class AddBuildingController implements Controller<CreateBuildingDto, Buil
       schema: buildingSchema
     }
   })
-  async handle (request: HttpRequest<CreateBuildingDto>): HandleResponse<Building> {
+  async handle(request: HttpRequest<CreateBuildingDto>): HandleResponse<Building> {
     const activeCompanyId = request.activeCompanyInfo?.id as Company['id']
     const createBuildingDto = request.body as CreateBuildingDto
 

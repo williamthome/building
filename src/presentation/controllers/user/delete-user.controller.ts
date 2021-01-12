@@ -15,18 +15,14 @@ import { userWithoutPassword } from '@/domain/helpers/user.helper'
   usesTransaction: true
 })
 export class DeleteUserController implements Controller<undefined, UserResponse> {
-
-  constructor (
-    @Inject() private readonly deleteUserUseCase: DeleteUserUseCase
-  ) { }
+  constructor(@Inject() private readonly deleteUserUseCase: DeleteUserUseCase) {}
 
   @HandleError
-  async handle (request: HttpRequest): HandleResponse<UserResponse> {
+  async handle(request: HttpRequest): HandleResponse<UserResponse> {
     const loggedUserId = request.loggedUserInfo?.id as User['id']
 
     const deletedUser = await this.deleteUserUseCase.call(loggedUserId)
-    if (!deletedUser)
-      return notFound(new EntityNotFoundError('User'))
+    if (!deletedUser) return notFound(new EntityNotFoundError('User'))
 
     const deletedUserWithoutPassword = userWithoutPassword(deletedUser)
 

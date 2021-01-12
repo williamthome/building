@@ -3,7 +3,7 @@ import { UpdateUserAccessTokenUseCase } from '@/domain/usecases'
 
 export class UpdateUserAccessTokenUseCaseSpy implements UpdateUserAccessTokenUseCase {
   id?: User['id']
-  accessToken?:  User['accessToken']
+  accessToken?: User['accessToken']
   shouldThrow = false
 
   call = async (id: User['id'], accessToken: User['accessToken']): Promise<void> => {

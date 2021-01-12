@@ -6,7 +6,10 @@ import { HttpRequest } from '@/presentation/protocols'
 import { EntityNotFoundError, PasswordDoNotMatchError } from '@/presentation/errors'
 // < Out: only domain layer
 import { mockAuthentication } from '@/__tests__/domain/__mocks__/entities'
-import { GetUserByEmailUseCaseSpy, UpdateUserAccessTokenUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
+import {
+  GetUserByEmailUseCaseSpy,
+  UpdateUserAccessTokenUseCaseSpy
+} from '@/__tests__/domain/__spys__/usecases'
 import { EncrypterSpy, HashComparerSpy } from '@/__tests__/domain/__spys__/cryptography'
 import { User, Authentication } from '@/domain/entities'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
@@ -20,9 +23,9 @@ const mockHttpRequest = (): HttpRequest<Authentication> => ({
 
 interface SutTypes {
   sut: AuthenticationController
-  getUserByEmailUseCase: GetUserByEmailUseCaseSpy,
-  hashComparer: HashComparerSpy,
-  encrypter: EncrypterSpy,
+  getUserByEmailUseCase: GetUserByEmailUseCaseSpy
+  hashComparer: HashComparerSpy
+  encrypter: EncrypterSpy
   updateUserAccessTokenUseCase: UpdateUserAccessTokenUseCaseSpy
 }
 
@@ -30,7 +33,9 @@ const makeSut = (): SutTypes => {
   const getUserByEmailUseCase = container.resolve<GetUserByEmailUseCaseSpy>('getUserByEmailUseCase')
   const hashComparer = container.resolve<HashComparerSpy>('hashComparer')
   const encrypter = container.resolve<EncrypterSpy>('encrypter')
-  const updateUserAccessTokenUseCase = container.resolve<UpdateUserAccessTokenUseCaseSpy>('updateUserAccessTokenUseCase')
+  const updateUserAccessTokenUseCase = container.resolve<UpdateUserAccessTokenUseCaseSpy>(
+    'updateUserAccessTokenUseCase'
+  )
   const sut = container.resolve(AuthenticationController)
   return {
     sut,
@@ -48,7 +53,10 @@ describe('AddUser Controller', () => {
     container.define('getUserByEmailUseCase').asNewable(GetUserByEmailUseCaseSpy).done()
     container.define('hashComparer').asNewable(HashComparerSpy).done()
     container.define('encrypter').asNewable(EncrypterSpy).done()
-    container.define('updateUserAccessTokenUseCase').asNewable(UpdateUserAccessTokenUseCaseSpy).done()
+    container
+      .define('updateUserAccessTokenUseCase')
+      .asNewable(UpdateUserAccessTokenUseCaseSpy)
+      .done()
     container.define(AuthenticationController).asNewable(AuthenticationController).done()
   })
 
@@ -101,7 +109,10 @@ describe('AddUser Controller', () => {
     it('should been called with right values', async () => {
       const { sut, encrypter, getUserByEmailUseCase } = makeSut()
       const httpRequest = mockHttpRequest()
-      getUserByEmailUseCase.override = { password: httpRequest.body?.password, accessToken: undefined }
+      getUserByEmailUseCase.override = {
+        password: httpRequest.body?.password,
+        accessToken: undefined
+      }
       await sut.handle(httpRequest)
       expect(encrypter.plaintext).toEqual(getUserByEmailUseCase.user?.id)
     })
@@ -109,7 +120,10 @@ describe('AddUser Controller', () => {
     it('should return server error if throws', async () => {
       const { sut, encrypter, getUserByEmailUseCase } = makeSut()
       const httpRequest = mockHttpRequest()
-      getUserByEmailUseCase.override = { password: httpRequest.body?.password, accessToken: undefined }
+      getUserByEmailUseCase.override = {
+        password: httpRequest.body?.password,
+        accessToken: undefined
+      }
       encrypter.shouldThrow = true
       const response = await sut.handle(httpRequest)
       expect(response).toEqual(serverError(new Error()))
@@ -120,7 +134,10 @@ describe('AddUser Controller', () => {
     it('should been called with right values', async () => {
       const { sut, updateUserAccessTokenUseCase, getUserByEmailUseCase, encrypter } = makeSut()
       const httpRequest = mockHttpRequest()
-      getUserByEmailUseCase.override = { password: httpRequest.body?.password, accessToken: undefined }
+      getUserByEmailUseCase.override = {
+        password: httpRequest.body?.password,
+        accessToken: undefined
+      }
       await sut.handle(httpRequest)
       expect(updateUserAccessTokenUseCase.id).toEqual(getUserByEmailUseCase.user?.id)
       expect(updateUserAccessTokenUseCase.accessToken).toEqual(encrypter.encrypted)
@@ -129,7 +146,10 @@ describe('AddUser Controller', () => {
     it('should return server error if throws', async () => {
       const { sut, updateUserAccessTokenUseCase, getUserByEmailUseCase } = makeSut()
       const httpRequest = mockHttpRequest()
-      getUserByEmailUseCase.override = { password: httpRequest.body?.password, accessToken: undefined }
+      getUserByEmailUseCase.override = {
+        password: httpRequest.body?.password,
+        accessToken: undefined
+      }
       updateUserAccessTokenUseCase.shouldThrow = true
       const response = await sut.handle(httpRequest)
       expect(response).toEqual(serverError(new Error()))
@@ -139,7 +159,10 @@ describe('AddUser Controller', () => {
   it('shold return authenticated user', async () => {
     const { sut, getUserByEmailUseCase, encrypter } = makeSut()
     const httpRequest = mockHttpRequest()
-    getUserByEmailUseCase.override = { password: httpRequest.body?.password, accessToken: undefined }
+    getUserByEmailUseCase.override = {
+      password: httpRequest.body?.password,
+      accessToken: undefined
+    }
     const response = await sut.handle(httpRequest)
     expect(response).toEqual(ok(userWithoutPassword(getUserByEmailUseCase.user as User)))
     expect((response.body as User).accessToken).toBe(encrypter.encrypted)

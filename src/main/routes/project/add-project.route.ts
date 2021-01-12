@@ -11,16 +11,13 @@ import { AddProjectController } from '@/presentation/controllers'
 import { CreateProjectDto, Project } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 
-export const addProjectPath = new RoutePath(
-  'POST',
-  '/project'
-)
+export const addProjectPath = new RoutePath('POST', '/project')
 
 @InjectableRoute(addProjectPath)
 export class AddProjectRoute implements Route<CreateProjectDto, Project> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageProjects)
 
-  constructor (
+  constructor(
     @InjectRouteController(AddProjectController)
     public readonly controller: AddProjectController,
 
@@ -32,9 +29,9 @@ export class AddProjectRoute implements Route<CreateProjectDto, Project> {
 
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
+  get middlewares(): Middleware[] {
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,

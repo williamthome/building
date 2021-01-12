@@ -25,9 +25,11 @@ describe(`AddCompany Route > ${addCompanyPath.describe}`, () => {
     await request(dbUtils.webServer.server())
       .post(addCompanyPath.urn)
       .set(HttpHeaderName.AUTHORIZATION, dbUtils.authorizationToken)
-      .send(mockCreateCompanyDto({
-        planId: dbUtils.plan.id
-      }))
+      .send(
+        mockCreateCompanyDto({
+          planId: dbUtils.plan.id
+        })
+      )
       .expect(HttpStatusCode.OK)
   })
 })

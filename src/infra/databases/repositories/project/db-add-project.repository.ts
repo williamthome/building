@@ -5,10 +5,7 @@ import { AddProjectRepository } from '@/data/repositories'
 
 @Injectable('addProjectRepository')
 export class DbAddProjectRepository implements AddProjectRepository {
-
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
   addProject = async (dto: CreateProjectData): Promise<ProjectData> => {
     return await this.db.addOne({

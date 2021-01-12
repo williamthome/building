@@ -6,7 +6,7 @@ declare module 'fastify' {
     RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
     RawServer extends RawServerBase = RawServerDefault,
     RawRequest extends RawRequestDefaultExpression<RawServer> = RawRequestDefaultExpression<RawServer>
-    > {
+  > {
     loggedUserInfo?: LoggedUserInfo
     activeCompanyInfo?: ActiveCompanyInfo
     files?: RequestFile[]

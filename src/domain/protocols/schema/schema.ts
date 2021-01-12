@@ -2,10 +2,10 @@ import { ValidateSchemaOptions } from './schema.protocol'
 import { validateSchemas, isDefined } from '../../helpers/validate.helper'
 
 export class Schema<TSchemas> {
-  constructor (protected readonly schemas: TSchemas) { }
+  constructor(protected readonly schemas: TSchemas) {}
 
-  validate = <T> (
-    obj: any,
+  validate = <T extends Record<string, unknown>>(
+    obj: T,
     opts?: ValidateSchemaOptions<T>
   ): void | string => {
     const allKeys = opts?.allKeys ?? true
@@ -13,14 +13,8 @@ export class Schema<TSchemas> {
     const messageIfNotTruthy = opts?.customMessageIfNotTruthy ?? 'Object must be truthy'
     const bannedFields = opts?.bannedFields ?? []
 
-    if (mustBeTruthy && !isDefined(obj))
-      return messageIfNotTruthy
+    if (mustBeTruthy && !isDefined(obj)) return messageIfNotTruthy
 
-    return validateSchemas(
-      this.schemas,
-      obj,
-      allKeys,
-      bannedFields
-    )
+    return validateSchemas(this.schemas, obj, allKeys, bannedFields)
   }
 }

@@ -5,10 +5,7 @@ import { GetFilesByReferenceIdRepository } from '@/data/repositories'
 
 @Injectable('getFilesByReferenceIdRepository')
 export class DbGetFilesByReferenceIdRepository implements GetFilesByReferenceIdRepository {
-
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
   getFilesByReferenceId = async (id: string): Promise<FileData[]> => {
     return await this.db.getMany<FileData, 'referenceId'>({

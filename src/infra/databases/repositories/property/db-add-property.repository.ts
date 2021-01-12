@@ -5,10 +5,7 @@ import { AddPropertyRepository } from '@/data/repositories'
 
 @Injectable('addPropertyRepository')
 export class DbAddPropertyRepository implements AddPropertyRepository {
-
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
   addProperty = async (dto: CreatePropertyData): Promise<PropertyData> => {
     return await this.db.addOne({

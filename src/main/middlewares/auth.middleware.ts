@@ -9,30 +9,24 @@ import { authorizationToken, okMiddleware } from '../helpers/middleware.helper'
 
 @Injectable()
 export class AuthMiddleware implements Middleware {
-
-  constructor (
+  constructor(
     @Inject() private readonly getUserByAccessTokenUseCase: GetUserByAccessTokenUseCase
-  ) { }
+  ) {}
 
   @HandleError
-  async handle<T> (httpRequest: HttpRequest<T>): MiddlewareResponse {
+  async handle<T>(httpRequest: HttpRequest<T>): MiddlewareResponse {
     const accessToken = authorizationToken(httpRequest)
-    if (!accessToken)
-      return unauthorized()
+    if (!accessToken) return unauthorized()
 
     const user = await this.getUserByAccessTokenUseCase.call(accessToken)
-    if (!user)
-      return notFound(new EntityNotFoundError('User'))
+    if (!user) return notFound(new EntityNotFoundError('User'))
 
-    return okMiddleware(
-      httpRequest,
-      {
-        loggedUserInfo: {
-          id: user.id,
-          verified: user.verified,
-          activeCompanyId: user.activeCompanyId
-        }
+    return okMiddleware(httpRequest, {
+      loggedUserInfo: {
+        id: user.id,
+        verified: user.verified,
+        activeCompanyId: user.activeCompanyId
       }
-    )
+    })
   }
 }

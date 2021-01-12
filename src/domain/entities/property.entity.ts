@@ -1,4 +1,9 @@
-import { ExtractDto, ExtractEntity, ExtractUpdateDto, limitedEntitySchema } from '../protocols/entity.protocol'
+import {
+  ExtractDto,
+  ExtractEntity,
+  ExtractUpdateDto,
+  limitedEntitySchema
+} from '../protocols/entity.protocol'
 import { object } from '../protocols/schema'
 import { addressSchema } from './nested'
 

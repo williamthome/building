@@ -14,10 +14,7 @@ import { Schema, string } from '@/domain/protocols/schema'
   usesTransaction: true
 })
 export class DeleteBuildingController implements Controller<undefined, Building> {
-
-  constructor (
-    @Inject() private readonly deleteBuildingUseCase: DeleteBuildingUseCase
-  ) { }
+  constructor(@Inject() private readonly deleteBuildingUseCase: DeleteBuildingUseCase) {}
 
   @HandleError
   @Validate({
@@ -27,12 +24,11 @@ export class DeleteBuildingController implements Controller<undefined, Building>
       })
     }
   })
-  async handle (request: HttpRequest): HandleResponse<Building> {
+  async handle(request: HttpRequest): HandleResponse<Building> {
     const buildingId = request.params?.id as Building['id']
 
     const deletedBuilding = await this.deleteBuildingUseCase.call(buildingId)
-    if (!deletedBuilding)
-      return notFound(new EntityNotFoundError('Building'))
+    if (!deletedBuilding) return notFound(new EntityNotFoundError('Building'))
 
     return ok(deletedBuilding)
   }

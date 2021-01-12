@@ -11,8 +11,7 @@ import { Authentication, authenticationSchema } from '@/domain/entities'
 
 @InjectableController()
 export class AuthenticationController implements Controller<Authentication, UserResponse> {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
 
@@ -24,7 +23,7 @@ export class AuthenticationController implements Controller<Authentication, User
 
     @Inject()
     private readonly updateUserAccessTokenUseCase: UpdateUserAccessTokenUseCase
-  ) { }
+  ) {}
 
   @HandleError
   @Validate({
@@ -32,19 +31,17 @@ export class AuthenticationController implements Controller<Authentication, User
       schema: authenticationSchema
     }
   })
-  async handle (request: HttpRequest<Authentication>): HandleResponse<UserResponse> {
+  async handle(request: HttpRequest<Authentication>): HandleResponse<UserResponse> {
     const authentication = request.body as Authentication
 
     const findedUser = await this.getUserByEmailUseCase.call(authentication.email)
-    if (!findedUser)
-      return notFound(new EntityNotFoundError('User'))
+    if (!findedUser) return notFound(new EntityNotFoundError('User'))
 
     const passwordMatch = await this.hashComparer.match(
       authentication.password,
       findedUser.password
     )
-    if (!passwordMatch)
-      return badRequest(new PasswordDoNotMatchError())
+    if (!passwordMatch) return badRequest(new PasswordDoNotMatchError())
 
     if (!findedUser.accessToken) {
       const accessToken = await this.encrypter.encrypt(findedUser.id)

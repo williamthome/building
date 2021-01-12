@@ -15,9 +15,7 @@ export class UpdateUserRepositorySpy implements UpdateUserRepository {
 
     if (this.shouldThrow) throw new Error()
 
-    this.user = this.shouldReturnNull
-      ? null
-      : mockUserData(dto)
+    this.user = this.shouldReturnNull ? null : mockUserData(dto)
 
     return this.user
   }

@@ -12,10 +12,7 @@ import { Schema, string } from '@/domain/protocols/schema'
 
 @InjectableController()
 export class UpdateCustomerController implements Controller<UpdateCustomerDto, Customer> {
-
-  constructor (
-    @Inject() private readonly updateCustomerUseCase: UpdateCustomerUseCase
-  ) { }
+  constructor(@Inject() private readonly updateCustomerUseCase: UpdateCustomerUseCase) {}
 
   @HandleError
   @Validate({
@@ -23,7 +20,7 @@ export class UpdateCustomerController implements Controller<UpdateCustomerDto, C
       schema: customerSchema,
       options: {
         allKeys: false
-      },
+      }
     },
     params: {
       schema: new Schema({
@@ -31,13 +28,12 @@ export class UpdateCustomerController implements Controller<UpdateCustomerDto, C
       })
     }
   })
-  async handle (request: HttpRequest<UpdateCustomerDto>): HandleResponse<Customer> {
+  async handle(request: HttpRequest<UpdateCustomerDto>): HandleResponse<Customer> {
     const customerId = request.params?.id as Customer['id']
     const updateCustomerDto = request.body as UpdateCustomerDto
 
     const udpatedCustomer = await this.updateCustomerUseCase.call(customerId, updateCustomerDto)
-    if (!udpatedCustomer)
-      return notFound(new EntityNotFoundError('Customer'))
+    if (!udpatedCustomer) return notFound(new EntityNotFoundError('Customer'))
 
     return ok(udpatedCustomer)
   }

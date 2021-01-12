@@ -8,10 +8,10 @@ const plaintext = fakeData.entity.password()
 const digest = `${plaintext}_hashed`
 
 jest.mock('bcrypt', () => ({
-  async hash (): Promise<string> {
+  async hash(): Promise<string> {
     return await Promise.resolve(digest)
   },
-  async compare (): Promise<boolean> {
+  async compare(): Promise<boolean> {
     return await Promise.resolve(true)
   }
 }))
@@ -47,7 +47,9 @@ describe('Bcrypt Adapter', () => {
 
     test('Should throw if method throws', async () => {
       const { sut } = makeSut()
-      jest.spyOn(bcrypt, 'hash').mockImplementationOnce(() => { throw new Error() })
+      jest.spyOn(bcrypt, 'hash').mockImplementationOnce(() => {
+        throw new Error()
+      })
       await expect(sut.hash(plaintext)).rejects.toThrow()
     })
   })
@@ -75,7 +77,9 @@ describe('Bcrypt Adapter', () => {
 
     test('Should throw if method throws', async () => {
       const { sut } = makeSut()
-      jest.spyOn(bcrypt, 'compare').mockImplementationOnce(() => { throw new Error() })
+      jest.spyOn(bcrypt, 'compare').mockImplementationOnce(() => {
+        throw new Error()
+      })
       await expect(sut.match(plaintext, plaintext)).rejects.toThrow()
     })
   })

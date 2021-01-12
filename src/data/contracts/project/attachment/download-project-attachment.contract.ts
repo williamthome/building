@@ -9,19 +9,17 @@ import { File, Project } from '@/domain/entities'
 
 @Injectable('downloadProjectAttachmentUseCase')
 export class DownloadProjectAttachmentContract implements DownloadProjectAttachmentUseCase {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly getFileByIdRepository: GetFileByIdRepository,
 
     @Inject()
     private readonly downloadProjectAttachmentBucket: DownloadProjectAttachmentBucket
-  ) { }
+  ) {}
 
   call = async (projectId: Project['id'], attachmentId: File['id']): Promise<Buffer | null> => {
     const attachment = await this.getFileByIdRepository.getFileById(attachmentId)
-    if (!attachment)
-      return null
+    if (!attachment) return null
 
     return await this.downloadProjectAttachmentBucket.downloadProjectAttachment(
       projectId,

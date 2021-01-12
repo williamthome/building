@@ -13,14 +13,13 @@ import { idStringSchema } from '@/domain/protocols'
 
 @InjectableController()
 export class UpdateUserActiveCompanyController implements Controller<undefined, null> {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly getCompanyByIdUseCase: GetCompanyByIdUseCase,
 
     @Inject()
     private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase
-  ) { }
+  ) {}
 
   @HandleError
   @Validate({
@@ -30,17 +29,17 @@ export class UpdateUserActiveCompanyController implements Controller<undefined, 
       })
     }
   })
-  async handle (request: HttpRequest): HandleResponse {
+  async handle(request: HttpRequest): HandleResponse {
     const loggedUserId = request.loggedUserInfo?.id as User['id']
     const companyId = request.params?.companyId as Company['id']
 
     const findedCompany = await this.getCompanyByIdUseCase.call(companyId)
-    if (!findedCompany)
-      return notFound(new EntityNotFoundError('Company'))
+    if (!findedCompany) return notFound(new EntityNotFoundError('Company'))
 
-    const loggedUserAsMemberOfFindedCompany = findedCompany.members.find(companyMember => loggedUserId === companyMember.userId)
-    if (!loggedUserAsMemberOfFindedCompany)
-      return forbidden(new AccessDeniedError())
+    const loggedUserAsMemberOfFindedCompany = findedCompany.members.find(
+      (companyMember) => loggedUserId === companyMember.userId
+    )
+    if (!loggedUserAsMemberOfFindedCompany) return forbidden(new AccessDeniedError())
 
     await this.updateUserActiveCompanyUseCase.call(loggedUserId, companyId)
 

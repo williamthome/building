@@ -11,16 +11,13 @@ import { DeleteCompanyController } from '@/presentation/controllers'
 import { Company } from '@/domain/entities'
 import { CompanyRole } from '@/shared/constants'
 
-export const deleteCompanyPath = new RoutePath(
-  'DELETE',
-  '/company'
-)
+export const deleteCompanyPath = new RoutePath('DELETE', '/company')
 
 @InjectableRoute(deleteCompanyPath)
 export class DeleteCompanyRoute implements Route<undefined, Company> {
   companyRoleMiddleware = new CompanyRoleMiddleware(CompanyRole.owner)
 
-  constructor (
+  constructor(
     @InjectRouteController(DeleteCompanyController)
     public readonly controller: DeleteCompanyController,
 
@@ -32,9 +29,9 @@ export class DeleteCompanyRoute implements Route<undefined, Company> {
 
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
+  get middlewares(): Middleware[] {
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,

@@ -17,10 +17,7 @@ describe(`UpdateBuilding Route > ${updateBuildingPath.describe}`, () => {
     await dbUtils.stop()
   })
 
-  const makeURN = (): string => updateBuildingPath
-    .fillURN()
-    .params({ id: dbUtils.building.id })
-    .urn
+  const makeURN = (): string => updateBuildingPath.fillURN().params({ id: dbUtils.building.id }).urn
 
   it('shold return ok', async () => {
     await dbUtils.addUser()

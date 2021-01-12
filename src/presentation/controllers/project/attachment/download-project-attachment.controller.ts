@@ -13,11 +13,10 @@ import { idStringSchema } from '@/domain/protocols'
 
 @InjectableController()
 export class DownloadProjectAttachmentController implements Controller<undefined, Buffer> {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly downloadProjectAttachmentUseCase: DownloadProjectAttachmentUseCase
-  ) { }
+  ) {}
 
   @HandleError
   @Validate({
@@ -28,13 +27,15 @@ export class DownloadProjectAttachmentController implements Controller<undefined
       })
     }
   })
-  async handle (request: HttpRequest): HandleResponse<Buffer> {
+  async handle(request: HttpRequest): HandleResponse<Buffer> {
     const projectId = request.params?.id as Project['id']
     const attachmentId = request.params?.attachmentId as File['id']
 
-    const downloadedAttachment = await this.downloadProjectAttachmentUseCase.call(projectId, attachmentId)
-    if (!downloadedAttachment)
-      return notFound(new EntityNotFoundError('File'))
+    const downloadedAttachment = await this.downloadProjectAttachmentUseCase.call(
+      projectId,
+      attachmentId
+    )
+    if (!downloadedAttachment) return notFound(new EntityNotFoundError('File'))
 
     return ok(downloadedAttachment)
   }

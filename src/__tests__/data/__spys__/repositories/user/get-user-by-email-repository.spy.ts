@@ -13,9 +13,7 @@ export class GetUserByEmailRepositorySpy implements GetUserByEmailRepository {
 
     if (this.shouldThrow) throw new Error()
 
-    this.user = this.shouldReturnNull
-      ? null
-      : { ...mockUserData(), email }
+    this.user = this.shouldReturnNull ? null : { ...mockUserData(), email }
 
     return this.user
   }

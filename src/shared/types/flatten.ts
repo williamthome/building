@@ -1,9 +1,7 @@
 export type Flatten<T> = NonObjectPropertiesOf<T> & SubPropertiesOf<T>
 
 export type NonObjectKeysOf<T> = {
-  [K in keyof T]: T[K] extends Array<any>
-  ? K
-  : T[K] extends Record<PropertyKey, any> ? K : K
+  [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends Record<PropertyKey, any> ? K : K
 }[keyof T]
 // export type NonObjectKeysOf<T> = {
 //   [K in keyof T]: T[K] extends Array<any> ?
@@ -14,18 +12,15 @@ export type NonObjectKeysOf<T> = {
 export type NonObjectPropertiesOf<T> = Pick<T, NonObjectKeysOf<T>>
 
 export type ValuesOf<T> = T[keyof T]
-export type ObjectValuesOf<T> = Exclude<
-  Extract<ValuesOf<T>, Record<PropertyKey, any>>,
-  Array<any>
->
+export type ObjectValuesOf<T> = Exclude<Extract<ValuesOf<T>, Record<PropertyKey, any>>, Array<any>>
 
 export type SubPropertiesOf<T> = {
   [K in keyof ObjectValuesOf<T>]: ObjectValuesOf<T>[K]
 }
 
-export type UnionToIntersection<U> = (U extends any
-  ? (k: U) => void
-  : never) extends ((k: infer I) => void)
+export type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
+  k: infer I
+) => void
   ? I
   : never
 

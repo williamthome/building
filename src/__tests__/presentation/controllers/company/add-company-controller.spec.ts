@@ -6,7 +6,7 @@ import { HttpRequest } from '@/presentation/protocols'
 import { EntityNotFoundError } from '@/presentation/errors'
 import { notFound, ok, serverError } from '@/presentation/factories/http.factory'
 // < Out: only domain layer
-import { Company, CreateCompanyDto } from '@/domain/entities'
+import { CreateCompanyDto } from '@/domain/entities'
 import { mockCreateCompanyDto } from '@/__tests__/domain/__mocks__/entities'
 import {
   AddCompanyUseCaseSpy,
@@ -35,7 +35,9 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
   const getPlanByIdUseCaseSpy = container.resolve<GetPlanByIdUseCaseSpy>('getPlanByIdUseCase')
   const addCompanyUseCaseSpy = container.resolve<AddCompanyUseCaseSpy>('addCompanyUseCase')
-  const updateUserActiveCompanyUseCaseSpy = container.resolve<UpdateUserActiveCompanyUseCaseSpy>('updateUserActiveCompanyUseCase')
+  const updateUserActiveCompanyUseCaseSpy = container.resolve<UpdateUserActiveCompanyUseCaseSpy>(
+    'updateUserActiveCompanyUseCase'
+  )
   const sut = container.resolve(AddCompanyController)
   return {
     sut,
@@ -51,7 +53,10 @@ describe('AddCompany Controller', () => {
   beforeEach(() => {
     container.define('getPlanByIdUseCase').asNewable(GetPlanByIdUseCaseSpy).done()
     container.define('addCompanyUseCase').asNewable(AddCompanyUseCaseSpy).done()
-    container.define('updateUserActiveCompanyUseCase').asNewable(UpdateUserActiveCompanyUseCaseSpy).done()
+    container
+      .define('updateUserActiveCompanyUseCase')
+      .asNewable(UpdateUserActiveCompanyUseCaseSpy)
+      .done()
     container.define(AddCompanyController).asNewable(AddCompanyController).done()
   })
 
@@ -97,7 +102,9 @@ describe('AddCompany Controller', () => {
       const { sut, updateUserActiveCompanyUseCaseSpy, addCompanyUseCaseSpy } = makeSut()
       await sut.handle(mockHttpRequest())
       expect(updateUserActiveCompanyUseCaseSpy.id).toEqual(ownerId)
-      expect(updateUserActiveCompanyUseCaseSpy.activeCompanyId).toEqual(addCompanyUseCaseSpy.company?.id)
+      expect(updateUserActiveCompanyUseCaseSpy.activeCompanyId).toEqual(
+        addCompanyUseCaseSpy.company?.id
+      )
     })
 
     it('should return server error if throws', async () => {

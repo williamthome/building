@@ -8,10 +8,7 @@ import { GetAllPlansUseCase } from '@/domain/usecases'
 
 @Injectable('getAllPlansUseCase')
 export class GetAllPlansContract implements GetAllPlansUseCase {
-
-  constructor (
-    @Inject() private readonly getAllPlansRepository: GetAllPlansRepository
-  ) { }
+  constructor(@Inject() private readonly getAllPlansRepository: GetAllPlansRepository) {}
 
   call = async (): Promise<Plan[]> => {
     return await this.getAllPlansRepository.getAllPlans()

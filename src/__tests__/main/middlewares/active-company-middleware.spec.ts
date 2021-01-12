@@ -2,8 +2,15 @@ import container from '@/shared/dependency-injection'
 import fakeData from '@/__tests__/shared/fake-data'
 import { ActiveCompanyMiddleware } from '@/main/middlewares'
 import { badRequest, forbidden, notFound, serverError } from '@/presentation/factories/http.factory'
-import { GetCompanyByIdUseCaseSpy, GetPlanByIdUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
-import { AccessDeniedError, ActiveCompanyIsFalsyError, EntityNotFoundError } from '@/presentation/errors'
+import {
+  GetCompanyByIdUseCaseSpy,
+  GetPlanByIdUseCaseSpy
+} from '@/__tests__/domain/__spys__/usecases'
+import {
+  AccessDeniedError,
+  ActiveCompanyIsFalsyError,
+  EntityNotFoundError
+} from '@/presentation/errors'
 import { HttpStatusCode } from '@/presentation/constants'
 import { HttpRequest } from '@/presentation/protocols'
 import { mockAuthorizationHeader } from '@/__tests__/presentation/__mocks__'
@@ -29,16 +36,20 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const getCompanyByIdUseCaseSpy = container.resolve<GetCompanyByIdUseCaseSpy>('getCompanyByIdUseCase')
+  const getCompanyByIdUseCaseSpy = container.resolve<GetCompanyByIdUseCaseSpy>(
+    'getCompanyByIdUseCase'
+  )
   const getPlanByIdUseCaseSpy = container.resolve<GetPlanByIdUseCaseSpy>('getPlanByIdUseCase')
   const sut = container.resolve(ActiveCompanyMiddleware)
 
   getCompanyByIdUseCaseSpy.override = {
-    members: [{
-      userId: ownerId,
-      companyRole: CompanyRole.owner,
-      features: UserFeatures.None
-    }]
+    members: [
+      {
+        userId: ownerId,
+        companyRole: CompanyRole.owner,
+        features: UserFeatures.None
+      }
+    ]
   }
 
   return {

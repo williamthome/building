@@ -4,7 +4,7 @@ import { Database } from '@/infra/protocols'
 
 @Injectable('app')
 export class Application implements App {
-  constructor (
+  constructor(
     @Inject() public readonly webServer: WebServer,
     @Inject() public readonly db: Database
   ) {

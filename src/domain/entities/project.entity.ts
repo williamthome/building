@@ -1,6 +1,11 @@
 import { ProjectStatus } from '@/shared/constants'
 import { OmitKey } from '@/shared/types'
-import { ExtractDto, ExtractEntity, ExtractUpdateDto, limitedEntitySchema } from '../protocols/entity.protocol'
+import {
+  ExtractDto,
+  ExtractEntity,
+  ExtractUpdateDto,
+  limitedEntitySchema
+} from '../protocols/entity.protocol'
 import { string, number, array } from '../protocols/schema'
 import { CreateFileDto } from './file.entity'
 

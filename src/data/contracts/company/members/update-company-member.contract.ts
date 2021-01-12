@@ -9,12 +9,15 @@ import { Member, UpdateMemberDto } from '@/domain/entities/nested'
 
 @Injectable('updateCompanyMemberUseCase')
 export class UpdateCompanyMemberContract implements UpdateCompanyMemberUseCase {
-
-  constructor (
+  constructor(
     @Inject() private readonly updateCompanyMemberRepository: UpdateCompanyMemberRepository
   ) {}
 
-  call = async (companyId: Company['id'], userId: Member['userId'], dto: UpdateMemberDto): Promise<Company | null> => {
+  call = async (
+    companyId: Company['id'],
+    userId: Member['userId'],
+    dto: UpdateMemberDto
+  ): Promise<Company | null> => {
     return await this.updateCompanyMemberRepository.updateCompanyMember(companyId, userId, dto)
   }
 }

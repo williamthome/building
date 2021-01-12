@@ -1,5 +1,13 @@
 import { addressSchema } from './nested'
-import { ExtractSchema, object, string, boolean, pickSchema, email, schema } from '../protocols/schema'
+import {
+  ExtractSchema,
+  object,
+  string,
+  boolean,
+  pickSchema,
+  email,
+  schema
+} from '../protocols/schema'
 import { optional, reserved } from '../protocols'
 import { entitySchema, ExtractEntity, ExtractUpdateDto } from '../protocols/entity.protocol'
 import { Company } from './company.entity'

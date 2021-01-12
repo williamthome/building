@@ -13,11 +13,10 @@ import { schema, string } from '@/domain/protocols/schema'
 
 @InjectableController()
 export class GetUserByAccessTokenController implements Controller<undefined, UserResponse> {
-
-  constructor (
+  constructor(
     @Inject()
-    private readonly getUserByAccessTokenUseCase: GetUserByAccessTokenUseCase,
-  ) { }
+    private readonly getUserByAccessTokenUseCase: GetUserByAccessTokenUseCase
+  ) {}
 
   @HandleError
   @Validate({
@@ -27,12 +26,11 @@ export class GetUserByAccessTokenController implements Controller<undefined, Use
       })
     }
   })
-  async handle (request: HttpRequest): HandleResponse<UserResponse> {
+  async handle(request: HttpRequest): HandleResponse<UserResponse> {
     const { accessToken } = request.query as { accessToken: string }
 
     const findedUser = await this.getUserByAccessTokenUseCase.call(accessToken)
-    if (!findedUser)
-      return notFound(new EntityNotFoundError('User'))
+    if (!findedUser) return notFound(new EntityNotFoundError('User'))
 
     const findedUserWithoutPassword = userWithoutPassword(findedUser)
 

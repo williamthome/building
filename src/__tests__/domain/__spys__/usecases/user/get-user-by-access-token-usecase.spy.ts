@@ -14,9 +14,7 @@ export class GetUserByAccessTokenUseCaseSpy implements GetUserByAccessTokenUseCa
 
     if (this.shouldThrow) throw new Error()
 
-    this.user = this.shouldReturnNull
-      ? null
-      : { ...mockUser(), accessToken, ...this.override }
+    this.user = this.shouldReturnNull ? null : { ...mockUser(), accessToken, ...this.override }
 
     return this.user
   }

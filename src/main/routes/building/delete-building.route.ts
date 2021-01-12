@@ -11,16 +11,13 @@ import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { DeleteBuildingController } from '@/presentation/controllers'
 import { Building } from '@/domain/entities'
 
-export const deleteBuildingPath = new RoutePath(
-  'DELETE',
-  '/building/:id'
-)
+export const deleteBuildingPath = new RoutePath('DELETE', '/building/:id')
 
 @InjectableRoute(deleteBuildingPath)
 export class DeleteBuildingRoute implements Route<undefined, Building> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageBuildings)
 
-  constructor (
+  constructor(
     @InjectRouteController(DeleteBuildingController)
     public readonly controller: DeleteBuildingController,
 
@@ -32,9 +29,9 @@ export class DeleteBuildingRoute implements Route<undefined, Building> {
 
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
+  get middlewares(): Middleware[] {
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,

@@ -1,5 +1,5 @@
 export class MissingBodyError extends Error {
-  constructor () {
+  constructor() {
     super('Data is required')
     this.name = 'MissingBodyError'
   }

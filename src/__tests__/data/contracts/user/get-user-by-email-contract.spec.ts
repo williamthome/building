@@ -11,7 +11,9 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const getUserByEmailRepositorySpy = container.resolve<GetUserByEmailRepositorySpy>('getUserByEmailRepository')
+  const getUserByEmailRepositorySpy = container.resolve<GetUserByEmailRepositorySpy>(
+    'getUserByEmailRepository'
+  )
   const sut = container.resolve(GetUserByEmailContract)
   return {
     sut,

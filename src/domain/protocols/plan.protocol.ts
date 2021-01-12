@@ -10,21 +10,15 @@ type PlanLimitFields =
   | 'project'
   | 'storageMb'
 
-type PlanValueFields =
-  | 'BRL'
-  | 'USD'
+type PlanValueFields = 'BRL' | 'USD'
 
 export type PlanLimits = { [K in PlanLimitFields]: number }
 
 export type PlanValues = { [K in PlanValueFields]: number }
 
-export type PlanLimit =
-  | 'unlimited'
-  | PlanLimits
+export type PlanLimit = 'unlimited' | PlanLimits
 
-export type PlanValue =
-  | 'free'
-  | PlanValues
+export type PlanValue = 'free' | PlanValues
 
 type PlanLimitCollectionName = { [K in PlanLimitFields]: CollectionName | 'members' }
 

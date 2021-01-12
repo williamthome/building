@@ -5,8 +5,7 @@ import { createFilePath } from '../helpers/storage.helper'
 
 @Injectable('storage')
 export class AmazonStorage implements Storage {
-
-  constructor (
+  constructor(
     @Inject('AWS_ACCESS_KEY_ID')
     private readonly accessKeyId: string,
 
@@ -28,10 +27,7 @@ export class AmazonStorage implements Storage {
     })
   }
 
-  upload = async (
-    file: StorageUploadFile,
-    buffer: Buffer
-  ): Promise<void | Error> => {
+  upload = async (file: StorageUploadFile, buffer: Buffer): Promise<void | Error> => {
     try {
       const key = createFilePath(file).encode()
       await new S3.ManagedUpload({
@@ -48,20 +44,19 @@ export class AmazonStorage implements Storage {
     }
   }
 
-  download = async (
-    file: StorageDownloadFile
-  ): Promise<Buffer> => {
+  download = async (file: StorageDownloadFile): Promise<Buffer> => {
     const path = createFilePath(file)
 
-    const response = await new S3().getObject({
-      Bucket: this.bucket,
-      Key: path.encode()
-    }).promise()
+    const response = await new S3()
+      .getObject({
+        Bucket: this.bucket,
+        Key: path.encode()
+      })
+      .promise()
 
     const { Body, ContentType } = response
 
-    if (Body instanceof Buffer && typeof ContentType === 'string')
-      return Body // Body.toString('base64')
+    if (Body instanceof Buffer && typeof ContentType === 'string') return Body // Body.toString('base64')
 
     throw new Error(`Invalid file format for file ${file.name} in ${file.reference}`)
   }

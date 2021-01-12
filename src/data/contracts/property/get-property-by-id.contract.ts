@@ -8,10 +8,7 @@ import { Property } from '@/domain/entities'
 
 @Injectable('getPropertyByIdUseCase')
 export class GetPropertyByIdContract implements GetPropertyByIdUseCase {
-
-  constructor (
-    @Inject() private readonly getPropertyByIdRepository: GetPropertyByIdRepository
-  ) {}
+  constructor(@Inject() private readonly getPropertyByIdRepository: GetPropertyByIdRepository) {}
 
   call = async (id: Property['id']): Promise<Property | null> => {
     return await this.getPropertyByIdRepository.getPropertyById(id)

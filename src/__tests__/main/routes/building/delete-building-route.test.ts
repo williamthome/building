@@ -16,10 +16,7 @@ describe(`DeleteBuilding Route > ${deleteBuildingPath.describe}`, () => {
     await dbUtils.stop()
   })
 
-  const makeURN = (): string => deleteBuildingPath
-    .fillURN()
-    .params({ id: dbUtils.building.id })
-    .urn
+  const makeURN = (): string => deleteBuildingPath.fillURN().params({ id: dbUtils.building.id }).urn
 
   it('shold return ok', async () => {
     await dbUtils.addUser()

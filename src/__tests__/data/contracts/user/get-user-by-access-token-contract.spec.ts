@@ -17,7 +17,9 @@ interface SutTypes {
 
 const makeSut = (): SutTypes => {
   const decrypterSpy = container.resolve<DecrypterSpy>('decrypter')
-  const getUserByIdRepositorySpy = container.resolve<GetUserByIdRepositorySpy>('getUserByIdRepository')
+  const getUserByIdRepositorySpy = container.resolve<GetUserByIdRepositorySpy>(
+    'getUserByIdRepository'
+  )
   const sut = container.resolve(GetUserByAccessTokenContract)
   return {
     sut,

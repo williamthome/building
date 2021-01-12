@@ -1,5 +1,5 @@
 export class ActiveCompanyIsFalsyError extends Error {
-  constructor () {
+  constructor() {
     super('Active company is falsy')
     this.name = 'ActiveCompanyIsFalsyError'
   }

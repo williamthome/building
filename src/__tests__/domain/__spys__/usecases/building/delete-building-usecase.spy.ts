@@ -9,14 +9,12 @@ export class DeleteBuildingUseCaseSpy implements DeleteBuildingUseCase {
   shouldReturnNull = false
   shouldThrow = false
 
-  call = async (id: Building['id'],): Promise<Building | null> => {
+  call = async (id: Building['id']): Promise<Building | null> => {
     this.id = id
 
     if (this.shouldThrow) throw new Error()
 
-    this.building = this.shouldReturnNull
-      ? null
-      : { ...mockBuilding(), ...this.override }
+    this.building = this.shouldReturnNull ? null : { ...mockBuilding(), ...this.override }
 
     return this.building
   }

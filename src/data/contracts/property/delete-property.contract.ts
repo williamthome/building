@@ -8,10 +8,7 @@ import { DeletePropertyUseCase } from '@/domain/usecases'
 
 @Injectable('deletePropertyUseCase')
 export class DeletePropertyContract implements DeletePropertyUseCase {
-
-  constructor (
-    @Inject() private readonly deletePropertyRepository: DeletePropertyRepository
-  ) {}
+  constructor(@Inject() private readonly deletePropertyRepository: DeletePropertyRepository) {}
 
   call = async (id: Property['id']): Promise<Property | null> => {
     const deletedProperty = await this.deletePropertyRepository.deleteProperty(id)

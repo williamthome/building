@@ -11,16 +11,13 @@ import { RemoveCompanyMemberController } from '@/presentation/controllers'
 import { Company } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 
-export const removeCompanyMemberPath = new RoutePath(
-  'DELETE',
-  '/member/:id'
-)
+export const removeCompanyMemberPath = new RoutePath('DELETE', '/member/:id')
 
 @InjectableRoute(removeCompanyMemberPath)
 export class RemoveCompanyMemberRoute implements Route<undefined, Company> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageCompanyData)
 
-  constructor (
+  constructor(
     @InjectRouteController(RemoveCompanyMemberController)
     public readonly controller: RemoveCompanyMemberController,
 
@@ -32,9 +29,9 @@ export class RemoveCompanyMemberRoute implements Route<undefined, Company> {
 
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
+  get middlewares(): Middleware[] {
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,

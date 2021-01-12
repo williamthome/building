@@ -13,10 +13,7 @@ import { UploadProjectAttachmentController } from '@/presentation/controllers'
 import { UploadFileResponse } from '@/presentation/protocols'
 import { mbToBytes } from '@/presentation/helpers/file.helper'
 
-export const uploadProjectAttachmentPath = new RoutePath(
-  'POST',
-  '/project/:id/attachment'
-)
+export const uploadProjectAttachmentPath = new RoutePath('POST', '/project/:id/attachment')
 
 @InjectableRoute(uploadProjectAttachmentPath)
 export class UploadProjectAttachmentRoute implements Route<undefined, UploadFileResponse> {
@@ -26,7 +23,7 @@ export class UploadProjectAttachmentRoute implements Route<undefined, UploadFile
     sizeInBytes: mbToBytes(5)
   })
 
-  constructor (
+  constructor(
     @InjectRouteController(UploadProjectAttachmentController)
     public readonly controller: UploadProjectAttachmentController,
 
@@ -38,9 +35,9 @@ export class UploadProjectAttachmentRoute implements Route<undefined, UploadFile
 
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
+  get middlewares(): Middleware[] {
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,

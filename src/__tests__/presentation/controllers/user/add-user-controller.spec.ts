@@ -7,7 +7,7 @@ import { UserAlreadyRegisteredError } from '@/presentation/errors'
 // < Out: only domain layer
 import { AddUserUseCaseSpy, GetUserByEmailUseCaseSpy } from '@/__tests__/domain/__spys__/usecases'
 import { mockCreateUserDto } from '@/__tests__/domain/__mocks__/entities'
-import { CreateUserDto, User } from '@/domain/entities'
+import { CreateUserDto } from '@/domain/entities'
 
 //#region Factories
 
@@ -23,7 +23,9 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const getUserByEmailUseCaseSpy = container.resolve<GetUserByEmailUseCaseSpy>('getUserByEmailUseCase')
+  const getUserByEmailUseCaseSpy = container.resolve<GetUserByEmailUseCaseSpy>(
+    'getUserByEmailUseCase'
+  )
   const addUserUseCaseSpy = container.resolve<AddUserUseCaseSpy>('addUserUseCase')
   const sut = container.resolve(AddUserController)
   return {
@@ -57,7 +59,7 @@ describe('AddUser Controller', () => {
     })
 
     it('should return server error if throws', async () => {
-      const { sut, } = makeSut()
+      const { sut } = makeSut()
       const response = await sut.handle(mockHttpRequest())
       expect(response).toEqual(badRequest(new UserAlreadyRegisteredError()))
     })

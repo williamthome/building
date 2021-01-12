@@ -5,7 +5,11 @@ import { CompanyRole } from '@/shared/constants'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { badRequest, forbidden, notFound, ok } from '@/presentation/factories/http.factory'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
-import { CanNotDeleteOwnerError, EntityNotFoundError, UserIsNotAMemberError } from '@/presentation/errors'
+import {
+  CanNotDeleteOwnerError,
+  EntityNotFoundError,
+  UserIsNotAMemberError
+} from '@/presentation/errors'
 // < Out: only domain layer
 import {
   GetUserByIdUseCase,
@@ -18,8 +22,7 @@ import { Schema, string } from '@/domain/protocols/schema'
 
 @InjectableController()
 export class RemoveCompanyMemberController implements Controller<undefined, Company> {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly getUserByIdUseCase: GetUserByIdUseCase,
 
@@ -28,7 +31,7 @@ export class RemoveCompanyMemberController implements Controller<undefined, Comp
 
     @Inject()
     private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase
-  ) { }
+  ) {}
 
   @HandleError
   @Validate({
@@ -38,25 +41,26 @@ export class RemoveCompanyMemberController implements Controller<undefined, Comp
       })
     }
   })
-  async handle (request: HttpRequest<undefined>): HandleResponse<Company> {
+  async handle(request: HttpRequest<undefined>): HandleResponse<Company> {
     const activeCompanyId = request.activeCompanyInfo?.id as Company['id']
     const activeCompanyMembers = request.activeCompanyInfo?.members as Member[]
     const userIdToRemove = request.params?.id as Member['userId']
 
     const memberToRemove = activeCompanyMembers.find(
-      companyMember => userIdToRemove === companyMember.userId
+      (companyMember) => userIdToRemove === companyMember.userId
     )
-    if (!memberToRemove)
-      return badRequest(new UserIsNotAMemberError())
+    if (!memberToRemove) return badRequest(new UserIsNotAMemberError())
 
     if (memberToRemove.companyRole === CompanyRole.owner)
       return forbidden(new CanNotDeleteOwnerError())
 
     const removedUserFromMembers = await this.getUserByIdUseCase.call(userIdToRemove)
-    if (!removedUserFromMembers)
-      return notFound(new EntityNotFoundError('User'))
+    if (!removedUserFromMembers) return notFound(new EntityNotFoundError('User'))
 
-    const activeCompanyWithoutMember = await this.removeCompanyMemberUseCase.call(activeCompanyId, userIdToRemove)
+    const activeCompanyWithoutMember = await this.removeCompanyMemberUseCase.call(
+      activeCompanyId,
+      userIdToRemove
+    )
 
     if (removedUserFromMembers.activeCompanyId === activeCompanyId)
       await this.updateUserActiveCompanyUseCase.call(userIdToRemove, undefined)

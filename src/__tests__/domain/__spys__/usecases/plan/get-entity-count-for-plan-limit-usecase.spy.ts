@@ -15,9 +15,7 @@ export class GetEntityCountForPlanLimitUseCaseSpy implements GetEntityCountForPl
 
     if (this.shouldThrow) throw new Error()
 
-    this.count = this.override
-      ? this.override
-      : 0
+    this.count = this.override ? this.override : 0
 
     return this.count
   }

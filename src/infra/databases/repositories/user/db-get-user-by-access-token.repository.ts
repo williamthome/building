@@ -5,10 +5,7 @@ import { GetUserByAccessTokenRepository } from '@/data/repositories'
 
 @Injectable('getUserByAccessTokenRepository')
 export class DbGetUserByAccessTokenRepository implements GetUserByAccessTokenRepository {
-
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
   getUserByAccessToken = async (accessToken: UserData['accessToken']): Promise<UserData | null> => {
     return await this.db.getOne<UserData, 'accessToken'>({

@@ -11,16 +11,13 @@ import { AddBuildingController } from '@/presentation/controllers'
 import { Building, CreateBuildingDto } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 
-export const addBuildingPath = new RoutePath(
-  'POST',
-  '/building'
-)
+export const addBuildingPath = new RoutePath('POST', '/building')
 
 @InjectableRoute(addBuildingPath)
 export class AddBuildingRoute implements Route<CreateBuildingDto, Building> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageBuildings)
 
-  constructor (
+  constructor(
     @InjectRouteController(AddBuildingController)
     public readonly controller: AddBuildingController,
 
@@ -32,9 +29,9 @@ export class AddBuildingRoute implements Route<CreateBuildingDto, Building> {
 
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
+  get middlewares(): Middleware[] {
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,

@@ -14,7 +14,9 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const updateUserAccessTokenRepositorySpy = container.resolve<UpdateUserAccessTokenRepositorySpy>('updateUserAccessTokenRepository')
+  const updateUserAccessTokenRepositorySpy = container.resolve<UpdateUserAccessTokenRepositorySpy>(
+    'updateUserAccessTokenRepository'
+  )
   const sut = container.resolve(UpdateUserAccessTokenContract)
   return {
     sut,
@@ -26,7 +28,10 @@ const makeSut = (): SutTypes => {
 
 describe('UpdateUserAccessToken Contract', () => {
   beforeEach(() => {
-    container.define('updateUserAccessTokenRepository').asNewable(UpdateUserAccessTokenRepositorySpy).done()
+    container
+      .define('updateUserAccessTokenRepository')
+      .asNewable(UpdateUserAccessTokenRepositorySpy)
+      .done()
     container.define(UpdateUserAccessTokenContract).asNewable(UpdateUserAccessTokenContract).done()
   })
 

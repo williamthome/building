@@ -8,8 +8,7 @@ import { Technician } from '@/domain/entities'
 
 @Injectable('getTechnicianByIdUseCase')
 export class GetTechnicianByIdContract implements GetTechnicianByIdUseCase {
-
-  constructor (
+  constructor(
     @Inject() private readonly getTechnicianByIdRepository: GetTechnicianByIdRepository
   ) {}
 

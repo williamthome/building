@@ -8,12 +8,10 @@ import { Company } from '@/domain/entities'
 @Injectable()
 export class ParamIdMatchActiveCompanyIdMiddleware implements Middleware {
   @HandleError
-  async handle <T> (httpRequest: HttpRequest<T>): MiddlewareResponse {
+  async handle<T>(httpRequest: HttpRequest<T>): MiddlewareResponse {
     const companyId = httpRequest.params?.id as Company['id']
     const activeCompanyId = httpRequest.activeCompanyInfo?.id as Company['id']
 
-    return companyId === activeCompanyId
-      ? noContent()
-      : unauthorized()
+    return companyId === activeCompanyId ? noContent() : unauthorized()
   }
 }

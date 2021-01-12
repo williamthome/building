@@ -4,14 +4,10 @@ export interface RequestFile {
   mimeType: string
 }
 
-export const requestFileKeys: Array<keyof RequestFile> = [
-  'name',
-  'buffer',
-  'mimeType',
-]
+export const requestFileKeys: Array<keyof RequestFile> = ['name', 'buffer', 'mimeType']
 
 interface UploadErrorResponse {
-  fileName: RequestFile['name'],
+  fileName: RequestFile['name']
   errorMessage: Error['message']
 }
 

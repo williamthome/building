@@ -6,11 +6,12 @@ import { MemberData } from '@/data/models/nested'
 
 @Injectable('removeCompanyMemberRepository')
 export class DbRemoveCompanyMemberRepository implements RemoveCompanyMemberRepository {
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
-  removeCompanyMember = async (companyId: CompanyData['id'], userId: MemberData['userId']): Promise<CompanyData | null> => {
+  removeCompanyMember = async (
+    companyId: CompanyData['id'],
+    userId: MemberData['userId']
+  ): Promise<CompanyData | null> => {
     return await this.db.pullOne<CompanyData, 'id', 'members'>({
       collectionName: 'companies',
       matchKey: 'id',

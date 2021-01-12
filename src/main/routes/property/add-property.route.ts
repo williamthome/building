@@ -11,16 +11,13 @@ import { AddPropertyController } from '@/presentation/controllers'
 import { CreatePropertyDto, Property } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 
-export const addPropertyPath = new RoutePath(
-  'POST',
-  '/property'
-)
+export const addPropertyPath = new RoutePath('POST', '/property')
 
 @InjectableRoute(addPropertyPath)
 export class AddPropertyRoute implements Route<CreatePropertyDto, Property> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageProperties)
 
-  constructor (
+  constructor(
     @InjectRouteController(AddPropertyController)
     public readonly controller: AddPropertyController,
 
@@ -32,9 +29,9 @@ export class AddPropertyRoute implements Route<CreatePropertyDto, Property> {
 
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
+  get middlewares(): Middleware[] {
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,

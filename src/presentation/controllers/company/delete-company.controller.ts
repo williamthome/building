@@ -13,18 +13,14 @@ import { DeleteCompanyUseCase } from '@/domain/usecases'
   usesTransaction: true
 })
 export class DeleteCompanyController implements Controller<undefined, Company> {
-
-  constructor (
-    @Inject() private readonly deleteCompanyUseCase: DeleteCompanyUseCase
-  ) { }
+  constructor(@Inject() private readonly deleteCompanyUseCase: DeleteCompanyUseCase) {}
 
   @HandleError
-  async handle (request: HttpRequest): HandleResponse<Company> {
+  async handle(request: HttpRequest): HandleResponse<Company> {
     const companyId = request.activeCompanyInfo?.id as Company['id']
 
     const deletedCompany = await this.deleteCompanyUseCase.call(companyId)
-    if (!deletedCompany)
-      return notFound(new EntityNotFoundError('Company'))
+    if (!deletedCompany) return notFound(new EntityNotFoundError('Company'))
 
     return ok(deletedCompany)
   }

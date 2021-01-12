@@ -3,17 +3,16 @@ import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { GetUserByAccessTokenController } from '@/presentation/controllers'
 import { UserResponse } from '@/domain/protocols'
 
-export const getUserByAccessTokenPath = new RoutePath(
-  'GET',
-  '/user/by-access-token'
-)
+export const getUserByAccessTokenPath = new RoutePath('GET', '/user/by-access-token')
 
 @InjectableRoute(getUserByAccessTokenPath)
 export class GetUserByAccessTokenRoute implements Route<undefined, UserResponse> {
-  constructor (
+  constructor(
     @InjectRouteController(GetUserByAccessTokenController)
-    public readonly controller: GetUserByAccessTokenController,
-  ) { }
+    public readonly controller: GetUserByAccessTokenController
+  ) {}
 
-  get middlewares (): Middleware[] { return [] }
+  get middlewares(): Middleware[] {
+    return []
+  }
 }

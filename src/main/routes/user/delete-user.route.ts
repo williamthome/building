@@ -5,20 +5,19 @@ import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { DeleteUserController } from '@/presentation/controllers'
 import { UserResponse } from '@/domain/protocols'
 
-export const deleteUserPath = new RoutePath(
-  'DELETE',
-  '/user'
-)
+export const deleteUserPath = new RoutePath('DELETE', '/user')
 
 @InjectableRoute(deleteUserPath)
 export class DeleteUserRoute implements Route<undefined, UserResponse> {
-  constructor (
+  constructor(
     @InjectRouteController(DeleteUserController)
     public readonly controller: DeleteUserController,
 
     @Inject(AuthMiddleware)
     private readonly authMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] { return [this.authMiddleware] }
+  get middlewares(): Middleware[] {
+    return [this.authMiddleware]
+  }
 }

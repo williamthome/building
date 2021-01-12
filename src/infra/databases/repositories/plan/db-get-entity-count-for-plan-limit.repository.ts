@@ -5,13 +5,11 @@ import { GetEntityCountForPlanLimitRepository } from '@/data/repositories'
 import { CompanyData } from '@/data/models'
 
 @Injectable('getEntityCountForPlanLimitRepository')
-export class DbGetEntityCountForPlanLimitRepository implements GetEntityCountForPlanLimitRepository {
+export class DbGetEntityCountForPlanLimitRepository
+  implements GetEntityCountForPlanLimitRepository {
+  constructor(@Inject('db') private readonly db: Database) {}
 
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
-
-  getEntityCount = async <T extends { companyId: CompanyData['id'] }> (
+  getEntityCount = async <T extends { companyId: CompanyData['id'] }>(
     reference: CollectionName,
     companyId: CompanyData['id']
   ): Promise<number> => {

@@ -6,9 +6,11 @@ import { CreateCompanyData } from '@/data/models'
 export const mockCreateCompanyData = (): CreateCompanyData => ({
   planId: mockPlanData().id,
   name: fakeData.person.fullName(),
-  members: [{
-    userId: fakeData.entity.id(),
-    companyRole: CompanyRole.owner,
-    features: UserFeatures.None
-  }]
+  members: [
+    {
+      userId: fakeData.entity.id(),
+      companyRole: CompanyRole.owner,
+      features: UserFeatures.None
+    }
+  ]
 })

@@ -14,9 +14,7 @@ export class GetPlanByIdUseCaseSpy implements GetPlanByIdUseCase {
 
     if (this.shouldThrow) throw new Error()
 
-    this.plan = this.shouldReturnNull
-      ? null
-      : { ...mockPlan(), id, ...this.override }
+    this.plan = this.shouldReturnNull ? null : { ...mockPlan(), id, ...this.override }
 
     return this.plan
   }

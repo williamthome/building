@@ -5,10 +5,7 @@ import { AddTechnicianRepository } from '@/data/repositories'
 
 @Injectable('addTechnicianRepository')
 export class DbAddTechnicianRepository implements AddTechnicianRepository {
-
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
   addTechnician = async (dto: CreateTechnicianData): Promise<TechnicianData> => {
     return await this.db.addOne({

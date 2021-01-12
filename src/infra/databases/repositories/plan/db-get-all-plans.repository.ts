@@ -5,10 +5,7 @@ import { GetAllPlansRepository } from '@/data/repositories'
 
 @Injectable('getAllPlansRepository')
 export class DbGetAllPlansRepository implements GetAllPlansRepository {
-
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
   getAllPlans = async (): Promise<PlanData[]> => {
     return await this.db.getAll({

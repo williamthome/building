@@ -12,14 +12,13 @@ import { CreateUserDto, createUserSchema } from '@/domain/entities'
 
 @InjectableController()
 export class AddUserController implements Controller<CreateUserDto, UserVerificationTokenResponse> {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
 
     @Inject()
     private readonly addUserUseCase: AddUserUseCase
-  ) { }
+  ) {}
 
   @HandleError
   @Validate({
@@ -27,14 +26,15 @@ export class AddUserController implements Controller<CreateUserDto, UserVerifica
       schema: createUserSchema
     }
   })
-  async handle (request: HttpRequest<CreateUserDto>): HandleResponse<UserVerificationTokenResponse> {
+  async handle(request: HttpRequest<CreateUserDto>): HandleResponse<UserVerificationTokenResponse> {
     const createUserDto = request.body as CreateUserDto
 
     const findedUser = await this.getUserByEmailUseCase.call(createUserDto.email)
-    if (findedUser)
-      return badRequest(new UserAlreadyRegisteredError())
+    if (findedUser) return badRequest(new UserAlreadyRegisteredError())
 
-    const { user: createdUserWithoutPassword, verificationToken } = await this.addUserUseCase.call(createUserDto)
+    const { user: createdUserWithoutPassword, verificationToken } = await this.addUserUseCase.call(
+      createUserDto
+    )
 
     return ok({
       user: createdUserWithoutPassword,

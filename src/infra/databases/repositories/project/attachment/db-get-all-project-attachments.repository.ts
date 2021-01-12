@@ -5,10 +5,7 @@ import { GetAllProjectAttachmentsRepository } from '@/data/repositories'
 
 @Injectable('getAllProjectAttachmentsRepository')
 export class DbGetAllProjectAttachmentsRepository implements GetAllProjectAttachmentsRepository {
-
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
   getAllProjectAttachments = async (id: ProjectData['id']): Promise<FileData[] | null> => {
     return await this.db.getMany<FileData, 'referenceId'>({

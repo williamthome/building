@@ -6,9 +6,7 @@ import { HashComparer } from '@/domain/protocols/cryptography'
 @Injectable('hasher')
 @Injectable('hashComparer')
 export class BcryptHasherAdapter implements Hasher, HashComparer {
-  constructor (
-    private readonly salt: number = 12
-  ) {}
+  constructor(private readonly salt: number = 12) {}
 
   hash = async (plaintext: string): Promise<string> => {
     return await bcrypt.hash(plaintext, this.salt)

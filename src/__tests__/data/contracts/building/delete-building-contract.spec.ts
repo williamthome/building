@@ -17,9 +17,15 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const deleteBuildingProjectsRepositorySpy = container.resolve<DeleteBuildingProjectsRepositorySpy>('deleteBuildingProjectsRepository')
-  const deleteBuildingPhasesRepositorySpy = container.resolve<DeleteBuildingPhasesRepositorySpy>('deleteBuildingPhasesRepository')
-  const deleteBuildingRepositorySpy = container.resolve<DeleteBuildingRepositorySpy>('deleteBuildingRepository')
+  const deleteBuildingProjectsRepositorySpy = container.resolve<DeleteBuildingProjectsRepositorySpy>(
+    'deleteBuildingProjectsRepository'
+  )
+  const deleteBuildingPhasesRepositorySpy = container.resolve<DeleteBuildingPhasesRepositorySpy>(
+    'deleteBuildingPhasesRepository'
+  )
+  const deleteBuildingRepositorySpy = container.resolve<DeleteBuildingRepositorySpy>(
+    'deleteBuildingRepository'
+  )
   const sut = container.resolve(DeleteBuildingContract)
   return {
     sut,
@@ -33,8 +39,14 @@ const makeSut = (): SutTypes => {
 
 describe('DeleteBuilding Contract', () => {
   beforeEach(() => {
-    container.define('deleteBuildingProjectsRepository').asNewable(DeleteBuildingProjectsRepositorySpy).done()
-    container.define('deleteBuildingPhasesRepository').asNewable(DeleteBuildingPhasesRepositorySpy).done()
+    container
+      .define('deleteBuildingProjectsRepository')
+      .asNewable(DeleteBuildingProjectsRepositorySpy)
+      .done()
+    container
+      .define('deleteBuildingPhasesRepository')
+      .asNewable(DeleteBuildingPhasesRepositorySpy)
+      .done()
     container.define('deleteBuildingRepository').asNewable(DeleteBuildingRepositorySpy).done()
     container.define(DeleteBuildingContract).asNewable(DeleteBuildingContract).done()
   })

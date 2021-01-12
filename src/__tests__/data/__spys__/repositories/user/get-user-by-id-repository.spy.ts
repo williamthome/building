@@ -14,9 +14,7 @@ export class GetUserByIdRepositorySpy implements GetUserByIdRepository {
 
     if (this.shouldThrow) throw new Error()
 
-    this.user = this.shouldReturnNull
-      ? null
-      : { ...mockUserData(), id, ...this.override }
+    this.user = this.shouldReturnNull ? null : { ...mockUserData(), id, ...this.override }
 
     return this.user
   }

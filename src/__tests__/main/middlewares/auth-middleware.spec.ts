@@ -21,7 +21,9 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const getUserByAccessTokenUseCaseSpy = container.resolve<GetUserByAccessTokenUseCaseSpy>('getUserByAccessTokenUseCase')
+  const getUserByAccessTokenUseCaseSpy = container.resolve<GetUserByAccessTokenUseCaseSpy>(
+    'getUserByAccessTokenUseCase'
+  )
   const sut = container.resolve(AuthMiddleware)
   return {
     sut,
@@ -52,7 +54,7 @@ describe('Auth Middleware', () => {
       expect(response).toEqual(unauthorized())
     })
 
-    it('should return unauthorized if authorization token not starts with \'Bearer\'', async () => {
+    it("should return unauthorized if authorization token not starts with 'Bearer'", async () => {
       const { sut } = makeSut()
       const response = await sut.handle({
         headers: {

@@ -1,5 +1,5 @@
 export class UserNotVerifiedError extends Error {
-  constructor () {
+  constructor() {
     super('E-mail verification required')
     this.name = 'UserNotVerifiedError'
   }

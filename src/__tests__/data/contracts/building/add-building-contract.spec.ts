@@ -3,7 +3,6 @@ import fakeData from '@/__tests__/shared/fake-data'
 import { AddBuildingContract } from '@/data/contracts'
 import { AddBuildingRepositorySpy } from '@/__tests__/data/__spys__'
 import { mockCreateBuildingData } from '@/__tests__/data/__mocks__/models'
-import { CreateBuildingData } from '@/data/models'
 
 //#region Factories
 
@@ -13,7 +12,9 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const addBuildingRepositorySpy = container.resolve<AddBuildingRepositorySpy>('addBuildingRepository')
+  const addBuildingRepositorySpy = container.resolve<AddBuildingRepositorySpy>(
+    'addBuildingRepository'
+  )
   const sut = container.resolve(AddBuildingContract)
   return {
     sut,

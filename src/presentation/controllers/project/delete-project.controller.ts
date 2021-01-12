@@ -12,10 +12,7 @@ import { idSchema } from '@/domain/protocols'
 
 @InjectableController()
 export class DeleteProjectController implements Controller<undefined, Project> {
-
-  constructor (
-    @Inject() private readonly deleteProjectUseCase: DeleteProjectUseCase
-  ) { }
+  constructor(@Inject() private readonly deleteProjectUseCase: DeleteProjectUseCase) {}
 
   @HandleError
   @Validate({
@@ -23,12 +20,11 @@ export class DeleteProjectController implements Controller<undefined, Project> {
       schema: idSchema
     }
   })
-  async handle (request: HttpRequest): HandleResponse<Project> {
+  async handle(request: HttpRequest): HandleResponse<Project> {
     const projectId = request.params?.id as Project['id']
 
     const deletedProject = await this.deleteProjectUseCase.call(projectId)
-    if (!deletedProject)
-      return notFound(new EntityNotFoundError('Project'))
+    if (!deletedProject) return notFound(new EntityNotFoundError('Project'))
 
     return ok(deletedProject)
   }

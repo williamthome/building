@@ -8,10 +8,7 @@ import { UpdateCompanyUseCase } from '@/domain/usecases'
 
 @Injectable('updateCompanyUseCase')
 export class UpdateCompanyContract implements UpdateCompanyUseCase {
-
-  constructor (
-    @Inject() private readonly updateCompanyRepository: UpdateCompanyRepository
-  ) {}
+  constructor(@Inject() private readonly updateCompanyRepository: UpdateCompanyRepository) {}
 
   call = async (id: Company['id'], dto: UpdateCompanyDto): Promise<Company | null> => {
     return await this.updateCompanyRepository.updateCompany(id, dto)

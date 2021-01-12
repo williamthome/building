@@ -3,7 +3,7 @@ import { string, number } from '../protocols/schema'
 
 export const unverifiedSchema = entitySchema({
   userId: string().required(),
-  expiresIn: number().required(),
+  expiresIn: number().required()
 })
 
 export type Unverified = ExtractEntity<typeof unverifiedSchema>

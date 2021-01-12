@@ -5,14 +5,11 @@ import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { AddCompanyController } from '@/presentation/controllers'
 import { Company, CreateCompanyDto } from '@/domain/entities'
 
-export const addCompanyPath = new RoutePath(
-  'POST',
-  '/company'
-)
+export const addCompanyPath = new RoutePath('POST', '/company')
 
 @InjectableRoute(addCompanyPath)
 export class AddCompanyRoute implements Route<CreateCompanyDto, Company> {
-  constructor (
+  constructor(
     @InjectRouteController(AddCompanyController)
     public readonly controller: AddCompanyController,
 
@@ -21,12 +18,9 @@ export class AddCompanyRoute implements Route<CreateCompanyDto, Company> {
 
     @Inject(UserVerifiedMiddleware)
     private readonly userVerifiedMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
-    return [
-      this.authMiddleware,
-      this.userVerifiedMiddleware
-    ]
+  get middlewares(): Middleware[] {
+    return [this.authMiddleware, this.userVerifiedMiddleware]
   }
 }

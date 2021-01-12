@@ -2,7 +2,7 @@ import container from '@/shared/dependency-injection'
 import { App } from './protocols'
 
 export class Server {
-  get app (): App {
+  get app(): App {
     return container.resolve<App>('app')
   }
 
@@ -20,7 +20,10 @@ export class Server {
 
   private defineInjectedValues = (): void => {
     container.define('PORT').as(5051).done()
-    container.define('DB_URL').as('mongodb://localhost:27001,localhost:27002,localhost:27003/building').done()
+    container
+      .define('DB_URL')
+      .as('mongodb://localhost:27001,localhost:27002,localhost:27003/building')
+      .done()
     container.define('JWT_SECRET').as('building_jwt_secret').done()
     container.define('AWS_ACCESS_KEY_ID').as('AKIAIMYTQYTNOPTU3DVA').done()
     container.define('AWS_SECRET_ACCESS_KEY').as('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').done()

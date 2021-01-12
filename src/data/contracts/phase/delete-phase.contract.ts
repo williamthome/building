@@ -8,8 +8,7 @@ import { DeletePhaseUseCase } from '@/domain/usecases'
 
 @Injectable('deletePhaseUseCase')
 export class DeletePhaseContract implements DeletePhaseUseCase {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly deletePhaseProjectsRepository: DeletePhaseProjectsRepository,
 

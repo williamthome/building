@@ -5,10 +5,7 @@ import { UpdatePhaseRepository } from '@/data/repositories'
 
 @Injectable('updatePhaseRepository')
 export class DbUpdatePhaseRepository implements UpdatePhaseRepository {
-
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
   updatePhase = async (id: PhaseData['id'], dto: UpdatePhaseData): Promise<PhaseData | null> => {
     return await this.db.updateOne<PhaseData, 'id'>({

@@ -5,9 +5,7 @@ import { DeleteBuildingPhasesRepository } from '@/data/repositories'
 
 @Injectable('deleteBuildingPhasesRepository')
 export class DbDeleteBuildingPhasesRepository implements DeleteBuildingPhasesRepository {
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
   deleteBuildingPhases = async (id: BuildingData['id']): Promise<number> => {
     return await this.db.deleteMany<PhaseData, 'buildingId'>({

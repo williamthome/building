@@ -9,19 +9,20 @@ import { File, UploadProjectAttachmentDto } from '@/domain/entities'
 
 @Injectable('uploadProjectAttachmentUseCase')
 export class UploadProjectAttachmentContract implements UploadProjectAttachmentUseCase {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly uploadProjectAttachmentBucket: UploadProjectAttachmentBucket,
 
     @Inject()
     private readonly addProjectAttachmentRepository: AddProjectAttachmentRepository
-  ) { }
+  ) {}
 
   call = async (dto: UploadProjectAttachmentDto, buffer: Buffer): Promise<File | Error> => {
-    const uploadError = await this.uploadProjectAttachmentBucket.uploadProjectAttachment(dto, buffer)
-    if (uploadError)
-      return uploadError
+    const uploadError = await this.uploadProjectAttachmentBucket.uploadProjectAttachment(
+      dto,
+      buffer
+    )
+    if (uploadError) return uploadError
 
     return await this.addProjectAttachmentRepository.addProjectAttachment(dto)
   }

@@ -12,8 +12,6 @@ export class HashComparerSpy implements HashComparer {
 
     if (this.shouldThrow) throw new Error()
 
-    return this.shouldNotMatch
-      ? false
-      : plaintext === digest
+    return this.shouldNotMatch ? false : plaintext === digest
   }
 }

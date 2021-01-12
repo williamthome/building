@@ -11,16 +11,13 @@ import { DeleteProjectController } from '@/presentation/controllers'
 import { Project } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 
-export const deleteProjectPath = new RoutePath(
-  'DELETE',
-  '/project/:id'
-)
+export const deleteProjectPath = new RoutePath('DELETE', '/project/:id')
 
 @InjectableRoute(deleteProjectPath)
 export class DeleteProjectRoute implements Route<undefined, Project> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageProjects)
 
-  constructor (
+  constructor(
     @InjectRouteController(DeleteProjectController)
     public readonly controller: DeleteProjectController,
 
@@ -32,9 +29,9 @@ export class DeleteProjectRoute implements Route<undefined, Project> {
 
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
+  get middlewares(): Middleware[] {
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,

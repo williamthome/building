@@ -11,11 +11,11 @@ const fakeToken = 'encrypted'
 const fakeVerifiedToken = { [JwtEncrypterAdapter.key]: 'decrypted' }
 
 jest.mock('jsonwebtoken', () => ({
-  sign (): string {
+  sign(): string {
     return fakeToken
   },
 
-  verify (): string {
+  verify(): string {
     return fakeVerifiedToken[JwtEncrypterAdapter.key]
   }
 }))
@@ -56,7 +56,9 @@ describe('JWT Adapter', () => {
 
     it('Should throw if method throws', async () => {
       const { sut } = makeSut()
-      jest.spyOn(jwt, 'sign').mockImplementationOnce(() => { throw new Error() })
+      jest.spyOn(jwt, 'sign').mockImplementationOnce(() => {
+        throw new Error()
+      })
       await expect(sut.encrypt(fakeId)).rejects.toThrow()
     })
   })
@@ -77,7 +79,9 @@ describe('JWT Adapter', () => {
 
     it('Should throw if method throws', async () => {
       const { sut } = makeSut()
-      jest.spyOn(jwt, 'verify').mockImplementationOnce(() => { throw new Error() })
+      jest.spyOn(jwt, 'verify').mockImplementationOnce(() => {
+        throw new Error()
+      })
       await expect(sut.decrypt(fakeId)).rejects.toThrow()
     })
   })

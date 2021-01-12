@@ -15,9 +15,7 @@ export class UpdateUserUseCaseSpy implements UpdateUserUseCase {
 
     if (this.shouldThrow) throw new Error()
 
-    this.user = this.shouldReturnNull
-      ? null
-      : mockUser(dto)
+    this.user = this.shouldReturnNull ? null : mockUser(dto)
 
     return this.user
   }

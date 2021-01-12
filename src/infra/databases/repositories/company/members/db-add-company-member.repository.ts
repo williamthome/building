@@ -6,11 +6,12 @@ import { CreateMemberData } from '@/data/models/nested'
 
 @Injectable('addCompanyMemberRepository')
 export class DbAddCompanyMemberRepository implements AddCompanyMemberRepository {
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
-  addCompanyMember = async (companyId: CompanyData['id'], dto: CreateMemberData): Promise<CompanyData | null> => {
+  addCompanyMember = async (
+    companyId: CompanyData['id'],
+    dto: CreateMemberData
+  ): Promise<CompanyData | null> => {
     return await this.db.pushOne<CompanyData, 'id', 'members'>({
       collectionName: 'companies',
       matchKey: 'id',

@@ -12,10 +12,7 @@ import { idSchema } from '@/domain/protocols'
 
 @InjectableController()
 export class DeletePropertyController implements Controller<undefined, Property> {
-
-  constructor (
-    @Inject() private readonly deletePropertyUseCase: DeletePropertyUseCase
-  ) { }
+  constructor(@Inject() private readonly deletePropertyUseCase: DeletePropertyUseCase) {}
 
   @HandleError
   @Validate({
@@ -23,12 +20,11 @@ export class DeletePropertyController implements Controller<undefined, Property>
       schema: idSchema
     }
   })
-  async handle (request: HttpRequest): HandleResponse<Property> {
+  async handle(request: HttpRequest): HandleResponse<Property> {
     const propertyId = request.params?.id as Property['id']
 
     const deteledProperty = await this.deletePropertyUseCase.call(propertyId)
-    if (!deteledProperty)
-      return notFound(new EntityNotFoundError('Property'))
+    if (!deteledProperty) return notFound(new EntityNotFoundError('Property'))
 
     return ok(deteledProperty)
   }

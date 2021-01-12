@@ -8,10 +8,7 @@ import { UpdatePropertyUseCase } from '@/domain/usecases'
 
 @Injectable('updatePropertyUseCase')
 export class UpdatePropertyContract implements UpdatePropertyUseCase {
-
-  constructor (
-    @Inject() private readonly updatePropertyRepository: UpdatePropertyRepository
-  ) {}
+  constructor(@Inject() private readonly updatePropertyRepository: UpdatePropertyRepository) {}
 
   call = async (id: Property['id'], dto: UpdatePropertyDto): Promise<Property | null> => {
     return await this.updatePropertyRepository.updateProperty(id, dto)

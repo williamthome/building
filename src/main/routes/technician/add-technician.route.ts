@@ -11,16 +11,13 @@ import { AddTechnicianController } from '@/presentation/controllers'
 import { CreateTechnicianDto, Technician } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 
-export const addTechnicianPath = new RoutePath(
-  'POST',
-  '/technician'
-)
+export const addTechnicianPath = new RoutePath('POST', '/technician')
 
 @InjectableRoute(addTechnicianPath)
 export class AddTechnicianRoute implements Route<CreateTechnicianDto, Technician> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageTechnicians)
 
-  constructor (
+  constructor(
     @InjectRouteController(AddTechnicianController)
     public readonly controller: AddTechnicianController,
 
@@ -32,9 +29,9 @@ export class AddTechnicianRoute implements Route<CreateTechnicianDto, Technician
 
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
+  get middlewares(): Middleware[] {
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,

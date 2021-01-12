@@ -1,13 +1,13 @@
-export const errorStack = (error: any): string =>
+export const errorStack = (error: unknown): string =>
   typeof error === 'undefined'
     ? 'Error is undefined'
-    : 'stack' in error
-      ? error['stack']
-      : typeof error === 'string'
-        ? error
-        : typeof error === 'bigint' ||
-          typeof error === 'boolean' ||
-          typeof error === 'number' ||
-          typeof error === 'symbol'
-          ? error.toString()
-          : JSON.stringify(error)
+    : error instanceof Error
+    ? error.stack || 'No error stack'
+    : typeof error === 'string'
+    ? error
+    : typeof error === 'bigint' ||
+      typeof error === 'boolean' ||
+      typeof error === 'number' ||
+      typeof error === 'symbol'
+    ? error.toString()
+    : JSON.stringify(error)

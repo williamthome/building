@@ -12,10 +12,7 @@ import { idSchema } from '@/domain/protocols'
 
 @InjectableController()
 export class UpdatePropertyController implements Controller<UpdatePropertyDto, Property> {
-
-  constructor (
-    @Inject() private readonly updatePropertyUseCase: UpdatePropertyUseCase
-  ) { }
+  constructor(@Inject() private readonly updatePropertyUseCase: UpdatePropertyUseCase) {}
 
   @HandleError
   @Validate({
@@ -29,13 +26,12 @@ export class UpdatePropertyController implements Controller<UpdatePropertyDto, P
       schema: idSchema
     }
   })
-  async handle (request: HttpRequest<UpdatePropertyDto>): HandleResponse<Property> {
+  async handle(request: HttpRequest<UpdatePropertyDto>): HandleResponse<Property> {
     const propertyId = request.params?.id as Property['id']
     const updatePropertyDto = request.body as UpdatePropertyDto
 
     const udpatedProperty = await this.updatePropertyUseCase.call(propertyId, updatePropertyDto)
-    if (!udpatedProperty)
-      return notFound(new EntityNotFoundError('Property'))
+    if (!udpatedProperty) return notFound(new EntityNotFoundError('Property'))
 
     return ok(udpatedProperty)
   }

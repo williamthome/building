@@ -11,16 +11,13 @@ import { AddCustomerController } from '@/presentation/controllers'
 import { CreateCustomerDto, Customer } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 
-export const addCustomerPath = new RoutePath(
-  'POST',
-  '/customer'
-)
+export const addCustomerPath = new RoutePath('POST', '/customer')
 
 @InjectableRoute(addCustomerPath)
 export class AddCustomerRoute implements Route<CreateCustomerDto, Customer> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageCustomers)
 
-  constructor (
+  constructor(
     @InjectRouteController(AddCustomerController)
     public readonly controller: AddCustomerController,
 
@@ -32,9 +29,9 @@ export class AddCustomerRoute implements Route<CreateCustomerDto, Customer> {
 
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
+  get middlewares(): Middleware[] {
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,

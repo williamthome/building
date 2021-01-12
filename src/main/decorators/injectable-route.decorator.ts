@@ -1,9 +1,9 @@
 import container from '@/shared/dependency-injection'
 import { RouteOptions, Route, RoutePath } from '../protocols'
 
-export const InjectableRoute = <TRequest = any, TResponse = any> (
+export const InjectableRoute = <TRequest = any, TResponse = any>(
   payload: RoutePath | RouteOptions
-) => <T extends new (...args: any[]) => Route<TRequest, TResponse>> (route: T): T => {
+) => <T extends new (...args: any[]) => Route<TRequest, TResponse>>(route: T): T => {
   container.define('routes').asNewableArray(route)
 
   const pathKey: keyof Route<TRequest, TResponse> = 'path'
@@ -12,7 +12,9 @@ export const InjectableRoute = <TRequest = any, TResponse = any> (
     get: () => {
       return payload instanceof RoutePath ? payload : new RoutePath(payload.method, payload.urn)
     },
-    set: () => new Error(`Property ${pathKey} in route is readonly`)
+    set: () => {
+      // if (process.env.NODE_ENV !== 'test') throw new Error(`Property ${pathKey} in route is readonly`)
+    }
   })
 
   return route

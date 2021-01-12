@@ -12,10 +12,7 @@ import { Schema, string } from '@/domain/protocols/schema'
 
 @InjectableController()
 export class UpdatePhaseController implements Controller<UpdatePhaseDto, Phase> {
-
-  constructor (
-    @Inject() private readonly updatePhaseUseCase: UpdatePhaseUseCase
-  ) { }
+  constructor(@Inject() private readonly updatePhaseUseCase: UpdatePhaseUseCase) {}
 
   @HandleError
   @Validate({
@@ -31,13 +28,12 @@ export class UpdatePhaseController implements Controller<UpdatePhaseDto, Phase> 
       })
     }
   })
-  async handle (request: HttpRequest<UpdatePhaseDto>): HandleResponse<Phase> {
+  async handle(request: HttpRequest<UpdatePhaseDto>): HandleResponse<Phase> {
     const phaseId = request.params?.id as Phase['id']
     const updatePhaseDto = request.body as UpdatePhaseDto
 
     const udpatedPhase = await this.updatePhaseUseCase.call(phaseId, updatePhaseDto)
-    if (!udpatedPhase)
-      return notFound(new EntityNotFoundError('Phase'))
+    if (!udpatedPhase) return notFound(new EntityNotFoundError('Phase'))
 
     return ok(udpatedPhase)
   }

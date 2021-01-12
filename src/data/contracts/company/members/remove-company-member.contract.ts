@@ -9,8 +9,7 @@ import { Member } from '@/domain/entities/nested'
 
 @Injectable('removeCompanyMemberUseCase')
 export class RemoveCompanyMemberContract implements RemoveCompanyMemberUseCase {
-
-  constructor (
+  constructor(
     @Inject() private readonly removeCompanyMemberRepository: RemoveCompanyMemberRepository
   ) {}
 

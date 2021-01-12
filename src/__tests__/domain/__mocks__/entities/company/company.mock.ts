@@ -7,10 +7,12 @@ export const mockCompany = (dto?: CreateCompanyDto | UpdateBuildingDto): Company
   id: fakeData.entity.id(),
   planId: mockPlan().id,
   name: fakeData.person.fullName(),
-  members: [{
-    userId: fakeData.entity.id(),
-    companyRole: CompanyRole.owner,
-    features: UserFeatures.None
-  }],
+  members: [
+    {
+      userId: fakeData.entity.id(),
+      companyRole: CompanyRole.owner,
+      features: UserFeatures.None
+    }
+  ],
   ...dto
 })

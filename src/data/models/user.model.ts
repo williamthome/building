@@ -5,7 +5,8 @@ import { User, CreateUserDto, UpdateUserDto } from '@/domain/entities'
 
 export type UserData = User
 
-export type CreateUserData = OmitKey<CreateUserDto, 'passwordConfirmation'> & Pick<UserData, 'verified'>
+export type CreateUserData = OmitKey<CreateUserDto, 'passwordConfirmation'> &
+  Pick<UserData, 'verified'>
 
 export type UpdateUserData = UpdateUserDto
 export interface UserDataRights {

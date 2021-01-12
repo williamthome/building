@@ -11,19 +11,17 @@ import { Company } from '@/domain/entities'
 
 @InjectableController()
 export class GetUserActiveCompanyController implements Controller<undefined, Company> {
-
-  constructor (
+  constructor(
     @Inject()
-    private readonly getCompanyByIdUseCase: GetCompanyByIdUseCase,
-  ) { }
+    private readonly getCompanyByIdUseCase: GetCompanyByIdUseCase
+  ) {}
 
   @HandleError
-  async handle (request: HttpRequest): HandleResponse<Company> {
+  async handle(request: HttpRequest): HandleResponse<Company> {
     const id = request.activeCompanyInfo?.id as Company['id']
 
     const findedCompany = await this.getCompanyByIdUseCase.call(id)
-    if (!findedCompany)
-      return notFound(new EntityNotFoundError('Company'))
+    if (!findedCompany) return notFound(new EntityNotFoundError('Company'))
 
     return ok(findedCompany)
   }

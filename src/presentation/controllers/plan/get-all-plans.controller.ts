@@ -10,13 +10,10 @@ import { GetAllPlansUseCase } from '@/domain/usecases'
 
 @InjectableController()
 export class GetAllPlansController implements Controller<undefined, Plan[]> {
-
-  constructor (
-    @Inject() private readonly getAllPlansUseCase: GetAllPlansUseCase
-  ) { }
+  constructor(@Inject() private readonly getAllPlansUseCase: GetAllPlansUseCase) {}
 
   @HandleError
-  async handle (): HandleResponse<Plan[]> {
+  async handle(): HandleResponse<Plan[]> {
     const allPlans = await this.getAllPlansUseCase.call()
 
     return ok(allPlans)

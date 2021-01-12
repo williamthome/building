@@ -23,6 +23,7 @@ describe(`UpdateCompany Route > ${updateCompanyPath.describe}`, () => {
     await dbUtils.verify()
     await dbUtils.addPlan()
     await dbUtils.addCompany()
+    // eslint-disable-next-line no-unused-vars
     const { planId, ...dto } = mockCreateCompanyDto({ planId: dbUtils.plan.id })
     await request(dbUtils.webServer.server())
       .patch(updateCompanyPath.urn)

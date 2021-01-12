@@ -1,4 +1,9 @@
-import { Project, CreateProjectDto, UpdateProjectDto, UploadProjectAttachmentDto } from '@/domain/entities'
+import {
+  Project,
+  CreateProjectDto,
+  UpdateProjectDto,
+  UploadProjectAttachmentDto
+} from '@/domain/entities'
 
 export type ProjectData = Project
 

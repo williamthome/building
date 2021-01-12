@@ -9,11 +9,10 @@ import { Decrypter } from '@/domain/protocols/cryptography'
 
 @Injectable('getUserByAccessTokenUseCase')
 export class GetUserByAccessTokenContract implements GetUserByAccessTokenUseCase {
-
-  constructor (
+  constructor(
     @Inject() private readonly decrypter: Decrypter,
     @Inject() private readonly getUserByIdRepository: GetUserByIdRepository
-  ) { }
+  ) {}
 
   call = async (accessToken: User['accessToken']): Promise<User | null> => {
     try {

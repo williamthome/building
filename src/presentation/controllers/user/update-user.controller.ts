@@ -13,10 +13,7 @@ import { userWithoutPassword } from '@/domain/helpers/user.helper'
 
 @InjectableController()
 export class UpdateUserController implements Controller<UpdateUserDto, UserResponse> {
-
-  constructor (
-    @Inject() private readonly updateUserUseCase: UpdateUserUseCase
-  ) { }
+  constructor(@Inject() private readonly updateUserUseCase: UpdateUserUseCase) {}
 
   @HandleError
   @Validate({
@@ -27,13 +24,12 @@ export class UpdateUserController implements Controller<UpdateUserDto, UserRespo
       }
     }
   })
-  async handle (request: HttpRequest<UpdateUserDto>): HandleResponse<UserResponse> {
+  async handle(request: HttpRequest<UpdateUserDto>): HandleResponse<UserResponse> {
     const loggedUserId = request.loggedUserInfo?.id as User['id']
     const updateUserDto = request.body as UpdateUserDto
 
     const findedUser = await this.updateUserUseCase.call(loggedUserId, updateUserDto)
-    if (!findedUser)
-      return notFound(new EntityNotFoundError('User'))
+    if (!findedUser) return notFound(new EntityNotFoundError('User'))
 
     const findedUserWithoutPassword = userWithoutPassword(findedUser)
 

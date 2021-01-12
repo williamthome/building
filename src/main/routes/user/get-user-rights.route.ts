@@ -5,20 +5,19 @@ import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { GetUserRightsController } from '@/presentation/controllers'
 import { UserRights } from '@/domain/entities'
 
-export const GetUserRightsPath = new RoutePath(
-  'GET',
-  '/user/rights'
-)
+export const GetUserRightsPath = new RoutePath('GET', '/user/rights')
 
 @InjectableRoute(GetUserRightsPath)
 export class GetUserRightsRoute implements Route<undefined, UserRights[]> {
-  constructor (
+  constructor(
     @InjectRouteController(GetUserRightsController)
     public readonly controller: GetUserRightsController,
 
     @Inject(AuthMiddleware)
     private readonly authMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] { return [this.authMiddleware] }
+  get middlewares(): Middleware[] {
+    return [this.authMiddleware]
+  }
 }

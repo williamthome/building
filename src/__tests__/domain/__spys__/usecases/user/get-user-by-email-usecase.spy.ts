@@ -14,9 +14,7 @@ export class GetUserByEmailUseCaseSpy implements GetUserByEmailUseCase {
 
     if (this.shouldThrow) throw new Error()
 
-    this.user = this.shouldReturnNull
-      ? null
-      : { ...mockUser(), email, ...this.override }
+    this.user = this.shouldReturnNull ? null : { ...mockUser(), email, ...this.override }
 
     return this.user
   }

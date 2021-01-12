@@ -11,16 +11,13 @@ import { UpdateBuildingController } from '@/presentation/controllers'
 import { Building, UpdateBuildingDto } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 
-export const updateBuildingPath = new RoutePath(
-  'PATCH',
-  '/building/:id'
-)
+export const updateBuildingPath = new RoutePath('PATCH', '/building/:id')
 
 @InjectableRoute(updateBuildingPath)
-export class UpdateBuildingRoute implements Route<UpdateBuildingDto ,Building> {
+export class UpdateBuildingRoute implements Route<UpdateBuildingDto, Building> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageBuildings)
 
-  constructor (
+  constructor(
     @InjectRouteController(UpdateBuildingController)
     public readonly controller: UpdateBuildingController,
 
@@ -32,9 +29,9 @@ export class UpdateBuildingRoute implements Route<UpdateBuildingDto ,Building> {
 
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
+  get middlewares(): Middleware[] {
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,

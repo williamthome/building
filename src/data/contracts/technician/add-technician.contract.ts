@@ -8,10 +8,7 @@ import { AddTechnicianUseCase } from '@/domain/usecases'
 
 @Injectable('addTechnicianUseCase')
 export class AddTechnicianContract implements AddTechnicianUseCase {
-
-  constructor (
-    @Inject() private readonly addTechnicianRepository: AddTechnicianRepository
-  ) { }
+  constructor(@Inject() private readonly addTechnicianRepository: AddTechnicianRepository) {}
 
   call = async (dto: CreateTechnicianDto, companyId: Company['id']): Promise<Technician> => {
     return await this.addTechnicianRepository.addTechnician({

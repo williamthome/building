@@ -1,5 +1,5 @@
 export class SomeUserIsNotAMemberError extends Error {
-  constructor () {
+  constructor() {
     super('Some user is not a member')
     this.name = 'SomeUserIsNotAMemberError'
   }

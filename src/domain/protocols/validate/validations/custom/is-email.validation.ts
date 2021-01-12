@@ -3,7 +3,9 @@ import { Validate, ValidateOptions } from '../../validate.protocol'
 class IsEmailValidation<T> extends Validate<T, IsEmailValidation<T>> {
   validation = (): IsEmailValidation<T> => this
 
-  constructor (opts: ValidateOptions | undefined) { super(opts) }
+  constructor(opts: ValidateOptions | undefined) {
+    super(opts)
+  }
 
   validate = (obj: T, key: keyof T): string | void => {
     const value = obj[key]
@@ -27,14 +29,16 @@ class IsEmailValidation<T> extends Validate<T, IsEmailValidation<T>> {
     if (account.length > 64) return false
 
     const domainParts = address.split('.')
-    if (domainParts.some(function (part) {
-      return part.length > 63
-    })) return false
+    if (
+      domainParts.some(function (part) {
+        return part.length > 63
+      })
+    )
+      return false
 
     return true
   }
 }
 
-export const isEmail = <T> (
-  opts?: ValidateOptions
-): IsEmailValidation<T> => new IsEmailValidation<T>(opts)
+export const isEmail = <T>(opts?: ValidateOptions): IsEmailValidation<T> =>
+  new IsEmailValidation<T>(opts)

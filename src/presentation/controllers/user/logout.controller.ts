@@ -11,14 +11,13 @@ import { User } from '@/domain/entities'
 
 @InjectableController()
 export class LogoutController implements Controller<Pick<User, 'accessToken'>, UserResponse> {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly getUserByAccessTokenUseCase: GetUserByAccessTokenUseCase,
 
     @Inject()
     private readonly updateUserAccessTokenUseCase: UpdateUserAccessTokenUseCase
-  ) { }
+  ) {}
 
   @HandleError
   @Validate({
@@ -28,12 +27,11 @@ export class LogoutController implements Controller<Pick<User, 'accessToken'>, U
       })
     }
   })
-  async handle (request: HttpRequest<Pick<User, 'accessToken'>>): HandleResponse<UserResponse> {
+  async handle(request: HttpRequest<Pick<User, 'accessToken'>>): HandleResponse<UserResponse> {
     const { accessToken } = request.body as { accessToken: string }
 
     const findedUser = await this.getUserByAccessTokenUseCase.call(accessToken)
-    if (!findedUser)
-      return notFound(new EntityNotFoundError('User'))
+    if (!findedUser) return notFound(new EntityNotFoundError('User'))
 
     await this.updateUserAccessTokenUseCase.call(findedUser.id, undefined)
 

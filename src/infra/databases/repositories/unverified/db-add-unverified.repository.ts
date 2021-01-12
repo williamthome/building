@@ -5,10 +5,7 @@ import { AddUnverifiedRepository } from '@/data/repositories'
 
 @Injectable('addUnverifiedRepository')
 export class DbAddUnverifiedRepository implements AddUnverifiedRepository {
-
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
   addUnverified = async (dto: CreateUnverifiedData): Promise<UnverifiedData> => {
     return await this.db.addOne({

@@ -8,12 +8,10 @@ import { User } from '@/domain/entities'
 @Injectable()
 export class ParamIdMatchLoggedUserIdMiddleware implements Middleware {
   @HandleError
-  async handle <T> (httpRequest: HttpRequest<T>): MiddlewareResponse {
+  async handle<T>(httpRequest: HttpRequest<T>): MiddlewareResponse {
     const userId = httpRequest.params?.id as User['id']
     const loggedUserId = httpRequest.loggedUserInfo?.id as User['id']
 
-    return userId === loggedUserId
-      ? noContent()
-      : unauthorized()
+    return userId === loggedUserId ? noContent() : unauthorized()
   }
 }

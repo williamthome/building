@@ -5,10 +5,7 @@ import { GetTechnicianByIdRepository } from '@/data/repositories'
 
 @Injectable('getTechnicianByIdRepository')
 export class DbGetTechnicianByIdRepository implements GetTechnicianByIdRepository {
-
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
   getTechnicianById = async (id: TechnicianData['id']): Promise<TechnicianData | null> => {
     return await this.db.getOne<TechnicianData, 'id'>({

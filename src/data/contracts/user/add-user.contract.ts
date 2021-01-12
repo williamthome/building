@@ -12,13 +12,12 @@ import { Encrypter } from '@/domain/protocols/cryptography'
 
 @Injectable('addUserUseCase')
 export class AddUserContract implements AddUserUseCase {
-
-  constructor (
+  constructor(
     @Inject() private readonly hasher: Hasher,
     @Inject() private readonly addUserRepository: AddUserRepository,
     @Inject() private readonly addUnverifiedRepository: AddUnverifiedRepository,
     @Inject() private readonly encrypter: Encrypter
-  ) { }
+  ) {}
 
   call = async (dto: CreateUserDto): Promise<UserVerificationTokenResponse> => {
     const hashedPassword = await this.hasher.hash(dto.password)

@@ -7,14 +7,17 @@ import { HandleError, InjectableController, Validate } from '@/presentation/deco
 import { EntityNotFoundError } from '@/presentation/errors'
 // < Out: only domain layer
 import { Company, companySchema, CreateCompanyDto, User } from '@/domain/entities'
-import { AddCompanyUseCase, GetPlanByIdUseCase, UpdateUserActiveCompanyUseCase } from '@/domain/usecases'
+import {
+  AddCompanyUseCase,
+  GetPlanByIdUseCase,
+  UpdateUserActiveCompanyUseCase
+} from '@/domain/usecases'
 
 @InjectableController({
   usesTransaction: true
 })
 export class AddCompanyController implements Controller<CreateCompanyDto, Company> {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly getPlanByIdUseCase: GetPlanByIdUseCase,
 
@@ -22,8 +25,8 @@ export class AddCompanyController implements Controller<CreateCompanyDto, Compan
     private readonly addCompanyUseCase: AddCompanyUseCase,
 
     @Inject()
-    private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase,
-  ) { }
+    private readonly updateUserActiveCompanyUseCase: UpdateUserActiveCompanyUseCase
+  ) {}
 
   @HandleError
   @Validate({
@@ -31,14 +34,13 @@ export class AddCompanyController implements Controller<CreateCompanyDto, Compan
       schema: companySchema
     }
   })
-  async handle (request: HttpRequest<CreateCompanyDto>): HandleResponse<Company> {
+  async handle(request: HttpRequest<CreateCompanyDto>): HandleResponse<Company> {
     const loggedUserId = request.loggedUserInfo?.id as User['id']
     const createCompanyDto = request.body as CreateCompanyDto
     const { planId } = createCompanyDto
 
     const findedPlan = await this.getPlanByIdUseCase.call(planId)
-    if (!findedPlan)
-      return notFound(new EntityNotFoundError('Plan'))
+    if (!findedPlan) return notFound(new EntityNotFoundError('Plan'))
 
     const createdCompany = await this.addCompanyUseCase.call(createCompanyDto, loggedUserId)
 

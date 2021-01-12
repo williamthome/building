@@ -3,7 +3,7 @@ import { Validate, ValidateOptions } from '../../validate.protocol'
 class RangeValidation<T> extends Validate<T, RangeValidation<T>> {
   validation = (): RangeValidation<T> => this
 
-  constructor (
+  constructor(
     private readonly min: number,
     private readonly max: number,
     opts: ValidateOptions | undefined
@@ -19,8 +19,5 @@ class RangeValidation<T> extends Validate<T, RangeValidation<T>> {
   }
 }
 
-export const range = <T> (
-  min: number,
-  max: number,
-  opts?: ValidateOptions
-): RangeValidation<T> => new RangeValidation<T>(min, max, opts)
+export const range = <T>(min: number, max: number, opts?: ValidateOptions): RangeValidation<T> =>
+  new RangeValidation<T>(min, max, opts)

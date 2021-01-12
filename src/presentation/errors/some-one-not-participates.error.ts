@@ -1,5 +1,5 @@
 export class SomeOneNotParticipatesError extends Error {
-  constructor () {
+  constructor() {
     super('Some user is not a participant')
     this.name = 'SomeOneNotParticipatesError'
   }

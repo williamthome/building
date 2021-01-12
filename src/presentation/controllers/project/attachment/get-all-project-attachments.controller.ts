@@ -11,12 +11,12 @@ import { Project } from '@/domain/entities'
 import { FileEntityResponse, idSchema } from '@/domain/protocols'
 
 @InjectableController()
-export class GetAllProjectAttachmentsController implements Controller<undefined, FileEntityResponse[]> {
-
-  constructor (
+export class GetAllProjectAttachmentsController
+  implements Controller<undefined, FileEntityResponse[]> {
+  constructor(
     @Inject()
     private readonly getAllProjectAttachmentsUseCase: GetAllProjectAttachmentsUseCase
-  ) { }
+  ) {}
 
   @HandleError
   @Validate({
@@ -24,12 +24,11 @@ export class GetAllProjectAttachmentsController implements Controller<undefined,
       schema: idSchema
     }
   })
-  async handle (request: HttpRequest): HandleResponse<FileEntityResponse[]> {
+  async handle(request: HttpRequest): HandleResponse<FileEntityResponse[]> {
     const projectId = request.params?.id as Project['id']
 
     const allProjectAttachments = await this.getAllProjectAttachmentsUseCase.call(projectId)
-    if (!allProjectAttachments)
-      return notFound(new EntityNotFoundError('Project'))
+    if (!allProjectAttachments) return notFound(new EntityNotFoundError('Project'))
 
     return ok(allProjectAttachments)
   }

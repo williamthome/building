@@ -9,15 +9,16 @@ export class UpdateBuildingRepositorySpy implements UpdateBuildingRepository {
   shouldReturnNull = false
   shouldThrow = false
 
-  updateBuilding = async (id: BuildingData['id'], dto: UpdateBuildingData): Promise<BuildingData | null> => {
+  updateBuilding = async (
+    id: BuildingData['id'],
+    dto: UpdateBuildingData
+  ): Promise<BuildingData | null> => {
     this.id = id
     this.dto = dto
 
     if (this.shouldThrow) throw new Error()
 
-    this.building = this.shouldReturnNull
-      ? null
-      : mockBuildingData(dto)
+    this.building = this.shouldReturnNull ? null : mockBuildingData(dto)
 
     return this.building
   }

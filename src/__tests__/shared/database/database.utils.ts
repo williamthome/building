@@ -5,9 +5,23 @@ import { CollectionName } from '@/shared/types'
 import { Server } from '@/main/server'
 import { Route, RoutePath, WebServer } from '@/main/protocols'
 import { Database } from '@/infra/protocols'
-import { BuildingData, CompanyData, CreateBuildingData, CreateCompanyData, CreatePlanData, CreateUserData, PlanData, UserData } from '@/data/models'
+import {
+  BuildingData,
+  CompanyData,
+  CreateBuildingData,
+  CreateCompanyData,
+  CreatePlanData,
+  CreateUserData,
+  PlanData,
+  UserData
+} from '@/data/models'
 import { Hasher } from '@/data/protocols/cryptography'
-import { mockCreateBuildingData, mockCreateCompanyData, mockCreateUserData, mockCreatePlanData } from '../../data/__mocks__/models'
+import {
+  mockCreateBuildingData,
+  mockCreateCompanyData,
+  mockCreateUserData,
+  mockCreatePlanData
+} from '../../data/__mocks__/models'
 
 export interface DataBaseUtilsOptions {
   routePath: RoutePath
@@ -26,13 +40,14 @@ interface Entities {
 }
 
 export abstract class DataBaseUtils {
-
+  // eslint-disable-next-line no-unused-vars
   protected abstract callThisOnConfig: (route: Route<any, any>) => Promise<ConfigResponse>
   protected abstract callThisOnRun?: () => Promise<void>
   protected abstract callThisOnStop?: () => Promise<void>
 
   private _accessToken?: UserData['accessToken']
   private _entities: Entities = {}
+  // eslint-disable-next-line no-unused-vars
   private _entityCollectionName: { [K in keyof Required<Entities>]: CollectionName } = {
     user: 'users',
     plan: 'plans',
@@ -40,30 +55,36 @@ export abstract class DataBaseUtils {
     building: 'buildings'
   }
 
-  get jwtSecret (): string { return container.resolve<string>('JWT_SECRET') }
-  get db (): Database { return container.resolve<Database>('db') }
-  get webServer (): WebServer { return container.resolve<WebServer>('webServer') }
+  get jwtSecret(): string {
+    return container.resolve<string>('JWT_SECRET')
+  }
+  get db(): Database {
+    return container.resolve<Database>('db')
+  }
+  get webServer(): WebServer {
+    return container.resolve<WebServer>('webServer')
+  }
 
-  get user (): UserData {
+  get user(): UserData {
     if (!this._entities.user) throw new Error('Undefined user')
     return this._entities.user
   }
-  get accessToken (): string {
+  get accessToken(): string {
     if (!this._accessToken) throw new Error('Undefined access token')
     return this._accessToken
   }
-  get authorizationToken (): string {
+  get authorizationToken(): string {
     return `Bearer ${this.accessToken}`
   }
-  get plan (): PlanData {
+  get plan(): PlanData {
     if (!this._entities.plan) throw new Error('Undefined unlimited plan')
     return this._entities.plan
   }
-  get company (): CompanyData {
+  get company(): CompanyData {
     if (!this._entities.company) throw new Error('Undefined company')
     return this._entities.company
   }
-  get building (): BuildingData {
+  get building(): BuildingData {
     if (!this._entities.building) throw new Error('Undefined building')
     return this._entities.building
   }
@@ -97,9 +118,8 @@ export abstract class DataBaseUtils {
 
     const routes = container.resolveArray<Route<unknown, unknown>>('routes')
 
-    const route = routes.find(route => routePath === route.path)
-    if (!route)
-      throw new Error(`Route ${routePath.describe} not injected`)
+    const route = routes.find((route) => routePath === route.path)
+    if (!route) throw new Error(`Route ${routePath.describe} not injected`)
 
     const { dbURI } = await this.callThisOnConfig(route)
 
@@ -107,7 +127,7 @@ export abstract class DataBaseUtils {
   }
 
   addUser = async (override?: {
-    email: CreateUserData['email'],
+    email: CreateUserData['email']
     password: CreateUserData['password']
   }): Promise<UserData> => {
     const userData = override
@@ -156,11 +176,13 @@ export abstract class DataBaseUtils {
       dto: {
         ...mockCreateCompanyData(),
         planId: this.plan.id,
-        members: [{
-          userId: this.user.id,
-          companyRole: CompanyRole.owner,
-          features: UserFeatures.None
-        }]
+        members: [
+          {
+            userId: this.user.id,
+            companyRole: CompanyRole.owner,
+            features: UserFeatures.None
+          }
+        ]
       }
     })
     await this.db.updateOne<UserData, 'id'>({
@@ -183,4 +205,3 @@ export abstract class DataBaseUtils {
     return this._entities.building
   }
 }
-

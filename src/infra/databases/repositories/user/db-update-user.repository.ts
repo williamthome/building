@@ -5,10 +5,7 @@ import { UpdateUserRepository } from '@/data/repositories'
 
 @Injectable('updateUserRepository')
 export class DbUpdateUserRepository implements UpdateUserRepository {
-
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
   updateUser = async (id: UserData['id'], dto: UpdateUserData): Promise<UserData | null> => {
     return await this.db.updateOne<UserData, 'id'>({

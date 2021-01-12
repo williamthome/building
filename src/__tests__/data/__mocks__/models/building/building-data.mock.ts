@@ -5,5 +5,5 @@ export const mockBuildingData = (dto?: CreateBuildingData | UpdateBuildingData):
   id: fakeData.entity.id(),
   companyId: fakeData.entity.id(),
   title: fakeData.random.word(),
-  ...dto,
+  ...dto
 })

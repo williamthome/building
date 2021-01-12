@@ -12,10 +12,7 @@ import { idSchema } from '@/domain/protocols'
 
 @InjectableController()
 export class UpdateTechnicianController implements Controller<UpdateTechnicianDto, Technician> {
-
-  constructor (
-    @Inject() private readonly updateTechnicianUseCase: UpdateTechnicianUseCase
-  ) { }
+  constructor(@Inject() private readonly updateTechnicianUseCase: UpdateTechnicianUseCase) {}
 
   @HandleError
   @Validate({
@@ -29,13 +26,15 @@ export class UpdateTechnicianController implements Controller<UpdateTechnicianDt
       schema: idSchema
     }
   })
-  async handle (request: HttpRequest<UpdateTechnicianDto>): HandleResponse<Technician> {
+  async handle(request: HttpRequest<UpdateTechnicianDto>): HandleResponse<Technician> {
     const technicianId = request.params?.id as Technician['id']
     const updateTechnicianDto = request.body as UpdateTechnicianDto
 
-    const udpatedTechnician = await this.updateTechnicianUseCase.call(technicianId, updateTechnicianDto)
-    if (!udpatedTechnician)
-      return notFound(new EntityNotFoundError('Technician'))
+    const udpatedTechnician = await this.updateTechnicianUseCase.call(
+      technicianId,
+      updateTechnicianDto
+    )
+    if (!udpatedTechnician) return notFound(new EntityNotFoundError('Technician'))
 
     return ok(udpatedTechnician)
   }

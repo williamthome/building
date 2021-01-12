@@ -9,10 +9,10 @@ import { Company } from '@/domain/entities'
 
 @Injectable('getEntityCountForPlanLimitUseCase')
 export class GetEntityCountForPlanLimitContract implements GetEntityCountForPlanLimitUseCase {
-
-  constructor (
-    @Inject() private readonly getEntityCountForPlanLimitRepository: GetEntityCountForPlanLimitRepository
-  ) { }
+  constructor(
+    @Inject()
+    private readonly getEntityCountForPlanLimitRepository: GetEntityCountForPlanLimitRepository
+  ) {}
 
   call = async (reference: CollectionName, companyId: Company['id']): Promise<number> => {
     return await this.getEntityCountForPlanLimitRepository.getEntityCount(reference, companyId)

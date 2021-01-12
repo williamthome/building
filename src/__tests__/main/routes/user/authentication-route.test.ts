@@ -2,7 +2,7 @@ import request from 'supertest'
 import { dbUtils } from '@/__tests__/shared/database'
 import { authenticationPath } from '@/main/routes'
 import { HttpStatusCode } from '@/presentation/constants'
-import { mockAuthentication, mockCreateUserDto } from '@/__tests__/domain/__mocks__/entities'
+import { mockAuthentication } from '@/__tests__/domain/__mocks__/entities'
 
 describe(`Authentication Route > ${authenticationPath.describe}`, () => {
   beforeAll(async () => {

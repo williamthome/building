@@ -1,4 +1,10 @@
-import fastify, { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler, RawServerBase } from 'fastify'
+import fastify, {
+  FastifyInstance,
+  FastifyReply,
+  FastifyRequest,
+  preHandlerHookHandler,
+  RawServerBase
+} from 'fastify'
 import cors from 'fastify-cors'
 import multer from 'fastify-multer'
 import { File as MulterFile } from 'fastify-multer/lib/interfaces'
@@ -8,20 +14,21 @@ import { Controller, HttpHeaders, HttpParameters, RequestFile } from '@/presenta
 import { isRequestFile } from '@/presentation/helpers/file.helper'
 
 @Injectable('webServer')
-export class Fastify implements WebServer
-<
-FastifyRequest,
-FastifyReply,
-preHandlerHookHandler,
-FastifyInstance,
-RawServerBase,
-MulterFile
-> {
+export class Fastify
+  implements
+    WebServer<
+      FastifyRequest,
+      FastifyReply,
+      preHandlerHookHandler,
+      FastifyInstance,
+      RawServerBase,
+      MulterFile
+    > {
   private _isListening = false
 
   private readonly fastifyInstance: FastifyInstance
 
-  constructor (
+  constructor(
     @Inject('PORT')
     public readonly port: number,
 
@@ -65,36 +72,31 @@ MulterFile
     }
   }
 
-  get isListening (): boolean {
+  get isListening(): boolean {
     return this._isListening
   }
 
-  adaptRoute = <TReq, TRes> (
+  adaptRoute = <TReq, TRes>(
     route: Route<TReq, TRes>,
     fastifyInstance: FastifyInstance
   ): FastifyInstance => {
-    if (!route.path)
-      throw new Error('No route path')
+    if (!route.path) throw new Error('No route path')
 
     return fastifyInstance.route({
       method: route.path.method,
       url: route.path.urn,
       handler: this.adaptHttpResponse(route.controller),
-      preHandler: [
-        multer().any(),
-        ...this.adaptMiddlewares<TReq>(route.middlewares)
-      ]
+      preHandler: [multer().any(), ...this.adaptMiddlewares<TReq>(route.middlewares)]
     })
   }
 
-  private adaptMiddlewares = <TReq> (middlewares: Middleware[]): preHandlerHookHandler[] => {
+  private adaptMiddlewares = <TReq>(middlewares: Middleware[]): preHandlerHookHandler[] => {
     const adapted: preHandlerHookHandler[] = []
-    for (const middleware of middlewares)
-      adapted.push(this.adaptMiddleware<TReq>(middleware))
+    for (const middleware of middlewares) adapted.push(this.adaptMiddleware<TReq>(middleware))
     return adapted
   }
 
-  adaptMiddleware = <TReq> (middleware: Middleware): preHandlerHookHandler => {
+  adaptMiddleware = <TReq>(middleware: Middleware): preHandlerHookHandler => {
     return async (req: FastifyRequest, res: FastifyReply): Promise<void> => {
       const httpRequest = this.adaptHttpRequest<TReq>(req)
 
@@ -114,7 +116,7 @@ MulterFile
     }
   }
 
-  adaptHttpRequest = <TReq> (req: FastifyRequest): AdaptMiddlewareHttpRequest<TReq> => ({
+  adaptHttpRequest = <TReq>(req: FastifyRequest): AdaptMiddlewareHttpRequest<TReq> => ({
     body: req.body as TReq,
     headers: this.adaptHttpHeaders(req),
     params: req.params as HttpParameters,
@@ -124,7 +126,7 @@ MulterFile
     files: this.adaptRequestFiles(req.files || [])
   })
 
-  adaptHttpResponse = <TReq, TRes> (controller: Controller<TReq, TRes>) => {
+  adaptHttpResponse = <TReq, TRes>(controller: Controller<TReq, TRes>) => {
     return async (req: FastifyRequest, res: FastifyReply): Promise<FastifyReply> => {
       const httpRequest = this.adaptHttpRequest<TReq>(req)
       const httpResponse = await controller.handle(httpRequest)
@@ -151,11 +153,9 @@ MulterFile
   }
 
   private adaptFile = (file: MulterFile): RequestFile => {
-    if (!file.buffer)
-      throw new Error('Buffer of file is undefined')
+    if (!file.buffer) throw new Error('Buffer of file is undefined')
 
-    if (!file.size)
-      throw new Error('Size of file is undefined')
+    if (!file.size) throw new Error('Size of file is undefined')
 
     return {
       name: file.originalname,
@@ -167,10 +167,7 @@ MulterFile
   adaptRequestFiles = (files: MulterFile[] | RequestFile[]): RequestFile[] => {
     const adapted: RequestFile[] = []
     for (const file of files) {
-      adapted.push(isRequestFile(file)
-        ? file
-        : this.adaptFile(file)
-      )
+      adapted.push(isRequestFile(file) ? file : this.adaptFile(file))
     }
     return adapted
   }

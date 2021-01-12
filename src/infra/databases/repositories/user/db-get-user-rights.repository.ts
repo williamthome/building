@@ -5,10 +5,7 @@ import { GetUserRightsRepository } from '@/data/repositories'
 
 @Injectable('getUserRightsRepository')
 export class DbGetUserRightsRepository implements GetUserRightsRepository {
-
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) {}
+  constructor(@Inject('db') private readonly db: Database) {}
 
   getUserRights = async (id: UserData['id']): Promise<UserDataRights[]> => {
     const companies = await this.db.getManyByNested<CompanyData, 'members', 'userId'>({

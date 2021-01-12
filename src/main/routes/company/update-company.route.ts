@@ -3,7 +3,7 @@ import {
   AuthMiddleware,
   UserVerifiedMiddleware,
   ActiveCompanyMiddleware,
-  RequirementsMiddleware,
+  RequirementsMiddleware
 } from '@/main/middlewares'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectableRoute, InjectRouteController } from '@/main/decorators'
@@ -11,16 +11,13 @@ import { UpdateCompanyController } from '@/presentation/controllers'
 import { Company, UpdateCompanyDto } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 
-export const updateCompanyPath = new RoutePath(
-  'PATCH',
-  '/company'
-)
+export const updateCompanyPath = new RoutePath('PATCH', '/company')
 
 @InjectableRoute(updateCompanyPath)
 export class UpdateCompanyRoute implements Route<UpdateCompanyDto, Company> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageCompanyData)
 
-  constructor (
+  constructor(
     @InjectRouteController(UpdateCompanyController)
     public readonly controller: UpdateCompanyController,
 
@@ -32,9 +29,9 @@ export class UpdateCompanyRoute implements Route<UpdateCompanyDto, Company> {
 
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: Middleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
+  get middlewares(): Middleware[] {
     return [
       this.authMiddleware,
       this.userVerifiedMiddleware,

@@ -8,10 +8,7 @@ import { CreateLogErrorDto } from '@/domain/entities'
 
 @Injectable('logErrorUseCase')
 export class LogErrorContract implements LogErrorUseCase {
-
-  constructor (
-    @Inject() private readonly logErrorRepository: LogErrorRepository
-  ) {}
+  constructor(@Inject() private readonly logErrorRepository: LogErrorRepository) {}
 
   call = async (dto: CreateLogErrorDto): Promise<void> => {
     await this.logErrorRepository.logError(dto)

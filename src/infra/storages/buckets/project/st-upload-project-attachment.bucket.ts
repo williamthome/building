@@ -5,12 +5,12 @@ import { UploadProjectAttachmentData } from '@/data/models'
 
 @Injectable('uploadProjectAttachmentBucket')
 export class StUploadProjectAttachmentBucket implements UploadProjectAttachmentBucket {
+  constructor(@Inject('storage') private readonly storage: Storage) {}
 
-  constructor (
-    @Inject('storage') private readonly storage: Storage
-  ) { }
-
-  uploadProjectAttachment = async (dto: UploadProjectAttachmentData, buffer: Buffer): Promise<void | Error> => {
+  uploadProjectAttachment = async (
+    dto: UploadProjectAttachmentData,
+    buffer: Buffer
+  ): Promise<void | Error> => {
     return await this.storage.upload(
       {
         reference: 'projects',

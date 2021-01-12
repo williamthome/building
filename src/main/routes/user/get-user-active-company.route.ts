@@ -5,14 +5,11 @@ import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { GetUserActiveCompanyController } from '@/presentation/controllers'
 import { Company } from '@/domain/entities'
 
-export const getUserActiveCompanyPath = new RoutePath(
-  'GET',
-  '/user/active-company'
-)
+export const getUserActiveCompanyPath = new RoutePath('GET', '/user/active-company')
 
 @InjectableRoute(getUserActiveCompanyPath)
 export class GetUserActiveCompanyRoute implements Route<undefined, Company> {
-  constructor (
+  constructor(
     @InjectRouteController(GetUserActiveCompanyController)
     public readonly controller: GetUserActiveCompanyController,
 
@@ -21,9 +18,9 @@ export class GetUserActiveCompanyRoute implements Route<undefined, Company> {
 
     @Inject(ActiveCompanyMiddleware)
     private readonly activeCompanyMiddleware: ActiveCompanyMiddleware
-  ) { }
+  ) {}
 
-  get middlewares (): Middleware[] {
+  get middlewares(): Middleware[] {
     return [this.authMiddleware, this.activeCompanyMiddleware]
   }
 }

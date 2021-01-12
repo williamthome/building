@@ -3,7 +3,9 @@ import { Validate, ValidateOptions } from '../../validate.protocol'
 class IsStringValidation<T> extends Validate<T, IsStringValidation<T>> {
   validation = (): IsStringValidation<T> => this
 
-  constructor (opts: ValidateOptions | undefined) { super(opts) }
+  constructor(opts: ValidateOptions | undefined) {
+    super(opts)
+  }
 
   validate = (obj: T, key: keyof T): string | void => {
     const value = obj[key]
@@ -13,6 +15,5 @@ class IsStringValidation<T> extends Validate<T, IsStringValidation<T>> {
   }
 }
 
-export const isString = <T> (
-  opts?: ValidateOptions
-): IsStringValidation<T> => new IsStringValidation<T>(opts)
+export const isString = <T>(opts?: ValidateOptions): IsStringValidation<T> =>
+  new IsStringValidation<T>(opts)

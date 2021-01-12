@@ -1,7 +1,4 @@
-import {
-  MongoMemoryReplSet,
-  MongoMemoryServer
-} from 'mongodb-memory-server'
+import { MongoMemoryReplSet, MongoMemoryServer } from 'mongodb-memory-server'
 import container from '@/shared/dependency-injection'
 import { Route } from '@/main/protocols'
 import { TransactionController } from '@/main/decorators'
@@ -10,7 +7,7 @@ import { ConfigResponse, DataBaseUtils } from './database.utils'
 export class MongoUtils extends DataBaseUtils {
   private _replSet?: boolean
 
-  private get mongoInMemory (): MongoMemoryReplSet | MongoMemoryServer {
+  private get mongoInMemory(): MongoMemoryReplSet | MongoMemoryServer {
     return this._replSet
       ? container.resolve(MongoMemoryReplSet)
       : container.resolve(MongoMemoryServer)
@@ -19,9 +16,10 @@ export class MongoUtils extends DataBaseUtils {
   protected callThisOnConfig = async (route: Route<any, any>): Promise<ConfigResponse> => {
     let mongoInMemory: MongoMemoryReplSet | MongoMemoryServer
 
-    this._replSet = route.controller instanceof TransactionController
-      ? route.controller.controller.usesTransaction
-      : route.controller.usesTransaction
+    this._replSet =
+      route.controller instanceof TransactionController
+        ? route.controller.controller.usesTransaction
+        : route.controller.usesTransaction
 
     if (this._replSet) {
       mongoInMemory = new MongoMemoryReplSet({

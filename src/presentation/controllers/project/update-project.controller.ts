@@ -12,10 +12,7 @@ import { idSchema } from '@/domain/protocols'
 
 @InjectableController()
 export class UpdateProjectController implements Controller<UpdateProjectDto, Project> {
-
-  constructor (
-    @Inject() private readonly updateProjectUseCase: UpdateProjectUseCase
-  ) { }
+  constructor(@Inject() private readonly updateProjectUseCase: UpdateProjectUseCase) {}
 
   @HandleError
   @Validate({
@@ -30,13 +27,12 @@ export class UpdateProjectController implements Controller<UpdateProjectDto, Pro
       schema: idSchema
     }
   })
-  async handle (request: HttpRequest<UpdateProjectDto>): HandleResponse<Project> {
+  async handle(request: HttpRequest<UpdateProjectDto>): HandleResponse<Project> {
     const projectId = request.params?.id as Project['id']
     const updateProjectDto = request.body as UpdateProjectDto
 
     const updatedProject = await this.updateProjectUseCase.call(projectId, updateProjectDto)
-    if (!updatedProject)
-      return notFound(new EntityNotFoundError('Project'))
+    if (!updatedProject) return notFound(new EntityNotFoundError('Project'))
 
     return ok(updatedProject)
   }

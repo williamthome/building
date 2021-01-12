@@ -9,8 +9,7 @@ import { CompanyRole } from '@/shared/constants'
 
 @Injectable('deleteUserUseCase')
 export class DeleteUserContract implements DeleteUserUseCase {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly deleteUserRepository: DeleteUserRepository,
 
@@ -27,7 +26,7 @@ export class DeleteUserContract implements DeleteUserUseCase {
 
     const userRights = await this.getUserRightsRepository.getUserRights(id)
     for (const { company, role } of userRights) {
-      const ownerCount = company.members.filter(member => id === member.userId).length
+      const ownerCount = company.members.filter((member) => id === member.userId).length
       if (ownerCount === 1 && role === CompanyRole.owner) {
         await this.deleteCompanyUseCase.call(company.id)
       }

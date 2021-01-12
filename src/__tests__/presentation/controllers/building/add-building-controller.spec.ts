@@ -14,24 +14,25 @@ import { CreateBuildingDto } from '@/domain/entities'
 const companyId = fakeData.entity.id()
 const buildingDto = mockCreateBuildingDto()
 const plan = mockPlan()
-const mockHttpRequest = (
-  { buildingLimit }: { buildingLimit?: number } = {}
-): HttpRequest<CreateBuildingDto> => ({
+const mockHttpRequest = ({
+  buildingLimit
+}: { buildingLimit?: number } = {}): HttpRequest<CreateBuildingDto> => ({
   body: buildingDto,
   activeCompanyInfo: {
     id: companyId,
-    limit: buildingLimit !== undefined
-      ? {
-        building: buildingLimit,
-        member: 1,
-        customer: 1,
-        phase: 1,
-        property: 1,
-        technician: 1,
-        project: 1,
-        storageMb: 0
-      }
-      : plan.limit
+    limit:
+      buildingLimit !== undefined
+        ? {
+            building: buildingLimit,
+            member: 1,
+            customer: 1,
+            phase: 1,
+            property: 1,
+            technician: 1,
+            project: 1,
+            storageMb: 0
+          }
+        : plan.limit
   }
 })
 

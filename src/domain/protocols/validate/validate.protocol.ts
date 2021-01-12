@@ -7,7 +7,7 @@ export type ValidateOptions = {
 }
 
 export abstract class Validate<T, TValidation extends Validation<T>> implements Validation<T> {
-  constructor (protected readonly opts: ValidateOptions | undefined) { }
+  constructor(protected readonly opts: ValidateOptions | undefined) {}
 
   protected abstract readonly validation: () => TValidation
 

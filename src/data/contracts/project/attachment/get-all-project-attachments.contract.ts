@@ -9,18 +9,18 @@ import { FileEntityResponse } from '@/domain/protocols'
 
 @Injectable('getAllProjectAttachmentsUseCase')
 export class GetAllProjectAttachmentsContract implements GetAllProjectAttachmentsUseCase {
-
-  constructor (
+  constructor(
     @Inject()
     private readonly getAllProjectAttachmentsRepository: GetAllProjectAttachmentsRepository
-  ) { }
+  ) {}
 
   call = async (projectId: Project['id']): Promise<FileEntityResponse[] | null> => {
-    const attachments = await this.getAllProjectAttachmentsRepository.getAllProjectAttachments(projectId)
-    if (!attachments)
-      return null
+    const attachments = await this.getAllProjectAttachmentsRepository.getAllProjectAttachments(
+      projectId
+    )
+    if (!attachments) return null
 
-    return attachments.map(attachment => {
+    return attachments.map((attachment) => {
       return {
         id: attachment.id,
         name: attachment.name,

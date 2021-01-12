@@ -5,10 +5,7 @@ import { GetProjectByIdRepository } from '@/data/repositories'
 
 @Injectable('getProjectByIdRepository')
 export class DbGetProjectByIdRepository implements GetProjectByIdRepository {
-
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
   getProjectById = async (id: ProjectData['id']): Promise<ProjectData | null> => {
     return await this.db.getOne<ProjectData, 'id'>({

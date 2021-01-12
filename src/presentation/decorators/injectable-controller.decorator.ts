@@ -3,9 +3,9 @@ import { Controller } from '../protocols'
 
 type InjectableControllerOptions = Pick<Controller<any, any>, 'usesTransaction'>
 
-export const InjectableController = <TRequest = any, TResponse = any> (
+export const InjectableController = <TRequest = any, TResponse = any>(
   opts?: InjectableControllerOptions
-) => <T extends new (...args: any[]) => Controller<TRequest, TResponse>> (controller: T): T => {
+) => <T extends new (...args: any[]) => Controller<TRequest, TResponse>>(controller: T): T => {
   container.define(controller).asNewable(controller)
 
   const usesTransactionKey: keyof Controller<TRequest, TResponse> = 'usesTransaction'
@@ -14,7 +14,9 @@ export const InjectableController = <TRequest = any, TResponse = any> (
     get: () => {
       return opts?.usesTransaction
     },
-    set: () => new Error(`Property ${usesTransactionKey} in controller is readonly`)
+    set: () => {
+      // throw new Error(`Property ${usesTransactionKey} in controller is readonly`)
+    }
   })
 
   return controller

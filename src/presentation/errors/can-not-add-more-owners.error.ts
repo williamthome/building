@@ -1,5 +1,5 @@
 export class CanNotAddMoreOwnesrError extends Error {
-  constructor () {
+  constructor() {
     super('Can not add more owners')
     this.name = 'CanNotAddMoreOwnesrError'
   }

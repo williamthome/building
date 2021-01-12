@@ -12,10 +12,7 @@ import { idSchema } from '@/domain/protocols'
 
 @InjectableController()
 export class GetPlanByIdController implements Controller<undefined, Plan> {
-
-  constructor (
-    @Inject() private readonly getPlanByIdUseCase: GetPlanByIdUseCase,
-  ) { }
+  constructor(@Inject() private readonly getPlanByIdUseCase: GetPlanByIdUseCase) {}
 
   @HandleError
   @Validate({
@@ -23,12 +20,11 @@ export class GetPlanByIdController implements Controller<undefined, Plan> {
       schema: idSchema
     }
   })
-  async handle (request: HttpRequest): HandleResponse<Plan> {
+  async handle(request: HttpRequest): HandleResponse<Plan> {
     const planId = request.params?.id as Plan['id']
 
     const findedPlan = await this.getPlanByIdUseCase.call(planId)
-    if (!findedPlan)
-      return notFound(new EntityNotFoundError('Plan'))
+    if (!findedPlan) return notFound(new EntityNotFoundError('Plan'))
 
     return ok(findedPlan)
   }

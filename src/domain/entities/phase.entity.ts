@@ -1,4 +1,9 @@
-import { ExtractDto, ExtractEntity, ExtractUpdateDto, limitedEntitySchema } from '../protocols/entity.protocol'
+import {
+  ExtractDto,
+  ExtractEntity,
+  ExtractUpdateDto,
+  limitedEntitySchema
+} from '../protocols/entity.protocol'
 import { string, array } from '../protocols/schema'
 
 export const phaseSchema = limitedEntitySchema({

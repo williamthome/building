@@ -5,10 +5,7 @@ import { VerifyUserRepository } from '@/data/repositories'
 
 @Injectable('verifyUserRepository')
 export class DbVerifyUserRepository implements VerifyUserRepository {
-
-  constructor (
-    @Inject('db') private readonly db: Database
-  ) { }
+  constructor(@Inject('db') private readonly db: Database) {}
 
   verifyUser = async (id: UserData['id']): Promise<UserData | null> => {
     return await this.db.updateOne<UserData, 'id'>({

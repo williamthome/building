@@ -12,10 +12,7 @@ import { Schema, string } from '@/domain/protocols/schema'
 
 @InjectableController()
 export class DeletePhaseController implements Controller<undefined, Phase> {
-
-  constructor (
-    @Inject() private readonly deletePhaseUseCase: DeletePhaseUseCase
-  ) { }
+  constructor(@Inject() private readonly deletePhaseUseCase: DeletePhaseUseCase) {}
 
   @HandleError
   @Validate({
@@ -25,12 +22,11 @@ export class DeletePhaseController implements Controller<undefined, Phase> {
       })
     }
   })
-  async handle (request: HttpRequest): HandleResponse<Phase> {
+  async handle(request: HttpRequest): HandleResponse<Phase> {
     const phaseId = request.params?.id as Phase['id']
 
     const deteledPhase = await this.deletePhaseUseCase.call(phaseId)
-    if (!deteledPhase)
-      return notFound(new EntityNotFoundError('Phase'))
+    if (!deteledPhase) return notFound(new EntityNotFoundError('Phase'))
 
     return ok(deteledPhase)
   }

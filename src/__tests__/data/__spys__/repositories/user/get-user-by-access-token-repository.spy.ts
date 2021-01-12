@@ -13,9 +13,7 @@ export class GetUserByAccessTokenRepositorySpy implements GetUserByAccessTokenRe
 
     if (this.shouldThrow) throw new Error()
 
-    this.user = this.shouldReturnNull
-      ? null
-      : { ...mockUserData(), accessToken }
+    this.user = this.shouldReturnNull ? null : { ...mockUserData(), accessToken }
 
     return this.user
   }

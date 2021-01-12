@@ -16,9 +16,8 @@ xdescribe(`UpdateUserActiveCompany Route > ${updateUserActiveCompanyPath.describ
     await dbUtils.stop()
   })
 
-  const makeURN = (): string => updateUserActiveCompanyPath.fillURN()
-    .params({ companyId: dbUtils.company.id })
-    .urn
+  const makeURN = (): string =>
+    updateUserActiveCompanyPath.fillURN().params({ companyId: dbUtils.company.id }).urn
 
   it('shold return no content', async () => {
     await dbUtils.addUser()
