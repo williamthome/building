@@ -20,6 +20,7 @@ export class Server {
 
   private defineInjectedValues = (): void => {
     const {
+      HOST,
       PORT,
       MONGO_URL,
       JWT_SECRET,
@@ -29,8 +30,12 @@ export class Server {
       AWS_REGION
     } = process.env
     container
+      .define('HOST')
+      .as(HOST || '0.0.0.0')
+      .done()
+    container
       .define('PORT')
-      .as(PORT || 5051)
+      .as(PORT || '5051')
       .done()
     container
       .define('DB_URL')

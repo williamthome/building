@@ -2,10 +2,10 @@ import fastify, {
   FastifyInstance,
   FastifyReply,
   FastifyRequest,
+  HookHandlerDoneFunction,
   preHandlerHookHandler,
   RawServerBase
 } from 'fastify'
-import cors from 'fastify-cors'
 import multer from 'fastify-multer'
 import { File as MulterFile } from 'fastify-multer/lib/interfaces'
 import { Injectable, Inject } from '@/shared/dependency-injection'
@@ -29,15 +29,19 @@ export class Fastify
   private readonly fastifyInstance: FastifyInstance
 
   constructor(
+    @Inject('HOST')
+    public readonly host: string,
+
     @Inject('PORT')
-    public readonly port: number,
+    public readonly port: string,
 
     @Inject()
     public readonly routes: Route<unknown, unknown>[]
   ) {
     this.fastifyInstance = fastify()
-    this.fastifyInstance.register(cors, {
-      origin: '*'
+    this.fastifyInstance.options('*', (req, res) => {
+      this.enableCors(req, res)
+      res.send()
     })
     this.fastifyInstance.register(multer.contentParser)
     this.injectRoutes()
@@ -48,7 +52,7 @@ export class Fastify
   }
 
   listen = async (): Promise<void> => {
-    await this.fastifyInstance.listen(this.port)
+    await this.fastifyInstance.listen(this.port, this.host)
     await this.ready()
     this._isListening = true
     console.log('Server listening on port ' + this.port)
@@ -86,7 +90,11 @@ export class Fastify
       method: route.path.method,
       url: route.path.urn,
       handler: this.adaptHttpResponse(route.controller),
-      preHandler: [multer().any(), ...this.adaptMiddlewares<TReq>(route.middlewares)]
+      preHandler: [
+        this.corsMiddleware(),
+        multer().any(),
+        ...this.adaptMiddlewares<TReq>(route.middlewares)
+      ]
     })
   }
 
@@ -116,6 +124,23 @@ export class Fastify
     }
   }
 
+  corsMiddleware = (): preHandlerHookHandler => {
+    return (req: FastifyRequest, res: FastifyReply, done: HookHandlerDoneFunction): void => {
+      this.enableCors(req, res)
+      done()
+    }
+  }
+
+  enableCors = (req: FastifyRequest, res: FastifyReply): void => {
+    res.raw.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
+    res.raw.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH,DELETE,OPTIONS,HEAD')
+    res.raw.setHeader('Access-Control-Allow-Credentials', 'true')
+    res.raw.setHeader(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization, User-Agent'
+    )
+  }
+
   adaptHttpRequest = <TReq>(req: FastifyRequest): AdaptMiddlewareHttpRequest<TReq> => ({
     body: req.body as TReq,
     headers: this.adaptHttpHeaders(req),
@@ -130,6 +155,7 @@ export class Fastify
     return async (req: FastifyRequest, res: FastifyReply): Promise<FastifyReply> => {
       const httpRequest = this.adaptHttpRequest<TReq>(req)
       const httpResponse = await controller.handle(httpRequest)
+
       return httpResponse.body instanceof Error
         ? res.status(httpResponse.statusCode).send({ error: httpResponse.body.message })
         : res.status(httpResponse.statusCode).send(httpResponse.body)

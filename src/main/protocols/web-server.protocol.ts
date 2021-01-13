@@ -10,7 +10,8 @@ export interface WebServer<
   TServer = unknown,
   TFile = unknown
 > {
-  port: number
+  host: string
+  port: string
   routes: Route<unknown, unknown>[]
   isListening: boolean
   server: () => TServer
