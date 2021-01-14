@@ -21,11 +21,14 @@ export class AuthMiddleware implements Middleware {
     const user = await this.getUserByAccessTokenUseCase.call(accessToken)
     if (!user) return notFound(new EntityNotFoundError('User'))
 
+    const { id, verified, activeCompanyId, email } = user
+
     return okMiddleware(httpRequest, {
       loggedUserInfo: {
-        id: user.id,
-        verified: user.verified,
-        activeCompanyId: user.activeCompanyId
+        id,
+        verified,
+        activeCompanyId,
+        email
       }
     })
   }
