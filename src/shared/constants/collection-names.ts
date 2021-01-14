@@ -10,5 +10,6 @@ export const collectionNames = [
   'phases',
   'customers',
   'properties',
-  'technicians'
+  'technicians',
+  'invites'
 ] as const
