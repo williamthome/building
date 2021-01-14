@@ -7,19 +7,19 @@ import {
 } from '@/main/middlewares'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
 import { InjectableRoute, InjectRouteController } from '@/main/decorators'
-import { AddInviteController } from '@/presentation/controllers'
+import { SendInviteController } from '@/presentation/controllers'
 import { CreateInviteDto, Invite } from '@/domain/entities'
 import { UserFeatures } from '@/shared/constants'
 
-export const addInvitePath = new RoutePath('POST', '/invite')
+export const sendInvitePath = new RoutePath('POST', '/invite')
 
-@InjectableRoute(addInvitePath)
-export class AddInviteRoute implements Route<CreateInviteDto, Invite> {
+@InjectableRoute(sendInvitePath)
+export class SendInviteRoute implements Route<CreateInviteDto, Invite> {
   requirementsMiddleware = new RequirementsMiddleware(UserFeatures.ManageUsers)
 
   constructor(
-    @InjectRouteController(AddInviteController)
-    public readonly controller: AddInviteController,
+    @InjectRouteController(SendInviteController)
+    public readonly controller: SendInviteController,
 
     @Inject(AuthMiddleware)
     private readonly authMiddleware: Middleware,

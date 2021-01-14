@@ -18,7 +18,7 @@ import { userIsMember } from '@/domain/helpers/user.helper'
 import { inviteAlreadySent } from '@/domain/helpers/invite.helper'
 
 @InjectableController()
-export class AddInviteController implements Controller<CreateInviteDto, Invite> {
+export class SendInviteController implements Controller<CreateInviteDto, Invite> {
   constructor(
     @Inject() private readonly mailer: Mailer,
 
