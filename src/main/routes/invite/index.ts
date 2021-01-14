@@ -1,3 +1,5 @@
 export * from './send-invite.route'
 export * from './accept-invite.route'
 export * from './decline-invite.route'
+export * from './invites-sent.route'
+export * from './invites-received.route'

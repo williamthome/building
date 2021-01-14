@@ -1,3 +1,5 @@
 export * from './send-invite.controller'
 export * from './accept-invite.controller'
 export * from './decline-invite.controller'
+export * from './invites-received.controller'
+export * from './invites-sent.controller'
