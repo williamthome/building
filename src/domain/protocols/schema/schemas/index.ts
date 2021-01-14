@@ -8,6 +8,7 @@ import { NumberSchema } from './number.schema'
 import { ObjectSchema } from './object.schema'
 import { StringSchema } from './string.schema'
 import { EmailSchema } from './email.schema'
+import { IdSchema } from './id.schema'
 
 /// HELPERS ------------------------------------------------
 
@@ -69,6 +70,16 @@ const string = <
 ): StringSchema<SchemaType<string, T, O>, SchemaOptions<T, O>> =>
   new StringSchema<SchemaType<string, T, O>, SchemaOptions<T, O>>(isStringValidationOptions)
 
+/// ID ------------------------------------------------
+
+const id = <
+  O extends OptionsOrType<string> = required,
+  T extends InvertOptionsAndType<O, string> = OptionsResponse<O, string>
+>(
+  isIdValidationOptions?: ValidateOptions
+): IdSchema<SchemaType<string, T, O>, SchemaOptions<T, O>> =>
+  new IdSchema<SchemaType<string, T, O>, SchemaOptions<T, O>>(isIdValidationOptions)
+
 /// EMAIL ------------------------------------------------
 
 const email = <
@@ -126,4 +137,4 @@ const custom = <T, O extends optional | required | reserved = required>(): Custo
 
 /// EXPORT ------------------------------------------------
 
-export { schema, pickSchema, string, email, number, boolean, array, object, custom }
+export { schema, pickSchema, string, id, email, number, boolean, array, object, custom }
