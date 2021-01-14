@@ -13,7 +13,7 @@
     "start": "node dist/index.js",
     "build:start": "npm run build && npm start",
     "dev": "npm run build && ts-node-dev --respawn --transpile-only src/index.ts",
-    "debug": "npm run build && npm run start -- --inspect=0.0.0.0:9222 --nolazy",
+    "debug": "rimraf dist && npx tsc -p tsconfig.json && npm run start -- --inspect=0.0.0.0:9222 --nolazy",
     "test": "npx jest --passWithNoTests --silent --noStackTrace --runInBand --detectOpenHandles",
     "test:verbose": "npx jest --passWithNoTests --runInBand --detectOpenHandles",
     "test:unit": "npm test -- --watch \"^(.*/)*(.*\\.)*(spec)\\.ts$\"",
