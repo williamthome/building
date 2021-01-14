@@ -44,7 +44,7 @@ export const idSchema = new Schema({
   id: idStringSchema
 })
 
-const entityIdSchema = string<reserved>().nonWritable()
+export const entityIdSchema = string<reserved>().nonWritable()
 
 export const entitySchema = <T>(schemas: T): Schema<EntityConstructor<T>> =>
   new Schema<EntityConstructor<T>>({
