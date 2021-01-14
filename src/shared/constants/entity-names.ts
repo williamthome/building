@@ -10,5 +10,6 @@ export const entityNames = [
   'Phase',
   'Customer',
   'Property',
-  'Technician'
+  'Technician',
+  'Invite'
 ] as const
