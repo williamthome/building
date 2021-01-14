@@ -1,10 +1,11 @@
 // : Shared
 import { Inject } from '@/shared/dependency-injection'
 // > In: presentation layer
-import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
-import { badRequest, ok } from '@/presentation/factories/http.factory'
+import { Controller, HandleResponse, HttpRequest, Mailer } from '@/presentation/protocols'
+import { badRequest, ok, serverError } from '@/presentation/factories/http.factory'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
 import { InviteAlreadySentError, UserAlreadyAMemberError } from '@/presentation/errors'
+import { sendInviteTemplate } from '@/presentation/mailers/views'
 // < Out: only domain layer
 import {
   AddInviteUseCase,
@@ -19,6 +20,8 @@ import { inviteAlreadySent } from '@/domain/helpers/invite.helper'
 @InjectableController()
 export class AddInviteController implements Controller<CreateInviteDto, Invite> {
   constructor(
+    @Inject() private readonly mailer: Mailer,
+
     @Inject()
     private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
 
@@ -37,7 +40,9 @@ export class AddInviteController implements Controller<CreateInviteDto, Invite> 
   })
   async handle(request: HttpRequest<CreateInviteDto>): HandleResponse<Invite> {
     const loggedUserId = request.loggedUserInfo?.id as User['id']
+    const loggedUserEmail = request.loggedUserInfo?.email as User['email']
     const activeCompanyId = request.activeCompanyInfo?.id as Company['id']
+    const activeCompanyName = request.activeCompanyInfo?.name as Company['name']
     const activeCompanyMembers = request.activeCompanyInfo?.members as Member[]
     const createInviteDto = request.body as CreateInviteDto
 
@@ -52,6 +57,18 @@ export class AddInviteController implements Controller<CreateInviteDto, Invite> 
       return badRequest(new InviteAlreadySentError())
 
     const invite = await this.addInviteUseCase.call(createInviteDto, loggedUserId, activeCompanyId)
+
+    const sendEmailError = await this.mailer.send({
+      to: email,
+      subject: `Building App | Invite to ${activeCompanyName}`,
+      template: sendInviteTemplate({
+        email,
+        invitedFrom: loggedUserEmail,
+        companyName: activeCompanyName,
+        inviteLink: 'https://api-building.web.app/profile'
+      })
+    })
+    if (sendEmailError) return serverError(sendEmailError)
 
     return ok(invite)
   }

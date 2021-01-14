@@ -37,14 +37,18 @@ export class ActiveCompanyMiddleware implements Middleware {
     const plan = await this.getPlanByIdUseCase.call(activeCompany.planId)
     if (!plan) return notFound(new EntityNotFoundError('Plan'))
 
+    const { companyRole, features } = member
+    const { id, name, members } = activeCompany
+
     return okMiddleware(httpRequest, {
       loggedUserInfo: {
-        companyRole: member?.companyRole,
-        features: member?.features
+        companyRole,
+        features
       },
       activeCompanyInfo: {
-        id: activeCompany?.id,
-        members: activeCompany?.members,
+        id,
+        name,
+        members,
         limit: plan.limit
       }
     })

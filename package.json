@@ -9,11 +9,12 @@
   },
   "private": true,
   "scripts": {
-    "build": "rimraf dist && npx tsc -p tsconfig.build.json",
+    "copy:mail-views": "npx copyfiles -f ./src/presentation/mailers/views/**/*.handlebars ./dist/presentation/mailers/views/",
+    "build": "rimraf dist && npx tsc -p tsconfig.build.json && npm run copy:mail-views",
     "start": "node dist/index.js",
     "build:start": "npm run build && npm start",
     "dev": "npm run build && ts-node-dev --respawn --transpile-only src/index.ts",
-    "debug": "rimraf dist && npx tsc -p tsconfig.json && npm run start -- --inspect=0.0.0.0:9222 --nolazy",
+    "debug": "rimraf dist && npx tsc -p tsconfig.json && npm run copy:mail-views && npm run start -- --inspect=0.0.0.0:9222 --nolazy",
     "test": "npx jest --passWithNoTests --silent --noStackTrace --runInBand --detectOpenHandles",
     "test:verbose": "npx jest --passWithNoTests --runInBand --detectOpenHandles",
     "test:unit": "npm test -- --watch \"^(.*/)*(.*\\.)*(spec)\\.ts$\"",
@@ -41,9 +42,11 @@
     "@types/jsonwebtoken": "^8.5.0",
     "@types/mongodb": "^3.5.34",
     "@types/node": "^14.14.9",
+    "@types/nodemailer": "^6.4.0",
     "@types/supertest": "^2.0.10",
     "@typescript-eslint/eslint-plugin": "^4.8.1",
     "@typescript-eslint/parser": "^4.8.1",
+    "copyfiles": "^2.4.1",
     "eslint": "^7.13.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-prettier": "^3.3.1",
@@ -68,7 +71,9 @@
     "jsonwebtoken": "^8.5.1",
     "lilinjector": "0.0.8",
     "module-alias": "^2.2.2",
-    "mongodb": "^3.6.3"
+    "mongodb": "^3.6.3",
+    "nodemailer": "^6.4.17",
+    "nodemailer-express-handlebars": "^4.0.0"
   },
   "_moduleAliases": {
     "@": "dist"

@@ -10,6 +10,11 @@ declare global {
       AWS_SECRET_ACCESS_KEY: string
       AWS_BUCKET: string
       AWS_REGION: string
+      MAIL_SERVICE: string
+      MAIL_HOST: string
+      MAIL_USER: string
+      MAIL_PASSWORD: string
+      MAIL_EMAIL: string
     }
   }
 }
