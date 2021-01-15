@@ -10,6 +10,19 @@ export type HttpQuery = Record<string, string>
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 
+export interface Cookie {
+  name: string
+  value?: string
+  expires?: number | 'now'
+  serverSideOnly?: boolean
+  path?: string
+  sameSite?: 'none' | 'strict' | 'lax'
+}
+
+export interface HttpOptions {
+  cookies?: Cookie[]
+}
+
 export interface HttpRequest<T = undefined> {
   body?: T
   headers?: HttpHeaders
@@ -18,9 +31,11 @@ export interface HttpRequest<T = undefined> {
   loggedUserInfo?: LoggedUserInfo
   activeCompanyInfo?: ActiveCompanyInfo
   files?: RequestFile[]
+  cookies?: Cookie[]
 }
 
 export interface HttpResponse<T = null> {
   statusCode: HttpStatusCode
   body: T
+  options?: HttpOptions
 }

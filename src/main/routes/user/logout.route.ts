@@ -1,6 +1,4 @@
-import { Inject } from '@/shared/dependency-injection'
 import { Middleware, Route, RoutePath } from '@/main/protocols'
-import { AuthMiddleware } from '@/main/middlewares'
 import { InjectableRoute, InjectRouteController } from '@/main/decorators'
 import { LogoutController } from '@/presentation/controllers'
 import { UserResponse } from '@/domain/protocols'
@@ -12,13 +10,10 @@ export const LogoutPath = new RoutePath('POST', '/logout')
 export class LogoutRoute implements Route<Pick<User, 'accessToken'>, UserResponse> {
   constructor(
     @InjectRouteController(LogoutController)
-    public readonly controller: LogoutController,
-
-    @Inject(AuthMiddleware)
-    private readonly authMiddleware: Middleware
+    public readonly controller: LogoutController
   ) {}
 
   get middlewares(): Middleware[] {
-    return [this.authMiddleware]
+    return []
   }
 }

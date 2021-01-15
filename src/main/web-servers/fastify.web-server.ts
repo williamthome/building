@@ -7,23 +7,25 @@ import fastify, {
   RawServerBase
 } from 'fastify'
 import multer from 'fastify-multer'
+import cookie from 'fastify-cookie'
 import { File as MulterFile } from 'fastify-multer/lib/interfaces'
 import { Injectable, Inject } from '@/shared/dependency-injection'
 import { AdaptMiddlewareHttpRequest, Middleware, Route, WebServer } from '../protocols'
-import { Controller, HttpHeaders, HttpParameters, RequestFile } from '@/presentation/protocols'
+import {
+  Controller,
+  Cookie,
+  HttpResponse,
+  HttpHeaders,
+  HttpParameters,
+  HttpQuery,
+  RequestFile
+} from '@/presentation/protocols'
 import { isRequestFile } from '@/presentation/helpers/file.helper'
 
 @Injectable('webServer')
 export class Fastify
   implements
-    WebServer<
-      FastifyRequest,
-      FastifyReply,
-      preHandlerHookHandler,
-      FastifyInstance,
-      RawServerBase,
-      MulterFile
-    > {
+    WebServer<FastifyRequest, FastifyReply, preHandlerHookHandler, FastifyInstance, RawServerBase> {
   private _isListening = false
 
   private readonly fastifyInstance: FastifyInstance
@@ -44,6 +46,7 @@ export class Fastify
       res.send()
     })
     this.fastifyInstance.register(multer.contentParser)
+    this.fastifyInstance.register(cookie)
     this.injectRoutes()
   }
 
@@ -132,7 +135,13 @@ export class Fastify
   }
 
   enableCors = (req: FastifyRequest, res: FastifyReply): void => {
-    res.raw.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
+    res.raw.setHeader(
+      'Access-Control-Allow-Origin',
+      process.env.NODE_ENV === 'production'
+        ? 'https://api-building.web.app' // ? 'https://api-building.firebaseapp.com'
+        : req.headers.origin || '*'
+    )
+    res.raw.setHeader('Vary', 'Origin')
     res.raw.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH,DELETE,OPTIONS,HEAD')
     res.raw.setHeader('Access-Control-Allow-Credentials', 'true')
     res.raw.setHeader(
@@ -141,20 +150,59 @@ export class Fastify
     )
   }
 
-  adaptHttpRequest = <TReq>(req: FastifyRequest): AdaptMiddlewareHttpRequest<TReq> => ({
-    body: req.body as TReq,
-    headers: this.adaptHttpHeaders(req),
-    params: req.params as HttpParameters,
-    query: req.query,
-    loggedUserInfo: req.loggedUserInfo,
-    activeCompanyInfo: req.activeCompanyInfo,
-    files: this.adaptRequestFiles(req.files || [])
+  adaptHttpRequest = <TReq>(req: FastifyRequest): AdaptMiddlewareHttpRequest<TReq> => {
+    const { body, params, query, loggedUserInfo, activeCompanyInfo } = req
+    return {
+      body: body as TReq,
+      headers: this.adaptHttpHeaders(req),
+      params: params as HttpParameters,
+      query: query as HttpQuery,
+      loggedUserInfo: loggedUserInfo,
+      activeCompanyInfo: activeCompanyInfo,
+      files: this.adaptRequestFiles(req),
+      cookies: this.adaptRequestCookies(req)
+    }
+  }
+
+  adaptCookie = (cookie: [string, string]): Cookie => ({
+    name: cookie[0],
+    value: cookie[1]
   })
+
+  adaptRequestCookies = (req: FastifyRequest): Cookie[] => {
+    const cookies: Cookie[] = []
+    for (const cookie of Object.entries(req.cookies)) cookies.push(this.adaptCookie(cookie))
+    return cookies
+  }
+
+  setResponseCookies = <TRes>(
+    apiResponse: HttpResponse<TRes>,
+    webServerResponse: FastifyReply
+  ): void => {
+    apiResponse.options?.cookies?.forEach((cookie) => {
+      const { name, value, expires, serverSideOnly, path } = cookie
+
+      webServerResponse.setCookie(name, value ?? '', {
+        expires:
+          typeof expires === 'number'
+            ? new Date(Date.now() + expires)
+            : expires === 'now'
+            ? new Date(0)
+            : undefined,
+        httpOnly: serverSideOnly ?? false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'none',
+        path: path || '/'
+      })
+    })
+  }
 
   adaptHttpResponse = <TReq, TRes>(controller: Controller<TReq, TRes>) => {
     return async (req: FastifyRequest, res: FastifyReply): Promise<FastifyReply> => {
       const httpRequest = this.adaptHttpRequest<TReq>(req)
       const httpResponse = await controller.handle(httpRequest)
+
+      this.setResponseCookies(httpResponse, res)
 
       return httpResponse.body instanceof Error
         ? res.status(httpResponse.statusCode).send({ error: httpResponse.body.message })
@@ -190,10 +238,12 @@ export class Fastify
     }
   }
 
-  adaptRequestFiles = (files: MulterFile[] | RequestFile[]): RequestFile[] => {
+  adaptRequestFiles = (req: FastifyRequest): RequestFile[] => {
     const adapted: RequestFile[] = []
-    for (const file of files) {
-      adapted.push(isRequestFile(file) ? file : this.adaptFile(file))
+    if (req.files) {
+      for (const file of req.files) {
+        adapted.push(isRequestFile(file) ? file : this.adaptFile(file))
+      }
     }
     return adapted
   }

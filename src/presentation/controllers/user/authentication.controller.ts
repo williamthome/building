@@ -50,7 +50,16 @@ export class AuthenticationController implements Controller<Authentication, User
     }
 
     const authenticatedUserWithoutPassword = userWithoutPassword(findedUser)
+    const tomorrow = 1000 * 60 * 60 * 24
 
-    return ok(authenticatedUserWithoutPassword)
+    return ok(authenticatedUserWithoutPassword, {
+      cookies: [
+        {
+          name: 'accessToken',
+          value: findedUser.accessToken,
+          expires: tomorrow
+        }
+      ]
+    })
   }
 }

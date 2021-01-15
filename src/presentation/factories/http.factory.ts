@@ -1,38 +1,45 @@
 import { HttpStatusCode } from '../constants'
 import { ServerError, UnauthorizedError } from '../errors'
-import { HttpResponse } from '../protocols'
+import { HttpOptions, HttpResponse } from '../protocols'
 
-export const ok = <T>(response: T): HttpResponse<T> => ({
+export const ok = <T>(response: T, options?: HttpOptions): HttpResponse<T> => ({
   statusCode: HttpStatusCode.OK,
-  body: response
+  body: response,
+  options
 })
 
-export const noContent = (): HttpResponse<null> => ({
+export const noContent = (options?: HttpOptions): HttpResponse<null> => ({
   statusCode: HttpStatusCode.NO_CONTENT,
-  body: null
+  body: null,
+  options
 })
 
-export const badRequest = (error: Error): HttpResponse<Error> => ({
+export const badRequest = (error: Error, options?: HttpOptions): HttpResponse<Error> => ({
   statusCode: HttpStatusCode.BAD_REQUEST,
-  body: error
+  body: error,
+  options
 })
 
-export const unauthorized = (): HttpResponse<Error> => ({
+export const unauthorized = (options?: HttpOptions): HttpResponse<Error> => ({
   statusCode: HttpStatusCode.UNAUTHORIZED,
-  body: new UnauthorizedError()
+  body: new UnauthorizedError(),
+  options
 })
 
-export const forbidden = (error: Error): HttpResponse<Error> => ({
+export const forbidden = (error: Error, options?: HttpOptions): HttpResponse<Error> => ({
   statusCode: HttpStatusCode.FORBIDDEN,
-  body: error
+  body: error,
+  options
 })
 
-export const notFound = (error: Error): HttpResponse<Error> => ({
+export const notFound = (error: Error, options?: HttpOptions): HttpResponse<Error> => ({
   statusCode: HttpStatusCode.NOT_FOUND,
-  body: error
+  body: error,
+  options
 })
 
-export const serverError = (error: Error): HttpResponse<Error> => ({
+export const serverError = (error: Error, options?: HttpOptions): HttpResponse<Error> => ({
   statusCode: HttpStatusCode.INTERNAL_SERVER_ERROR,
-  body: new ServerError(error.stack)
+  body: new ServerError(error.stack),
+  options
 })

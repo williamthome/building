@@ -7,8 +7,7 @@ export interface WebServer<
   TResponse = unknown,
   TMiddleware = unknown,
   TInstance = unknown,
-  TServer = unknown,
-  TFile = unknown
+  TServer = unknown
 > {
   host: string
   port: string
@@ -26,9 +25,9 @@ export interface WebServer<
   adaptHttpResponse: <TReq, TRes>(
     controller: Controller<TReq, TRes>
   ) => (req: TRequest, res: TResponse) => void
-  adaptRequestFiles: (files: TFile[]) => RequestFile[]
+  adaptRequestFiles: (req: TRequest) => RequestFile[]
 }
 
 export type AdaptMiddlewareHttpRequest<TRequest> = {
-  [K in keyof Required<HttpRequest<TRequest>>]: any
+  [K in keyof Required<HttpRequest<TRequest>>]: HttpRequest<TRequest>[K]
 }

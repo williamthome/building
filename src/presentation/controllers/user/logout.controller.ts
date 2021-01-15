@@ -2,7 +2,7 @@ import { Inject } from '@/shared/dependency-injection'
 import { UserResponse } from '@/domain/protocols'
 import { GetUserByAccessTokenUseCase, UpdateUserAccessTokenUseCase } from '@/domain/usecases/user'
 import { HandleError, InjectableController, Validate } from '@/presentation/decorators'
-import { notFound, ok } from '@/presentation/factories/http.factory'
+import { noContent, notFound, ok } from '@/presentation/factories/http.factory'
 import { Controller, HandleResponse, HttpRequest } from '@/presentation/protocols'
 import { EntityNotFoundError } from '@/presentation/errors'
 import { userWithoutPassword } from '@/domain/helpers/user.helper'
@@ -28,17 +28,28 @@ export class LogoutController implements Controller<Pick<User, 'accessToken'>, U
     }
   })
   async handle(request: HttpRequest<Pick<User, 'accessToken'>>): HandleResponse<UserResponse> {
-    const { accessToken } = request.body as { accessToken: string }
+    const accessToken = request.cookies?.find((cookie) => cookie.name === 'accessToken')?.value
+    if (!accessToken) return noContent()
 
     const findedUser = await this.getUserByAccessTokenUseCase.call(accessToken)
     if (!findedUser) return notFound(new EntityNotFoundError('User'))
 
-    await this.updateUserAccessTokenUseCase.call(findedUser.id, undefined)
-
-    findedUser.accessToken = undefined
+    if (findedUser.accessToken) {
+      await this.updateUserAccessTokenUseCase.call(findedUser.id, undefined)
+      findedUser.accessToken = undefined
+    }
 
     const findedUserWithoutPassword = userWithoutPassword(findedUser)
 
-    return ok(findedUserWithoutPassword)
+    return ok(findedUserWithoutPassword, {
+      cookies: request.cookies?.some((cookie) => cookie.name === 'accessToken')
+        ? [
+            {
+              name: 'accessToken',
+              expires: 'now'
+            }
+          ]
+        : undefined
+    })
   }
 }

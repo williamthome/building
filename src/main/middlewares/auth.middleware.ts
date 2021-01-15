@@ -5,7 +5,7 @@ import { notFound, unauthorized } from '@/presentation/factories/http.factory'
 import { HttpRequest } from '@/presentation/protocols'
 import { HandleError } from '@/presentation/decorators'
 import { GetUserByAccessTokenUseCase } from '@/domain/usecases'
-import { authorizationToken, okMiddleware } from '../helpers/middleware.helper'
+import { okMiddleware } from '../helpers/middleware.helper'
 
 @Injectable()
 export class AuthMiddleware implements Middleware {
@@ -15,7 +15,7 @@ export class AuthMiddleware implements Middleware {
 
   @HandleError
   async handle<T>(httpRequest: HttpRequest<T>): MiddlewareResponse {
-    const accessToken = authorizationToken(httpRequest)
+    const accessToken = httpRequest.cookies?.find((cookie) => cookie.name === 'accessToken')?.value
     if (!accessToken) return unauthorized()
 
     const user = await this.getUserByAccessTokenUseCase.call(accessToken)
